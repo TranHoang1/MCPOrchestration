@@ -1,0 +1,39 @@
+<mxGraphModel adaptiveColors="auto">
+  <root>
+    <mxCell id="0"/>
+    <mxCell id="1" parent="0"/>
+    <mxCell id="qdrant_grp" value="Qdrant Vector Database" style="swimlane;startSize=28;fillColor=#f3e5f5;strokeColor=#7b1fa2;html=1;fontSize=13;fontStyle=1;" vertex="1" parent="1">
+      <mxGeometry x="20" y="20" width="380" height="320" as="geometry"/>
+    </mxCell>
+    <mxCell id="mcp_tools_col" value="&lt;b&gt;Collection: mcp_tools&lt;/b&gt;&lt;hr&gt;&lt;div style='text-align:left;padding:4px;font-size:10px;'&gt;&lt;b&gt;Vector Config:&lt;/b&gt;&lt;br&gt;  size: 768&lt;br&gt;  distance: Cosine&lt;br&gt;  index: HNSW (m=16, ef=128)&lt;br&gt;&lt;br&gt;&lt;b&gt;Point Schema:&lt;/b&gt;&lt;br&gt;  PK id : String (server::tool)&lt;br&gt;  vector : Float[768]&lt;br&gt;&lt;br&gt;&lt;b&gt;Payload Fields:&lt;/b&gt;&lt;br&gt;  name : String [keyword idx]&lt;br&gt;  description : String [text idx]&lt;br&gt;  input_schema : JSON&lt;br&gt;  server_name : String [keyword idx]&lt;br&gt;  indexed_at : String (ISO-8601)&lt;/div&gt;" style="shape=table;startSize=28;container=0;collapsible=0;childLayout=tableLayout;fixedRows=0;rowLines=0;fontStyle=1;align=center;resizeLast=0;html=1;whiteSpace=wrap;fillColor=#e1bee7;strokeColor=#7b1fa2;fontSize=11;" vertex="1" parent="qdrant_grp">
+      <mxGeometry x="30" y="40" width="320" height="260" as="geometry"/>
+    </mxCell>
+    <mxCell id="inmem_grp" value="In-Memory Structures (JVM Heap)" style="swimlane;startSize=28;fillColor=#fff3e0;strokeColor=#f57c00;html=1;fontSize=13;fontStyle=1;" vertex="1" parent="1">
+      <mxGeometry x="440" y="20" width="380" height="320" as="geometry"/>
+    </mxCell>
+    <mxCell id="tool_registry_mem" value="&lt;b&gt;ToolRegistry&lt;/b&gt;&lt;hr&gt;&lt;div style='text-align:left;padding:4px;font-size:10px;'&gt;toolMap : ConcurrentHashMap&lt;br&gt;  key: tool_name (String)&lt;br&gt;  value: ToolEntry&lt;br&gt;&lt;br&gt;serverToolMap : ConcurrentHashMap&lt;br&gt;  key: server_name (String)&lt;br&gt;  value: List&amp;lt;tool_name&amp;gt;&lt;/div&gt;" style="shape=table;startSize=28;container=0;collapsible=0;childLayout=tableLayout;fixedRows=0;rowLines=0;fontStyle=1;align=center;resizeLast=0;html=1;whiteSpace=wrap;fillColor=#ffe0b2;strokeColor=#f57c00;fontSize=11;" vertex="1" parent="inmem_grp">
+      <mxGeometry x="30" y="40" width="320" height="120" as="geometry"/>
+    </mxCell>
+    <mxCell id="server_state_mem" value="&lt;b&gt;UpstreamServerState&lt;/b&gt;&lt;hr&gt;&lt;div style='text-align:left;padding:4px;font-size:10px;'&gt;name : String&lt;br&gt;transport : STDIO | HTTP&lt;br&gt;status : STARTING | CONNECTED | DISCONNECTED | ERROR&lt;br&gt;lastHealthCheck : Instant&lt;br&gt;reconnectAttempts : Int&lt;br&gt;connection : McpConnection?&lt;/div&gt;" style="shape=table;startSize=28;container=0;collapsible=0;childLayout=tableLayout;fixedRows=0;rowLines=0;fontStyle=1;align=center;resizeLast=0;html=1;whiteSpace=wrap;fillColor=#ffe0b2;strokeColor=#f57c00;fontSize=11;" vertex="1" parent="inmem_grp">
+      <mxGeometry x="30" y="180" width="320" height="120" as="geometry"/>
+    </mxCell>
+    <mxCell id="faiss_grp" value="FAISS Fallback (Local File)" style="swimlane;startSize=28;fillColor=#e8f5e9;strokeColor=#388e3c;html=1;fontSize=13;fontStyle=1;" vertex="1" parent="1">
+      <mxGeometry x="20" y="380" width="380" height="120" as="geometry"/>
+    </mxCell>
+    <mxCell id="faiss_idx" value="&lt;b&gt;faiss.index&lt;/b&gt;&lt;br&gt;IndexFlatIP (768 dim)&lt;br&gt;~/.mcp-orchestrator/faiss.index" style="shape=cylinder3;whiteSpace=wrap;html=1;fillColor=#c8e6c9;strokeColor=#388e3c;fontSize=10;size=10;" vertex="1" parent="faiss_grp">
+      <mxGeometry x="20" y="35" width="160" height="70" as="geometry"/>
+    </mxCell>
+    <mxCell id="faiss_meta" value="&lt;b&gt;faiss-metadata.json&lt;/b&gt;&lt;br&gt;Tool payloads companion" style="shape=mxgraph.flowchart.document;whiteSpace=wrap;html=1;fillColor=#c8e6c9;strokeColor=#388e3c;fontSize=10;" vertex="1" parent="faiss_grp">
+      <mxGeometry x="210" y="40" width="150" height="60" as="geometry"/>
+    </mxCell>
+    <mxCell id="e_registry_qdrant" value="mirrors" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;dashed=1;fontSize=10;" edge="1" source="tool_registry_mem" target="mcp_tools_col" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e_server_qdrant" value="hosts tools in" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;dashed=1;fontSize=10;" edge="1" source="server_state_mem" target="mcp_tools_col" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e_qdrant_faiss" value="fallback" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;dashed=1;strokeColor=#999999;fontSize=10;" edge="1" source="mcp_tools_col" target="faiss_idx" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+  </root>
+</mxGraphModel>

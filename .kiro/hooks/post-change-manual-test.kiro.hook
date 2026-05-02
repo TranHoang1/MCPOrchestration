@@ -1,0 +1,13 @@
+{
+  "enabled": true,
+  "name": "Verify Implementation After Completion",
+  "description": "After completing all spec tasks or a bug fix, invoke @jira-master-agent to verify on localhost:3000 that the bug/requirements are implemented correctly.",
+  "version": "2.0.0",
+  "when": {
+    "type": "agentStop"
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "If you just finished implementing all tasks in a spec (run all tasks) or completed a bug fix that affects UI or API: 1) Compile affected modules: ./gradlew :frontend:compileKotlinJs (frontend) and/or ./gradlew :server:compileKotlinJvm (backend). 2) Stop the running server process and restart it with ./gradlew :server:jvmRun (use controlPwshProcess). 3) Invoke @jira-master-agent to verify on localhost:3000: read the spec requirements/bugfix doc, open browser, login, navigate to affected pages, test each requirement/bug fix, check console errors, take screenshots, and report PASS/FAIL for each acceptance criteria. 4) If any test FAIL, fix the code, recompile, restart server, and test again until all PASS. If the agent session was only editing docs, specs, or steering files (no code changes), skip this verification."
+  }
+}

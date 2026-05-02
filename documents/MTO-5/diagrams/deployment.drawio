@@ -1,0 +1,69 @@
+<mxGraphModel adaptiveColors="auto">
+  <root>
+    <mxCell id="0"/>
+    <mxCell id="1" parent="0"/>
+    <mxCell id="title" value="&lt;b&gt;Deployment Diagram&lt;/b&gt; — MCP Orchestration Server (TDD 2.3)" style="text;html=1;fontSize=14;fontStyle=1;fillColor=none;strokeColor=none;align=left;" vertex="1" parent="1">
+      <mxGeometry x="20" y="10" width="500" height="30" as="geometry"/>
+    </mxCell>
+    <mxCell id="dev_machine" value="Developer Machine" style="swimlane;startSize=30;fillColor=#f5f5f5;strokeColor=#666666;html=1;fontSize=13;fontStyle=1;" vertex="1" parent="1">
+      <mxGeometry x="20" y="50" width="900" height="420" as="geometry"/>
+    </mxCell>
+    <mxCell id="kiro_proc" value="Kiro IDE Process" style="swimlane;startSize=26;fillColor=#e1f5fe;strokeColor=#0288d1;html=1;fontSize=11;fontStyle=1;" vertex="1" parent="dev_machine">
+      <mxGeometry x="30" y="50" width="200" height="90" as="geometry"/>
+    </mxCell>
+    <mxCell id="kiro_agent" value="Kiro AI Agent" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#b3e5fc;strokeColor=#0288d1;fontSize=11;" vertex="1" parent="kiro_proc">
+      <mxGeometry x="25" y="38" width="150" height="40" as="geometry"/>
+    </mxCell>
+    <mxCell id="orch_proc" value="MCP Orchestrator Process (JVM)" style="swimlane;startSize=26;fillColor=#fff3e0;strokeColor=#f57c00;html=1;fontSize=11;fontStyle=1;" vertex="1" parent="dev_machine">
+      <mxGeometry x="300" y="50" width="260" height="140" as="geometry"/>
+    </mxCell>
+    <mxCell id="ktor_app" value="Ktor Application" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe0b2;strokeColor=#f57c00;fontSize=11;" vertex="1" parent="orch_proc">
+      <mxGeometry x="30" y="38" width="200" height="36" as="geometry"/>
+    </mxCell>
+    <mxCell id="heap" value="In-Memory ToolRegistry&lt;br&gt;(max 256 MB heap)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe0b2;strokeColor=#f57c00;fontSize=10;" vertex="1" parent="orch_proc">
+      <mxGeometry x="30" y="88" width="200" height="40" as="geometry"/>
+    </mxCell>
+    <mxCell id="upstream_procs" value="Upstream Processes" style="swimlane;startSize=26;fillColor=#e8f5e9;strokeColor=#388e3c;html=1;fontSize=11;fontStyle=1;" vertex="1" parent="dev_machine">
+      <mxGeometry x="640" y="50" width="220" height="180" as="geometry"/>
+    </mxCell>
+    <mxCell id="p1" value="npx jira-mcp-server" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#c8e6c9;strokeColor=#388e3c;fontSize=10;" vertex="1" parent="upstream_procs">
+      <mxGeometry x="20" y="38" width="180" height="34" as="geometry"/>
+    </mxCell>
+    <mxCell id="p2" value="python db-mcp-server" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#c8e6c9;strokeColor=#388e3c;fontSize=10;" vertex="1" parent="upstream_procs">
+      <mxGeometry x="20" y="86" width="180" height="34" as="geometry"/>
+    </mxCell>
+    <mxCell id="p3" value="node git-mcp-server" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#c8e6c9;strokeColor=#388e3c;fontSize=10;" vertex="1" parent="upstream_procs">
+      <mxGeometry x="20" y="134" width="180" height="34" as="geometry"/>
+    </mxCell>
+    <mxCell id="docker_svc" value="Local Services (Docker)" style="swimlane;startSize=26;fillColor=#f3e5f5;strokeColor=#7b1fa2;html=1;fontSize=11;fontStyle=1;" vertex="1" parent="dev_machine">
+      <mxGeometry x="300" y="260" width="260" height="100" as="geometry"/>
+    </mxCell>
+    <mxCell id="qdrant_c" value="Qdrant Container :6333" style="shape=cylinder3;whiteSpace=wrap;html=1;fillColor=#e1bee7;strokeColor=#7b1fa2;fontSize=10;size=10;" vertex="1" parent="docker_svc">
+      <mxGeometry x="55" y="34" width="150" height="55" as="geometry"/>
+    </mxCell>
+    <mxCell id="cloud" value="Cloud Services" style="swimlane;startSize=30;fillColor=#e8eaf6;strokeColor=#3f51b5;html=1;fontSize=13;fontStyle=1;" vertex="1" parent="1">
+      <mxGeometry x="300" y="520" width="260" height="90" as="geometry"/>
+    </mxCell>
+    <mxCell id="openai_c" value="OpenAI API (api.openai.com)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#c5cae9;strokeColor=#3f51b5;fontSize=11;" vertex="1" parent="cloud">
+      <mxGeometry x="25" y="42" width="210" height="36" as="geometry"/>
+    </mxCell>
+    <mxCell id="e_kiro_orch" value="stdio pipe" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;fontSize=10;" edge="1" source="kiro_agent" target="ktor_app" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e_orch_p1" value="stdio" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;fontSize=9;" edge="1" source="ktor_app" target="p1" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e_orch_p2" value="stdio" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;fontSize=9;" edge="1" source="ktor_app" target="p2" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e_orch_p3" value="HTTP" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;fontSize=9;" edge="1" source="ktor_app" target="p3" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e_orch_qdrant" value="HTTP :6333" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;fontSize=10;" edge="1" source="ktor_app" target="qdrant_c" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e_orch_openai" value="HTTPS" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;fontSize=10;" edge="1" source="ktor_app" target="openai_c" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+  </root>
+</mxGraphModel>

@@ -1,0 +1,81 @@
+<mxGraphModel adaptiveColors="auto">
+  <root>
+    <mxCell id="0"/>
+    <mxCell id="1" parent="0"/>
+    <mxCell id="title" value="&lt;b&gt;Class Diagram&lt;/b&gt; — Core Interfaces &amp;amp; Implementations (TDD 5.3)" style="text;html=1;fontSize=14;fontStyle=1;fillColor=none;strokeColor=none;align=left;" vertex="1" parent="1">
+      <mxGeometry x="40" y="10" width="600" height="30" as="geometry"/>
+    </mxCell>
+    <mxCell id="i_tds" value="&lt;p style='margin:0;padding:4px;'&gt;&amp;lt;&amp;lt;interface&amp;gt;&amp;gt;&lt;br&gt;&lt;b&gt;ToolDiscoveryService&lt;/b&gt;&lt;/p&gt;&lt;hr&gt;&lt;p style='margin:0;padding:4px;text-align:left;font-size:10px;'&gt;+findTools(query, topK, threshold): FindToolsResponse&lt;/p&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#e1f5fe;strokeColor=#0288d1;fontSize=11;verticalAlign=top;" vertex="1" parent="1">
+      <mxGeometry x="40" y="60" width="300" height="80" as="geometry"/>
+    </mxCell>
+    <mxCell id="i_ted" value="&lt;p style='margin:0;padding:4px;'&gt;&amp;lt;&amp;lt;interface&amp;gt;&amp;gt;&lt;br&gt;&lt;b&gt;ToolExecutionDispatcher&lt;/b&gt;&lt;/p&gt;&lt;hr&gt;&lt;p style='margin:0;padding:4px;text-align:left;font-size:10px;'&gt;+execute(toolName, arguments): ExecuteToolResponse&lt;/p&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#e1f5fe;strokeColor=#0288d1;fontSize=11;verticalAlign=top;" vertex="1" parent="1">
+      <mxGeometry x="440" y="60" width="300" height="80" as="geometry"/>
+    </mxCell>
+    <mxCell id="c_tds_impl" value="&lt;p style='margin:0;padding:4px;'&gt;&lt;b&gt;ToolDiscoveryServiceImpl&lt;/b&gt;&lt;/p&gt;&lt;hr&gt;&lt;p style='margin:0;padding:4px;text-align:left;font-size:10px;'&gt;-embeddingService: EmbeddingService&lt;br&gt;-vectorDbClient: VectorDbClient&lt;br&gt;-toolRegistry: ToolRegistry&lt;br&gt;-keywordEngine: KeywordSearchEngine&lt;/p&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#e8f5e9;strokeColor=#388e3c;fontSize=11;verticalAlign=top;" vertex="1" parent="1">
+      <mxGeometry x="40" y="240" width="300" height="100" as="geometry"/>
+    </mxCell>
+    <mxCell id="c_ted_impl" value="&lt;p style='margin:0;padding:4px;'&gt;&lt;b&gt;ToolExecutionDispatcherImpl&lt;/b&gt;&lt;/p&gt;&lt;hr&gt;&lt;p style='margin:0;padding:4px;text-align:left;font-size:10px;'&gt;-toolRegistry: ToolRegistry&lt;br&gt;-serverManager: UpstreamServerManager&lt;br&gt;-config: OrchestratorConfig&lt;/p&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#e8f5e9;strokeColor=#388e3c;fontSize=11;verticalAlign=top;" vertex="1" parent="1">
+      <mxGeometry x="440" y="240" width="300" height="100" as="geometry"/>
+    </mxCell>
+    <mxCell id="i_vdb" value="&lt;p style='margin:0;padding:4px;'&gt;&amp;lt;&amp;lt;interface&amp;gt;&amp;gt;&lt;br&gt;&lt;b&gt;VectorDbClient&lt;/b&gt;&lt;/p&gt;&lt;hr&gt;&lt;p style='margin:0;padding:4px;text-align:left;font-size:10px;'&gt;+upsert(collection, points)&lt;br&gt;+search(collection, vector, limit, threshold): List&lt;br&gt;+delete(collection, filter)&lt;br&gt;+isHealthy(): Boolean&lt;/p&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#e1f5fe;strokeColor=#0288d1;fontSize=11;verticalAlign=top;" vertex="1" parent="1">
+      <mxGeometry x="40" y="440" width="280" height="110" as="geometry"/>
+    </mxCell>
+    <mxCell id="i_emb" value="&lt;p style='margin:0;padding:4px;'&gt;&amp;lt;&amp;lt;interface&amp;gt;&amp;gt;&lt;br&gt;&lt;b&gt;EmbeddingService&lt;/b&gt;&lt;/p&gt;&lt;hr&gt;&lt;p style='margin:0;padding:4px;text-align:left;font-size:10px;'&gt;+generateEmbedding(text): FloatArray&lt;br&gt;+generateEmbeddings(texts): List&lt;br&gt;+isHealthy(): Boolean&lt;/p&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#e1f5fe;strokeColor=#0288d1;fontSize=11;verticalAlign=top;" vertex="1" parent="1">
+      <mxGeometry x="380" y="440" width="280" height="100" as="geometry"/>
+    </mxCell>
+    <mxCell id="i_conn" value="&lt;p style='margin:0;padding:4px;'&gt;&amp;lt;&amp;lt;interface&amp;gt;&amp;gt;&lt;br&gt;&lt;b&gt;McpConnection&lt;/b&gt;&lt;/p&gt;&lt;hr&gt;&lt;p style='margin:0;padding:4px;text-align:left;font-size:10px;'&gt;+sendRequest(method, params): JsonObject&lt;br&gt;+close()&lt;br&gt;+isActive(): Boolean&lt;/p&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#e1f5fe;strokeColor=#0288d1;fontSize=11;verticalAlign=top;" vertex="1" parent="1">
+      <mxGeometry x="720" y="440" width="260" height="100" as="geometry"/>
+    </mxCell>
+    <mxCell id="i_usm" value="&lt;p style='margin:0;padding:4px;'&gt;&amp;lt;&amp;lt;interface&amp;gt;&amp;gt;&lt;br&gt;&lt;b&gt;UpstreamServerManager&lt;/b&gt;&lt;/p&gt;&lt;hr&gt;&lt;p style='margin:0;padding:4px;text-align:left;font-size:10px;'&gt;+connectAll()&lt;br&gt;+getConnection(serverName): McpConnection?&lt;br&gt;+getServerState(serverName): ServerState&lt;/p&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#e1f5fe;strokeColor=#0288d1;fontSize=11;verticalAlign=top;" vertex="1" parent="1">
+      <mxGeometry x="840" y="60" width="260" height="100" as="geometry"/>
+    </mxCell>
+    <mxCell id="c_qdrant" value="&lt;b&gt;QdrantVectorDbClient&lt;/b&gt;&lt;br&gt;&lt;span style='font-size:10px;'&gt;-httpClient: HttpClient&lt;br&gt;-baseUrl: String&lt;/span&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#e8f5e9;strokeColor=#388e3c;fontSize=11;verticalAlign=top;" vertex="1" parent="1">
+      <mxGeometry x="40" y="650" width="200" height="70" as="geometry"/>
+    </mxCell>
+    <mxCell id="c_faiss" value="&lt;b&gt;FaissVectorDbClient&lt;/b&gt;&lt;br&gt;&lt;span style='font-size:10px;'&gt;-indexPath: String&lt;br&gt;-metadataPath: String&lt;/span&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#e8f5e9;strokeColor=#388e3c;fontSize=11;verticalAlign=top;" vertex="1" parent="1">
+      <mxGeometry x="300" y="650" width="200" height="70" as="geometry"/>
+    </mxCell>
+    <mxCell id="c_openai_emb" value="&lt;b&gt;OpenAiEmbeddingService&lt;/b&gt;&lt;br&gt;&lt;span style='font-size:10px;'&gt;-httpClient: HttpClient&lt;br&gt;-apiKey: String&lt;br&gt;-model: String&lt;/span&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#e8f5e9;strokeColor=#388e3c;fontSize=11;verticalAlign=top;" vertex="1" parent="1">
+      <mxGeometry x="440" y="650" width="200" height="80" as="geometry"/>
+    </mxCell>
+    <mxCell id="c_stdio_conn" value="&lt;b&gt;StdioMcpConnection&lt;/b&gt;&lt;br&gt;&lt;span style='font-size:10px;'&gt;-process: Process&lt;br&gt;-reader: BufferedReader&lt;/span&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#e8f5e9;strokeColor=#388e3c;fontSize=11;verticalAlign=top;" vertex="1" parent="1">
+      <mxGeometry x="700" y="650" width="180" height="70" as="geometry"/>
+    </mxCell>
+    <mxCell id="c_http_conn" value="&lt;b&gt;HttpMcpConnection&lt;/b&gt;&lt;br&gt;&lt;span style='font-size:10px;'&gt;-httpClient: HttpClient&lt;br&gt;-serverUrl: String&lt;/span&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#e8f5e9;strokeColor=#388e3c;fontSize=11;verticalAlign=top;" vertex="1" parent="1">
+      <mxGeometry x="940" y="650" width="180" height="70" as="geometry"/>
+    </mxCell>
+    <mxCell id="e_tds_impl" value="" style="html=1;endArrow=block;endFill=0;endSize=12;dashed=1;strokeColor=#0288d1;" edge="1" source="c_tds_impl" target="i_tds" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e_ted_impl" value="" style="html=1;endArrow=block;endFill=0;endSize=12;dashed=1;strokeColor=#0288d1;" edge="1" source="c_ted_impl" target="i_ted" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e_qdrant_impl" value="" style="html=1;endArrow=block;endFill=0;endSize=12;dashed=1;strokeColor=#0288d1;" edge="1" source="c_qdrant" target="i_vdb" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e_faiss_impl" value="" style="html=1;endArrow=block;endFill=0;endSize=12;dashed=1;strokeColor=#0288d1;" edge="1" source="c_faiss" target="i_vdb" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e_openai_impl" value="" style="html=1;endArrow=block;endFill=0;endSize=12;dashed=1;strokeColor=#0288d1;" edge="1" source="c_openai_emb" target="i_emb" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e_stdio_impl" value="" style="html=1;endArrow=block;endFill=0;endSize=12;dashed=1;strokeColor=#0288d1;" edge="1" source="c_stdio_conn" target="i_conn" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e_http_impl" value="" style="html=1;endArrow=block;endFill=0;endSize=12;dashed=1;strokeColor=#0288d1;" edge="1" source="c_http_conn" target="i_conn" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e_tds_emb" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=diamond;endFill=0;endSize=10;strokeColor=#333333;" edge="1" source="c_tds_impl" target="i_emb" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e_tds_vdb" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=diamond;endFill=0;endSize=10;strokeColor=#333333;" edge="1" source="c_tds_impl" target="i_vdb" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e_ted_usm" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=diamond;endFill=0;endSize=10;strokeColor=#333333;" edge="1" source="c_ted_impl" target="i_usm" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e_usm_conn" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=diamond;endFill=0;endSize=10;strokeColor=#333333;" edge="1" source="i_usm" target="i_conn" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+  </root>
+</mxGraphModel>

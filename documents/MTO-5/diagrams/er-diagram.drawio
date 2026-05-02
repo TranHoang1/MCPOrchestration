@@ -1,0 +1,30 @@
+<mxGraphModel adaptiveColors="auto">
+  <root>
+    <mxCell id="0"/>
+    <mxCell id="1" parent="0"/>
+    <mxCell id="upstream_server" value="&lt;b&gt;UPSTREAM_SERVER&lt;/b&gt;&lt;hr&gt;&lt;div style='text-align:left;padding:4px;'&gt;PK name : String&lt;br&gt;transport : String&lt;br&gt;command : String&lt;br&gt;url : String&lt;br&gt;status : String&lt;br&gt;last_health_check : Timestamp&lt;br&gt;reconnect_attempts : Int&lt;/div&gt;" style="shape=table;startSize=28;container=0;collapsible=0;childLayout=tableLayout;fixedRows=0;rowLines=0;fontStyle=1;align=center;resizeLast=0;html=1;whiteSpace=wrap;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="40" y="40" width="220" height="200" as="geometry"/>
+    </mxCell>
+    <mxCell id="tool_definition" value="&lt;b&gt;TOOL_DEFINITION&lt;/b&gt;&lt;hr&gt;&lt;div style='text-align:left;padding:4px;'&gt;PK id : String&lt;br&gt;name : String&lt;br&gt;description : String&lt;br&gt;input_schema : JSON&lt;br&gt;FK server_name : String&lt;br&gt;indexed_at : Timestamp&lt;/div&gt;" style="shape=table;startSize=28;container=0;collapsible=0;childLayout=tableLayout;fixedRows=0;rowLines=0;fontStyle=1;align=center;resizeLast=0;html=1;whiteSpace=wrap;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="380" y="40" width="220" height="180" as="geometry"/>
+    </mxCell>
+    <mxCell id="tool_vector" value="&lt;b&gt;TOOL_VECTOR&lt;/b&gt;&lt;hr&gt;&lt;div style='text-align:left;padding:4px;'&gt;PK tool_id : String&lt;br&gt;embedding : Float[768]&lt;br&gt;metadata : JSON&lt;/div&gt;" style="shape=table;startSize=28;container=0;collapsible=0;childLayout=tableLayout;fixedRows=0;rowLines=0;fontStyle=1;align=center;resizeLast=0;html=1;whiteSpace=wrap;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="720" y="40" width="200" height="130" as="geometry"/>
+    </mxCell>
+    <mxCell id="config_tbl" value="&lt;b&gt;CONFIG&lt;/b&gt;&lt;hr&gt;&lt;div style='text-align:left;padding:4px;'&gt;PK key : String&lt;br&gt;value : String&lt;br&gt;updated_at : Timestamp&lt;/div&gt;" style="shape=table;startSize=28;container=0;collapsible=0;childLayout=tableLayout;fixedRows=0;rowLines=0;fontStyle=1;align=center;resizeLast=0;html=1;whiteSpace=wrap;fillColor=#f5f5f5;strokeColor=#666666;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="40" y="340" width="200" height="130" as="geometry"/>
+    </mxCell>
+    <mxCell id="execution_log" value="&lt;b&gt;EXECUTION_LOG&lt;/b&gt;&lt;hr&gt;&lt;div style='text-align:left;padding:4px;'&gt;PK id : String&lt;br&gt;tool_name : String&lt;br&gt;server_name : String&lt;br&gt;duration_ms : Int&lt;br&gt;success : Boolean&lt;br&gt;error_message : String&lt;br&gt;executed_at : Timestamp&lt;/div&gt;" style="shape=table;startSize=28;container=0;collapsible=0;childLayout=tableLayout;fixedRows=0;rowLines=0;fontStyle=1;align=center;resizeLast=0;html=1;whiteSpace=wrap;fillColor=#fce4ec;strokeColor=#c62828;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="380" y="310" width="220" height="200" as="geometry"/>
+    </mxCell>
+    <mxCell id="e_server_tool" value="1 : N&lt;br&gt;hosts" style="edgeStyle=entityRelationEdgeStyle;html=1;endArrow=ERmandOne;startArrow=ERmandOne;endFill=0;startFill=0;fontSize=10;rounded=1;" edge="1" source="upstream_server" target="tool_definition" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e_tool_vector" value="1 : 1&lt;br&gt;embedded as" style="edgeStyle=entityRelationEdgeStyle;html=1;endArrow=ERmandOne;startArrow=ERmandOne;endFill=0;startFill=0;fontSize=10;rounded=1;" edge="1" source="tool_definition" target="tool_vector" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e_tool_log" value="1 : N&lt;br&gt;logs" style="edgeStyle=entityRelationEdgeStyle;html=1;endArrow=ERmandOne;startArrow=ERmandOne;endFill=0;startFill=0;dashed=1;fontSize=10;rounded=1;" edge="1" source="tool_definition" target="execution_log" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+  </root>
+</mxGraphModel>

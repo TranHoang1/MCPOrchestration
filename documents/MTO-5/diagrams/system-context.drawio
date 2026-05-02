@@ -1,0 +1,60 @@
+<mxGraphModel adaptiveColors="auto">
+  <root>
+    <mxCell id="0"/>
+    <mxCell id="1" parent="0"/>
+    <mxCell id="title" value="&lt;b&gt;System Context Diagram&lt;/b&gt; — MCP Orchestration Server" style="text;html=1;fontSize=14;fontStyle=1;fillColor=none;strokeColor=none;align=left;" vertex="1" parent="1">
+      <mxGeometry x="60" y="10" width="500" height="30" as="geometry"/>
+    </mxCell>
+    <mxCell id="kiro" value="&lt;b&gt;Kiro IDE&lt;/b&gt;&lt;br&gt;(AI Agent)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1f5fe;strokeColor=#0288d1;fontSize=13;fontStyle=0;" vertex="1" parent="1">
+      <mxGeometry x="280" y="60" width="180" height="70" as="geometry"/>
+    </mxCell>
+    <mxCell id="orch" value="&lt;b&gt;MCP Orchestration Server&lt;/b&gt;&lt;br&gt;(Kotlin/Ktor)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff3e0;strokeColor=#f57c00;fontSize=13;fontStyle=0;" vertex="1" parent="1">
+      <mxGeometry x="260" y="220" width="220" height="70" as="geometry"/>
+    </mxCell>
+    <mxCell id="vdb" value="&lt;b&gt;Vector Database&lt;/b&gt;&lt;br&gt;(Qdrant / FAISS)" style="shape=cylinder3;whiteSpace=wrap;html=1;fillColor=#f3e5f5;strokeColor=#7b1fa2;fontSize=11;size=12;" vertex="1" parent="1">
+      <mxGeometry x="60" y="400" width="160" height="80" as="geometry"/>
+    </mxCell>
+    <mxCell id="emb" value="&lt;b&gt;Embedding Service&lt;/b&gt;&lt;br&gt;(OpenAI / HuggingFace)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f3e5f5;strokeColor=#7b1fa2;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="280" y="400" width="180" height="70" as="geometry"/>
+    </mxCell>
+    <mxCell id="cfg" value="&lt;b&gt;Config Store&lt;/b&gt;&lt;br&gt;(application.yml)" style="shape=mxgraph.flowchart.document;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="520" y="400" width="160" height="70" as="geometry"/>
+    </mxCell>
+    <mxCell id="mcp1" value="&lt;b&gt;Jira MCP Server&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8f5e9;strokeColor=#388e3c;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="580" y="60" width="160" height="50" as="geometry"/>
+    </mxCell>
+    <mxCell id="mcp2" value="&lt;b&gt;Git MCP Server&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8f5e9;strokeColor=#388e3c;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="580" y="170" width="160" height="50" as="geometry"/>
+    </mxCell>
+    <mxCell id="mcp3" value="&lt;b&gt;Database MCP Server&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8f5e9;strokeColor=#388e3c;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="580" y="280" width="160" height="50" as="geometry"/>
+    </mxCell>
+    <mxCell id="mcpn" value="&lt;b&gt;... N MCP Servers&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8f5e9;strokeColor=#388e3c;fontSize=11;dashed=1;" vertex="1" parent="1">
+      <mxGeometry x="580" y="390" width="160" height="50" as="geometry"/>
+    </mxCell>
+    <mxCell id="e_kiro_orch" value="find_tools(query)&lt;br&gt;execute_dynamic_tool(name, args)" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;fontSize=10;" edge="1" source="kiro" target="orch" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e_orch_vdb" value="Semantic Search" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;fontSize=10;" edge="1" source="orch" target="vdb" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e_orch_emb" value="Generate Embeddings" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;fontSize=10;" edge="1" source="orch" target="emb" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e_orch_cfg" value="Read Config" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;fontSize=10;" edge="1" source="orch" target="cfg" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e_orch_mcp1" value="JSON-RPC Proxy" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;fontSize=10;" edge="1" source="orch" target="mcp1" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e_orch_mcp2" value="JSON-RPC Proxy" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;fontSize=10;" edge="1" source="orch" target="mcp2" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e_orch_mcp3" value="JSON-RPC Proxy" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;fontSize=10;" edge="1" source="orch" target="mcp3" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e_emb_vdb" value="Store Vectors" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;dashed=1;fontSize=10;" edge="1" source="emb" target="vdb" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+  </root>
+</mxGraphModel>

@@ -1,0 +1,31 @@
+{
+  "mcpServers": {
+    "mcp-atlassian": {
+      "command": "uvx",
+      "args": [
+        "mcp-atlassian",
+        "--jira-url=https://jiraassist.atlassian.net",
+        "--jira-username=dnguyenminh@gmail.com",
+        "--jira-token=ATATT3xFfGF0lT9tTvrE-LqhjLov_QsGHxk8GGg5pHvuoIUKjlohEauJgKp_bn6Kvr0UYjCDwrliCe179CjCEgniHOjoxxNrN1FJvLM2WXmd0jW5uKRtKrY8ntUxxebzKDYIV6LPHuJpF1Zv06CGmvRPev2PdCVLMRNcltOGtvc83IaIMAeTTu4=D5C2E388"
+      ],
+      "autoApprove": [
+        "jira_update_issue",
+        "jira_get_issue",
+        "jira_get_transitions",
+        "jira_transition_issue",
+        "jira_add_comment",
+        "jira_get_all_projects",
+        "jira_get_project_issues",
+        "jira_get_project_versions",
+        "jira_get_project_components",
+        "jira_get_agile_boards",
+        "jira_search",
+        "jira_create_issue",
+        "jira_delete_issue",
+        "jira_delete_issue",
+        "jira_delete_issue",
+        "jira_delete_issue"
+      ]
+    }
+  }
+}

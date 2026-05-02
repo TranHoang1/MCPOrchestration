@@ -1,0 +1,54 @@
+<mxGraphModel adaptiveColors="auto">
+  <root>
+    <mxCell id="0"/>
+    <mxCell id="1" parent="0"/>
+    <mxCell id="title" value="&lt;b&gt;Server Health State Machine&lt;/b&gt; — FSD 3.5" style="text;html=1;fontSize=14;fontStyle=1;fillColor=none;strokeColor=none;align=left;" vertex="1" parent="1">
+      <mxGeometry x="60" y="10" width="400" height="30" as="geometry"/>
+    </mxCell>
+    <mxCell id="start" value="" style="ellipse;fillColor=#000000;strokeColor=#000000;" vertex="1" parent="1">
+      <mxGeometry x="295" y="60" width="30" height="30" as="geometry"/>
+    </mxCell>
+    <mxCell id="starting" value="&lt;b&gt;STARTING&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff3e0;strokeColor=#f57c00;fontSize=13;" vertex="1" parent="1">
+      <mxGeometry x="230" y="160" width="160" height="70" as="geometry"/>
+    </mxCell>
+    <mxCell id="connected" value="&lt;b&gt;CONNECTED&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8f5e9;strokeColor=#388e3c;fontSize=13;" vertex="1" parent="1">
+      <mxGeometry x="60" y="340" width="160" height="70" as="geometry"/>
+    </mxCell>
+    <mxCell id="error_state" value="&lt;b&gt;ERROR&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fce4ec;strokeColor=#c62828;fontSize=13;" vertex="1" parent="1">
+      <mxGeometry x="560" y="160" width="160" height="70" as="geometry"/>
+    </mxCell>
+    <mxCell id="disconnected" value="&lt;b&gt;DISCONNECTED&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1f5fe;strokeColor=#0288d1;fontSize=13;" vertex="1" parent="1">
+      <mxGeometry x="400" y="340" width="170" height="70" as="geometry"/>
+    </mxCell>
+    <mxCell id="end_state" value="" style="ellipse;fillColor=#000000;strokeColor=#000000;shape=doubleCircle;" vertex="1" parent="1">
+      <mxGeometry x="125" y="520" width="30" height="30" as="geometry"/>
+    </mxCell>
+    <mxCell id="e_start_starting" value="Server configured" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;fontSize=10;" edge="1" source="start" target="starting" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e_starting_connected" value="Connection successful" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;fontSize=10;" edge="1" source="starting" target="connected" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e_starting_error" value="Connection failed" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;fontSize=10;" edge="1" source="starting" target="error_state" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e_connected_disconnected" value="Health check failed" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;fontSize=10;" edge="1" source="connected" target="disconnected" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e_connected_self" value="Health check OK" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;fontSize=10;" edge="1" source="connected" target="connected" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e_disconnected_starting" value="Auto-reconnect triggered" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;fontSize=10;" edge="1" source="disconnected" target="starting" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e_disconnected_error" value="Max reconnect exceeded" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;fontSize=10;" edge="1" source="disconnected" target="error_state" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e_error_starting" value="Retry attempt" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;fontSize=10;" edge="1" source="error_state" target="starting" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e_connected_end" value="Server removed" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;fontSize=10;" edge="1" source="connected" target="end_state" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+  </root>
+</mxGraphModel>

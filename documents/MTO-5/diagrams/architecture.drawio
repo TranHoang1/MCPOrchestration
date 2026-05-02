@@ -1,0 +1,81 @@
+<mxGraphModel adaptiveColors="auto">
+  <root>
+    <mxCell id="0"/>
+    <mxCell id="1" parent="0"/>
+    <mxCell id="kiro" value="&lt;b&gt;Kiro IDE&lt;/b&gt;&lt;br&gt;(AI Agent)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1f5fe;strokeColor=#0288d1;fontSize=13;" vertex="1" parent="1">
+      <mxGeometry x="320" y="20" width="160" height="50" as="geometry"/>
+    </mxCell>
+    <mxCell id="transport_layer" value="Transport Layer" style="swimlane;startSize=28;fillColor=#fff3e0;strokeColor=#f57c00;html=1;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+      <mxGeometry x="220" y="110" width="360" height="70" as="geometry"/>
+    </mxCell>
+    <mxCell id="stdio_t" value="StdioTransport" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe0b2;strokeColor=#f57c00;fontSize=11;" vertex="1" parent="transport_layer">
+      <mxGeometry x="20" y="35" width="140" height="30" as="geometry"/>
+    </mxCell>
+    <mxCell id="http_t" value="HttpTransport" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe0b2;strokeColor=#f57c00;fontSize=11;" vertex="1" parent="transport_layer">
+      <mxGeometry x="200" y="35" width="140" height="30" as="geometry"/>
+    </mxCell>
+    <mxCell id="protocol_layer" value="MCP Protocol Layer" style="swimlane;startSize=28;fillColor=#e8eaf6;strokeColor=#3f51b5;html=1;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+      <mxGeometry x="220" y="200" width="360" height="70" as="geometry"/>
+    </mxCell>
+    <mxCell id="jsonrpc" value="JsonRpcHandler" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#c5cae9;strokeColor=#3f51b5;fontSize=11;" vertex="1" parent="protocol_layer">
+      <mxGeometry x="20" y="35" width="140" height="30" as="geometry"/>
+    </mxCell>
+    <mxCell id="toolreg" value="McpToolRegistrar" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#c5cae9;strokeColor=#3f51b5;fontSize=11;" vertex="1" parent="protocol_layer">
+      <mxGeometry x="200" y="35" width="140" height="30" as="geometry"/>
+    </mxCell>
+    <mxCell id="orch_layer" value="Orchestration Layer" style="swimlane;startSize=28;fillColor=#e8f5e9;strokeColor=#388e3c;html=1;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+      <mxGeometry x="220" y="290" width="360" height="80" as="geometry"/>
+    </mxCell>
+    <mxCell id="discovery" value="ToolDiscoveryService" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#c8e6c9;strokeColor=#388e3c;fontSize=11;" vertex="1" parent="orch_layer">
+      <mxGeometry x="20" y="35" width="150" height="35" as="geometry"/>
+    </mxCell>
+    <mxCell id="dispatcher" value="ToolExecutionDispatcher" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#c8e6c9;strokeColor=#388e3c;fontSize=11;" vertex="1" parent="orch_layer">
+      <mxGeometry x="190" y="35" width="155" height="35" as="geometry"/>
+    </mxCell>
+    <mxCell id="infra_layer" value="Infrastructure Layer" style="swimlane;startSize=28;fillColor=#fce4ec;strokeColor=#c62828;html=1;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+      <mxGeometry x="120" y="400" width="560" height="80" as="geometry"/>
+    </mxCell>
+    <mxCell id="vdb_client" value="VectorDB Client" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffcdd2;strokeColor=#c62828;fontSize=11;" vertex="1" parent="infra_layer">
+      <mxGeometry x="15" y="35" width="120" height="35" as="geometry"/>
+    </mxCell>
+    <mxCell id="emb_svc" value="EmbeddingService" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffcdd2;strokeColor=#c62828;fontSize=11;" vertex="1" parent="infra_layer">
+      <mxGeometry x="150" y="35" width="120" height="35" as="geometry"/>
+    </mxCell>
+    <mxCell id="usm" value="UpstreamServerManager" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffcdd2;strokeColor=#c62828;fontSize=11;" vertex="1" parent="infra_layer">
+      <mxGeometry x="285" y="35" width="150" height="35" as="geometry"/>
+    </mxCell>
+    <mxCell id="config_mgr" value="ConfigManager" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffcdd2;strokeColor=#c62828;fontSize=11;" vertex="1" parent="infra_layer">
+      <mxGeometry x="450" y="35" width="100" height="35" as="geometry"/>
+    </mxCell>
+    <mxCell id="qdrant" value="&lt;b&gt;Qdrant&lt;/b&gt;&lt;br&gt;(Vector DB)" style="shape=cylinder3;whiteSpace=wrap;html=1;fillColor=#f3e5f5;strokeColor=#7b1fa2;fontSize=12;size=12;" vertex="1" parent="1">
+      <mxGeometry x="40" y="540" width="120" height="70" as="geometry"/>
+    </mxCell>
+    <mxCell id="openai" value="&lt;b&gt;OpenAI API&lt;/b&gt;&lt;br&gt;(Embeddings)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f3e5f5;strokeColor=#7b1fa2;fontSize=12;" vertex="1" parent="1">
+      <mxGeometry x="220" y="540" width="140" height="50" as="geometry"/>
+    </mxCell>
+    <mxCell id="mcp_servers" value="&lt;b&gt;Upstream MCP Servers&lt;/b&gt;&lt;br&gt;(Jira, Git, DB, ...)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8f5e9;strokeColor=#388e3c;fontSize=12;" vertex="1" parent="1">
+      <mxGeometry x="420" y="540" width="180" height="50" as="geometry"/>
+    </mxCell>
+    <mxCell id="e_kiro_transport" value="MCP JSON-RPC&lt;br&gt;(stdio/HTTP)" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;fontSize=10;" edge="1" source="kiro" target="transport_layer" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e_transport_protocol" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;" edge="1" source="transport_layer" target="protocol_layer" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e_protocol_orch" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;" edge="1" source="protocol_layer" target="orch_layer" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e_orch_infra" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;" edge="1" source="orch_layer" target="infra_layer" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e_vdb_qdrant" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;" edge="1" source="vdb_client" target="qdrant" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e_emb_openai" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;" edge="1" source="emb_svc" target="openai" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e_usm_mcp" value="JSON-RPC&lt;br&gt;(stdio/HTTP)" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;fontSize=10;" edge="1" source="usm" target="mcp_servers" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+  </root>
+</mxGraphModel>

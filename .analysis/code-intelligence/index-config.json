@@ -1,0 +1,50 @@
+{
+  "includedExtensions": [
+    ".kt",
+    ".java",
+    ".ts",
+    ".tsx",
+    ".js",
+    ".jsx",
+    ".py",
+    ".go",
+    ".rs",
+    ".cs",
+    ".gradle.kts",
+    ".gradle",
+    ".yml",
+    ".yaml",
+    ".properties",
+    ".xml",
+    ".json",
+    ".sql",
+    ".toml",
+    ".cfg",
+    ".ini"
+  ],
+  "excludedDirectories": [
+    "build",
+    "dist",
+    "out",
+    "target",
+    ".gradle",
+    ".git",
+    ".analysis",
+    "node_modules",
+    ".idea",
+    ".kiro",
+    ".vscode",
+    "__pycache__",
+    ".mypy_cache",
+    "vendor",
+    "bin",
+    "obj"
+  ],
+  "excludedFilePatterns": [
+    "*.generated.*",
+    "*.min.*",
+    "*.map",
+    "*.lock",
+    "*.sum"
+  ]
+}

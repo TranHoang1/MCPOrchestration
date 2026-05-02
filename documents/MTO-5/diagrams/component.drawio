@@ -1,0 +1,105 @@
+<mxGraphModel adaptiveColors="auto">
+  <root>
+    <mxCell id="0"/>
+    <mxCell id="1" parent="0"/>
+    <mxCell id="title" value="&lt;b&gt;Component Diagram&lt;/b&gt; — MCP Orchestration Server (TDD 2.2)" style="text;html=1;fontSize=14;fontStyle=1;fillColor=none;strokeColor=none;align=left;" vertex="1" parent="1">
+      <mxGeometry x="40" y="10" width="550" height="30" as="geometry"/>
+    </mxCell>
+    <mxCell id="grp_transport" value="Transport Layer" style="swimlane;startSize=28;fillColor=#fff3e0;strokeColor=#f57c00;html=1;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+      <mxGeometry x="40" y="50" width="500" height="100" as="geometry"/>
+    </mxCell>
+    <mxCell id="stdio" value="StdioTransport" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe0b2;strokeColor=#f57c00;fontSize=11;" vertex="1" parent="grp_transport">
+      <mxGeometry x="30" y="40" width="130" height="40" as="geometry"/>
+    </mxCell>
+    <mxCell id="http" value="HttpTransport" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe0b2;strokeColor=#f57c00;fontSize=11;" vertex="1" parent="grp_transport">
+      <mxGeometry x="210" y="40" width="130" height="40" as="geometry"/>
+    </mxCell>
+    <mxCell id="grp_protocol" value="Protocol Layer" style="swimlane;startSize=28;fillColor=#e8eaf6;strokeColor=#3f51b5;html=1;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+      <mxGeometry x="40" y="200" width="500" height="100" as="geometry"/>
+    </mxCell>
+    <mxCell id="jsonrpc_h" value="JsonRpcHandler" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#c5cae9;strokeColor=#3f51b5;fontSize=11;" vertex="1" parent="grp_protocol">
+      <mxGeometry x="30" y="40" width="130" height="40" as="geometry"/>
+    </mxCell>
+    <mxCell id="toolreg_c" value="McpToolRegistrar" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#c5cae9;strokeColor=#3f51b5;fontSize=11;" vertex="1" parent="grp_protocol">
+      <mxGeometry x="210" y="40" width="130" height="40" as="geometry"/>
+    </mxCell>
+    <mxCell id="grp_orch" value="Orchestration Layer" style="swimlane;startSize=28;fillColor=#e8f5e9;strokeColor=#388e3c;html=1;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+      <mxGeometry x="40" y="350" width="700" height="100" as="geometry"/>
+    </mxCell>
+    <mxCell id="tds" value="ToolDiscovery&lt;br&gt;Service" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#c8e6c9;strokeColor=#388e3c;fontSize=11;" vertex="1" parent="grp_orch">
+      <mxGeometry x="20" y="40" width="130" height="45" as="geometry"/>
+    </mxCell>
+    <mxCell id="ted" value="ToolExecution&lt;br&gt;Dispatcher" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#c8e6c9;strokeColor=#388e3c;fontSize=11;" vertex="1" parent="grp_orch">
+      <mxGeometry x="190" y="40" width="130" height="45" as="geometry"/>
+    </mxCell>
+    <mxCell id="tr" value="ToolRegistry" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#c8e6c9;strokeColor=#388e3c;fontSize=11;" vertex="1" parent="grp_orch">
+      <mxGeometry x="360" y="40" width="130" height="45" as="geometry"/>
+    </mxCell>
+    <mxCell id="ti" value="ToolIndexer" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#c8e6c9;strokeColor=#388e3c;fontSize=11;" vertex="1" parent="grp_orch">
+      <mxGeometry x="530" y="40" width="130" height="45" as="geometry"/>
+    </mxCell>
+    <mxCell id="grp_infra" value="Infrastructure Layer" style="swimlane;startSize=28;fillColor=#fce4ec;strokeColor=#c62828;html=1;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+      <mxGeometry x="40" y="510" width="880" height="100" as="geometry"/>
+    </mxCell>
+    <mxCell id="vdb" value="VectorDbClient" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffcdd2;strokeColor=#c62828;fontSize=11;" vertex="1" parent="grp_infra">
+      <mxGeometry x="20" y="40" width="130" height="45" as="geometry"/>
+    </mxCell>
+    <mxCell id="emb" value="EmbeddingService" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffcdd2;strokeColor=#c62828;fontSize=11;" vertex="1" parent="grp_infra">
+      <mxGeometry x="190" y="40" width="130" height="45" as="geometry"/>
+    </mxCell>
+    <mxCell id="usm_c" value="UpstreamServer&lt;br&gt;Manager" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffcdd2;strokeColor=#c62828;fontSize=11;" vertex="1" parent="grp_infra">
+      <mxGeometry x="360" y="40" width="130" height="45" as="geometry"/>
+    </mxCell>
+    <mxCell id="hm" value="HealthMonitor" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffcdd2;strokeColor=#c62828;fontSize=11;" vertex="1" parent="grp_infra">
+      <mxGeometry x="530" y="40" width="130" height="45" as="geometry"/>
+    </mxCell>
+    <mxCell id="cm" value="ConfigManager" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffcdd2;strokeColor=#c62828;fontSize=11;" vertex="1" parent="grp_infra">
+      <mxGeometry x="700" y="40" width="130" height="45" as="geometry"/>
+    </mxCell>
+    <mxCell id="e_stdio_jsonrpc" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;" edge="1" source="stdio" target="jsonrpc_h" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e_http_jsonrpc" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;" edge="1" source="http" target="jsonrpc_h" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e_jsonrpc_toolreg" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;" edge="1" source="jsonrpc_h" target="toolreg_c" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e_toolreg_tds" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;" edge="1" source="toolreg_c" target="tds" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e_toolreg_ted" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;" edge="1" source="toolreg_c" target="ted" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e_tds_vdb" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;" edge="1" source="tds" target="vdb" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e_tds_emb" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;" edge="1" source="tds" target="emb" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e_tds_tr" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;" edge="1" source="tds" target="tr" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e_ted_tr" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;" edge="1" source="ted" target="tr" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e_ted_usm" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;" edge="1" source="ted" target="usm_c" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e_ti_emb" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;" edge="1" source="ti" target="emb" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e_ti_vdb" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;" edge="1" source="ti" target="vdb" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e_ti_usm" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;" edge="1" source="ti" target="usm_c" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e_usm_hm" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;" edge="1" source="usm_c" target="hm" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e_usm_cm" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;" edge="1" source="usm_c" target="cm" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+  </root>
+</mxGraphModel>

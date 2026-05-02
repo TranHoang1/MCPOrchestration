@@ -1,0 +1,13 @@
+{
+  "enabled": true,
+  "name": "Spec Sync Reminder",
+  "description": "After completing a code change, check if it relates to an existing spec and update requirements/design documents accordingly",
+  "version": "1",
+  "when": {
+    "type": "agentStop"
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "Check if the changes just made relate to any existing spec in .kiro/specs/. If yes, update the corresponding requirements.md and/or design.md to reflect the actual state of the code. Only update if there are meaningful differences between the spec documents and the implemented code. Do not update tasks.md for completed tasks. If no spec is related, do nothing."
+  }
+}

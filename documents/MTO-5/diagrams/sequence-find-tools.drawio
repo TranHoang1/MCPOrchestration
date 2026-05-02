@@ -1,0 +1,89 @@
+<mxGraphModel adaptiveColors="auto">
+  <root>
+    <mxCell id="0"/>
+    <mxCell id="1" parent="0"/>
+    <mxCell id="kiro_h" value="&lt;b&gt;Kiro IDE&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1f5fe;strokeColor=#0288d1;fontSize=12;" vertex="1" parent="1">
+      <mxGeometry x="60" y="20" width="120" height="40" as="geometry"/>
+    </mxCell>
+    <mxCell id="kiro_l" value="" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;size=16;strokeColor=#0288d1;" vertex="1" parent="1">
+      <mxGeometry x="115" y="60" width="10" height="520" as="geometry"/>
+    </mxCell>
+    <mxCell id="orch_h" value="&lt;b&gt;Orchestrator&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff3e0;strokeColor=#f57c00;fontSize=12;" vertex="1" parent="1">
+      <mxGeometry x="260" y="20" width="120" height="40" as="geometry"/>
+    </mxCell>
+    <mxCell id="orch_l" value="" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;size=16;strokeColor=#f57c00;" vertex="1" parent="1">
+      <mxGeometry x="315" y="60" width="10" height="520" as="geometry"/>
+    </mxCell>
+    <mxCell id="emb_h" value="&lt;b&gt;Embedding Service&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f3e5f5;strokeColor=#7b1fa2;fontSize=12;" vertex="1" parent="1">
+      <mxGeometry x="460" y="20" width="140" height="40" as="geometry"/>
+    </mxCell>
+    <mxCell id="emb_l" value="" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;size=16;strokeColor=#7b1fa2;" vertex="1" parent="1">
+      <mxGeometry x="525" y="60" width="10" height="520" as="geometry"/>
+    </mxCell>
+    <mxCell id="vdb_h" value="&lt;b&gt;Vector DB&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fce4ec;strokeColor=#c62828;fontSize=12;" vertex="1" parent="1">
+      <mxGeometry x="680" y="20" width="120" height="40" as="geometry"/>
+    </mxCell>
+    <mxCell id="vdb_l" value="" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;size=16;strokeColor=#c62828;" vertex="1" parent="1">
+      <mxGeometry x="735" y="60" width="10" height="520" as="geometry"/>
+    </mxCell>
+    <mxCell id="m1" value="find_tools(query: &quot;check logs and create Jira ticket&quot;)" style="html=1;endSize=6;startSize=6;fontSize=10;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="120" y="120" as="sourcePoint"/>
+        <mxPoint x="320" y="120" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="m2" value="Validate query (non-empty, max 2000 chars)" style="html=1;endSize=6;startSize=6;fontSize=10;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="320" y="170" as="sourcePoint"/>
+        <mxPoint x="320" y="200" as="targetPoint"/>
+        <Array as="points">
+          <mxPoint x="370" y="170"/>
+          <mxPoint x="370" y="200"/>
+        </Array>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="m3" value="generateEmbedding(query)" style="html=1;endSize=6;startSize=6;fontSize=10;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="320" y="240" as="sourcePoint"/>
+        <mxPoint x="530" y="240" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="m4" value="vector[768]" style="html=1;endSize=6;startSize=6;dashed=1;fontSize=10;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="530" y="280" as="sourcePoint"/>
+        <mxPoint x="320" y="280" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="m5" value="searchSimilar(vector, topK=5, threshold=0.7)" style="html=1;endSize=6;startSize=6;fontSize=10;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="320" y="320" as="sourcePoint"/>
+        <mxPoint x="740" y="320" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="m6" value="[{tool_def, score}, ...]" style="html=1;endSize=6;startSize=6;dashed=1;fontSize=10;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="740" y="360" as="sourcePoint"/>
+        <mxPoint x="320" y="360" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="m7" value="Enrich with server_status" style="html=1;endSize=6;startSize=6;fontSize=10;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="320" y="400" as="sourcePoint"/>
+        <mxPoint x="320" y="430" as="targetPoint"/>
+        <Array as="points">
+          <mxPoint x="370" y="400"/>
+          <mxPoint x="370" y="430"/>
+        </Array>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="m8" value="[{name, description, input_schema, similarity_score}, ...]" style="html=1;endSize=6;startSize=6;dashed=1;fontSize=10;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="320" y="470" as="sourcePoint"/>
+        <mxPoint x="120" y="470" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="note1" value="Fallback: If Embedding fails → keyword search" style="shape=note;whiteSpace=wrap;html=1;size=14;fillColor=#fff9c4;strokeColor=#f9a825;fontSize=10;" vertex="1" parent="1">
+      <mxGeometry x="400" y="500" width="240" height="40" as="geometry"/>
+    </mxCell>
+  </root>
+</mxGraphModel>

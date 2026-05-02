@@ -52,42 +52,59 @@
 
 ---
 
-## 2. Installation
+## 2. Getting Started
+
+> **IMPORTANT:** This section is for users who **download the release** and run it. Do NOT include "clone repo" or "build from source" instructions here — those belong in a Developer Guide.
 
 ### 2.1 Quick Start
 
 ```bash
-# Step 1: {Clone/Download}
-{command}
+# Step 1: Download the release
+{Download command or URL}
 
-# Step 2: {Build}
-{command}
+# Step 2: Configure
+{Create/edit config file}
 
-# Step 3: {Run}
-{command}
+# Step 3: Run
+{Run command}
+
+# Step 4: Verify
+{Verification command or expected log output}
 ```
 
 ### 2.2 System Requirements
 
 | Component | Minimum | Recommended |
 |-----------|---------|-------------|
-| {CPU} | {spec} | {spec} |
+| {Runtime} | {version} | {version} |
 | {Memory} | {spec} | {spec} |
 | {Disk} | {spec} | {spec} |
 | {OS} | {spec} | {spec} |
 
-### 2.3 Build from Source
+### 2.3 Distribution Formats
 
-```bash
-# {Build commands with explanation}
-{command}
-```
+| Format | How to Get | Use Case |
+|--------|-----------|----------|
+| {Fat JAR / Docker / Binary} | {Download URL or command} | {When to use} |
 
-### 2.4 Distribution Formats
+### 2.4 Configuration Methods
 
-| Format | Location | Use Case |
+{List all ways to configure the system (config file, env vars, CLI args, etc.) with priority/override order.}
+
+| Method | Priority | Best For |
 |--------|----------|----------|
-| {Fat JAR / Docker / Binary} | {path} | {When to use} |
+| {Config file} | {priority} | {use case} |
+| {Environment variables} | {priority} | {use case} |
+
+{Include a minimal working example for each method.}
+
+### 2.5 Verify Configuration
+
+{Step-by-step verification that the system is running correctly:}
+- Check 1: {Server started — expected log output}
+- Check 2: {Dependencies connected — expected log output}
+- Check 3: {Basic functionality test — command + expected result}
+- Common issues table: symptom → cause → fix
 
 ---
 
@@ -95,7 +112,7 @@
 
 ### 3.1 Configuration File
 
-{Path to config file and format (YAML/JSON/TOML).}
+{Path to config file relative to the application (NOT source code path). Describe format (YAML/JSON/TOML) and how to override with environment variables.}
 
 ### 3.2 Configuration Reference
 

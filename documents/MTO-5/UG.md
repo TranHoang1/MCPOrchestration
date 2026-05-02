@@ -57,53 +57,141 @@ This guide covers installation, configuration, usage, administration, and troubl
 
 ---
 
-## 2. Installation
+## 2. Getting Started
 
-### 2.1 Quick Start
+### 2.1 Quick Start (5 minutes)
 
 ```bash
-# Step 1: Clone the repository
-git clone <repository-url>
-cd mcp-orchestrator
+# Step 1: Download the latest release JAR
+# → Download mcp-orchestrator-all.jar from the Releases page
 
-# Step 2: Build the fat JAR
-./gradlew buildFatJar
+# Step 2: Create configuration file
+# → Copy the example below to application.yml (same directory as JAR)
 
-# Step 3: Run the server (stdio mode — default)
-java -jar build/libs/mcp-orchestrator-all.jar
+# Step 3: Run the server
+java -jar mcp-orchestrator-all.jar
+
+# Step 4: Verify it's working
+# → Server logs should show "MCP Orchestration Server ready"
 ```
 
 ### 2.2 System Requirements
 
 | Component | Minimum | Recommended |
 |-----------|---------|-------------|
-| CPU | 2 cores | 4 cores |
+| JDK | 21+ | 21 LTS |
 | Memory | 512 MB heap | 1 GB heap |
-| Disk | 100 MB (application) | 500 MB (with FAISS index) |
-| OS | Any OS with JDK 21+ | Linux / macOS / Windows |
-| Network | Localhost only (stdio) | Localhost + outbound HTTPS (for OpenAI API) |
+| Disk | 100 MB | 500 MB (with local vector index) |
+| OS | Windows / macOS / Linux | Any OS with JDK 21+ |
+| Network | Localhost only (stdio mode) | Localhost + outbound HTTPS (for OpenAI API) |
 
-### 2.3 Build from Source
+### 2.3 Distribution Formats
 
-```bash
-# Full build with tests
-./gradlew build
+| Format | How to Get | Use Case |
+|--------|-----------|----------|
+| **Fat JAR** (recommended) | Download `mcp-orchestrator-all.jar` from Releases | Production use — single file, no dependencies |
+| **Docker** (optional) | `docker pull mcp-orchestrator:latest` | Containerized deployment |
 
-# Build fat JAR only (skip tests)
-./gradlew buildFatJar -x test
+### 2.4 Configuration Methods
 
-# Run tests only
-./gradlew test
+The server supports 3 ways to configure:
+
+| Method | Priority | Best For |
+|--------|----------|----------|
+| **1. YAML file** (`application.yml`) | Lowest | Full configuration with all options |
+| **2. JSON file** (`mcp.json`) | Medium | Kiro IDE MCP server config format |
+| **3. Environment variables** | Highest (overrides file) | Secrets (API keys), CI/CD, Docker |
+
+#### Method 1: YAML Configuration File
+
+Place `application.yml` in the **same directory** as the JAR file:
+
+```yaml
+orchestrator:
+  server:
+    transport: stdio    # stdio (for Kiro IDE) or http
+  embedding:
+    api_key: ${OPENAI_API_KEY}
+  upstream_servers:
+    - name: jira-server
+      transport: stdio
+      command: npx
+      args: ["-y", "@modelcontextprotocol/server-jira"]
+      env:
+        JIRA_URL: "https://mycompany.atlassian.net"
+        JIRA_TOKEN: ${JIRA_TOKEN}
 ```
 
-**Build output:** `build/libs/mcp-orchestrator-all.jar`
+#### Method 2: Kiro IDE MCP Configuration (mcp.json)
 
-### 2.4 Distribution Formats
+Add to your Kiro IDE MCP settings:
 
-| Format | Location | Use Case |
-|--------|----------|----------|
-| Fat JAR | `build/libs/mcp-orchestrator-all.jar` | Production deployment, Kiro IDE integration |
-| Gradle run | `./gradlew run` | Development and debugging |
+```json
+{
+  "mcpServers": {
+    "mcp-orchestrator": {
+      "command": "java",
+      "args": ["-jar", "/path/to/mcp-orchestrator-all.jar"],
+      "env": {
+        "OPENAI_API_KEY": "sk-..."
+      }
+    }
+  }
+}
+```
+
+#### Method 3: Environment Variables
+
+```bash
+# Required (if using semantic search)
+export OPENAI_API_KEY=sk-proj-abc123...
+
+# Optional (per upstream server)
+export JIRA_TOKEN=ATATT3xFfGF0...
+export JIRA_URL=https://mycompany.atlassian.net
+
+# Run
+java -jar mcp-orchestrator-all.jar
+```
+
+### 2.5 Verify Configuration
+
+After starting the server, verify it's working:
+
+**Check 1: Server started successfully**
+```
+# Look for this in the logs:
+MCP Orchestration Server v1.0.0 starting...
+MCP Orchestration Server ready (stdio transport)
+```
+
+**Check 2: Upstream servers connected**
+```
+# Look for these log entries:
+Health check OK: jira-server
+Health check OK: git-server
+```
+
+**Check 3: Test tool discovery (via MCP client)**
+```json
+{"jsonrpc":"2.0","id":1,"method":"tools/list"}
+→ Should return 2 tools: find_tools, execute_dynamic_tool
+```
+
+**Check 4: Test semantic search**
+```json
+{"jsonrpc":"2.0","id":2,"method":"tools/call","params":{
+  "name":"find_tools","arguments":{"query":"create a Jira ticket"}
+}}
+→ Should return matching tools from upstream servers
+```
+
+**Common issues:**
+| Symptom | Cause | Fix |
+|---------|-------|-----|
+| "OPENAI_API_KEY not set" | Missing env var | Set `export OPENAI_API_KEY=sk-...` |
+| "Connection refused" to upstream | Upstream server not running | Check upstream server command/URL |
+| "search_mode: keyword" | Qdrant not available | Normal — keyword fallback is working. Install Qdrant for better results. |
 
 ---
 
@@ -111,7 +199,7 @@ java -jar build/libs/mcp-orchestrator-all.jar
 
 ### 3.1 Configuration File
 
-The primary configuration file is `src/main/resources/application.yml` (bundled in the JAR). Override values using environment variables with the `${ENV_VAR}` syntax.
+The primary configuration file is `application.yml`, placed in the **same directory** as the JAR file. The server also reads environment variables (which override file values). See Section 2.4 for all configuration methods.
 
 ### 3.2 Configuration Reference
 

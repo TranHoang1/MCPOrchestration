@@ -59,13 +59,19 @@
       "updateScope": "Added --config CLI argument (Method 3), mcp-servers.json mcpServers format examples, updated config loading order (4 methods), updated FAQ"
     },
     "testing": {
-      "status": "in_progress",
-      "completedAt": null,
-      "testResults": null,
+      "status": "done",
+      "completedAt": "2026-05-10T06:53:00Z",
+      "testResults": {
+        "total": 166,
+        "passed": 166,
+        "failed": 0
+      },
       "itRewrite": {
-        "status": "in_progress",
+        "status": "done",
         "reason": "IT tests were all-mock unit tests, not real integration tests per STC spec",
-        "startedAt": "2026-05-09T10:00:00Z"
+        "startedAt": "2026-05-09T10:00:00Z",
+        "completedAt": "2026-05-10T06:53:00Z",
+        "changes": "IntegrationTestBase.kt + 6 IT files rewritten with real Koin DI wiring, McpServerFactory SDK migration"
       }
     },
     "uat": {
@@ -78,6 +84,15 @@
     }
   },
   "jiraStatus": "Done",
-  "lastCommentProcessed": "2026-05-08T16:12:00Z",
-  "lastUpdated": "2026-05-08T16:12:00Z"
+  "lastCommentProcessed": "2026-05-10T06:53:00Z",
+  "lastUpdated": "2026-05-10T06:53:00Z",
+  "lastCommit": {
+    "hash": "2602bcf",
+    "branch": "MTO-5",
+    "message": "MTO-5: Migrate to official Kotlin MCP SDK + IT test rewrite",
+    "filesChanged": 27,
+    "insertions": 1326,
+    "deletions": 461,
+    "pushedAt": "2026-05-10T06:53:00Z"
+  }
 }

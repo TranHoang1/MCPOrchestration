@@ -5,8 +5,8 @@
       "args": [
         "mcp-atlassian",
         "--jira-url=https://jiraassist.atlassian.net",
-        "--jira-username=dnguyenminh@gmail.com",
-        "--jira-token=ATATT3xFfGF0lT9tTvrE-LqhjLov_QsGHxk8GGg5pHvuoIUKjlohEauJgKp_bn6Kvr0UYjCDwrliCe179CjCEgniHOjoxxNrN1FJvLM2WXmd0jW5uKRtKrY8ntUxxebzKDYIV6LPHuJpF1Zv06CGmvRPev2PdCVLMRNcltOGtvc83IaIMAeTTu4=D5C2E388"
+        "--jira-username=dnguyenminh@hotmail.com",
+        "--jira-token=ATATT3xFfGF0ais6wI-ix7FCWszdv_Z5iirFWPR_q-SXkYkuOdRCjeLQCGsv58yw_zdyPl7c4eWmgCKEtlaat7p0Obq-QFjogCSYgfCqc3J0GmhQgk97Y20PDapIftPZ2FDY9oDmUWpQeksMYGlGFC7KORSQF82mwzfktuu1t2rHgFNpSapFCeM=5B843418"
       ],
       "autoApprove": [
         "jira_update_issue",

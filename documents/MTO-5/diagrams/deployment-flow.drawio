@@ -1,0 +1,132 @@
+<mxGraphModel dx="1422" dy="762" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
+  <root>
+    <mxCell id="0"/>
+    <mxCell id="1" parent="0"/>
+    <!-- Title -->
+    <mxCell id="title" value="MCP Orchestrator — Deployment Flow" style="text;html=1;fontSize=18;fontStyle=1;align=center;verticalAlign=middle;whiteSpace=wrap;fillColor=none;strokeColor=none;" vertex="1" parent="1">
+      <mxGeometry x="284" y="20" width="600" height="40" as="geometry"/>
+    </mxCell>
+    <!-- Swimlane: Build -->
+    <mxCell id="lane1" value="Build" style="shape=swimlane;startSize=30;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;html=1;horizontal=0;swimlaneHead=0;swimlaneBody=0;collapsible=0;" vertex="1" parent="1">
+      <mxGeometry x="40" y="80" width="1080" height="120" as="geometry"/>
+    </mxCell>
+    <mxCell id="s1" value="Start" style="ellipse;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="lane1">
+      <mxGeometry x="60" y="40" width="80" height="40" as="geometry"/>
+    </mxCell>
+    <mxCell id="s2" value="gradlew&#xa;clean build" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="lane1">
+      <mxGeometry x="200" y="35" width="120" height="50" as="geometry"/>
+    </mxCell>
+    <mxCell id="s3" value="gradlew test&#xa;(118 tests)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="lane1">
+      <mxGeometry x="380" y="35" width="120" height="50" as="geometry"/>
+    </mxCell>
+    <mxCell id="s4" value="Tests&#xa;Pass?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="lane1">
+      <mxGeometry x="560" y="25" width="80" height="70" as="geometry"/>
+    </mxCell>
+    <mxCell id="s5" value="Fat JAR&#xa;Ready" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="lane1">
+      <mxGeometry x="720" y="35" width="120" height="50" as="geometry"/>
+    </mxCell>
+    <mxCell id="s4fail" value="Fix &amp;&#xa;Retry" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="lane1">
+      <mxGeometry x="550" y="100" width="100" height="30" as="geometry"/>
+    </mxCell>
+    <mxCell id="e1" edge="1" parent="lane1" source="s1" target="s2" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e2" edge="1" parent="lane1" source="s2" target="s3" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e3" edge="1" parent="lane1" source="s3" target="s4" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e4" value="Yes" edge="1" parent="lane1" source="s4" target="s5" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e4f" value="No" edge="1" parent="lane1" source="s4" target="s4fail" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <!-- Swimlane: Configure -->
+    <mxCell id="lane2" value="Configure" style="shape=swimlane;startSize=30;fillColor=#e1d5e7;strokeColor=#9673a6;fontStyle=1;html=1;horizontal=0;swimlaneHead=0;swimlaneBody=0;collapsible=0;" vertex="1" parent="1">
+      <mxGeometry x="40" y="200" width="1080" height="120" as="geometry"/>
+    </mxCell>
+    <mxCell id="c1" value="Copy JAR +&#xa;application.yml" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="lane2">
+      <mxGeometry x="60" y="35" width="140" height="50" as="geometry"/>
+    </mxCell>
+    <mxCell id="c2" value="Set&#xa;OPENAI_API_KEY" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="lane2">
+      <mxGeometry x="260" y="35" width="140" height="50" as="geometry"/>
+    </mxCell>
+    <mxCell id="c3" value="Configure&#xa;upstream servers" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="lane2">
+      <mxGeometry x="460" y="35" width="140" height="50" as="geometry"/>
+    </mxCell>
+    <mxCell id="c4" value="Start Qdrant&#xa;(optional)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;dashed=1;" vertex="1" parent="lane2">
+      <mxGeometry x="660" y="35" width="140" height="50" as="geometry"/>
+    </mxCell>
+    <mxCell id="ec1" edge="1" parent="lane2" source="c1" target="c2" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="ec2" edge="1" parent="lane2" source="c2" target="c3" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="ec3" edge="1" parent="lane2" source="c3" target="c4" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <!-- Swimlane: Deploy -->
+    <mxCell id="lane3" value="Deploy" style="shape=swimlane;startSize=30;fillColor=#fff2cc;strokeColor=#d6b656;fontStyle=1;html=1;horizontal=0;swimlaneHead=0;swimlaneBody=0;collapsible=0;" vertex="1" parent="1">
+      <mxGeometry x="40" y="320" width="1080" height="120" as="geometry"/>
+    </mxCell>
+    <mxCell id="d1" value="Start&#xa;Application&#xa;(java -jar)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="lane3">
+      <mxGeometry x="60" y="30" width="140" height="60" as="geometry"/>
+    </mxCell>
+    <mxCell id="d2" value="Tool Indexing&#xa;(auto)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="lane3">
+      <mxGeometry x="260" y="35" width="140" height="50" as="geometry"/>
+    </mxCell>
+    <mxCell id="d3" value="Upstream&#xa;Connections&#xa;Established" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="lane3">
+      <mxGeometry x="460" y="30" width="140" height="60" as="geometry"/>
+    </mxCell>
+    <mxCell id="ed1" edge="1" parent="lane3" source="d1" target="d2" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="ed2" edge="1" parent="lane3" source="d2" target="d3" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <!-- Swimlane: Verify -->
+    <mxCell id="lane4" value="Verify" style="shape=swimlane;startSize=30;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;html=1;horizontal=0;swimlaneHead=0;swimlaneBody=0;collapsible=0;" vertex="1" parent="1">
+      <mxGeometry x="40" y="440" width="1080" height="130" as="geometry"/>
+    </mxCell>
+    <mxCell id="v1" value="Health Check&#xa;(MCP ping)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="lane4">
+      <mxGeometry x="60" y="40" width="140" height="50" as="geometry"/>
+    </mxCell>
+    <mxCell id="v2" value="Smoke Tests&#xa;(find_tools +&#xa;execute)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="lane4">
+      <mxGeometry x="260" y="35" width="140" height="60" as="geometry"/>
+    </mxCell>
+    <mxCell id="v3" value="Sanity&#xa;Pass?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="lane4">
+      <mxGeometry x="460" y="30" width="80" height="70" as="geometry"/>
+    </mxCell>
+    <mxCell id="v4" value="✅ Deploy&#xa;Complete" style="ellipse;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;" vertex="1" parent="lane4">
+      <mxGeometry x="620" y="35" width="120" height="60" as="geometry"/>
+    </mxCell>
+    <mxCell id="v5" value="❌ Rollback&#xa;(See Rollback Flow)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="lane4">
+      <mxGeometry x="440" y="110" width="140" height="30" as="geometry"/>
+    </mxCell>
+    <mxCell id="ev1" edge="1" parent="lane4" source="v1" target="v2" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="ev2" edge="1" parent="lane4" source="v2" target="v3" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="ev3" value="Yes" edge="1" parent="lane4" source="v3" target="v4" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="ev4" value="No" edge="1" parent="lane4" source="v3" target="v5" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <!-- Cross-lane connectors -->
+    <mxCell id="cross1" edge="1" parent="1" source="s5" target="c1" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;dashed=1;strokeColor=#666666;">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="cross2" edge="1" parent="1" source="c4" target="d1" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;dashed=1;strokeColor=#666666;">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="cross3" edge="1" parent="1" source="d3" target="v1" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;dashed=1;strokeColor=#666666;">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+  </root>
+</mxGraphModel>

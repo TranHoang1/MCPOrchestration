@@ -406,14 +406,27 @@ At the end of STC.md, add a **Requirements Traceability Matrix (RTM)**:
 3. Ensure test case steps are clear and reproducible.
 4. Ensure test data is specified where needed.
 
-### Step 7: Export to DOCX (MANDATORY)
+### Step 7: Export to DOCX/XLSX (MANDATORY)
 
-For each document (STP.md, STC.md):
+For STP.md (narrative document):
 1. Read the file with `skipPruning=true`.
 2. Convert relative image paths to absolute paths if any.
 3. Use `mcp_markdown_exporter_local_export_docx` to export.
-4. Copy DOCX to `documents/{TICKET-KEY}/STP-v{VERSION}-{TICKET-KEY}.docx` and `documents/{TICKET-KEY}/STC-v{VERSION}-{TICKET-KEY}.docx`. VERSION from document's Revision History.
+4. Copy DOCX to `documents/{TICKET-KEY}/STP-v{VERSION}-{TICKET-KEY}.docx`. VERSION from document's Revision History.
 5. Verify files exist with `Test-Path`.
+
+For STC.md (tabular test cases — Excel format):
+1. Read the file with `skipPruning=true`.
+2. Convert test cases into a comprehensive markdown table with columns: TC_ID, Title, Level, Priority, Type, Requirement, Preconditions, Test Steps Summary, Expected Result, Status.
+3. Use `mcp_markdown_exporter_local_export_xlsx` to export to Excel.
+4. Copy XLSX to `documents/{TICKET-KEY}/STC-v{VERSION}-{TICKET-KEY}.xlsx`. VERSION from document's Revision History.
+5. Verify files exist with `Test-Path`.
+
+For TEST-REPORT.md (narrative document):
+1. Read the file with `skipPruning=true`.
+2. Use `mcp_markdown_exporter_local_export_docx` to export.
+3. Copy DOCX to `documents/{TICKET-KEY}/TEST-REPORT-v{VERSION}-{TICKET-KEY}.docx`.
+4. Verify files exist with `Test-Path`.
 
 ### Step 7.5: Ingest STP/STC into Knowledge Base (MANDATORY)
 
@@ -625,6 +638,11 @@ After manual execution, update `TEST-REPORT-{TICKET-KEY}.csv`:
 - **MANDATORY CSV TEST DATA**: When creating STC (Test Cases), you MUST also generate CSV test data files at `documents/{TICKET}/testdata/`. STC without test data CSVs is INCOMPLETE. Every test case in STC must have corresponding test data in at least one CSV file.
 - **MANDATORY INTEGRATION TEST CODE**: When TDD.md exists with API specifications, you MUST generate executable integration test code (not just documentation). Tests must compile and pass. Match existing project test patterns.
 - **MANDATORY TEST REPORT TEMPLATE**: Use `documents/templates/TEST-REPORT-TEMPLATE.md` for test execution reports. Sections 1-7 show FINAL results only. Re-test history goes in Appendix A.
+- **MANDATORY DOCUMENT EXPORT & JIRA ATTACHMENT**: After creating STP/STC/TEST-REPORT, you MUST export and prepare files for SM to attach to Jira:
+  - **STP.md** → Export DOCX: `mcp_markdown_exporter_local_export_docx(file_name: "STP-v{VERSION}-{TICKET}.docx")` → Copy to `documents/{TICKET}/STP-v{VERSION}-{TICKET}.docx`
+  - **STC.md** → Export XLSX (Excel): `mcp_markdown_exporter_local_export_xlsx(file_name: "STC-v{VERSION}-{TICKET}.xlsx")` → Copy to `documents/{TICKET}/STC-v{VERSION}-{TICKET}.xlsx` — Test cases dạng bảng phù hợp Excel hơn DOCX
+  - **TEST-REPORT.md** → Export DOCX: `mcp_markdown_exporter_local_export_docx(file_name: "TEST-REPORT-v{VERSION}-{TICKET}.docx")` → Copy to `documents/{TICKET}/TEST-REPORT-v{VERSION}-{TICKET}.docx`
+  - SM sẽ attach các files này lên Jira. Nếu SM không attach, QA agent báo cáo thiếu sót.
 - **MANUAL SIT EXECUTION ON REQUEST**: When Scrum Master or user requests manual testing, execute SIT test cases on localhost:3000 using Playwright browser tools. Take screenshots as evidence. Generate SIT execution report.
 - NEVER fabricate test scenarios not traceable to documents/FSD requirements.
 - Every test case MUST reference its source requirement (UC-x, BR-x, Story x).

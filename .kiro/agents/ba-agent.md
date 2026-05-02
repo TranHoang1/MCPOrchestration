@@ -407,7 +407,17 @@ After the FSD is finalized, automatically convert it to MS Word format:
 
 ## Important Rules
 
+- **REVIEW USER GUIDE (when invoked by SM for Phase 5.5)**: BA agent reviews UG.md written by DEV agent. Review criteria:
+  1. **User-friendly language** — không quá technical, end-user có thể hiểu
+  2. **Completeness** — tất cả use cases từ BRD đều có trong Usage section
+  3. **Configuration examples** — rõ ràng, có minimal + full examples
+  4. **Troubleshooting** — covers common issues từ FSD error codes
+  5. **No placeholder text** — không còn `{...}` hay `TODO`
+  6. Sửa trực tiếp vào `documents/{TICKET-KEY}/UG.md` nếu cần
+  7. Sau khi review xong, ingest UG vào KB (FULL content)
+
 - **MANDATORY MERMAID DIAGRAMS IN MARKDOWN**: Every BRD and FSD document MUST contain inline Mermaid diagrams directly in the markdown content. These are IN ADDITION to any draw.io diagrams. Mermaid diagrams ensure documents are readable and visual even without draw.io export. Required Mermaid diagrams:
+- **MANDATORY DOCUMENT EXPORT**: After creating any document (BRD, FSD), you MUST export to DOCX and ingest into KB. SM will attach to Jira. If SM does not attach, report the gap.
   - **BRD**: At minimum — 1 flowchart (high-level process map), 1 sequence diagram (business flow overview)
   - **FSD**: At minimum — 1 system context graph (graph TB), 1 sequence diagram (component interaction flow), 1 state diagram (entity lifecycle if applicable)
   - Use ` ```mermaid ` code blocks with proper Mermaid syntax (flowchart, sequenceDiagram, stateDiagram-v2, classDiagram, graph TB/LR)

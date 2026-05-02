@@ -200,6 +200,38 @@ Before presenting code to user, verify:
 
 4. Report: "📚 Code intelligence index updated. Implementation summary ingested into KB."
 
+### Step 9: Write User Guide (when invoked by SM for Phase 5.5)
+
+**Trigger:** SM invokes DEV agent specifically to write User Guide. NOT part of normal implementation flow.
+
+**Prerequisites:** Code exists, BRD + FSD + TDD exist.
+
+1. **Read template**: `documents/templates/UG-TEMPLATE.md`
+2. **Read from KB**: BRD, FSD, TDD (for business context and feature descriptions)
+3. **Read source code** to extract accurate details:
+   - `src/main/resources/application.yml` — full configuration reference
+   - Config data classes — all properties with defaults and validation ranges
+   - API/Tool schemas — exact input/output formats
+   - Error codes — all error codes with messages
+   - Startup sequence — how the system initializes
+4. **Write `documents/{TICKET-KEY}/UG.md`** with these sections:
+   - **Installation**: Prerequisites, build commands, distribution formats
+   - **Configuration Reference**: Every property with type, default, range, description
+   - **Usage**: Each tool/API with examples and expected output
+   - **Administration**: Adding servers, monitoring health, hot-reload
+   - **Troubleshooting**: Common issues table, error codes, log locations
+   - **API Reference**: Full schemas for each exposed tool
+   - **FAQ**: Common questions from BRD/FSD use cases
+5. **Ingest UG into KB** (FULL content):
+   ```
+   mcp_knowledge_base_kb_ingest(
+     title: "{TICKET-KEY} User Guide",
+     content: "{FULL UG content}",
+     tags: "user-guide, {TICKET-KEY}, {PROJECT-KEY}, documentation, sdlc"
+   )
+   ```
+6. Report: "📄 User Guide created at documents/{TICKET-KEY}/UG.md"
+
 ### ⛔ MANDATORY: Fix All Failures Before Reporting
 
 **DEV agent PHẢI fix tất cả lỗi do mình tạo ra trước khi báo cáo hoàn thành.**
@@ -259,6 +291,7 @@ Quy trình bắt buộc sau khi implement:
 ## Implementation Rules
 
 - ALWAYS read existing code first to match project style — do NOT introduce new patterns.
+- **MANDATORY DOCUMENT EXPORT**: After creating any document (UG.md, implementation summary), you MUST export to DOCX and ingest into KB. SM will attach to Jira. If SM does not attach, report the gap.
 - **ALWAYS read STC.md** before writing tests — implement ALL automated test cases (PBT, UT, IT, E2E-API, E2E-UI) defined in STC. Do NOT skip E2E tests.
 - **E2E-TESTS MODULE KNOWLEDGE**: Before writing E2E tests, read the existing `e2e-tests/` module structure to understand:
   - `ApiTestBase.kt` — base class for API E2E tests (auth helpers, HTTP client setup)
@@ -290,3 +323,4 @@ If the user requests only a specific part:
 - "Tạo database migration" → Step 3 only
 - "Implement service" → Steps 4 + 7 (service tests only)
 - "Implement {feature name}" → Find relevant TDD section and implement that scope
+- "Viết User Guide" / "Tạo UG" → Step 9 only (User Guide)

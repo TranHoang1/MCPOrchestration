@@ -1,0 +1,93 @@
+<mxGraphModel dx="1222" dy="662" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
+  <root>
+    <mxCell id="0"/>
+    <mxCell id="1" parent="0"/>
+    <!-- Title -->
+    <mxCell id="title" value="MCP Orchestrator — Rollback Flow" style="text;html=1;fontSize=18;fontStyle=1;align=center;verticalAlign=middle;whiteSpace=wrap;fillColor=none;strokeColor=none;" vertex="1" parent="1">
+      <mxGeometry x="334" y="20" width="500" height="40" as="geometry"/>
+    </mxCell>
+    <!-- Trigger -->
+    <mxCell id="r1" value="⚠️ Issue&#xa;Detected" style="ellipse;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontStyle=1;" vertex="1" parent="1">
+      <mxGeometry x="484" y="80" width="120" height="60" as="geometry"/>
+    </mxCell>
+    <!-- Severity Assessment -->
+    <mxCell id="r2" value="Severity?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontStyle=1;" vertex="1" parent="1">
+      <mxGeometry x="494" y="180" width="100" height="80" as="geometry"/>
+    </mxCell>
+    <!-- Critical Path -->
+    <mxCell id="r3" value="Stop Application&#xa;(kill process)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+      <mxGeometry x="200" y="300" width="160" height="50" as="geometry"/>
+    </mxCell>
+    <mxCell id="r4" value="Restore Previous&#xa;JAR + Config" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+      <mxGeometry x="200" y="390" width="160" height="50" as="geometry"/>
+    </mxCell>
+    <mxCell id="r5" value="Restore FAISS&#xa;Index (if needed)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+      <mxGeometry x="200" y="480" width="160" height="50" as="geometry"/>
+    </mxCell>
+    <mxCell id="r6" value="Start Previous&#xa;Version" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+      <mxGeometry x="200" y="570" width="160" height="50" as="geometry"/>
+    </mxCell>
+    <mxCell id="r7" value="Run Smoke&#xa;Tests" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+      <mxGeometry x="460" y="570" width="160" height="50" as="geometry"/>
+    </mxCell>
+    <mxCell id="r8" value="Rollback&#xa;OK?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+      <mxGeometry x="500" y="660" width="80" height="70" as="geometry"/>
+    </mxCell>
+    <mxCell id="r9" value="✅ Rollback&#xa;Complete" style="ellipse;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;" vertex="1" parent="1">
+      <mxGeometry x="340" y="760" width="120" height="50" as="geometry"/>
+    </mxCell>
+    <mxCell id="r10" value="🚨 Escalate&#xa;to Dev Lead" style="ellipse;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontStyle=1;" vertex="1" parent="1">
+      <mxGeometry x="620" y="760" width="120" height="50" as="geometry"/>
+    </mxCell>
+    <!-- Minor Path -->
+    <mxCell id="m1" value="Log Issue &amp;&#xa;Investigate" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+      <mxGeometry x="720" y="300" width="160" height="50" as="geometry"/>
+    </mxCell>
+    <mxCell id="m2" value="Hotfix&#xa;Possible?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+      <mxGeometry x="760" y="390" width="80" height="70" as="geometry"/>
+    </mxCell>
+    <mxCell id="m3" value="Apply Hotfix&#xa;&amp; Redeploy" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+      <mxGeometry x="880" y="480" width="140" height="50" as="geometry"/>
+    </mxCell>
+    <!-- Edges -->
+    <mxCell id="e1" edge="1" parent="1" source="r1" target="r2" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e2" value="Critical /&#xa;Major" edge="1" parent="1" source="r2" target="r3" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e3" value="Minor" edge="1" parent="1" source="r2" target="m1" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e4" edge="1" parent="1" source="r3" target="r4" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e5" edge="1" parent="1" source="r4" target="r5" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e6" edge="1" parent="1" source="r5" target="r6" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e7" edge="1" parent="1" source="r6" target="r7" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e8" edge="1" parent="1" source="r7" target="r8" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e9" value="Yes" edge="1" parent="1" source="r8" target="r9" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e10" value="No" edge="1" parent="1" source="r8" target="r10" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e11" edge="1" parent="1" source="m1" target="m2" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e12" value="Yes" edge="1" parent="1" source="m2" target="m3" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e13" value="No" edge="1" parent="1" source="m2" target="r3" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+  </root>
+</mxGraphModel>

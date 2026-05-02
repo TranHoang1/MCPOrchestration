@@ -1,6 +1,6 @@
 {
   "ticket": "MTO-5",
-  "currentPhase": "implementation",
+  "currentPhase": "done",
   "phases": {
     "requirements": {
       "status": "done",
@@ -46,35 +46,78 @@
       "startedAt": "2026-05-03T10:00:00Z",
       "completedAt": "2026-05-03T12:00:00Z",
       "branch": "MTO-5",
+      "commit": "fa19a41",
+      "filesChanged": 68,
+      "insertions": 5210,
       "testResults": {
         "total": 118,
         "passed": 118,
         "failed": 0,
-        "ignored": 0,
-        "breakdown": {
-          "PBT": 12,
-          "UT": 42,
-          "IT": 31,
-          "E2E-API": 21,
-          "FAISS": 6,
-          "ToolIndexer": 6
-        }
+        "ignored": 0
       }
     },
+    "user_guide": {
+      "status": "done",
+      "file": "UG.md",
+      "version": 1,
+      "completedAt": "2026-05-03T14:00:00Z",
+      "review": "approved"
+    },
     "testing": {
-      "status": "not_started"
+      "status": "done",
+      "startedAt": "2026-05-03T15:33:00Z",
+      "completedAt": "2026-05-03T16:00:00Z",
+      "report": "TEST-REPORT-MTO-5.md",
+      "results": {
+        "total": 118,
+        "passed": 118,
+        "failed": 0,
+        "passRate": "100%"
+      }
+    },
+    "uat": {
+      "status": "done",
+      "startedAt": "2026-05-03T16:30:00Z",
+      "completedAt": "2026-05-03T18:00:00Z",
+      "result": "accepted",
+      "notes": "Comment #10046: JSON config format for UG — deferred to v1.1.0"
     },
     "deployment": {
-      "status": "not_started"
+      "status": "done",
+      "startedAt": "2026-05-03T18:00:00Z",
+      "completedAt": "2026-05-03T18:10:00Z",
+      "files": ["DPG.md", "RLN.md"],
+      "version": 1,
+      "sanityTest": "passed",
+      "buildResult": "BUILD SUCCESSFUL",
+      "fatJar": "build/libs/mcp-orchestrator-all.jar",
+      "fatJarSize": "19.4 MB",
+      "diagrams": ["deployment-flow.drawio", "rollback-flow.drawio"]
     }
   },
-  "jiraStatus": "In Progress",
+  "jiraStatus": "Done",
   "docsAttached": true,
   "attachedFiles": [
     "BRD-v2-MTO-5.docx",
     "FSD-v1-MTO-5.docx",
-    "TDD-v1-MTO-5.docx"
+    "TDD-v1-MTO-5.docx",
+    "STP-v1-MTO-5.docx",
+    "STC-v1-MTO-5.xlsx",
+    "UG-v1-MTO-5.docx",
+    "DPG-v1-MTO-5.docx",
+    "RLN-v1-MTO-5.docx",
+    "TEST-REPORT-v1-MTO-5.docx",
+    "deployment-flow.drawio",
+    "rollback-flow.drawio"
   ],
-  "lastCommentProcessed": "2026-05-02T11:55:35Z",
-  "lastUpdated": "2026-05-03T12:00:00Z"
+  "knownIssues": [
+    {
+      "id": "comment-10046",
+      "description": "UG only shows YAML config format, user wants JSON format support",
+      "targetFix": "v1.1.0",
+      "severity": "minor"
+    }
+  ],
+  "lastCommentProcessed": "2026-05-03T18:00:00Z",
+  "lastUpdated": "2026-05-03T18:10:00Z"
 }

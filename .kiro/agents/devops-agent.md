@@ -282,6 +282,7 @@ For each document (DPG.md, RLN.md):
 
 ## Important Rules
 
+- **MANDATORY DOCUMENT EXPORT**: After creating DPG.md and RLN.md, you MUST export to DOCX and ingest into KB. SM will attach to Jira. If SM does not attach, report the gap.
 - NEVER assume infrastructure details — read existing configs first.
 - Deployment steps must be specific and executable — no vague instructions.
 - Always include rollback plan for every deployment.

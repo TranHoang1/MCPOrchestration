@@ -66,6 +66,7 @@ COLLEX-64 tạo tài liệu đầy đủ template:documents/templates/MY-TEMPLAT
      - BRD → `documents/templates/BRD-TEMPLATE.md`
      - FSD → `documents/templates/FSD-TEMPLATE.md`
      - TDD → `documents/templates/TDD-TEMPLATE.md`
+     - UG → `documents/templates/UG-TEMPLATE.md`
    - Template is passed to agent via prompt: `"Tạo {doc} cho {TICKET} dùng template:{path}"`
 
 ### Interactive Guidance
@@ -156,6 +157,7 @@ SM **không dừng lại để hỏi** về template. Thông báo rồi chạy t
 | 3.5 | Feedback Loop | ba↔sa | FSD fix + TDD update | DISCREPANCY.md exists |
 | 4 | Test Planning | qa-agent | STP.md, STC.md | BRD + FSD + TDD exist |
 | 5 | Implementation | dev-agent | Source code | TDD exists |
+| 5.5 | User Guide | dev-agent (write) + ba-agent (review) | UG.md | Code exists + BRD + FSD + TDD exist |
 | 6 | Testing | qa-agent | Test results | Code exists + STP/STC exist |
 | 6.5 | UAT | PO/User | Acceptance sign-off | All tests pass |
 | 7 | Deployment | devops-agent | DPG.md, RLN.md + Deploy | UAT accepted |
@@ -173,7 +175,7 @@ SM **không dừng lại để hỏi** về template. Thông báo rồi chạy t
 | **UI** | Wireframes, Stitch screens | ✅ UI design summary | ❌ |
 | **SA** | TDD.md | ✅ TDD | ❌ |
 | **QA** | STP.md, STC.md | ✅ STP + STC | ❌ |
-| **DEV** | Source code | ✅ Implementation summary | ✅ Code intelligence index |
+| **DEV** | Source code, UG.md | ✅ Implementation summary + UG | ✅ Code intelligence index |
 | **DevOps** | DPG.md, RLN.md | ✅ DPG + RLN | ❌ |
 
 ### Read (Input Sources)
@@ -693,7 +695,44 @@ If review found issues:
    mcp_jira_jira_transition_issue(issue_key: "{TICKET}", transition_name: "Review code")
    ```
 8. Update STATUS: `implementation.status = "done"`
-9. Report: "✅ Phase 5 done — Code pushed to branch {TICKET}. Chuyển sang Phase 6 (Testing)?"
+9. Report: "✅ Phase 5 done — Code pushed to branch {TICKET}. Chuyển sang Phase 5.5 (User Guide)?"
+10. Wait for user confirmation.
+
+### Step 5.5: Execute Phase — User Guide (DEV write + BA review)
+
+**Prerequisites:** Code exists (implementation.status = "done"), BRD + FSD + TDD exist
+
+**Process:** DEV agent writes User Guide (knows code best), BA agent reviews for user-friendliness.
+
+#### Step 5.5a: DEV writes User Guide
+
+1. Update STATUS: `user_guide.status = "in_progress"`
+2. Invoke DEV agent:
+   ```
+   invokeSubAgent(
+     name: "dev-agent",
+     prompt: "Viết User Guide cho {TICKET}. Đọc BRD, FSD, TDD từ KB. Đọc source code (application.yml, config classes, API schemas). Template: documents/templates/UG-TEMPLATE.md. Output: documents/{TICKET}/UG.md. Nội dung cần có: Installation, Configuration Reference (tất cả properties), Usage (mỗi tool/API), Administration, Troubleshooting, Error Codes, FAQ."
+   )
+   ```
+3. Verify `documents/{TICKET}/UG.md` exists
+
+#### Step 5.5b: BA reviews User Guide
+
+4. Invoke BA agent to review:
+   ```
+   invokeSubAgent(
+     name: "ba-agent",
+     prompt: "Review User Guide cho {TICKET} tại documents/{TICKET}/UG.md. Kiểm tra: 1) Ngôn ngữ user-friendly (không quá technical), 2) Đầy đủ use cases từ BRD, 3) Configuration examples rõ ràng, 4) Troubleshooting covers common issues. Sửa trực tiếp nếu cần."
+   )
+   ```
+
+#### Step 5.5c: Finalize
+
+5. Update STATUS: `user_guide.status = "done"`, `user_guide.version = 1`
+6. Export DOCX: `mcp_markdown_exporter_local_export_docx(markdown: UG content, file_name: "UG-v1-{TICKET}.docx")`
+7. Attach to Jira
+8. Ingest UG vào KB (FULL content)
+9. Report: "✅ Phase 5.5 done — UG.md created and reviewed. Chuyển sang Phase 6 (Testing)?"
 10. Wait for user confirmation.
 
 ### Step 6: Execute Phase — Testing (QA → Test Execution)
@@ -738,6 +777,7 @@ Skip to the specific phase:
 - `tạo FSD` → Step 2 (check BRD prerequisite)
 - `tạo TDD` → Step 3 (check FSD prerequisite)
 - `tạo STP` → Step 4 (check BRD+FSD+TDD prerequisites)
+- `tạo UG` → Step 5.5 (check code + BRD+FSD+TDD prerequisites)
 
 ### "tạo lại {doc}" action
 Force redo:
@@ -955,11 +995,13 @@ The file `.analysis/code-intelligence/index-config.json` contains indexer config
 4. **Timing attach**:
    - BRD, FSD, TDD → attach sau Phase 3 (khi DOCS REVIEW hoàn thành)
    - STP, STC → attach sau Phase 4 (Test Planning)
+   - UG → attach sau Phase 5.5 (User Guide)
    - TEST-REPORT → attach sau Phase 6 (Testing)
    - DPG, RLN → attach sau Phase 7 (Deployment)
-5. **Format**: Attach cả DOCX và draw.io files:
-   - DOCX: `{DOC}-v{version}-{TICKET}.docx` — cho reviewer đọc
-   - Draw.io: `{diagram-name}.drawio` — cho reviewer mở trong draw.io desktop để xem/edit diagrams
+5. **Format**: Attach theo loại document phù hợp:
+   - **Narrative documents** (BRD, FSD, TDD, STP, UG, DPG, RLN, TEST-REPORT): Export → DOCX (`{DOC}-v{version}-{TICKET}.docx`)
+   - **Tabular documents** (STC — test cases dạng bảng): Export → XLSX (`STC-v{version}-{TICKET}.xlsx`) — Excel phù hợp hơn DOCX cho test cases
+   - **Diagrams**: `{diagram-name}.drawio` — cho reviewer mở trong draw.io desktop để xem/edit
 
 ### ⛔ Draw.io Files PHẢI Attach vào Jira (MANDATORY)
 
@@ -1052,6 +1094,28 @@ mcp_jira_jira_update_issue(
 | 5 | Has Test Coverage Diagram | Check `documents/{TICKET}/diagrams/test-coverage.drawio` + `.png` | Invoke QA: "Tạo draw.io diagrams cho STP" |
 | 6 | Has Test Execution Flow Diagram | Check `documents/{TICKET}/diagrams/test-execution-flow.drawio` + `.png` | Invoke QA: "Tạo draw.io diagrams cho STP" |
 | 7 | Has CSV test data files | Check `documents/{TICKET}/testdata/*.csv` | Re-invoke QA agent |
+| 8 | **STP DOCX attached to Jira** | Check Jira attachments for `STP-v{N}-{TICKET}.docx` | Export DOCX + attach |
+| 9 | **STC XLSX attached to Jira** | Check Jira attachments for `STC-v{N}-{TICKET}.xlsx` | Export XLSX + attach |
+
+### Verification Checklist — TEST-REPORT (Phase 6)
+
+| # | Check | How to Verify | If Missing |
+|---|-------|---------------|------------|
+| 1 | TEST-REPORT.md exists | `readFile("documents/{TICKET}/TEST-REPORT-{TICKET}.md")` | Re-invoke QA agent |
+| 2 | **TEST-REPORT DOCX attached to Jira** | Check Jira attachments for `TEST-REPORT-v{N}-{TICKET}.docx` | Export DOCX + attach |
+
+### Verification Checklist — UG (Phase 5.5)
+
+| # | Check | How to Verify | If Missing |
+|---|-------|---------------|------------|
+| 1 | UG.md exists | `readFile("documents/{TICKET}/UG.md")` | Re-invoke DEV agent |
+| 2 | Has Installation section | Scan for "Installation" or "Quick Start" header | Ask DEV to add |
+| 3 | Has Configuration Reference | Scan for "Configuration" header with property tables | Ask DEV to add |
+| 4 | Has Usage section with examples | Scan for "Usage" header with code blocks | Ask DEV to add |
+| 5 | Has Troubleshooting section | Scan for "Troubleshooting" header | Ask DEV to add |
+| 6 | Has Error Codes table | Scan for "Error Codes" header | Ask DEV to add |
+| 7 | Has API Reference (if applicable) | Scan for "API Reference" header | Ask DEV to add |
+| 8 | BA review completed | Check UG has been reviewed (no "TODO" or placeholder text) | Invoke BA to review |
 
 ### Verification Checklist — DPG (Phase 7)
 
@@ -1100,6 +1164,7 @@ After each sub-agent completes:
 | TDD | architecture + component | draw.io → PNG |
 | STP | test-coverage + test-execution-flow | draw.io → PNG |
 | DPG | deployment-flow + rollback-flow | draw.io → PNG |
+| UG | None required (text-only document) | Markdown → DOCX |
 
 ### ⛔ CRITICAL RULE
 

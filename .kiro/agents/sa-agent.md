@@ -399,6 +399,7 @@ Create draw.io XML diagrams and export to PNG:
 
 ## Important Rules
 
+- **MANDATORY DOCUMENT EXPORT**: After creating TDD.md, you MUST export to DOCX and ingest into KB. SM will attach to Jira. If SM does not attach, report the gap.
 - **MANDATORY MERMAID DIAGRAMS IN MARKDOWN**: Every TDD document MUST contain inline Mermaid diagrams directly in the markdown content. These are IN ADDITION to any draw.io diagrams. Mermaid diagrams ensure documents are readable and visual even without draw.io export. Required Mermaid diagrams:
 - **MANDATORY E2E TEST ARCHITECTURE IN TDD**: When the feature has UI or API components, TDD MUST include Section 11 (E2E Test Architecture) documenting the existing e2e-tests module structure, reusable components (ApiTestBase, CommonSteps, TestHelper), and specific E2E test design for the feature. This enables DEV to implement E2E tests without re-analyzing the module, and serves as reusable knowledge for future projects. **Note**: E2E framework runs on JVM — step classes and test code must match the project's main language (Kotlin or Java). Document the language choice in Section 11.1.
   - **TDD**: At minimum — 1 architecture/component graph (graph TB), 1 sequence diagram (request flow), 1 class diagram (key interfaces and relationships), 1 state diagram (entity lifecycle if applicable)

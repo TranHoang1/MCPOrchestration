@@ -1,0 +1,37 @@
+orchestrator:
+  server:
+    port: 8080
+    transport: stdio
+
+  discovery:
+    top_k: 5
+    similarity_threshold: 0.7
+    max_query_length: 2000
+    fallback_to_keyword: true
+
+  execution:
+    timeout_seconds: 30
+    validate_arguments: true
+    max_retries: 1
+
+  embedding:
+    provider: openai
+    model: text-embedding-3-small
+    api_key: ${OPENAI_API_KEY}
+    dimensions: 768
+    cache_enabled: true
+    cache_max_size: 100
+    cache_ttl_minutes: 5
+
+  vector_db:
+    provider: qdrant
+    host: localhost
+    port: 6333
+    collection_name: mcp_tools
+
+  health:
+    check_interval_seconds: 30
+    auto_reconnect: true
+    max_reconnect_attempts: 5
+
+  upstream_servers: []

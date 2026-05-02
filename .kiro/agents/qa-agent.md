@@ -627,6 +627,13 @@ After manual execution, update `TEST-REPORT-{TICKET-KEY}.csv`:
 
 ## Important Rules
 
+- **MANDATORY UG VERIFICATION (when invoked by SM for Phase 5.5c)**: QA agent PHẢI thực sự chạy server theo User Guide instructions để verify tài liệu có thể sử dụng được. KHÔNG chỉ đọc text — phải execute commands và verify output. Checklist:
+  1. Follow Quick Start: chạy `java -jar`, verify log output match UG
+  2. Copy config examples từ UG vào file, verify YAML/JSON syntax hợp lệ
+  3. Send MCP requests (tools/list, find_tools), verify response format match UG
+  4. Verify error codes match actual server behavior
+  5. Verify config validation rules match actual validation
+  6. Báo cáo PASS/FAIL cho mỗi step với evidence (actual output)
 - **MANDATORY E2E TEST CLASSIFICATION**: When creating STP and STC, you MUST classify test cases into 6 levels (PBT, UT, IT, E2E-API, E2E-UI, SIT). Prioritize automation — only keep SIT manual for visual/UX/timing tests that cannot be automated. Reference `.kiro/steering/e2e-testing.md` for E2E file structure and conventions.
 - **MANDATORY E2E STEP REUSE**: When writing E2E-UI Gherkin scenarios, you MUST maximize reuse of existing step definitions. Before creating new steps:
   1. Read `e2e-tests/src/test/kotlin/com/assistant/e2e/steps/CommonSteps.kt` to see all shared steps (auth, navigation, clicks, waits, assertions)

@@ -59,9 +59,10 @@
     "user_guide": {
       "status": "done",
       "file": "UG.md",
-      "version": 1,
-      "completedAt": "2026-05-03T14:00:00Z",
-      "review": "approved"
+      "version": 2,
+      "completedAt": "2026-05-04T10:00:00Z",
+      "review": "approved",
+      "note": "v2 rewritten by DEV agent from source code (OrchestratorConfig.kt, McpToolRegistrar.kt, ErrorCodes.kt, etc.)"
     },
     "testing": {
       "status": "done",
@@ -104,6 +105,7 @@
     "STP-v1-MTO-5.docx",
     "STC-v1-MTO-5.xlsx",
     "UG-v1-MTO-5.docx",
+    "UG-v2-MTO-5.docx",
     "DPG-v1-MTO-5.docx",
     "RLN-v1-MTO-5.docx",
     "TEST-REPORT-v1-MTO-5.docx",
@@ -119,5 +121,5 @@
     }
   ],
   "lastCommentProcessed": "2026-05-03T18:00:00Z",
-  "lastUpdated": "2026-05-03T18:10:00Z"
+  "lastUpdated": "2026-05-04T10:00:00Z"
 }

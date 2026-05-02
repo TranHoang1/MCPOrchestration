@@ -1,0 +1,133 @@
+<mxGraphModel adaptiveColors="auto">
+  <root>
+    <mxCell id="0"/>
+    <mxCell id="1" parent="0"/>
+    <mxCell id="k_h" value="&lt;b&gt;Kiro IDE&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1f5fe;strokeColor=#0288d1;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="30" y="20" width="100" height="36" as="geometry"/>
+    </mxCell>
+    <mxCell id="k_l" value="" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;size=16;strokeColor=#0288d1;" vertex="1" parent="1">
+      <mxGeometry x="75" y="56" width="10" height="560" as="geometry"/>
+    </mxCell>
+    <mxCell id="t_h" value="&lt;b&gt;Transport&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff3e0;strokeColor=#f57c00;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="170" y="20" width="100" height="36" as="geometry"/>
+    </mxCell>
+    <mxCell id="t_l" value="" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;size=16;strokeColor=#f57c00;" vertex="1" parent="1">
+      <mxGeometry x="215" y="56" width="10" height="560" as="geometry"/>
+    </mxCell>
+    <mxCell id="p_h" value="&lt;b&gt;JsonRpcHandler&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff3e0;strokeColor=#f57c00;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="310" y="20" width="120" height="36" as="geometry"/>
+    </mxCell>
+    <mxCell id="p_l" value="" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;size=16;strokeColor=#f57c00;" vertex="1" parent="1">
+      <mxGeometry x="365" y="56" width="10" height="560" as="geometry"/>
+    </mxCell>
+    <mxCell id="d_h" value="&lt;b&gt;ToolDiscovery&lt;br&gt;Service&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8f5e9;strokeColor=#388e3c;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="470" y="20" width="110" height="36" as="geometry"/>
+    </mxCell>
+    <mxCell id="d_l" value="" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;size=16;strokeColor=#388e3c;" vertex="1" parent="1">
+      <mxGeometry x="520" y="56" width="10" height="560" as="geometry"/>
+    </mxCell>
+    <mxCell id="e_h" value="&lt;b&gt;Embedding&lt;br&gt;Service&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f3e5f5;strokeColor=#7b1fa2;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="620" y="20" width="100" height="36" as="geometry"/>
+    </mxCell>
+    <mxCell id="e_l" value="" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;size=16;strokeColor=#7b1fa2;" vertex="1" parent="1">
+      <mxGeometry x="665" y="56" width="10" height="560" as="geometry"/>
+    </mxCell>
+    <mxCell id="v_h" value="&lt;b&gt;VectorDB&lt;br&gt;Client&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fce4ec;strokeColor=#c62828;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="760" y="20" width="100" height="36" as="geometry"/>
+    </mxCell>
+    <mxCell id="v_l" value="" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;size=16;strokeColor=#c62828;" vertex="1" parent="1">
+      <mxGeometry x="805" y="56" width="10" height="560" as="geometry"/>
+    </mxCell>
+    <mxCell id="r_h" value="&lt;b&gt;Tool&lt;br&gt;Registry&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8eaf6;strokeColor=#3f51b5;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="900" y="20" width="100" height="36" as="geometry"/>
+    </mxCell>
+    <mxCell id="r_l" value="" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;size=16;strokeColor=#3f51b5;" vertex="1" parent="1">
+      <mxGeometry x="945" y="56" width="10" height="560" as="geometry"/>
+    </mxCell>
+    <mxCell id="m1" value="JSON-RPC tools/call {find_tools}" style="html=1;endSize=6;fontSize=10;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="80" y="100" as="sourcePoint"/>
+        <mxPoint x="220" y="100" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="m2" value="Parse JSON-RPC message" style="html=1;endSize=6;fontSize=10;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="220" y="140" as="sourcePoint"/>
+        <mxPoint x="370" y="140" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="m3" value="findTools(query, topK, threshold)" style="html=1;endSize=6;fontSize=10;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="370" y="180" as="sourcePoint"/>
+        <mxPoint x="525" y="180" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="m4" value="Validate query" style="html=1;endSize=6;fontSize=10;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="525" y="215" as="sourcePoint"/>
+        <mxPoint x="525" y="240" as="targetPoint"/>
+        <Array as="points">
+          <mxPoint x="565" y="215"/>
+          <mxPoint x="565" y="240"/>
+        </Array>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="m5" value="generateEmbedding(query)" style="html=1;endSize=6;fontSize=10;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="525" y="270" as="sourcePoint"/>
+        <mxPoint x="670" y="270" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="m6" value="FloatArray[768]" style="html=1;endSize=6;dashed=1;fontSize=10;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="670" y="305" as="sourcePoint"/>
+        <mxPoint x="525" y="305" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="m7" value="search(vector, topK, threshold)" style="html=1;endSize=6;fontSize=10;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="525" y="340" as="sourcePoint"/>
+        <mxPoint x="810" y="340" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="m8" value="List&lt;ScoredPoint&gt;" style="html=1;endSize=6;dashed=1;fontSize=10;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="810" y="375" as="sourcePoint"/>
+        <mxPoint x="525" y="375" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="m9" value="enrichWithServerStatus(results)" style="html=1;endSize=6;fontSize=10;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="525" y="410" as="sourcePoint"/>
+        <mxPoint x="950" y="410" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="m10" value="List&lt;ToolResult&gt; with server_status" style="html=1;endSize=6;dashed=1;fontSize=10;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="950" y="445" as="sourcePoint"/>
+        <mxPoint x="525" y="445" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="m11" value="FindToolsResponse" style="html=1;endSize=6;dashed=1;fontSize=10;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="525" y="480" as="sourcePoint"/>
+        <mxPoint x="370" y="480" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="m12" value="JSON-RPC result" style="html=1;endSize=6;dashed=1;fontSize=10;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="370" y="510" as="sourcePoint"/>
+        <mxPoint x="220" y="510" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="m13" value="Response" style="html=1;endSize=6;dashed=1;fontSize=10;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="220" y="540" as="sourcePoint"/>
+        <mxPoint x="80" y="540" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="n1" value="Fallback: If E fails → keyword search via R&#xa;Fallback: If V fails → keyword search via R" style="shape=note;whiteSpace=wrap;html=1;size=14;fillColor=#fff9c4;strokeColor=#f9a825;fontSize=10;" vertex="1" parent="1">
+      <mxGeometry x="560" y="560" width="280" height="40" as="geometry"/>
+    </mxCell>
+  </root>
+</mxGraphModel>

@@ -308,3 +308,12 @@ sequenceDiagram
 | System uptime | > 99.5% |
 | Average find_tools latency | < 200ms |
 | Tool execution success rate | > 99% (when upstream available) |
+
+---
+
+## 9. Diagram Index
+
+| # | Diagram | Image | Source (editable) |
+|---|---------|-------|-------------------|
+| 1 | Business Flow | [business-flow.png](diagrams/business-flow.png) | [business-flow.drawio](diagrams/business-flow.drawio) |
+| 2 | Use Case Diagram | [use-case.png](diagrams/use-case.png) | [use-case.drawio](diagrams/use-case.drawio) |

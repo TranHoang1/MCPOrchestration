@@ -1171,6 +1171,20 @@ After each sub-agent completes:
 | DPG | deployment-flow + rollback-flow | draw.io → PNG |
 | UG | None required (text-only document) | Markdown → DOCX |
 
+### ⛔ Diagram Index trong mỗi tài liệu (MANDATORY)
+
+**Mỗi tài liệu có diagrams PHẢI có Diagram Index table** trong Appendix, liệt kê TẤT CẢ `.drawio` source files:
+
+```markdown
+### Diagram Index
+
+| # | Diagram | Image | Source (editable) |
+|---|---------|-------|-------------------|
+| 1 | {Diagram Name} | [{name}.png](diagrams/{name}.png) | [{name}.drawio](diagrams/{name}.drawio) |
+```
+
+**Lý do:** Reviewer cần biết chính xác có bao nhiêu diagrams, lấy đúng `.drawio` file để edit/update khi document version tăng.
+
 ### ⛔ CRITICAL RULE
 
 **SM PHẢI chạy verification checklist SAU MỖI sub-agent call.** Không được skip verification khi chạy "tạo tài liệu đầy đủ" (pipeline mode). Pipeline mode = Phase 1 verify → Phase 2 verify → Phase 3 verify. Mỗi phase PHẢI pass verification trước khi chuyển sang phase tiếp theo.

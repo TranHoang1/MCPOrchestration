@@ -1167,13 +1167,13 @@ flowchart TD
 
 ### 11.1 Diagrams
 
-| Diagram | File |
-|---------|------|
-| System Context Diagram | [system-context.png](diagrams/system-context.png) |
-| ER Diagram | [er-diagram.png](diagrams/er-diagram.png) |
-| Sequence — find_tools (UC-01) | [sequence-find-tools.png](diagrams/sequence-find-tools.png) |
-| Sequence — execute_dynamic_tool (UC-02) | [sequence-execute-tool.png](diagrams/sequence-execute-tool.png) |
-| State — Server Health (UC-05) | [state-server-health.png](diagrams/state-server-health.png) |
+| Diagram | File | Source (editable) |
+|---------|------|-------------------|
+| System Context Diagram | [system-context.png](diagrams/system-context.png) | [system-context.drawio](diagrams/system-context.drawio) |
+| ER Diagram | [er-diagram.png](diagrams/er-diagram.png) | [er-diagram.drawio](diagrams/er-diagram.drawio) |
+| Sequence — find_tools (UC-01) | [sequence-find-tools.png](diagrams/sequence-find-tools.png) | [sequence-find-tools.drawio](diagrams/sequence-find-tools.drawio) |
+| Sequence — execute_dynamic_tool (UC-02) | [sequence-execute-tool.png](diagrams/sequence-execute-tool.png) | [sequence-execute-tool.drawio](diagrams/sequence-execute-tool.drawio) |
+| State — Server Health (UC-05) | [state-server-health.png](diagrams/state-server-health.png) | [state-server-health.drawio](diagrams/state-server-health.drawio) |
 
 ### 11.2 Change Log from BRD
 

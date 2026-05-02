@@ -14,7 +14,7 @@
 | Version | 1.0 |
 | Date | {CURRENT_DATE} |
 | Status | Draft |
-| Related TDD | documents/{TICKET-KEY}/TDD.md |
+| Related TDD | TDD-v{VERSION}-{TICKET-KEY}.docx |
 
 ---
 

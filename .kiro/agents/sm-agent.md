@@ -992,7 +992,12 @@ The file `.analysis/code-intelligence/index-config.json` contains indexer config
 2. **Tên file trong Jira PHẢI có version**: `{DOC}-v{version}-{TICKET}.docx`
    - Ví dụ: `BRD-v1-SCRUM-50.docx`, `FSD-v2-SCRUM-50.docx`, `TDD-v1-SCRUM-50.docx`
 3. **Khi document update** (version tăng): attach file mới với version mới, KHÔNG xóa file cũ (giữ lịch sử)
-4. **Timing attach**:
+4. **⛔ Document References PHẢI dùng DOCX/XLSX format** — KHÔNG BAO GIỜ tham chiếu file `.md`:
+   - ❌ SAI: `| Related BRD | documents/MTO-5/BRD.md |`
+   - ✅ ĐÚNG: `| Related BRD | BRD-v2-MTO-5.docx |`
+   - ✅ ĐÚNG: `| Related STC | STC-v1-MTO-5.xlsx |`
+   - Lý do: Reviewer đọc DOCX/XLSX, không đọc markdown. References phải trỏ đến deliverable thực tế.
+5. **Timing attach**:
    - BRD, FSD, TDD → attach sau Phase 3 (khi DOCS REVIEW hoàn thành)
    - STP, STC → attach sau Phase 4 (Test Planning)
    - UG → attach sau Phase 5.5 (User Guide)

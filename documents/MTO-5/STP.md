@@ -14,9 +14,9 @@
 | Version | 1.0 |
 | Date | 2026-05-02 |
 | Status | Draft |
-| Related BRD | documents/MTO-5/BRD.md |
-| Related FSD | documents/MTO-5/FSD.md |
-| Related TDD | documents/MTO-5/TDD.md |
+| Related BRD | BRD-v2-MTO-5.docx |
+| Related FSD | FSD-v1-MTO-5.docx |
+| Related TDD | TDD-v1-MTO-5.docx |
 
 ---
 
@@ -68,9 +68,9 @@ This is a **backend-only** system with no UI. Testing focuses on API-level verif
 
 | Document | Location |
 |----------|----------|
-| BRD | documents/MTO-5/BRD.md |
-| FSD | documents/MTO-5/FSD.md |
-| TDD | documents/MTO-5/TDD.md |
+| BRD | BRD-v2-MTO-5.docx |
+| FSD | FSD-v1-MTO-5.docx |
+| TDD | TDD-v1-MTO-5.docx |
 | MCP Specification | https://modelcontextprotocol.io/specification |
 
 ---

@@ -14,9 +14,9 @@
 | Version | 1.0 |
 | Date | 2026-05-02 |
 | Status | Draft |
-| Related STP | documents/MTO-5/STP.md |
-| Related FSD | documents/MTO-5/FSD.md |
-| Related TDD | documents/MTO-5/TDD.md |
+| Related STP | STP-v1-MTO-5.docx |
+| Related FSD | FSD-v1-MTO-5.docx |
+| Related TDD | TDD-v1-MTO-5.docx |
 
 ---
 

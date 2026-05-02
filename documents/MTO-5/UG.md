@@ -15,9 +15,9 @@
 | Version | 1.0 |
 | Date | 2026-05-03 |
 | Status | Draft |
-| Related BRD | documents/MTO-5/BRD.md |
-| Related FSD | documents/MTO-5/FSD.md |
-| Related TDD | documents/MTO-5/TDD.md |
+| Related BRD | BRD-v2-MTO-5.docx |
+| Related FSD | FSD-v1-MTO-5.docx |
+| Related TDD | TDD-v1-MTO-5.docx |
 
 ---
 
@@ -707,11 +707,11 @@ A: The Orchestrator maintains in-memory state (ToolRegistry, server connections)
 
 | Document | Location |
 |----------|----------|
-| BRD | documents/MTO-5/BRD.md |
-| FSD | documents/MTO-5/FSD.md |
-| TDD | documents/MTO-5/TDD.md |
-| STP | documents/MTO-5/STP.md |
-| STC | documents/MTO-5/STC.md |
+| BRD | BRD-v2-MTO-5.docx |
+| FSD | FSD-v1-MTO-5.docx |
+| TDD | TDD-v1-MTO-5.docx |
+| STP | STP-v1-MTO-5.docx |
+| STC | STC-v1-MTO-5.xlsx |
 
 ### 9.3 Version Compatibility
 

@@ -14,7 +14,7 @@
 | Version | 1.0 |
 | Date | 2026-05-03 |
 | Status | Final |
-| Related TDD | documents/MTO-5/TDD.md |
+| Related TDD | TDD-v1-MTO-5.docx |
 
 ---
 

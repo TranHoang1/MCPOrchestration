@@ -15,9 +15,9 @@
 | Version | 1.0 |
 | Date | {CURRENT_DATE} |
 | Status | Draft |
-| Related BRD | documents/{TICKET-KEY}/BRD.md |
-| Related FSD | documents/{TICKET-KEY}/FSD.md |
-| Related TDD | documents/{TICKET-KEY}/TDD.md |
+| Related BRD | BRD-v{VERSION}-{TICKET-KEY}.docx |
+| Related FSD | FSD-v{VERSION}-{TICKET-KEY}.docx |
+| Related TDD | TDD-v{VERSION}-{TICKET-KEY}.docx |
 
 ---
 
@@ -310,10 +310,10 @@ A: {Answer}
 
 | Document | Location |
 |----------|----------|
-| BRD | documents/{TICKET-KEY}/BRD.md |
-| FSD | documents/{TICKET-KEY}/FSD.md |
-| TDD | documents/{TICKET-KEY}/TDD.md |
-| DPG | documents/{TICKET-KEY}/DPG.md |
+| BRD | BRD-v{VERSION}-{TICKET-KEY}.docx |
+| FSD | FSD-v{VERSION}-{TICKET-KEY}.docx |
+| TDD | TDD-v{VERSION}-{TICKET-KEY}.docx |
+| DPG | DPG-v{VERSION}-{TICKET-KEY}.docx |
 
 ### 9.3 Version Compatibility
 

@@ -14,8 +14,8 @@
 | Version | 1.0 |
 | Date | {CURRENT_DATE} |
 | Status | Draft |
-| Related STP | documents/{TICKET-KEY}/STP.md |
-| Related FSD | documents/{TICKET-KEY}/FSD.md |
+| Related STP | STP-v{VERSION}-{TICKET-KEY}.docx |
+| Related FSD | FSD-v{VERSION}-{TICKET-KEY}.docx |
 
 ---
 

@@ -169,7 +169,7 @@ This is the initial release (v1.0.0). No backward compatibility concerns.
 
 ## 8. Deployment Instructions
 
-See: [Deployment Guide](documents/MTO-5/DPG.md)
+See: [Deployment Guide](DPG-v1-MTO-5.docx)
 
 ### Quick Reference
 
@@ -188,7 +188,7 @@ See: [Deployment Guide](documents/MTO-5/DPG.md)
 
 ## 9. Rollback Plan
 
-See: [Deployment Guide — Section 8](documents/MTO-5/DPG.md#8-rollback-plan)
+See: [Deployment Guide — Section 8](DPG-v1-MTO-5.docx)
 
 **Rollback Decision Criteria:**
 - Application fails to start after deployment

@@ -152,7 +152,7 @@
 
 {Reference the Deployment Guide for detailed steps.}
 
-See: [Deployment Guide](documents/{TICKET-KEY}/DPG.md)
+See: [Deployment Guide](DPG-v{VERSION}-{TICKET-KEY}.docx)
 
 ### Quick Reference
 

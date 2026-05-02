@@ -14,8 +14,8 @@
 | Version | 1.0 |
 | Date | {CURRENT_DATE} |
 | Status | Draft |
-| Related BRD | documents/{TICKET-KEY}/BRD.md |
-| Related FSD | documents/{TICKET-KEY}/FSD.md |
+| Related BRD | BRD-v{VERSION}-{TICKET-KEY}.docx |
+| Related FSD | FSD-v{VERSION}-{TICKET-KEY}.docx |
 
 ---
 
@@ -80,8 +80,8 @@
 
 | Document | Location |
 |----------|----------|
-| BRD | documents/{TICKET-KEY}/BRD.md |
-| FSD | documents/{TICKET-KEY}/FSD.md |
+| BRD | BRD-v{VERSION}-{TICKET-KEY}.docx |
+| FSD | FSD-v{VERSION}-{TICKET-KEY}.docx |
 
 ---
 

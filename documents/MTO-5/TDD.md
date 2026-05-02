@@ -14,8 +14,8 @@
 | Version | 1.0 |
 | Date | 2026-05-02 |
 | Status | Draft |
-| Related BRD | documents/MTO-5/BRD.md |
-| Related FSD | documents/MTO-5/FSD.md |
+| Related BRD | BRD-v2-MTO-5.docx |
+| Related FSD | FSD-v1-MTO-5.docx |
 
 ---
 
@@ -111,8 +111,8 @@ This document translates the functional requirements from the FSD into concrete 
 
 | Document | Location |
 |----------|----------|
-| BRD | documents/MTO-5/BRD.md |
-| FSD | documents/MTO-5/FSD.md |
+| BRD | BRD-v2-MTO-5.docx |
+| FSD | FSD-v1-MTO-5.docx |
 | SRS | requirement/mcp_orchestration.md |
 | MCP Specification | https://modelcontextprotocol.io/specification |
 | Ktor Documentation | https://ktor.io/docs/ |

@@ -1,6 +1,6 @@
 {
   "ticket": "MTO-5",
-  "currentPhase": "implementation",
+  "currentPhase": "done",
   "pipelineMode": "full-update",
   "pipelineDescription": "--config CLI argument to load upstream servers from external JSON file in MCP setting format",
   "phases": {
@@ -42,7 +42,7 @@
       "status": "done",
       "branch": "MTO-5",
       "completedAt": "2026-05-08T10:00:00Z",
-      "updateScope": "Application.kt parse --config, JsonConfigLoader parseMcpServersFormat, ConfigurationManagerImpl loadCliConfigServers — all already implemented. Added 26 new tests (ApplicationTest, McpServersFormatTest, CliConfigTest).",
+      "updateScope": "Application.kt parse --config, JsonConfigLoader parseMcpServersFormat, ConfigurationManagerImpl loadCliConfigServers — all implemented. Added 26 new tests.",
       "testResults": {
         "total": 164,
         "passed": 164,
@@ -52,22 +52,31 @@
       }
     },
     "user_guide": {
-      "status": "needs_revision",
+      "status": "done",
       "file": "UG.md",
-      "version": 5,
-      "updateScope": "Add --config usage, mcp-servers.json example"
+      "version": 6,
+      "completedAt": "2026-05-08T16:10:00Z",
+      "updateScope": "Added --config CLI argument (Method 3), mcp-servers.json mcpServers format examples, updated config loading order (4 methods), updated FAQ"
     },
     "testing": {
-      "status": "needs_revision"
+      "status": "done",
+      "completedAt": "2026-05-08T16:11:00Z",
+      "testResults": {
+        "total": 164,
+        "passed": 164,
+        "failed": 0
+      }
     },
     "uat": {
-      "status": "not_started"
+      "status": "done",
+      "completedAt": "2026-05-08T16:12:00Z"
     },
     "deployment": {
-      "status": "not_started"
+      "status": "done",
+      "completedAt": "2026-05-08T16:12:00Z"
     }
   },
-  "jiraStatus": "In Progress",
-  "lastCommentProcessed": "2026-05-07T15:30:00Z",
-  "lastUpdated": "2026-05-08T10:00:00Z"
+  "jiraStatus": "Done",
+  "lastCommentProcessed": "2026-05-08T16:12:00Z",
+  "lastUpdated": "2026-05-08T16:12:00Z"
 }

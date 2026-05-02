@@ -1,24 +1,29 @@
 {
   "ticket": "MTO-5",
-  "currentPhase": "done",
+  "currentPhase": "implementation",
+  "pipelineMode": "full-update",
+  "pipelineDescription": "--config CLI argument to load upstream servers from external JSON file in MCP setting format",
   "phases": {
     "requirements": {
       "status": "done",
       "file": "BRD.md",
-      "version": 2,
-      "completedAt": "2026-05-01T16:39:00Z"
+      "version": 3,
+      "completedAt": "2026-05-07T15:30:00Z",
+      "updateScope": "STORY-4 AC5 (--config CLI arg) and AC6 (mcpServers format)"
     },
     "specification": {
       "status": "done",
       "file": "FSD.md",
-      "version": 1,
-      "completedAt": "2026-05-01T17:30:00Z"
+      "version": 2,
+      "completedAt": "2026-05-07T15:30:00Z",
+      "updateScope": "UC-04 AF-11/AF-12, EF-13/EF-14, BR-28..BR-31, §3.4.5/§3.4.6 mcpServers format"
     },
     "design": {
       "status": "done",
       "file": "TDD.md",
-      "version": 1,
-      "completedAt": "2026-05-02T06:30:00Z"
+      "version": 2,
+      "completedAt": "2026-05-07T15:30:00Z",
+      "updateScope": "§3.5 CLI Arguments, §3.6 mcpServers format, Application.kt/JsonConfigLoader/ConfigurationManagerImpl"
     },
     "feedback_loop": {
       "status": "not_started",
@@ -31,95 +36,38 @@
       "version": 1,
       "completedAt": "2026-05-02T14:00:00Z",
       "review": "approved",
-      "testCaseCounts": {
-        "PBT": 12,
-        "UT": 35,
-        "IT": 25,
-        "E2E-API": 15,
-        "total": 87,
-        "automated": 87,
-        "manual": 0
-      }
+      "updateScope": "Test cases for --config CLI and mcpServers format added during implementation"
     },
     "implementation": {
       "status": "done",
-      "startedAt": "2026-05-03T10:00:00Z",
-      "completedAt": "2026-05-03T12:00:00Z",
       "branch": "MTO-5",
-      "commit": "fa19a41",
-      "filesChanged": 68,
-      "insertions": 5210,
+      "completedAt": "2026-05-08T10:00:00Z",
+      "updateScope": "Application.kt parse --config, JsonConfigLoader parseMcpServersFormat, ConfigurationManagerImpl loadCliConfigServers — all already implemented. Added 26 new tests (ApplicationTest, McpServersFormatTest, CliConfigTest).",
       "testResults": {
-        "total": 118,
-        "passed": 118,
+        "total": 164,
+        "passed": 164,
         "failed": 0,
-        "ignored": 0
+        "newTests": 26,
+        "baselineTests": 138
       }
     },
     "user_guide": {
-      "status": "done",
+      "status": "needs_revision",
       "file": "UG.md",
-      "version": 2,
-      "completedAt": "2026-05-04T10:00:00Z",
-      "review": "approved",
-      "note": "v2 rewritten by DEV agent from source code (OrchestratorConfig.kt, McpToolRegistrar.kt, ErrorCodes.kt, etc.)"
+      "version": 5,
+      "updateScope": "Add --config usage, mcp-servers.json example"
     },
     "testing": {
-      "status": "done",
-      "startedAt": "2026-05-03T15:33:00Z",
-      "completedAt": "2026-05-03T16:00:00Z",
-      "report": "TEST-REPORT-MTO-5.md",
-      "results": {
-        "total": 118,
-        "passed": 118,
-        "failed": 0,
-        "passRate": "100%"
-      }
+      "status": "needs_revision"
     },
     "uat": {
-      "status": "done",
-      "startedAt": "2026-05-03T16:30:00Z",
-      "completedAt": "2026-05-03T18:00:00Z",
-      "result": "accepted",
-      "notes": "Comment #10046: JSON config format for UG — deferred to v1.1.0"
+      "status": "not_started"
     },
     "deployment": {
-      "status": "done",
-      "startedAt": "2026-05-03T18:00:00Z",
-      "completedAt": "2026-05-03T18:10:00Z",
-      "files": ["DPG.md", "RLN.md"],
-      "version": 1,
-      "sanityTest": "passed",
-      "buildResult": "BUILD SUCCESSFUL",
-      "fatJar": "build/libs/mcp-orchestrator-all.jar",
-      "fatJarSize": "19.4 MB",
-      "diagrams": ["deployment-flow.drawio", "rollback-flow.drawio"]
+      "status": "not_started"
     }
   },
-  "jiraStatus": "Done",
-  "docsAttached": true,
-  "attachedFiles": [
-    "BRD-v2-MTO-5.docx",
-    "FSD-v1-MTO-5.docx",
-    "TDD-v1-MTO-5.docx",
-    "STP-v1-MTO-5.docx",
-    "STC-v1-MTO-5.xlsx",
-    "UG-v1-MTO-5.docx",
-    "UG-v2-MTO-5.docx",
-    "DPG-v1-MTO-5.docx",
-    "RLN-v1-MTO-5.docx",
-    "TEST-REPORT-v1-MTO-5.docx",
-    "deployment-flow.drawio",
-    "rollback-flow.drawio"
-  ],
-  "knownIssues": [
-    {
-      "id": "comment-10046",
-      "description": "UG only shows YAML config format, user wants JSON format support",
-      "targetFix": "v1.1.0",
-      "severity": "minor"
-    }
-  ],
-  "lastCommentProcessed": "2026-05-03T18:00:00Z",
-  "lastUpdated": "2026-05-04T10:00:00Z"
+  "jiraStatus": "In Progress",
+  "lastCommentProcessed": "2026-05-07T15:30:00Z",
+  "lastUpdated": "2026-05-08T10:00:00Z"
 }

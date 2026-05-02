@@ -22,3 +22,6 @@ local.properties
 
 # Office temp files
 ~$*
+
+# Temp folder for testing
+TempRelease/

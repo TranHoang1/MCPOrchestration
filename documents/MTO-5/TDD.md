@@ -11,11 +11,11 @@
 | Jira Ticket | MTO-5 |
 | Title | Create MCP Tool Orchestration |
 | Author | SA Agent |
-| Version | 1.0 |
-| Date | 2026-05-02 |
+| Version | 2.0 |
+| Date | 2026-05-07 |
 | Status | Draft |
-| Related BRD | BRD-v2-MTO-5.docx |
-| Related FSD | FSD-v1-MTO-5.docx |
+| Related BRD | BRD-v3-MTO-5.docx |
+| Related FSD | FSD-v2-MTO-5.docx |
 
 ---
 
@@ -33,6 +33,7 @@
 | Version | Date | Author | Changes |
 |---------|------|--------|---------|
 | 1.0 | 2026-05-02 | SA Agent | Initiate document — auto-generated from BRD and FSD |
+| 2.0 | 2026-05-07 | SA Agent | Added §3.5 CLI Arguments (--config), §3.6 mcpServers format, Application.kt/JsonConfigLoader/ConfigurationManagerImpl design changes |
 
 ---
 
@@ -111,8 +112,8 @@ This document translates the functional requirements from the FSD into concrete 
 
 | Document | Location |
 |----------|----------|
-| BRD | BRD-v2-MTO-5.docx |
-| FSD | FSD-v1-MTO-5.docx |
+| BRD | BRD-v3-MTO-5.docx |
+| FSD | FSD-v2-MTO-5.docx |
 | SRS | requirement/mcp_orchestration.md |
 | MCP Specification | https://modelcontextprotocol.io/specification |
 | Ktor Documentation | https://ktor.io/docs/ |
@@ -672,6 +673,112 @@ Returns the 2 registered tools with their full schemas.
       { "name": "execute_dynamic_tool", "description": "...", "inputSchema": { ... } }
     ]
   }
+}
+```
+
+### 3.5 CLI Arguments
+
+**Implements:** UC-04 AF-11, BR-28, BR-30
+
+The server accepts command-line arguments to override configuration at startup.
+
+| Argument | Type | Required | Default | Description |
+|----------|------|----------|---------|-------------|
+| `--config` | String (file path) | No | None | Path to external JSON config file in mcpServers format |
+
+**Parsing Logic in `Application.kt`:**
+
+```kotlin
+fun main(args: Array<String>) = runBlocking {
+    val configPath = parseConfigArg(args)
+    // Pass configPath to ConfigurationManagerImpl
+    startKoin {
+        modules(appModule(configPath))
+    }
+    // ... rest of startup
+}
+
+private fun parseConfigArg(args: Array<String>): String? {
+    val idx = args.indexOf("--config")
+    return if (idx >= 0 && idx + 1 < args.size) args[idx + 1] else null
+}
+```
+
+**`main()` function signature change:** `fun main()` → `fun main(args: Array<String>)` to accept CLI arguments.
+
+### 3.6 mcpServers JSON Format (--config)
+
+**Implements:** UC-04 AF-12, BR-29, BR-31
+
+The `--config` file uses the MCP setting format:
+
+```json
+{
+  "mcpServers": {
+    "server-name": {
+      "command": "npx",
+      "args": ["-y", "@mcp/server-jira"],
+      "env": { "JIRA_URL": "...", "JIRA_TOKEN": "..." }
+    },
+    "http-server": {
+      "url": "http://localhost:3001/mcp"
+    }
+  }
+}
+```
+
+**JsonConfigLoader changes:**
+
+Current `parseUpstreamServers()` supports `upstream_servers` array format. Add `parseMcpServersFormat()`:
+
+```kotlin
+fun parseMcpServersFormat(content: String): List<UpstreamServerConfig> {
+    val root = json.parseToJsonElement(content).jsonObject
+    val mcpServers = root["mcpServers"]?.jsonObject ?: return emptyList()
+    return mcpServers.entries.map { (name, config) ->
+        val obj = config.jsonObject
+        val url = obj["url"]?.jsonPrimitive?.content
+        val command = obj["command"]?.jsonPrimitive?.content
+        UpstreamServerConfig(
+            name = name,
+            transport = if (url != null) "http" else "stdio",
+            command = command,
+            args = obj["args"]?.jsonArray?.map { it.jsonPrimitive.content } ?: emptyList(),
+            env = obj["env"]?.jsonObject?.mapValues { it.value.jsonPrimitive.content } ?: emptyMap(),
+            url = url
+        )
+    }
+}
+```
+
+**ConfigurationManagerImpl changes:**
+
+Add `configPath` parameter to constructor. In `loadConfig()`, after loading YAML + JSON servers, also load `--config` servers:
+
+```kotlin
+class ConfigurationManagerImpl(
+    private val configContent: String? = null,
+    private val configPath: String? = null,  // ← from --config CLI arg
+    private val workingDirectory: File = File(".")
+) : ConfigurationManager {
+
+    private fun loadConfig(): OrchestratorConfig {
+        val yamlConfig = loadYamlConfig()
+        val jsonServers = loadJsonServers()
+        val cliServers = loadCliConfigServers()  // ← NEW
+        return mergeAllServers(yamlConfig, jsonServers, cliServers)
+    }
+
+    private fun loadCliConfigServers(): List<UpstreamServerConfig> {
+        val path = configPath ?: return emptyList()
+        val file = File(path).let { if (it.isAbsolute) it else File(workingDirectory, path) }
+        if (!file.exists()) {
+            logger.warn("Config file not found: ${file.absolutePath}. Continuing without it.")
+            return emptyList()
+        }
+        val content = file.readText()
+        return JsonConfigLoader.parseMcpServersFormat(content)
+    }
 }
 ```
 

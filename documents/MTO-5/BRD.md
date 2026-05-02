@@ -11,7 +11,7 @@
 | Jira Ticket | MTO-5 |
 | Title | Create MCP Tool Orchestration |
 | Author | BA Agent |
-| Version | 2.0 |
+| Version | 3.0 |
 | Date | 2026-05-01 |
 | Status | Approved |
 
@@ -23,6 +23,7 @@
 |---------|------|--------|---------|
 | 1.0 | 2026-05-01 | BA Agent | Initial BRD — auto-generated from Jira ticket |
 | 2.0 | 2026-05-01 | BA Agent | Added Business Flow Diagram, Use Case Diagram, and inline Mermaid diagrams |
+| 3.0 | 2026-05-07 | BA Agent | STORY-4: Added AC5 (--config CLI argument) and AC6 (mcpServers format specification) |
 
 ---
 
@@ -208,6 +209,8 @@ sequenceDiagram
 - AC2: Hot-reload configuration changes
 - AC3: Support stdio and HTTP transport types
 - AC4: Validate configuration on startup
+- AC5: Support `--config <path>` CLI argument to load upstream servers from an external JSON file. The path can be absolute or relative to the working directory. If the file does not exist, the server logs a warning and continues with default/YAML config only.
+- AC6: The external JSON config file uses the **MCP setting format** (`mcpServers` key), where each key is the server name and the value is the server configuration object (with `command`, `args`, `env`, `url` fields). This is the same format used by Kiro IDE's `mcp.json`.
 
 ### STORY-5: Health Monitoring
 

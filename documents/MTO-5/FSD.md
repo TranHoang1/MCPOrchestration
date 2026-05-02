@@ -11,10 +11,10 @@
 | Jira Ticket | MTO-5 |
 | Title | Create MCP Tool Orchestration |
 | Author | BA Agent |
-| Version | 1.0 |
-| Date | 2026-05-01 |
+| Version | 2.0 |
+| Date | 2026-05-07 |
 | Status | Draft |
-| Related BRD | BRD-v2-MTO-5.docx |
+| Related BRD | BRD-v3-MTO-5.docx |
 | Related SRS | requirement/mcp_orchestration.md |
 
 ---
@@ -24,6 +24,7 @@
 | Version | Date | Author | Changes |
 |---------|------|--------|---------|
 | 1.0 | 2026-05-01 | BA Agent | Initial document — auto-generated from BRD and Jira ticket MTO-5 |
+| 2.0 | 2026-05-07 | BA Agent | UC-04: Added AF-11/AF-12 (--config CLI argument), EF-13/EF-14, BR-28..BR-31, mcpServers format spec (§3.4.5, §3.4.6) |
 
 ---
 
@@ -542,6 +543,8 @@ The system must be able to scan upstream MCP Servers, extract tool metadata (nam
 
 The system reads upstream MCP Server configurations from `application.yml` or `config.json`. Configuration includes server names, transport types (stdio/HTTP), connection parameters, and orchestrator settings (Top-K, thresholds, timeouts). The system supports hot-reload — configuration changes are detected and applied without server restart.
 
+Additionally, the server supports a `--config <path>` CLI argument to load upstream servers from an external JSON file in the **MCP setting format** (`mcpServers` key). This enables seamless integration with Kiro IDE's `mcp.json` configuration format.
+
 #### 3.4.2 Use Case
 
 **Use Case ID:** UC-04
@@ -573,6 +576,15 @@ The system reads upstream MCP Server configurations from `application.yml` or `c
 |----|-----------|-------|
 | EF-11 | New configuration is invalid (parse error) | Reject the change, keep current config. Log error with validation details. |
 | EF-12 | New server in config is unreachable | Mark as DISCONNECTED, continue with other changes. Schedule retry. |
+| EF-13 | `--config` file does not exist | Log warning: "Config file not found: {path}. Continuing with default/YAML config." Continue startup normally. |
+| EF-14 | `--config` file is invalid JSON | Log error: "Failed to parse config file: {path}: {error}". Continue with default/YAML config only. |
+
+**Alternative Flows:**
+
+| ID | Condition | Steps |
+|----|-----------|-------|
+| AF-11 | Server started with `--config <path>` CLI argument | 1. Parse `--config` value from args array. 2. Resolve path (absolute or relative to working directory). 3. Read and parse JSON file. 4. Extract `mcpServers` key — each entry key is server name, value is server config. 5. Convert to `UpstreamServerConfig` list. 6. Merge with YAML upstream_servers (JSON overrides YAML for same server name). 7. Continue normal startup with merged config. |
+| AF-12 | `--config` file uses `mcpServers` format (MCP setting format) | Parse format: `{"mcpServers": {"server-name": {"command": "...", "args": [...], "env": {...}, "url": "..."}}}`. Each key under `mcpServers` becomes the server `name`. Transport is inferred: if `url` is present → `http`, if `command` is present → `stdio`. |
 
 #### 3.4.3 Business Rules
 
@@ -582,6 +594,10 @@ The system reads upstream MCP Server configurations from `application.yml` or `c
 | BR-20 | Hot-reload must not cause downtime or dropped requests | BRD Acceptance Criteria |
 | BR-21 | Invalid configuration must be rejected — system keeps previous valid config | Derived from reliability |
 | BR-22 | Both stdio and HTTP transports must be supported for upstream connections | SRS §2 |
+| BR-28 | `--config` CLI argument must accept absolute or relative file paths | BRD Story #4 AC5 |
+| BR-29 | External JSON config must support `mcpServers` format where keys are server names | BRD Story #4 AC6 |
+| BR-30 | If `--config` file not found, server logs warning and continues with YAML config only | BRD Story #4 AC5 |
+| BR-31 | `mcpServers` format: transport inferred from presence of `url` (→ http) or `command` (→ stdio) | Derived from MCP setting format |
 
 #### 3.4.4 Configuration Schema
 
@@ -638,6 +654,49 @@ orchestrator:
       command: python
       args: ["-m", "mcp_server_database"]
 ```
+
+#### 3.4.5 CLI Arguments
+
+| Argument | Type | Required | Default | Description |
+|----------|------|----------|---------|-------------|
+| `--config` | String (file path) | No | None | Path to external JSON config file in MCP setting format. Absolute or relative to working directory. |
+
+#### 3.4.6 External JSON Config — mcpServers Format
+
+The `--config` file uses the **MCP setting format** (`mcpServers` key), identical to Kiro IDE's `mcp.json`:
+
+```json
+{
+  "mcpServers": {
+    "jira-server": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-jira"],
+      "env": {
+        "JIRA_URL": "https://mycompany.atlassian.net",
+        "JIRA_TOKEN": "ATATT3xFfGF0..."
+      }
+    },
+    "git-server": {
+      "url": "http://localhost:3001/mcp"
+    }
+  }
+}
+```
+
+**Parsing Rules:**
+- Top-level key `mcpServers` is required
+- Each key under `mcpServers` is the server **name**
+- Transport is **inferred**: `url` present → `http`, `command` present → `stdio`
+- `args` is optional (default: empty array)
+- `env` is optional (default: empty map)
+- Servers from `--config` are **merged** with YAML `upstream_servers` — JSON overrides YAML for same server name
+
+**Config Loading Priority (lowest → highest):**
+1. Classpath `application.yml` (bundled in JAR)
+2. External `application.yml` (working directory)
+3. External JSON (`config.json` / `application.json` in working directory)
+4. `--config <path>` CLI argument (mcpServers format)
+5. Environment variables (`${VAR}` resolution)
 
 ---
 

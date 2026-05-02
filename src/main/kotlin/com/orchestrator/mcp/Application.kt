@@ -13,12 +13,17 @@ import org.slf4j.LoggerFactory
 
 private val logger = LoggerFactory.getLogger("com.orchestrator.mcp.Application")
 
-fun main() = runBlocking {
+fun main(args: Array<String>) = runBlocking {
     logger.info("MCP Orchestration Server v1.0.0 starting...")
+
+    val configPath = parseConfigArg(args)
+    if (configPath != null) {
+        logger.info("Using external config: $configPath")
+    }
 
     // Initialize DI
     startKoin {
-        modules(appModule)
+        modules(appModule(configPath))
     }
 
     val koin = getKoin()
@@ -52,4 +57,14 @@ fun main() = runBlocking {
             // HTTP transport would be implemented here with Ktor server
         }
     }
+}
+
+/**
+ * Parse --config CLI argument from args array.
+ * Returns the file path or null if not provided.
+ */
+internal fun parseConfigArg(args: Array<String>): String? {
+    val idx = args.indexOf("--config")
+    if (idx < 0 || idx + 1 >= args.size) return null
+    return args[idx + 1]
 }

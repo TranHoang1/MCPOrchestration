@@ -26,9 +26,11 @@ import io.ktor.serialization.kotlinx.json.*
 import kotlinx.serialization.json.Json
 import org.koin.dsl.module
 
-val appModule = module {
+fun appModule(configPath: String? = null) = module {
     // Configuration
-    single<ConfigurationManager> { ConfigurationManagerImpl() }
+    single<ConfigurationManager> {
+        ConfigurationManagerImpl(configPath = configPath)
+    }
     single<OrchestratorConfig> { get<ConfigurationManager>().getConfig() }
 
     // HTTP Client (shared)

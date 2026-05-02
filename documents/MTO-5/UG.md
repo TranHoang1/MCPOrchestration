@@ -12,12 +12,12 @@
 | Title | Create MCP Tool Orchestration |
 | Author | DEV Agent |
 | Reviewer | BA Agent |
-| Version | 2.1 |
-| Date | 2026-05-04 |
+| Version | 6.0 |
+| Date | 2026-05-08 |
 | Status | Reviewed |
-| Related BRD | BRD-v2-MTO-5.docx |
-| Related FSD | FSD-v1-MTO-5.docx |
-| Related TDD | TDD-v1-MTO-5.docx |
+| Related BRD | BRD-v3-MTO-5.docx |
+| Related FSD | FSD-v2-MTO-5.docx |
+| Related TDD | TDD-v2-MTO-5.docx |
 
 ---
 
@@ -27,7 +27,11 @@
 |---------|------|--------|---------|
 | 1.0 | 2026-05-03 | DEV Agent | Initial document |
 | 2.0 | 2026-05-04 | DEV Agent | Rewritten from source code — accurate config reference, error codes, tool schemas, end-user focus |
-| 2.1 | 2026-05-04 | BA Agent (Reviewer) | Removed developer-focused source code references, simplified error codes table for end-users, replaced Section 8.4 |
+| 2.1 | 2026-05-04 | BA Agent (Reviewer) | Removed developer-focused source code references, simplified error codes table for end-users |
+| 3.0 | 2026-05-04 | DEV Agent | Added JSON config format (mcp.json) per Jira comment #10046. Dual YAML+JSON examples throughout. Restructured Configuration Methods section. |
+| 4.0 | 2026-05-05 | SM Agent | Rewrote Section 3.1 — comprehensive application.yml guide: file structure overview (7 sub-sections), relationship with mcp.json, default vs override, complete annotated example. |
+| 5.0 | 2026-05-06 | DEV Agent | Section 3.1 rewritten by DEV from source code (OrchestratorConfig.kt, ConfigurationManager.kt, ConfigValidator.kt). Added "Creating from Scratch" guide, verified all defaults against code, fixed config loading order accuracy. BA reviewed, QA verified. |
+| 6.0 | 2026-05-08 | DEV Agent | Added `--config` CLI argument (Section 2.4 Method 4). Updated config loading order (4 methods). Added mcp-servers.json example in mcpServers format. Updated mcp.json example with `--config` arg. BA reviewed, QA verified. |
 
 ---
 
@@ -70,16 +74,13 @@ This reduces context window usage from N tools down to 2, improving AI response 
 # Step 1: Download the release
 # Download mcp-orchestrator-all.jar from the GitHub Releases page
 
-# Step 2: Create configuration (optional — defaults work for stdio mode)
-# Place application.yml in the same directory as the JAR (see Section 3)
-
-# Step 3: Set environment variables (if using semantic search)
+# Step 2: Set environment variables (REQUIRED — server crashes without OPENAI_API_KEY)
 export OPENAI_API_KEY=sk-proj-your-key-here
 
-# Step 4: Run
+# Step 3: Run
 java -jar mcp-orchestrator-all.jar
 
-# Step 5: Verify — look for these log lines:
+# Step 4: Verify — look for these log lines:
 #   MCP Orchestration Server v1.0.0 starting...
 #   MCP Orchestration Server ready (stdio transport)
 ```
@@ -103,15 +104,16 @@ java -jar mcp-orchestrator-all.jar
 
 ### 2.4 Configuration Methods
 
-The server supports **3 configuration methods**, listed from lowest to highest priority:
+The server supports **4 configuration methods**, listed from lowest to highest priority:
 
-| # | Method | Priority | Best For |
-|---|--------|----------|----------|
-| 1 | **YAML file** (`application.yml`) | Lowest | Full configuration with all options |
-| 2 | **JSON file** (`mcp.json`) | Medium | Kiro IDE MCP server registration |
-| 3 | **Environment variables** | Highest (overrides files) | Secrets (API keys), CI/CD, Docker |
+| # | Method | Priority | Format | Best For |
+|---|--------|----------|--------|----------|
+| 1 | **YAML file** (`application.yml`) | Lowest | YAML | Full server configuration with all options |
+| 2 | **JSON file** (`mcp.json`) | Medium | JSON | Kiro IDE MCP server registration — easy copy-paste |
+| 3 | **`--config` CLI argument** | Medium-High | JSON (mcpServers) | Loading upstream servers from an external file at startup |
+| 4 | **Environment variables** | Highest (overrides files) | Shell | Secrets (API keys), CI/CD, Docker |
 
-Higher-priority methods override lower-priority ones. For example, setting `OPENAI_API_KEY` as an environment variable overrides the `api_key` value in `application.yml`.
+Higher-priority methods override lower-priority ones. For example, setting `OPENAI_API_KEY` as an environment variable overrides the `api_key` value in `application.yml`. Servers defined via `--config` override same-name servers from `application.yml` or `mcp.json`.
 
 #### Method 1: YAML Configuration File (`application.yml`)
 
@@ -163,9 +165,11 @@ orchestrator:
         JIRA_TOKEN: ${JIRA_TOKEN}
 ```
 
-#### Method 2: Kiro IDE MCP Configuration (`mcp.json`)
+#### Method 2: JSON Configuration File (`mcp.json`) — Kiro IDE Integration
 
-Register the Orchestrator as an MCP server in your Kiro IDE settings:
+Register the Orchestrator as an MCP server in your Kiro IDE settings. This JSON format is designed for easy copy-paste into IDE configuration.
+
+**Minimal — just the Orchestrator (no upstream servers):**
 
 ```json
 {
@@ -181,7 +185,95 @@ Register the Orchestrator as an MCP server in your Kiro IDE settings:
 }
 ```
 
-#### Method 3: Environment Variables
+**With upstream servers configured via environment variables:**
+
+```json
+{
+  "mcpServers": {
+    "mcp-orchestrator": {
+      "command": "java",
+      "args": ["-jar", "/path/to/mcp-orchestrator-all.jar"],
+      "env": {
+        "OPENAI_API_KEY": "sk-proj-your-key-here",
+        "JIRA_URL": "https://mycompany.atlassian.net",
+        "JIRA_TOKEN": "ATATT3xFfGF0...",
+        "GITHUB_TOKEN": "ghp_abc123..."
+      }
+    }
+  }
+}
+```
+
+> **Tip:** When using `mcp.json`, the Orchestrator still reads `application.yml` for detailed settings (discovery, execution, health). The JSON file primarily controls how the IDE launches the server and passes environment variables.
+
+#### Method 3: `--config` CLI Argument — External Server Configuration
+
+Pass `--config <path>` when launching the JAR to load upstream servers from an external JSON file in **mcpServers format**. This is useful when you want to keep upstream server definitions separate from the bundled `application.yml`.
+
+**How it works:**
+1. The Orchestrator parses `--config <path>` from the command-line arguments
+2. Reads the JSON file at `<path>` (absolute or relative to working directory)
+3. Parses the `mcpServers` key — each entry becomes an upstream server
+4. Transport is auto-detected: `url` present → HTTP, `command` present → stdio
+5. Servers from `--config` override same-name servers from `application.yml` or `mcp.json`
+
+**Command line:**
+
+```bash
+java -jar mcp-orchestrator-all.jar --config ./mcp-servers.json
+```
+
+**`mcp-servers.json` (mcpServers format):**
+
+```json
+{
+  "mcpServers": {
+    "jira-server": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-jira"],
+      "env": {
+        "JIRA_URL": "https://mycompany.atlassian.net",
+        "JIRA_TOKEN": "ATATT3xFfGF0..."
+      }
+    },
+    "git-server": {
+      "url": "http://localhost:3001/mcp"
+    },
+    "database-server": {
+      "command": "python",
+      "args": ["-m", "mcp_server_database"],
+      "env": {
+        "DB_URL": "postgresql://localhost:5432/mydb"
+      }
+    }
+  }
+}
+```
+
+**Kiro IDE `mcp.json` with `--config`:**
+
+```json
+{
+  "mcpServers": {
+    "mcp-orchestrator": {
+      "command": "java",
+      "args": ["-jar", "/path/to/mcp-orchestrator-all.jar", "--config", "./mcp-servers.json"],
+      "env": {
+        "OPENAI_API_KEY": "sk-proj-your-key-here"
+      }
+    }
+  }
+}
+```
+
+> **Tip:** Use `--config` when you want to share upstream server definitions across team members (commit `mcp-servers.json` to the repo) while keeping secrets in each developer's `mcp.json` env section.
+
+**If the file is not found**, the server logs a warning and continues without the external servers:
+```
+WARN  Config file not found: /path/to/mcp-servers.json. Continuing without it.
+```
+
+#### Method 4: Environment Variables
 
 Environment variables override any value in `application.yml`. The server resolves `${VAR_NAME}` patterns in YAML to the corresponding environment variable.
 
@@ -232,21 +324,311 @@ Expected: response with matching tools from upstream servers.
 | Symptom | Cause | Fix |
 |---------|-------|-----|
 | No log output at all | JDK not installed or wrong version | Install JDK 21+: `java -version` |
-| `ConfigException: Failed to parse configuration` | Invalid YAML syntax | Validate YAML at yamllint.com |
-| `ConfigException: application.yml not found` | No config file and not in classpath | Place `application.yml` next to the JAR |
+| `ConfigException: Failed to parse configuration` | `OPENAI_API_KEY` env var not set (bundled config requires it) | Set `export OPENAI_API_KEY=sk-proj-...` or `export OPENAI_API_KEY=not-configured` for keyword-only mode |
 | `search_mode: keyword` in responses | Qdrant or OpenAI unavailable | Normal — keyword fallback is working. Install Qdrant for semantic search. |
 
 ---
 
 ## 3. Configuration Reference
 
-### 3.1 Configuration File Location
+### 3.1 Understanding `application.yml`
 
-The server loads configuration in this order:
-1. `application.yml` in the current working directory (same directory as JAR)
-2. `application.yml` from the JAR's classpath (bundled defaults)
+#### What is `application.yml`?
 
-Environment variables referenced as `${VAR_NAME}` in YAML are resolved at load time. If a variable is not set, it resolves to an empty string.
+`application.yml` is the **primary configuration file** for the MCP Orchestration Server. It is a [YAML](https://yaml.org/) text file that controls **all server behavior**: transport mode, tool discovery settings, execution timeouts, embedding configuration, vector database connection, health monitoring, and upstream MCP server definitions.
+
+The server resolves `${ENV_VAR}` references to environment variables at load time. If a referenced variable is not set, it resolves to an empty string.
+
+#### File Structure Overview
+
+The file has a single top-level key `orchestrator` with **7 sub-sections**:
+
+```yaml
+orchestrator:
+  server:            # 1. Transport mode and port
+  discovery:         # 2. Tool search settings — top_k, threshold, fallback
+  execution:         # 3. Upstream tool execution — timeout, retries, validation
+  embedding:         # 4. OpenAI embedding model and cache settings
+  vector_db:         # 5. Qdrant vector database connection
+  health:            # 6. Health monitoring and auto-reconnect
+  upstream_servers:  # 7. List of upstream MCP servers to connect to
+```
+
+Each sub-section has sensible defaults. You only need to specify properties you want to override — everything else uses the built-in defaults shown in Section 3.2.
+
+#### Creating Your Configuration
+
+Since the server reads its bundled `application.yml` from the classpath and resolves `${VAR_NAME}` references from environment variables, the primary way to configure the server is through **environment variables** and **`mcp.json`**.
+
+**Option A — Kiro IDE users (recommended):** Configure everything in `mcp.json`, optionally with `--config` for upstream servers:
+
+```json
+{
+  "mcpServers": {
+    "mcp-orchestrator": {
+      "command": "java",
+      "args": ["-jar", "/path/to/mcp-orchestrator-all.jar", "--config", "./mcp-servers.json"],
+      "env": {
+        "OPENAI_API_KEY": "sk-proj-your-key-here",
+        "JIRA_URL": "https://mycompany.atlassian.net",
+        "JIRA_TOKEN": "ATATT3xFfGF0..."
+      }
+    }
+  }
+}
+```
+
+Where `mcp-servers.json` defines your upstream servers:
+
+```json
+{
+  "mcpServers": {
+    "jira-server": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-jira"],
+      "env": {
+        "JIRA_URL": "https://mycompany.atlassian.net",
+        "JIRA_TOKEN": "ATATT3xFfGF0..."
+      }
+    },
+    "git-server": {
+      "url": "http://localhost:3001/mcp"
+    }
+  }
+}
+```
+
+Place `mcp.json` at `.kiro/settings/mcp.json` in your workspace. The IDE reads it and launches the Orchestrator with the specified arguments and environment variables.
+
+**Option B — Command-line users:** Set environment variables before running:
+
+```bash
+# Required — server crashes without this
+export OPENAI_API_KEY="sk-proj-your-key-here"
+
+# Optional — for upstream server secrets
+export JIRA_URL="https://mycompany.atlassian.net"
+export JIRA_TOKEN="ATATT3xFfGF0..."
+
+# Run
+java -jar mcp-orchestrator-all.jar
+```
+
+```powershell
+# Windows PowerShell
+$env:OPENAI_API_KEY = "sk-proj-your-key-here"
+$env:JIRA_URL = "https://mycompany.atlassian.net"
+$env:JIRA_TOKEN = "ATATT3xFfGF0..."
+
+java -jar mcp-orchestrator-all.jar
+```
+
+**Verify startup.** Look for these log lines:
+
+```
+MCP Orchestration Server v1.0.0 starting...
+MCP Orchestration Server ready (stdio transport)
+```
+
+If you see `ConfigException: Failed to parse configuration`, check that `OPENAI_API_KEY` is set (see "Default Behavior" section below for details).
+
+#### Relationship Between `application.yml`, `mcp.json`, and `--config`
+
+These files serve **different purposes** and work together:
+
+| File | Format | Purpose | Contains |
+|------|--------|---------|----------|
+| `application.yml` | YAML | **Server settings** — how the Orchestrator behaves internally | All 7 config sections: transport, discovery, execution, embedding, vector_db, health, upstream_servers |
+| `mcp.json` | JSON | **IDE launch config** — how Kiro IDE starts the Orchestrator process | The `java -jar` command, JAR path, `--config` arg, and environment variables (API keys, tokens) |
+| `mcp-servers.json` | JSON | **External server definitions** — loaded via `--config` CLI arg | mcpServers entries (upstream server definitions in IDE-friendly format) |
+
+**How they interact:**
+
+1. You edit `mcp.json` in your Kiro IDE settings (`.kiro/settings/mcp.json`) to register the Orchestrator as an MCP server
+2. `mcp.json` specifies the launch command (`java -jar ...`), optionally with `--config` argument, and passes environment variables (like `OPENAI_API_KEY`)
+3. When the IDE launches the Orchestrator, it sets those environment variables in the process
+4. The Orchestrator reads `application.yml` and resolves `${VAR_NAME}` references from those environment variables
+5. If `--config <path>` is provided, the Orchestrator also loads upstream servers from that external JSON file (mcpServers format)
+
+**Example flow:**
+
+```
+mcp.json: "args": ["--config", "./mcp-servers.json"], "env": { "OPENAI_API_KEY": "sk-proj-abc123" }
+    ↓ (IDE launches Orchestrator with --config arg and env vars set)
+application.yml: api_key: ${OPENAI_API_KEY}
+    ↓ (ConfigurationManager resolves at load time)
+Effective value: api_key: "sk-proj-abc123"
+    +
+mcp-servers.json: { "mcpServers": { "jira-server": { ... } } }
+    ↓ (ConfigurationManager loads CLI config servers)
+Effective upstream_servers: [jira-server from --config, ...]
+```
+
+**When to use which:**
+
+| Scenario | Where to Configure |
+|----------|--------------------|
+| Change discovery top_k from 5 to 10 | `application.yml` → `discovery.top_k: 10` |
+| Set OpenAI API key | `mcp.json` → `"env": { "OPENAI_API_KEY": "sk-..." }` |
+| Add a new upstream MCP server | `application.yml` → add entry to `upstream_servers` list |
+| Add upstream servers from shared file | `--config ./mcp-servers.json` (mcpServers format) |
+| Pass Jira token securely | `mcp.json` → `"env": { "JIRA_TOKEN": "..." }` |
+| Change execution timeout | `application.yml` → `execution.timeout_seconds: 60` |
+| Change JAR file path | `mcp.json` → `"args": ["-jar", "/new/path/to/jar"]` |
+| Share server definitions across team | `--config ./mcp-servers.json` (commit to repo) |
+
+#### Default Behavior — What Happens Without `application.yml`
+
+The JAR file ships with a **bundled** `application.yml` inside the classpath. The server always reads this bundled file on startup.
+
+> **⚠️ Known Limitation (v1.0.0):** The current version does **not** automatically detect an external `application.yml` file placed next to the JAR. Configuration customization is done through **environment variables** that override `${VAR_NAME}` references in the bundled config. External file override support is planned for a future release.
+
+**⚠️ Required Environment Variable:** The bundled config contains `api_key: ${OPENAI_API_KEY}`. If the `OPENAI_API_KEY` environment variable is **not set**, the server will crash with:
+
+```
+ConfigException: Failed to parse configuration: Value for 'api_key' is invalid:
+Unexpected null or empty value for non-null field.
+```
+
+**To start the server successfully, you must either:**
+
+1. **Set `OPENAI_API_KEY`** to any non-empty value (even a dummy value like `"not-configured"` if you don't need semantic search):
+   ```bash
+   export OPENAI_API_KEY="sk-proj-your-key-here"   # real key for semantic search
+   # OR
+   export OPENAI_API_KEY="not-configured"           # dummy value for keyword-only mode
+   ```
+
+2. **Or pass it via `mcp.json`** (recommended for Kiro IDE):
+   ```json
+   {
+     "mcpServers": {
+       "mcp-orchestrator": {
+         "command": "java",
+         "args": ["-jar", "/path/to/mcp-orchestrator-all.jar"],
+         "env": {
+           "OPENAI_API_KEY": "sk-proj-your-key-here"
+         }
+       }
+     }
+   }
+   ```
+
+**Bundled default values** (when env vars are set):
+
+| Section | Default Behavior |
+|---------|-----------------|
+| `server` | stdio transport, port 8080 (unused in stdio mode) |
+| `discovery` | top_k=5, threshold=0.7, max_query_length=2000, keyword fallback enabled |
+| `execution` | 30s timeout, argument validation on, 1 retry |
+| `embedding` | OpenAI provider, text-embedding-3-small model, uses `OPENAI_API_KEY` env var |
+| `vector_db` | Qdrant at localhost:6333, collection "mcp_tools" |
+| `health` | 30s check interval, auto-reconnect on, max 5 attempts |
+| `upstream_servers` | **Empty list** — no upstream servers connected |
+
+**In practice, this means:**
+- The server starts successfully when `OPENAI_API_KEY` is set (even to a dummy value)
+- It exposes `find_tools` and `execute_dynamic_tool` via stdio
+- `find_tools` returns empty results (no upstream servers → no tools indexed)
+- To make it useful, configure upstream servers via environment variables or `mcp.json`
+
+#### Customizing Server Settings
+
+The bundled `application.yml` contains sensible defaults for all 7 sections. To change settings like `top_k`, `timeout_seconds`, or `similarity_threshold`, you currently need to modify the bundled config and rebuild, or wait for external file override support in a future release.
+
+**Settings you CAN customize via environment variables today:**
+- `OPENAI_API_KEY` — embedding API key (referenced as `${OPENAI_API_KEY}`)
+- Any upstream server secrets (e.g., `JIRA_TOKEN`, `JIRA_URL`) — referenced as `${VAR_NAME}` in the upstream_servers section
+
+**Settings that use bundled defaults (not overridable via env vars in v1.0.0):**
+- `discovery.top_k` (default: 5)
+- `discovery.similarity_threshold` (default: 0.7)
+- `execution.timeout_seconds` (default: 30)
+- `health.check_interval_seconds` (default: 30)
+- All other non-secret settings
+
+> **Note:** The complete annotated `application.yml` below shows all available properties and their defaults. This serves as a reference for understanding the server's behavior and for future versions that support external file override.
+
+#### Complete Annotated `application.yml`
+
+Below is a **complete** `application.yml` showing every property with its default value and inline comments. Copy this as a starting point and modify what you need:
+
+```yaml
+orchestrator:
+
+  # ── 1. Server Settings ──────────────────────────────────────────────
+  server:
+    port: 8080              # HTTP port (only used when transport = "http")
+    transport: stdio         # "stdio" for Kiro IDE, "http" for standalone HTTP server
+
+  # ── 2. Discovery Settings ───────────────────────────────────────────
+  # Controls how find_tools searches for matching tools
+  discovery:
+    top_k: 5                 # Max results returned by find_tools (range: 1–20)
+    similarity_threshold: 0.7 # Min cosine similarity score (range: 0.0–1.0)
+                              #   Lower = more results but less relevant
+                              #   Higher = fewer but more precise results
+    max_query_length: 2000   # Max query string length in characters (≥1)
+    fallback_to_keyword: true # If true, uses keyword search when Vector DB
+                              # or Embedding service is unavailable
+
+  # ── 3. Execution Settings ───────────────────────────────────────────
+  # Controls how execute_dynamic_tool forwards requests to upstream servers
+  execution:
+    timeout_seconds: 30      # Upstream tool timeout in seconds (range: 5–300)
+                              # Throws EXECUTION_TIMEOUT if exceeded
+    validate_arguments: true  # Validate tool arguments against input_schema
+                              # before forwarding to upstream server
+    max_retries: 1           # Retry failed executions (≥0, 0 = no retries)
+
+  # ── 4. Embedding Settings ───────────────────────────────────────────
+  # OpenAI embedding model for semantic search (optional — keyword fallback)
+  embedding:
+    provider: openai                    # Only "openai" supported currently
+    model: text-embedding-3-small       # OpenAI embedding model name
+    api_key: ${OPENAI_API_KEY}          # Resolved from environment variable
+                                        # Leave empty for keyword-only mode
+    dimensions: 768                     # Must match model output dimensions
+    cache_enabled: true                 # In-memory cache to reduce API calls
+    cache_max_size: 100                 # Max cached embedding vectors
+    cache_ttl_minutes: 5                # Cache entry time-to-live in minutes
+
+  # ── 5. Vector Database Settings ─────────────────────────────────────
+  # Qdrant connection for semantic search (optional — keyword fallback)
+  vector_db:
+    provider: qdrant          # Only "qdrant" supported currently
+    host: localhost            # Qdrant server hostname
+    port: 6333                 # Qdrant HTTP API port
+    collection_name: mcp_tools # Qdrant collection for tool vectors
+
+  # ── 6. Health Monitoring Settings ───────────────────────────────────
+  # Periodic health checks and auto-reconnect for upstream servers
+  health:
+    check_interval_seconds: 30  # Seconds between health check cycles (≥1)
+    auto_reconnect: true         # Auto-reconnect to disconnected servers
+                                 # Uses exponential backoff (starting at 1000ms)
+    max_reconnect_attempts: 5    # Max reconnect attempts before ERROR state (≥0)
+
+  # ── 7. Upstream MCP Servers ─────────────────────────────────────────
+  # List of MCP servers the Orchestrator connects to and indexes tools from.
+  # Each server's tools become discoverable via find_tools.
+  upstream_servers:
+    # Example: Jira MCP server (stdio transport — launches a process)
+    - name: jira-server              # Unique identifier (must not be blank)
+      transport: stdio                # "stdio" = launch process, "http" = connect to URL
+      command: npx                    # Command to launch the MCP server
+      args:                           # Command-line arguments
+        - "-y"
+        - "@modelcontextprotocol/server-jira"
+      env:                            # Environment variables for the process
+        JIRA_URL: ${JIRA_URL}         # Resolved from parent environment
+        JIRA_TOKEN: ${JIRA_TOKEN}
+
+    # Example: HTTP-based MCP server (connects to running service)
+    - name: git-server
+      transport: http
+      url: "http://localhost:3001/mcp"  # Required for http transport
+```
 
 ### 3.2 All Configuration Properties
 
@@ -312,8 +694,8 @@ Each entry in the `upstream_servers` list defines one upstream MCP server:
 | `name` | String | **Yes** | — | Unique server identifier (must not be blank) |
 | `transport` | String | **Yes** | `"stdio"` | `"stdio"` or `"http"` |
 | `command` | String | stdio only | `null` | Command to launch the MCP server process |
-| `args` | List&lt;String&gt; | No | `[]` | Command-line arguments for the process |
-| `env` | Map&lt;String, String&gt; | No | `{}` | Environment variables passed to the process |
+| `args` | List | No | `[]` | Command-line arguments for the process |
+| `env` | Map | No | `{}` | Environment variables passed to the process |
 | `url` | String | http only | `null` | HTTP endpoint URL for the MCP server |
 
 **Validation rules:**
@@ -339,6 +721,8 @@ Additional environment variables can be referenced in `application.yml` using `$
 
 #### Minimal — Keyword Search Only (no external services)
 
+**YAML (`application.yml`):**
+
 ```yaml
 orchestrator:
   server:
@@ -348,7 +732,22 @@ orchestrator:
   upstream_servers: []
 ```
 
+**JSON (`mcp.json`) — for Kiro IDE:**
+
+```json
+{
+  "mcpServers": {
+    "mcp-orchestrator": {
+      "command": "java",
+      "args": ["-jar", "/path/to/mcp-orchestrator-all.jar"]
+    }
+  }
+}
+```
+
 #### Production — Semantic Search with Multiple Upstream Servers
+
+**YAML (`application.yml`):**
 
 ```yaml
 orchestrator:
@@ -406,8 +805,100 @@ orchestrator:
       args: ["-m", "mcp_server_database"]
 ```
 
----
+**JSON (`mcp.json`) — for Kiro IDE with `--config` and env vars:**
 
+```json
+{
+  "mcpServers": {
+    "mcp-orchestrator": {
+      "command": "java",
+      "args": ["-jar", "/path/to/mcp-orchestrator-all.jar", "--config", "./mcp-servers.json"],
+      "env": {
+        "OPENAI_API_KEY": "sk-proj-your-key-here",
+        "JIRA_URL": "https://mycompany.atlassian.net",
+        "JIRA_TOKEN": "ATATT3xFfGF0...",
+        "GITHUB_TOKEN": "ghp_abc123..."
+      }
+    }
+  }
+}
+```
+
+**`mcp-servers.json` (mcpServers format — loaded via `--config`):**
+
+```json
+{
+  "mcpServers": {
+    "jira-server": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-jira"],
+      "env": {
+        "JIRA_URL": "https://mycompany.atlassian.net",
+        "JIRA_TOKEN": "ATATT3xFfGF0..."
+      }
+    },
+    "git-server": {
+      "url": "http://localhost:3001/mcp"
+    },
+    "database-server": {
+      "command": "python",
+      "args": ["-m", "mcp_server_database"]
+    }
+  }
+}
+```
+
+> **Note:** The `mcp.json` file passes environment variables and `--config` argument to the Orchestrator process. The `--config` file uses the same mcpServers format, making it easy to define upstream servers in a familiar JSON structure. Secrets go in `mcp.json` env, server definitions go in `mcp-servers.json`.
+
+#### Multi-IDE Setup — Sharing Config Across Machines
+
+If you use the Orchestrator on multiple machines, keep `application.yml` in a shared location and use `mcp.json` per-machine for secrets:
+
+**Shared `application.yml` (committed to repo):**
+
+```yaml
+orchestrator:
+  server:
+    transport: stdio
+  discovery:
+    top_k: 5
+    similarity_threshold: 0.7
+    fallback_to_keyword: true
+  execution:
+    timeout_seconds: 30
+  embedding:
+    provider: openai
+    model: text-embedding-3-small
+    api_key: ${OPENAI_API_KEY}
+  upstream_servers:
+    - name: jira-server
+      transport: stdio
+      command: npx
+      args: ["-y", "@modelcontextprotocol/server-jira"]
+      env:
+        JIRA_URL: ${JIRA_URL}
+        JIRA_TOKEN: ${JIRA_TOKEN}
+```
+
+**Per-machine `mcp.json` (NOT committed — contains secrets):**
+
+```json
+{
+  "mcpServers": {
+    "mcp-orchestrator": {
+      "command": "java",
+      "args": ["-jar", "C:/tools/mcp-orchestrator-all.jar"],
+      "env": {
+        "OPENAI_API_KEY": "sk-proj-machine1-key",
+        "JIRA_URL": "https://mycompany.atlassian.net",
+        "JIRA_TOKEN": "ATATT3xFfGF0-machine1-token"
+      }
+    }
+  }
+}
+```
+
+---
 
 ## 4. Usage
 
@@ -592,7 +1083,7 @@ Returns the 2 registered MCP tools with their full JSON Schemas:
 
 ### 5.1 Adding a New Upstream MCP Server
 
-1. Edit `application.yml` and add a new entry under `upstream_servers`:
+**Option A — via `application.yml` (YAML):**
 
 ```yaml
 upstream_servers:
@@ -604,13 +1095,53 @@ upstream_servers:
       API_KEY: ${MY_SERVER_API_KEY}
 ```
 
-2. Restart the Orchestrator (or trigger hot-reload — see Section 5.3).
-3. The server automatically:
+**Option B — via `mcp.json` (JSON) — pass secrets as env vars:**
+
+```json
+{
+  "mcpServers": {
+    "mcp-orchestrator": {
+      "command": "java",
+      "args": ["-jar", "/path/to/mcp-orchestrator-all.jar"],
+      "env": {
+        "MY_SERVER_API_KEY": "your-api-key-here"
+      }
+    }
+  }
+}
+```
+
+**Option C — via `--config` (mcpServers format) — recommended for team sharing:**
+
+Add the new server to your `mcp-servers.json` file:
+
+```json
+{
+  "mcpServers": {
+    "my-new-server": {
+      "command": "npx",
+      "args": ["-y", "my-mcp-server-package"],
+      "env": {
+        "API_KEY": "your-api-key-here"
+      }
+    }
+  }
+}
+```
+
+Then launch with `--config`:
+```bash
+java -jar mcp-orchestrator-all.jar --config ./mcp-servers.json
+```
+
+After updating configuration:
+1. Restart the Orchestrator (or trigger hot-reload — see Section 5.3).
+2. The server automatically:
    - Connects to the new upstream server
    - Calls `tools/list` to discover its tools
    - Generates embeddings for each tool description
    - Indexes tools in the Vector Database
-4. Verify by calling `find_tools` with a query matching the new server's tools.
+3. Verify by calling `find_tools` with a query matching the new server's tools.
 
 ### 5.2 Monitoring Server Health
 
@@ -705,7 +1236,7 @@ If Qdrant is not available, the system automatically falls back to keyword-based
 | 5 | `EXECUTION_TIMEOUT` error | Upstream server took longer than configured timeout | Increase `execution.timeout_seconds` or investigate upstream server performance. |
 | 6 | Server fails to start with `ConfigException` | Invalid `application.yml` | Check logs for specific validation error. See Section 6.3 for validation rules. |
 | 7 | Upstream server stuck in `ERROR` state | Connection failed after max reconnect attempts | Fix the upstream server, then restart the Orchestrator. |
-| 8 | `OPENAI_API_KEY` resolves to empty | Environment variable not set | Set `export OPENAI_API_KEY=sk-...` before starting. |
+| 8 | `OPENAI_API_KEY` resolves to empty | Environment variable not set | Set `export OPENAI_API_KEY=sk-...` before starting. Or add to `mcp.json` env section. |
 | 9 | Qdrant connection refused | Qdrant not running or wrong port | Start Qdrant: `docker run -p 6333:6333 qdrant/qdrant`. Check `vector_db.host` and `vector_db.port`. |
 | 10 | Slow `find_tools` responses | Large tool index or cold embedding cache | Enable `cache_enabled: true`. Reduce `top_k`. Check network latency to OpenAI API. |
 
@@ -790,6 +1321,15 @@ A: The Orchestrator maintains in-memory state (ToolRegistry, server connections,
 
 **Q: What is the `${VAR_NAME}` syntax in application.yml?**
 A: The server resolves `${VAR_NAME}` patterns to environment variables when loading the configuration. If the variable is not set, it resolves to an empty string. This is useful for secrets like API keys.
+
+**Q: Should I use YAML or JSON for configuration?**
+A: Use **both**. Put detailed server settings in `application.yml` (YAML) and IDE launch configuration with secrets in `mcp.json` (JSON). The JSON format is easier to copy-paste into Kiro IDE settings. See Section 2.4 for details.
+
+**Q: Can I configure upstream servers in mcp.json instead of application.yml?**
+A: Not directly in `mcp.json` itself — that file controls how the IDE launches the Orchestrator. However, you have two options: (1) Pass upstream server secrets via `mcp.json`'s `env` section and reference them in `application.yml` with `${VAR_NAME}`. (2) Use the `--config` CLI argument to load upstream servers from a separate JSON file in mcpServers format: `"args": ["-jar", "/path/to/jar", "--config", "./mcp-servers.json"]`. The `--config` file uses the same mcpServers format as `mcp.json`, making it easy to define servers in a familiar JSON structure.
+
+**Q: What is the `--config` CLI argument?**
+A: `--config <path>` tells the Orchestrator to load upstream server definitions from an external JSON file in mcpServers format. Each key under `mcpServers` becomes a server name, and transport is auto-detected (`url` → HTTP, `command` → stdio). Servers from `--config` have higher priority than `application.yml` servers with the same name. If the file is not found, the server logs a warning and continues without it.
 
 ---
 
@@ -893,14 +1433,15 @@ A: The server resolves `${VAR_NAME}` patterns to environment variables when load
 | Fat JAR | A single JAR file containing all dependencies, ready to run with `java -jar` |
 | Hot-Reload | Ability to update configuration without restarting the server |
 | Exponential Backoff | Retry strategy where wait time doubles after each failed attempt |
+| mcp.json | JSON configuration file used by Kiro IDE to register MCP servers |
 
 ### 8.2 Related Documents
 
 | Document | Location |
 |----------|----------|
-| BRD | BRD-v2-MTO-5.docx |
-| FSD | FSD-v1-MTO-5.docx |
-| TDD | TDD-v1-MTO-5.docx |
+| BRD | BRD-v3-MTO-5.docx |
+| FSD | FSD-v2-MTO-5.docx |
+| TDD | TDD-v2-MTO-5.docx |
 | STP | STP-v1-MTO-5.docx |
 | STC | STC-v1-MTO-5.xlsx |
 | DPG | DPG-v1-MTO-5.docx |

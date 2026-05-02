@@ -1,0 +1,147 @@
+package com.orchestrator.mcp.config
+
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.jsonArray
+import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.jsonPrimitive
+import org.slf4j.LoggerFactory
+
+/**
+ * Loads upstream server configuration from JSON files
+ * (config.json or application.json).
+ *
+ * JSON config is a simpler format focused on upstream_servers,
+ * complementing the full YAML configuration.
+ */
+object JsonConfigLoader {
+
+    private val logger = LoggerFactory.getLogger(
+        JsonConfigLoader::class.java
+    )
+
+    private val json = Json {
+        ignoreUnknownKeys = true
+        isLenient = true
+    }
+
+    /**
+     * Parse JSON content and extract upstream server configs.
+     * Supports two formats:
+     * - Root-level: { "upstream_servers": [...] }
+     * - Nested: { "orchestrator": { "upstream_servers": [...] } }
+     */
+    fun parseUpstreamServers(
+        content: String
+    ): List<UpstreamServerConfig> {
+        return try {
+            val resolved = ConfigurationManagerImpl
+                .resolveEnvVars(content)
+            val root = json.parseToJsonElement(resolved)
+                .jsonObject
+            val servers = findServersArray(root)
+            servers.map { parseServerEntry(it.jsonObject) }
+        } catch (e: Exception) {
+            logger.error(
+                "Failed to parse JSON config: ${e.message}"
+            )
+            emptyList()
+        }
+    }
+
+    /**
+     * Parse JSON content in MCP setting format (mcpServers key).
+     * Format: { "mcpServers": { "name": { config } } }
+     * Each key under mcpServers becomes the server name.
+     * Transport is inferred: url → http, command → stdio.
+     */
+    fun parseMcpServersFormat(
+        content: String
+    ): List<UpstreamServerConfig> {
+        return try {
+            val resolved = ConfigurationManagerImpl
+                .resolveEnvVars(content)
+            val root = json.parseToJsonElement(resolved)
+                .jsonObject
+            val mcpServers = root["mcpServers"]
+                ?.jsonObject ?: return emptyList()
+            mcpServers.entries.map { (name, config) ->
+                parseMcpServerEntry(name, config.jsonObject)
+            }
+        } catch (e: Exception) {
+            logger.error(
+                "Failed to parse mcpServers config: " +
+                    "${e.message}"
+            )
+            emptyList()
+        }
+    }
+
+    private fun findServersArray(
+        root: JsonObject
+    ): List<kotlinx.serialization.json.JsonElement> {
+        // Try root-level: { "upstream_servers": [...] }
+        root["upstream_servers"]?.jsonArray?.let {
+            return it.toList()
+        }
+        // Try nested: { "orchestrator": { "upstream_servers": [...] } }
+        root["orchestrator"]?.jsonObject
+            ?.get("upstream_servers")?.jsonArray?.let {
+                return it.toList()
+            }
+        return emptyList()
+    }
+
+    private fun parseServerEntry(
+        obj: JsonObject
+    ): UpstreamServerConfig {
+        val name = obj["name"]?.jsonPrimitive?.content ?: ""
+        val transport = obj["transport"]
+            ?.jsonPrimitive?.content ?: "stdio"
+        val command = obj["command"]
+            ?.jsonPrimitive?.content
+        val args = obj["args"]?.jsonArray
+            ?.map { it.jsonPrimitive.content }
+            ?: emptyList()
+        val env = obj["env"]?.jsonObject
+            ?.mapValues { it.value.jsonPrimitive.content }
+            ?: emptyMap()
+        val url = obj["url"]?.jsonPrimitive?.content
+        return UpstreamServerConfig(
+            name = name,
+            transport = transport,
+            command = command,
+            args = args,
+            env = env,
+            url = url
+        )
+    }
+
+    /**
+     * Parse a single server entry from mcpServers format.
+     * Transport inferred: url present → http, else → stdio.
+     */
+    private fun parseMcpServerEntry(
+        name: String,
+        obj: JsonObject
+    ): UpstreamServerConfig {
+        val url = obj["url"]?.jsonPrimitive?.content
+        val command = obj["command"]
+            ?.jsonPrimitive?.content
+        val transport = if (url != null) "http" else "stdio"
+        val args = obj["args"]?.jsonArray
+            ?.map { it.jsonPrimitive.content }
+            ?: emptyList()
+        val env = obj["env"]?.jsonObject
+            ?.mapValues { it.value.jsonPrimitive.content }
+            ?: emptyMap()
+        return UpstreamServerConfig(
+            name = name,
+            transport = transport,
+            command = command,
+            args = args,
+            env = env,
+            url = url
+        )
+    }
+}

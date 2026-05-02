@@ -110,6 +110,30 @@ From TDD Section 6 (Integration Design):
 
 **CRITICAL — After implementing production code, you MUST read STC.md and implement ALL automated test cases defined there (excluding manual SIT cases).**
 
+**⛔ INTEGRATION TEST IMPLEMENTATION RULES (IT-level tests):**
+
+Integration tests MUST test real component interactions, NOT just mock everything:
+
+| STC Specifies | DEV MUST Use | ❌ FORBIDDEN |
+|---------------|-------------|-------------|
+| "Ktor testApplication" | `testApplication { }` block with real routing | Direct service method calls |
+| "Testcontainers" / "real DB" | Testcontainers dependency + real container | `mockk<DbClient>()` or `mockk<VectorDbClient>()` |
+| "Mock upstream server process" | Real mock process (spawn process or embedded server) | `mockk<McpConnection>()` |
+| "HTTP server" | Embedded HTTP server (e.g., MockWebServer, Ktor test server) | `mockk<HttpClient>()` |
+| "Config hot-reload" | Real file watcher + actual file modification | Only testing YAML parsing |
+
+**Acceptable mocks in IT tests:** Only for external paid services (OpenAI API, cloud services) that cannot run locally. Everything else MUST be real or use Testcontainers.
+
+**If STC requires a dependency not in build.gradle.kts** (e.g., Testcontainers), DEV MUST:
+1. Add the dependency to build.gradle.kts
+2. Inform user about the new dependency
+3. Implement tests using the real dependency
+
+**If DEV cannot implement a real integration** (e.g., no Docker available for Testcontainers):
+1. Document the limitation explicitly in test comments
+2. Implement the test with mocks BUT mark it clearly: `// TODO: Replace mockk with Testcontainers when Docker is available`
+3. Report to SM/QA that IT tests are degraded
+
 1. Read `documents/{TICKET-KEY}/STC.md` to get the full list of test cases
 2. Implement test cases by level:
 

@@ -59,12 +59,13 @@
       "updateScope": "Added --config CLI argument (Method 3), mcp-servers.json mcpServers format examples, updated config loading order (4 methods), updated FAQ"
     },
     "testing": {
-      "status": "done",
-      "completedAt": "2026-05-08T16:11:00Z",
-      "testResults": {
-        "total": 164,
-        "passed": 164,
-        "failed": 0
+      "status": "in_progress",
+      "completedAt": null,
+      "testResults": null,
+      "itRewrite": {
+        "status": "in_progress",
+        "reason": "IT tests were all-mock unit tests, not real integration tests per STC spec",
+        "startedAt": "2026-05-09T10:00:00Z"
       }
     },
     "uat": {

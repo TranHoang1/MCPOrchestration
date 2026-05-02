@@ -26,6 +26,17 @@
         "jira_delete_issue",
         "jira_delete_issue"
       ]
+    },
+    "mcp-orchestrator": {
+      "command": "java",
+      "args": [
+        "-jar",
+        ".\\TempRelease\\mcp-orchestrator-all.jar",
+        "--config", ".\\TempRelease\\mcp-servers.json"
+      ],
+      "env": {
+        "OPENAI_API_KEY": "not-configured"
+      }
     }
   }
 }

@@ -5,6 +5,9 @@ kotlin = "2.3.20"
 # Ktor
 ktor = "3.4.0"
 
+# MCP SDK
+mcp-sdk = "0.12.0"
+
 # DI
 koin = "4.1.1"
 
@@ -12,6 +15,7 @@ koin = "4.1.1"
 kotlinx-coroutines = "1.10.2"
 kotlinx-serialization = "1.8.1"
 kotlinx-datetime = "0.6.2"
+kotlinx-io = "0.7.0"
 
 # Logging
 logback = "1.5.18"
@@ -26,6 +30,12 @@ mockk = "1.14.2"
 testcontainers = "1.21.1"
 
 [libraries]
+# MCP SDK
+mcp-sdk-server = { module = "io.modelcontextprotocol:kotlin-sdk-server", version.ref = "mcp-sdk" }
+
+# KotlinX IO (required by MCP SDK StdioServerTransport)
+kotlinx-io-core = { module = "org.jetbrains.kotlinx:kotlinx-io-core", version.ref = "kotlinx-io" }
+
 # Ktor Server
 ktor-server-core = { module = "io.ktor:ktor-server-core", version.ref = "ktor" }
 ktor-server-netty = { module = "io.ktor:ktor-server-netty", version.ref = "ktor" }

@@ -59,7 +59,7 @@ class ToolExecutionDispatcherImplTest : FunSpec({
         val response = dispatcher.execute("read_logs", buildJsonObject { put("path", "/var/log") })
 
         response.content[0].text shouldBe "log data..."
-        response.meta?.upstream_server shouldBe "log-server"
+        response.meta?.upstreamServer shouldBe "log-server"
         coVerify { connection.sendRequest("tools/call", any()) }
     }
 

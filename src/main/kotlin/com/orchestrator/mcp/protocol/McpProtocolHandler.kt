@@ -10,6 +10,9 @@ import org.slf4j.LoggerFactory
 
 /**
  * Handles MCP protocol methods: initialize, tools/list, tools/call, ping.
+ *
+ * NOTE: This class is retained for backward compatibility with existing tests.
+ * Production code now uses McpServerFactory + official MCP SDK.
  */
 class McpProtocolHandler(
     private val discoveryService: ToolDiscoveryService,
@@ -19,9 +22,10 @@ class McpProtocolHandler(
     private val json = Json { ignoreUnknownKeys = true; encodeDefaults = true }
 
     fun handleInitialize(params: JsonObject?): InitializeResult {
-        logger.info("MCP initialize handshake")
+        val clientVersion = params?.get("protocolVersion")?.jsonPrimitive?.content ?: "2024-11-05"
+        logger.info("MCP initialize handshake (client version: $clientVersion)")
         return InitializeResult(
-            protocolVersion = "2024-11-05",
+            protocolVersion = clientVersion,
             capabilities = ServerCapabilities(tools = JsonObject(emptyMap())),
             serverInfo = ServerInfo(name = "mcp-orchestrator", version = "1.0.0")
         )
@@ -116,8 +120,10 @@ class McpProtocolHandler(
             val response = executionDispatcher.execute(toolName, toolArguments)
 
             ToolCallResult(
-                content = response.content,
-                _meta = response.meta
+                content = response.content.map { ContentItem(type = it.type, text = it.text) },
+                _meta = response.meta?.let {
+                    ToolCallMeta(upstream_server = it.upstreamServer, execution_time_ms = it.executionTimeMs)
+                }
             )
         } catch (e: McpOrchestratorException) {
             ToolCallResult(

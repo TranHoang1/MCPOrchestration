@@ -4,9 +4,9 @@ import com.orchestrator.mcp.discovery.ToolDiscoveryService
 import com.orchestrator.mcp.discovery.model.FindToolsResponse
 import com.orchestrator.mcp.execution.ToolExecutionDispatcher
 import com.orchestrator.mcp.execution.model.ExecuteToolResponse
-import com.orchestrator.mcp.protocol.model.ContentItem
+import com.orchestrator.mcp.execution.model.ExecutionContentItem
+import com.orchestrator.mcp.execution.model.ExecutionMeta
 import com.orchestrator.mcp.protocol.model.JsonRpcRequest
-import com.orchestrator.mcp.protocol.model.ToolCallMeta
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldContain
@@ -89,8 +89,8 @@ class JsonRpcHandlerTest : FunSpec({
 
     test("tools/call with execute_dynamic_tool dispatches correctly") {
         coEvery { executionDispatcher.execute(any(), any()) } returns ExecuteToolResponse(
-            content = listOf(ContentItem(text = "result data")),
-            meta = ToolCallMeta(upstream_server = "test-server", execution_time_ms = 50)
+            content = listOf(ExecutionContentItem(text = "result data")),
+            meta = ExecutionMeta(upstreamServer = "test-server", executionTimeMs = 50)
         )
 
         val request = """{"jsonrpc":"2.0","id":2,"method":"tools/call","params":{"name":"execute_dynamic_tool","arguments":{"tool_name":"read_logs","arguments":{"path":"/tmp"}}}}"""

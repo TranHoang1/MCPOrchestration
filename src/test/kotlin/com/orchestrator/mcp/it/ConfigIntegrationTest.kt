@@ -6,79 +6,121 @@ import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldContain
+import java.io.File
+import kotlin.io.path.createTempDirectory
 
 /**
- * Integration tests for Configuration Management.
+ * IT tests for Configuration Management.
+ * Real: ConfigurationManagerImpl with real file I/O.
+ * No mocks — tests actual YAML parsing, env var
+ * substitution, and config reload via temp files.
  */
 class ConfigIntegrationTest : FunSpec({
 
-    // STC: IT-016 — hot-reload new server added via config change
-    test("IT-016: hot-reload adds new server config") {
-        val initialYaml = """
-            orchestrator:
-              upstream_servers:
-                - name: server-a
-                  transport: stdio
-                  command: echo
-        """.trimIndent()
+    // STC: IT-016 — hot-reload adds new server config
+    test("IT-016: load config then reload with new server") {
+        val dir = createTempDirectory("cfg-it016").toFile()
+        try {
+            val file = File(dir, "application.yml")
+            file.writeText(buildYaml(servers = 1))
 
-        val manager = ConfigurationManagerImpl(configContent = initialYaml)
-        val config = manager.getConfig()
-        config.orchestrator.upstreamServers.size shouldBe 1
-        config.orchestrator.upstreamServers[0].name shouldBe "server-a"
+            val mgr = ConfigurationManagerImpl(
+                configPath = file.absolutePath
+            )
+            mgr.getConfig().orchestrator
+                .upstreamServers.size shouldBe 1
+
+            // Modify file — add second server
+            file.writeText(buildYaml(servers = 2))
+            val reloaded = mgr.reload()
+            reloaded.orchestrator
+                .upstreamServers.size shouldBe 2
+        } finally {
+            dir.deleteRecursively()
+        }
     }
 
-    // STC: IT-017 — hot-reload server removed via config change
-    test("IT-017: config with 2 servers loads correctly") {
-        val yaml = """
-            orchestrator:
-              upstream_servers:
-                - name: server-a
-                  transport: stdio
-                  command: echo
-                - name: server-b
-                  transport: http
-                  url: http://localhost:9999
-        """.trimIndent()
+    // STC: IT-017 — hot-reload server removed
+    test("IT-017: reload with fewer servers") {
+        val dir = createTempDirectory("cfg-it017").toFile()
+        try {
+            val file = File(dir, "application.yml")
+            file.writeText(buildYaml(servers = 2))
 
-        val manager = ConfigurationManagerImpl(configContent = yaml)
-        val config = manager.getConfig()
-        config.orchestrator.upstreamServers.size shouldBe 2
+            val mgr = ConfigurationManagerImpl(
+                configPath = file.absolutePath
+            )
+            mgr.getConfig().orchestrator
+                .upstreamServers.size shouldBe 2
+
+            // Remove one server
+            file.writeText(buildYaml(servers = 1))
+            val reloaded = mgr.reload()
+            reloaded.orchestrator
+                .upstreamServers.size shouldBe 1
+        } finally {
+            dir.deleteRecursively()
+        }
     }
 
-    // STC: IT-018 — hot-reload invalid config rejected
-    test("IT-018: invalid config rejected, previous config retained") {
-        val validYaml = """
-            orchestrator:
-              discovery:
-                top_k: 5
-        """.trimIndent()
+    // STC: IT-018 — invalid config rejected, previous retained
+    test("IT-018: invalid config keeps previous config") {
+        val dir = createTempDirectory("cfg-it018").toFile()
+        try {
+            val file = File(dir, "application.yml")
+            file.writeText(buildYaml(servers = 1))
 
-        val manager = ConfigurationManagerImpl(configContent = validYaml)
-        val config = manager.getConfig()
-        config.orchestrator.discovery.topK shouldBe 5
+            val mgr = ConfigurationManagerImpl(
+                configPath = file.absolutePath
+            )
+            val original = mgr.getConfig()
+            original.orchestrator
+                .upstreamServers.size shouldBe 1
 
-        // Reload with invalid content is not possible via configContent
-        // but we can test that getConfig returns cached value
-        val config2 = manager.getConfig()
-        config2.orchestrator.discovery.topK shouldBe 5
+            // Write invalid YAML
+            file.writeText("orchestrator: [invalid yaml {{")
+            val afterReload = mgr.reload()
+            // Previous config retained
+            afterReload.orchestrator
+                .upstreamServers.size shouldBe 1
+        } finally {
+            dir.deleteRecursively()
+        }
     }
 
     // STC: IT-019 — environment variable substitution
-    test("IT-019: environment variable substitution works") {
-        val content = "orchestrator:\n  embedding:\n    api_key: \${OPENAI_API_KEY}"
-        val resolved = ConfigurationManagerImpl.resolveEnvVars(content)
+    test("IT-019: env var substitution works") {
+        val content =
+            "orchestrator:\n  embedding:\n    api_key: \${OPENAI_API_KEY}"
+        val resolved =
+            ConfigurationManagerImpl.resolveEnvVars(content)
 
-        // If env var is not set, it resolves to empty string
         val envValue = System.getenv("OPENAI_API_KEY") ?: ""
         resolved shouldContain "api_key: $envValue"
     }
 
     test("IT-018b: invalid YAML throws ConfigException") {
-        val invalidYaml = "orchestrator: [invalid yaml {{"
+        val invalid = "orchestrator: [invalid yaml {{"
 
         shouldThrow<ConfigException> {
-            ConfigurationManagerImpl(configContent = invalidYaml).getConfig()
+            ConfigurationManagerImpl(
+                configContent = invalid
+            ).getConfig()
         }
     }
 })
+
+/**
+ * Build a minimal valid YAML config with N servers.
+ */
+private fun buildYaml(servers: Int): String {
+    val sb = StringBuilder()
+    sb.appendLine("orchestrator:")
+    sb.appendLine("  upstream_servers:")
+    for (i in 1..servers) {
+        sb.appendLine("    - name: server-$i")
+        sb.appendLine("      transport: stdio")
+        sb.appendLine("      command: echo")
+    }
+    return sb.toString()
+}

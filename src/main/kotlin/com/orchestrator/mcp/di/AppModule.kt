@@ -10,8 +10,7 @@ import com.orchestrator.mcp.embedding.EmbeddingService
 import com.orchestrator.mcp.embedding.OpenAiEmbeddingService
 import com.orchestrator.mcp.execution.ToolExecutionDispatcher
 import com.orchestrator.mcp.execution.ToolExecutionDispatcherImpl
-import com.orchestrator.mcp.protocol.JsonRpcHandler
-import com.orchestrator.mcp.protocol.McpProtocolHandler
+import com.orchestrator.mcp.protocol.McpServerFactory
 import com.orchestrator.mcp.registry.ToolRegistry
 import com.orchestrator.mcp.registry.ToolRegistryImpl
 import com.orchestrator.mcp.upstream.HealthMonitor
@@ -91,7 +90,6 @@ fun appModule(configPath: String? = null) = module {
         ToolExecutionDispatcherImpl(get(), get(), get())
     }
 
-    // Protocol
-    single { McpProtocolHandler(get(), get()) }
-    single { JsonRpcHandler(get()) }
+    // MCP Server Factory (replaces old JsonRpcHandler + McpProtocolHandler)
+    single { McpServerFactory(get(), get()) }
 }

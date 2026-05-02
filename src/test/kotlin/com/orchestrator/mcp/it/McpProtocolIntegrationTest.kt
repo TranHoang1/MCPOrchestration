@@ -1,70 +1,65 @@
 package com.orchestrator.mcp.it
 
-import com.orchestrator.mcp.discovery.ToolDiscoveryService
-import com.orchestrator.mcp.execution.ToolExecutionDispatcher
-import com.orchestrator.mcp.protocol.JsonRpcHandler
-import com.orchestrator.mcp.protocol.McpProtocolHandler
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
-import io.mockk.mockk
 import kotlinx.serialization.json.*
 
 /**
- * Integration tests for MCP Protocol layer.
+ * IT tests for MCP Protocol layer.
+ * Real: JsonRpcHandler → McpProtocolHandler →
+ *       ToolDiscoveryServiceImpl, ToolExecutionDispatcherImpl,
+ *       ToolRegistryImpl, KeywordSearchEngine
+ * Mock: EmbeddingService, VectorDbClient (external services)
  */
 class McpProtocolIntegrationTest : FunSpec({
 
-    lateinit var discoveryService: ToolDiscoveryService
-    lateinit var executionDispatcher: ToolExecutionDispatcher
-    lateinit var handler: JsonRpcHandler
+    lateinit var stack: ProtocolStack
 
     beforeEach {
-        discoveryService = mockk()
-        executionDispatcher = mockk()
-        val protocolHandler = McpProtocolHandler(discoveryService, executionDispatcher)
-        handler = JsonRpcHandler(protocolHandler)
+        stack = IntegrationTestBase.protocolStack()
     }
 
     // STC: IT-023 — MCP initialize handshake
-    test("IT-023: MCP initialize handshake") {
-        val request = """
-            {"jsonrpc":"2.0","id":0,"method":"initialize","params":{
-                "protocolVersion":"2024-11-05",
-                "capabilities":{},
-                "clientInfo":{"name":"kiro","version":"1.0.0"}
-            }}
+    test("IT-023: initialize returns protocol version") {
+        val req = """
+            {"jsonrpc":"2.0","id":0,"method":"initialize",
+             "params":{"protocolVersion":"2024-11-05",
+             "capabilities":{},
+             "clientInfo":{"name":"kiro","version":"1.0.0"}}}
         """.trimIndent()
 
-        val response = handler.handleMessage(request)!!
+        val resp = stack.handler.handleMessage(req)!!
 
-        response.contains("2024-11-05") shouldBe true
-        response.contains("mcp-orchestrator") shouldBe true
-        response.contains("tools") shouldBe true
+        resp.contains("2024-11-05") shouldBe true
+        resp.contains("mcp-orchestrator") shouldBe true
+        resp.contains("tools") shouldBe true
     }
 
-    // STC: IT-024 — MCP tools/list returns exactly 2 tools
-    test("IT-024: MCP tools/list returns exactly 2 tools") {
-        val request = """{"jsonrpc":"2.0","id":1,"method":"tools/list"}"""
+    // STC: IT-024 — tools/list returns exactly 2 tools
+    test("IT-024: tools/list returns 2 tools") {
+        val req = """{"jsonrpc":"2.0","id":1,"method":"tools/list"}"""
 
-        val response = handler.handleMessage(request)!!
-        val parsed = Json.parseToJsonElement(response).jsonObject
-        val result = parsed["result"]!!.jsonObject
-        val tools = result["tools"]!!.jsonArray
+        val resp = stack.handler.handleMessage(req)!!
+        val parsed = Json.parseToJsonElement(resp).jsonObject
+        val tools = parsed["result"]!!
+            .jsonObject["tools"]!!.jsonArray
 
         tools.size shouldBe 2
-        val names = tools.map { it.jsonObject["name"]!!.jsonPrimitive.content }
+        val names = tools.map {
+            it.jsonObject["name"]!!.jsonPrimitive.content
+        }
         names.contains("find_tools") shouldBe true
         names.contains("execute_dynamic_tool") shouldBe true
     }
 
-    // STC: IT-025 — MCP ping returns empty result
-    test("IT-025: MCP ping returns empty result") {
-        val request = """{"jsonrpc":"2.0","id":2,"method":"ping"}"""
+    // STC: IT-025 — ping returns empty result
+    test("IT-025: ping returns empty result") {
+        val req = """{"jsonrpc":"2.0","id":2,"method":"ping"}"""
 
-        val response = handler.handleMessage(request)
-        response.shouldNotBeNull()
-        val parsed = Json.parseToJsonElement(response).jsonObject
+        val resp = stack.handler.handleMessage(req)
+        resp.shouldNotBeNull()
+        val parsed = Json.parseToJsonElement(resp).jsonObject
         val result = parsed["result"]!!.jsonObject
 
         result.size shouldBe 0
@@ -72,24 +67,26 @@ class McpProtocolIntegrationTest : FunSpec({
 
     test("IT-023b: all responses have jsonrpc 2.0") {
         val requests = listOf(
-            """{"jsonrpc":"2.0","id":0,"method":"initialize","params":{}}""",
+            """{"jsonrpc":"2.0","id":0,"method":"initialize",
+               "params":{}}""",
             """{"jsonrpc":"2.0","id":1,"method":"tools/list"}""",
             """{"jsonrpc":"2.0","id":2,"method":"ping"}"""
         )
 
         requests.forEach { request ->
-            val response = handler.handleMessage(request)
-            response.shouldNotBeNull()
-            response.contains("\"jsonrpc\":\"2.0\"") shouldBe true
+            val resp = stack.handler.handleMessage(request)
+            resp.shouldNotBeNull()
+            resp.contains("\"jsonrpc\":\"2.0\"") shouldBe true
         }
     }
 
     test("IT-024b: each tool has description and inputSchema") {
-        val request = """{"jsonrpc":"2.0","id":1,"method":"tools/list"}"""
-        val response = handler.handleMessage(request)
-        response.shouldNotBeNull()
-        val parsed = Json.parseToJsonElement(response).jsonObject
-        val tools = parsed["result"]!!.jsonObject["tools"]!!.jsonArray
+        val req = """{"jsonrpc":"2.0","id":1,"method":"tools/list"}"""
+        val resp = stack.handler.handleMessage(req)
+        resp.shouldNotBeNull()
+        val parsed = Json.parseToJsonElement(resp).jsonObject
+        val tools = parsed["result"]!!
+            .jsonObject["tools"]!!.jsonArray
 
         tools.forEach { tool ->
             val obj = tool.jsonObject
@@ -99,8 +96,11 @@ class McpProtocolIntegrationTest : FunSpec({
     }
 
     test("notification does not return response") {
-        val notification = """{"jsonrpc":"2.0","method":"notifications/initialized"}"""
-        val response = handler.handleMessage(notification)
-        response shouldBe null
+        val notif = """
+            {"jsonrpc":"2.0",
+             "method":"notifications/initialized"}
+        """.trimIndent()
+        val resp = stack.handler.handleMessage(notif)
+        resp shouldBe null
     }
 })

@@ -760,7 +760,7 @@ If review found issues:
 11. Report: "✅ Phase 5.5 done — UG.md created, BA reviewed, QA verified. Chuyển sang Phase 6 (Testing)?"
 12. Wait for user confirmation.
 
-### Step 6: Execute Phase — Testing (QA → Test Execution)
+### Step 6: Execute Phase — Testing (QA → Test Execution + Test Code Quality Review)
 
 **Prerequisites:** Code exists, STP/STC exist, Jira ticket ở IN REVIEW hoặc QA TEST
 
@@ -769,10 +769,52 @@ If review found issues:
    mcp_jira_jira_transition_issue(issue_key: "{TICKET}", transition_name: "Verify")
    ```
 2. Update STATUS: `testing.status = "in_progress"`
-3. Invoke QA agent for test execution
-4. If tests fail → transition "Fix bugs" → invoke DEV to fix → retest (loop)
-4. Update STATUS: `testing.status = "done"`
-5. Report results.
+
+#### Step 6a: QA runs automated tests
+3. Invoke QA agent for test execution — run `./gradlew test` and report pass/fail
+
+#### Step 6b: SM reviews test code quality (MANDATORY)
+4. **SM MUST verify test implementation matches STC spec.** This is a quality gate that prevents "all-mock integration tests" from passing as real integration tests.
+
+   **Review process:**
+   - Read STC.md to identify IT-level test cases and their specified techniques (Testcontainers, Ktor testApplication, mock servers, etc.)
+   - Read actual IT test source files (e.g., `*IntegrationTest.kt`)
+   - Compare: does the test code use the technique STC specified?
+   
+   **Check for these red flags:**
+   
+   | Red Flag | Meaning | Action |
+   |----------|---------|--------|
+   | IT test uses `mockk()` for ALL dependencies | Not a real integration test | ❌ Send back to DEV |
+   | IT test calls service methods directly (no HTTP) | Missing API layer testing | ❌ Send back to DEV |
+   | IT test has no Testcontainers when STC requires it | Missing real DB/infra testing | ❌ Send back to DEV |
+   | IT test mocks Connection/Transport | Missing real process interaction | ❌ Send back to DEV |
+   | Config reload test only parses YAML | Missing actual file watcher test | ⚠️ Flag as degraded |
+   
+   **Acceptable exceptions:**
+   - External paid APIs (OpenAI, cloud services) → mock is OK
+   - DEV documented limitation with TODO comment → accept as degraded, track as tech debt
+   
+   **If issues found:**
+   ```
+   invokeSubAgent(
+     name: "qa-agent",
+     prompt: "Review IT test code cho {TICKET}. So sánh test implementation với STC spec. Báo cáo discrepancies. Cụ thể: {list of red flags found}"
+   )
+   ```
+   Then invoke DEV to fix:
+   ```
+   invokeSubAgent(
+     name: "dev-agent",
+     prompt: "Fix IT tests cho {TICKET}. QA phát hiện: {discrepancies}. Phải dùng đúng technique trong STC: {specific instructions}"
+   )
+   ```
+   Re-run tests after fix.
+
+#### Step 6c: Finalize
+5. If tests fail → transition "Fix bugs" → invoke DEV to fix → retest (loop)
+6. Update STATUS: `testing.status = "done"`
+7. Report results including test code quality assessment.
 
 ### Step 7: Execute Phase — Deployment (DevOps → DPG/RLN)
 

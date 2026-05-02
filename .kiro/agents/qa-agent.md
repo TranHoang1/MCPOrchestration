@@ -644,6 +644,17 @@ After manual execution, update `TEST-REPORT-{TICKET-KEY}.csv`:
   6. **Goal: minimize new step definitions per feature** — a well-designed E2E suite should have 80%+ step reuse across features
 - **MANDATORY CSV TEST DATA**: When creating STC (Test Cases), you MUST also generate CSV test data files at `documents/{TICKET}/testdata/`. STC without test data CSVs is INCOMPLETE. Every test case in STC must have corresponding test data in at least one CSV file.
 - **MANDATORY INTEGRATION TEST CODE**: When TDD.md exists with API specifications, you MUST generate executable integration test code (not just documentation). Tests must compile and pass. Match existing project test patterns.
+- **MANDATORY TEST IMPLEMENTATION REVIEW (Phase 6)**: When executing Phase 6 (Testing), QA MUST NOT only run `./gradlew test` and check pass/fail. QA MUST also:
+  1. **Read actual test source code** for IT-level tests (integration tests)
+  2. **Compare test implementation with STC spec** — verify the test technique matches what STC defined:
+     - If STC says "Ktor testApplication" → test code MUST use `testApplication { }`, NOT direct service method calls
+     - If STC says "Testcontainers" or "real database" → test code MUST use Testcontainers, NOT `mockk<DbClient>()`
+     - If STC says "mock upstream server process" → test code MUST spawn a real mock process, NOT `mockk<Connection>()`
+  3. **Report discrepancies** between STC plan and actual test code as defects:
+     - Severity: **Major** — "IT test uses mocks instead of real dependencies as specified in STC"
+     - Action: Send back to DEV with specific instructions on what to fix
+  4. **Quality gate**: Integration tests that only use mocks (mockk/Mockito) for ALL dependencies are actually unit tests. They MUST be reclassified or rewritten.
+  5. **Acceptable mock usage in IT tests**: Only mock external services that cannot run locally (e.g., paid APIs, cloud services). Local infrastructure (DB, message queue, HTTP server) MUST use real instances or Testcontainers.
 - **MANDATORY TEST REPORT TEMPLATE**: Use `documents/templates/TEST-REPORT-TEMPLATE.md` for test execution reports. Sections 1-7 show FINAL results only. Re-test history goes in Appendix A.
 - **MANDATORY DOCUMENT EXPORT & JIRA ATTACHMENT**: After creating STP/STC/TEST-REPORT, you MUST export and prepare files for SM to attach to Jira:
   - **STP.md** → Export DOCX: `mcp_markdown_exporter_local_export_docx(file_name: "STP-v{VERSION}-{TICKET}.docx")` → Copy to `documents/{TICKET}/STP-v{VERSION}-{TICKET}.docx`

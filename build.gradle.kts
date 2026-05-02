@@ -17,6 +17,10 @@ repositories {
 }
 
 dependencies {
+    // MCP SDK (official Kotlin MCP implementation)
+    implementation(libs.mcp.sdk.server)
+    implementation(libs.kotlinx.io.core)
+
     // Ktor Server
     implementation(libs.ktor.server.core)
     implementation(libs.ktor.server.netty)

@@ -2,9 +2,9 @@ package com.orchestrator.mcp.execution
 
 import com.orchestrator.mcp.config.OrchestratorConfig
 import com.orchestrator.mcp.execution.model.ExecuteToolResponse
+import com.orchestrator.mcp.execution.model.ExecutionContentItem
+import com.orchestrator.mcp.execution.model.ExecutionMeta
 import com.orchestrator.mcp.model.*
-import com.orchestrator.mcp.protocol.model.ContentItem
-import com.orchestrator.mcp.protocol.model.ToolCallMeta
 import com.orchestrator.mcp.registry.ToolRegistry
 import com.orchestrator.mcp.upstream.UpstreamServerManager
 import com.orchestrator.mcp.upstream.model.ServerState
@@ -24,36 +24,50 @@ class ToolExecutionDispatcherImpl(
 ) : ToolExecutionDispatcher {
 
     private val logger = LoggerFactory.getLogger(ToolExecutionDispatcherImpl::class.java)
-    private val json = Json { ignoreUnknownKeys = true }
 
-    override suspend fun execute(toolName: String, arguments: JsonObject?): ExecuteToolResponse {
+    override suspend fun execute(
+        toolName: String,
+        arguments: JsonObject?
+    ): ExecuteToolResponse {
         logger.info("execute_dynamic_tool: tool=$toolName")
 
-        // 1. Lookup tool in registry
-        val toolEntry = toolRegistry.lookupTool(toolName)
-            ?: throw ToolNotFoundException(toolName)
+        val toolEntry = lookupAndValidate(toolName)
+        val connection = getConnection(toolName, toolEntry.serverName)
 
-        // 2. Check server availability
-        val serverState = serverManager.getServerState(toolEntry.serverName)
-        if (serverState != ServerState.CONNECTED) {
-            throw ServerUnavailableException(toolName, toolEntry.serverName, serverState)
-        }
-
-        // 3. Get connection
-        val connection = serverManager.getConnection(toolEntry.serverName)
-            ?: throw ServerUnavailableException(toolName, toolEntry.serverName, ServerState.DISCONNECTED)
-
-        // 4. Build JSON-RPC tools/call request
         val params = buildJsonObject {
             put("name", toolName)
             arguments?.let { put("arguments", it) }
         }
 
-        // 5. Execute with timeout
+        return executeWithTimeout(toolName, toolEntry.serverName, params)
+    }
+
+    private fun lookupAndValidate(toolName: String): ToolEntry {
+        val entry = toolRegistry.lookupTool(toolName)
+            ?: throw ToolNotFoundException(toolName)
+
+        val state = serverManager.getServerState(entry.serverName)
+        if (state != ServerState.CONNECTED) {
+            throw ServerUnavailableException(toolName, entry.serverName, state)
+        }
+        return entry
+    }
+
+    private fun getConnection(toolName: String, serverName: String) =
+        serverManager.getConnection(serverName)
+            ?: throw ServerUnavailableException(toolName, serverName, ServerState.DISCONNECTED)
+
+    private suspend fun executeWithTimeout(
+        toolName: String,
+        serverName: String,
+        params: JsonObject
+    ): ExecuteToolResponse {
+        val connection = serverManager.getConnection(serverName)!!
+        val timeoutMs = config.orchestrator.execution.timeoutSeconds * 1000L
         var result: JsonObject
         val durationMs: Long
+
         try {
-            val timeoutMs = config.orchestrator.execution.timeoutSeconds * 1000L
             durationMs = measureTimeMillis {
                 result = withTimeout(timeoutMs) {
                     connection.sendRequest("tools/call", params)
@@ -64,33 +78,33 @@ class ToolExecutionDispatcherImpl(
         } catch (e: McpOrchestratorException) {
             throw e
         } catch (e: Exception) {
-            throw UpstreamErrorException(e.message ?: "Unknown error", toolEntry.serverName)
+            throw UpstreamErrorException(e.message ?: "Unknown error", serverName)
         }
 
-        // 6. Check for upstream error
-        val error = result["error"]?.jsonObject
-        if (error != null) {
-            val errorMessage = error["message"]?.jsonPrimitive?.content ?: "Unknown upstream error"
-            throw UpstreamErrorException(errorMessage, toolEntry.serverName)
-        }
+        checkUpstreamError(result, serverName)
+        val content = extractContent(result)
 
-        // 7. Extract content
-        val content = result["content"]?.jsonArray?.map { item ->
-            val obj = item.jsonObject
-            ContentItem(
-                type = obj["type"]?.jsonPrimitive?.content ?: "text",
-                text = obj["text"]?.jsonPrimitive?.content ?: ""
-            )
-        } ?: listOf(ContentItem(text = result.toString()))
-
-        logger.info("execute_dynamic_tool: tool=$toolName, server=${toolEntry.serverName}, duration=${durationMs}ms, success=true")
+        logger.info("execute_dynamic_tool: tool=$toolName, server=$serverName, duration=${durationMs}ms")
 
         return ExecuteToolResponse(
             content = content,
-            meta = ToolCallMeta(
-                upstream_server = toolEntry.serverName,
-                execution_time_ms = durationMs
-            )
+            meta = ExecutionMeta(upstreamServer = serverName, executionTimeMs = durationMs)
         )
+    }
+
+    private fun checkUpstreamError(result: JsonObject, serverName: String) {
+        val error = result["error"]?.jsonObject ?: return
+        val msg = error["message"]?.jsonPrimitive?.content ?: "Unknown upstream error"
+        throw UpstreamErrorException(msg, serverName)
+    }
+
+    private fun extractContent(result: JsonObject): List<ExecutionContentItem> {
+        return result["content"]?.jsonArray?.map { item ->
+            val obj = item.jsonObject
+            ExecutionContentItem(
+                type = obj["type"]?.jsonPrimitive?.content ?: "text",
+                text = obj["text"]?.jsonPrimitive?.content ?: ""
+            )
+        } ?: listOf(ExecutionContentItem(text = result.toString()))
     }
 }

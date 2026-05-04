@@ -45,7 +45,18 @@ class OpenAiEmbeddingService(
             val embedding = data[0].jsonObject["embedding"]?.jsonArray
                 ?: throw EmbeddingServiceException(RuntimeException("No embedding in response"))
 
-            FloatArray(embedding.size) { embedding[it].jsonPrimitive.float }
+            val result = FloatArray(embedding.size) { embedding[it].jsonPrimitive.float }
+            return when {
+                result.size == dimensions -> result
+                result.size < dimensions -> {
+                    logger.warn("OpenAI embedding too small: got ${result.size}, padding to $dimensions")
+                    result.copyOf(dimensions)
+                }
+                else -> {
+                    logger.warn("OpenAI embedding too large: got ${result.size}, truncating to $dimensions")
+                    result.copyOfRange(0, dimensions)
+                }
+            }
         } catch (e: EmbeddingServiceException) {
             throw e
         } catch (e: Exception) {

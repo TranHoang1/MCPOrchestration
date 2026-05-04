@@ -9,7 +9,7 @@ group = "com.orchestrator.mcp"
 version = "1.0.0"
 
 application {
-    mainClass.set("com.orchestrator.mcp.ApplicationKt")
+    mainClass.set("com.orchestrator.mcp.Main")
 }
 
 repositories {
@@ -50,6 +50,10 @@ dependencies {
     // YAML parsing
     implementation(libs.kaml)
 
+    // Database
+    implementation(libs.postgresql)
+    implementation(libs.hikaricp)
+
     // Testing
     testImplementation(libs.junit.jupiter)
     testImplementation(libs.junit.jupiter.api)
@@ -61,6 +65,7 @@ dependencies {
     testImplementation(libs.ktor.server.test.host)
     testImplementation(libs.ktor.client.mock)
     testImplementation(libs.testcontainers.junit)
+    testImplementation("org.testcontainers:postgresql:1.21.1")
     testImplementation(libs.koin.test)
 }
 

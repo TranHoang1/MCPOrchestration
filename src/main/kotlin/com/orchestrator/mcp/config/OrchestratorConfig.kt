@@ -21,6 +21,7 @@ data class OrchestratorSettings(
     @SerialName("vector_db")
     val vectorDb: VectorDbConfig = VectorDbConfig(),
     val health: HealthConfig = HealthConfig(),
+    val session: SessionConfig = SessionConfig(),
     @SerialName("upstream_servers")
     val upstreamServers: List<UpstreamServerConfig> = emptyList()
 )
@@ -28,7 +29,8 @@ data class OrchestratorSettings(
 @Serializable
 data class ServerConfig(
     val port: Int = 8080,
-    val transport: String = "stdio"
+    val transport: String = "stdio",
+    val protocol: String = "stdio" // "stdio" or "sse"
 )
 
 @Serializable
@@ -60,6 +62,8 @@ data class EmbeddingConfig(
     @SerialName("api_key")
     val apiKey: String = "",
     val dimensions: Int = 768,
+    @SerialName("base_url")
+    val baseUrl: String = "",
     @SerialName("cache_enabled")
     val cacheEnabled: Boolean = true,
     @SerialName("cache_max_size")
@@ -74,7 +78,15 @@ data class VectorDbConfig(
     val host: String = "localhost",
     val port: Int = 6333,
     @SerialName("collection_name")
-    val collectionName: String = "mcp_tools"
+    val collectionName: String = "mcp_tools",
+    @SerialName("connection_string")
+    val connectionString: String = "",
+    val user: String = "",
+    val password: String = "",
+    @SerialName("hnsw_m")
+    val hnswM: Int = 16,
+    @SerialName("hnsw_ef_construction")
+    val hnswEfConstruction: Int = 64
 )
 
 @Serializable
@@ -94,5 +106,28 @@ data class UpstreamServerConfig(
     val command: String? = null,
     val args: List<String> = emptyList(),
     val env: Map<String, String> = emptyMap(),
-    val url: String? = null
+    val url: String? = null,
+    val disabled: Boolean = false,
+    @SerialName("tool_filter")
+    val toolFilter: ToolFilterConfig? = null,
+    @SerialName("auto_approve")
+    val autoApprove: List<String> = emptyList(),
+    /**
+     * Framing mode for stdio communication.
+     * - "newline"        : one JSON object per line (Python mcp / FastMCP, default)
+     * - "content-length" : HTTP-style Content-Length header (Kotlin/Node SDK)
+     */
+    @SerialName("framing_mode")
+    val framingMode: String = "newline"
+)
+
+@Serializable
+data class SessionConfig(
+    val id: String = System.getenv("HOSTNAME") ?: "orch-default"
+)
+
+@Serializable
+data class ToolFilterConfig(
+    val mode: String, // "allowlist" or "blocklist"
+    val tools: List<String>
 )

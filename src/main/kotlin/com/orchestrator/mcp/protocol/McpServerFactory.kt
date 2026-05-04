@@ -23,7 +23,9 @@ import org.slf4j.LoggerFactory
  */
 class McpServerFactory(
     private val discoveryService: ToolDiscoveryService,
-    private val executionDispatcher: ToolExecutionDispatcher
+    private val executionDispatcher: ToolExecutionDispatcher,
+    private val toolManagementService: com.orchestrator.mcp.management.ToolManagementService,
+    private val sessionConfig: com.orchestrator.mcp.config.SessionConfig
 ) {
     private val logger = LoggerFactory.getLogger(McpServerFactory::class.java)
     private val json = Json {
@@ -46,8 +48,11 @@ class McpServerFactory(
 
         registerFindTools(server)
         registerExecuteDynamicTool(server)
+        registerToggleTool(server)
+        registerResetTools(server)
+        registerManageAutoApprove(server)
 
-        logger.info("MCP SDK Server created with 2 tools registered")
+        logger.info("MCP SDK Server created with 5 tools registered")
         return server
     }
 
@@ -124,6 +129,62 @@ class McpServerFactory(
             )
         } catch (e: McpOrchestratorException) {
             errorResult(e.errorCode, e.message ?: "Unknown error")
+        }
+    }
+
+    private fun registerToggleTool(server: Server) {
+        server.addTool("toggle_tool", toggleToolDescription(), toggleToolSchema()) { request ->
+            handleToggleTool(request.arguments)
+        }
+    }
+
+    private fun registerResetTools(server: Server) {
+        server.addTool("reset_tools", resetToolsDescription(), resetToolsSchema()) { request ->
+            handleResetTools(request.arguments)
+        }
+    }
+
+    private fun registerManageAutoApprove(server: Server) {
+        server.addTool("manage_auto_approve", manageAutoApproveDescription(), manageAutoApproveSchema()) { request ->
+            handleManageAutoApprove(request.arguments)
+        }
+    }
+
+    private suspend fun handleToggleTool(arguments: JsonObject?): CallToolResult {
+        return try {
+            val enabled = arguments?.get("enabled")?.let { it as? kotlinx.serialization.json.JsonPrimitive }?.content?.toBoolean()
+                ?: return errorResult("INVALID_PARAMS", "enabled is required")
+            val toolName = arguments["tool_name"]?.let { it as? kotlinx.serialization.json.JsonPrimitive }?.content
+            val serverName = arguments["server_name"]?.let { it as? kotlinx.serialization.json.JsonPrimitive }?.content
+            
+            val response = toolManagementService.toggleTool(sessionConfig.id, com.orchestrator.mcp.management.ToggleToolRequest(toolName, serverName, enabled))
+            CallToolResult(content = listOf(TextContent(text = json.encodeToString(com.orchestrator.mcp.management.ToggleToolResponse.serializer(), response))))
+        } catch (e: Exception) {
+            errorResult("INTERNAL_ERROR", e.message ?: "Unknown error")
+        }
+    }
+
+    private suspend fun handleResetTools(arguments: JsonObject?): CallToolResult {
+        return try {
+            val serverName = arguments?.get("server_name")?.let { it as? kotlinx.serialization.json.JsonPrimitive }?.content
+            val response = toolManagementService.resetTools(sessionConfig.id, com.orchestrator.mcp.management.ResetToolsRequest(serverName))
+            CallToolResult(content = listOf(TextContent(text = json.encodeToString(com.orchestrator.mcp.management.ResetToolsResponse.serializer(), response))))
+        } catch (e: Exception) {
+            errorResult("INTERNAL_ERROR", e.message ?: "Unknown error")
+        }
+    }
+
+    private suspend fun handleManageAutoApprove(arguments: JsonObject?): CallToolResult {
+        return try {
+            val autoApprove = arguments?.get("auto_approve")?.let { it as? kotlinx.serialization.json.JsonPrimitive }?.content?.toBoolean()
+                ?: return errorResult("INVALID_PARAMS", "auto_approve is required")
+            val toolName = arguments["tool_name"]?.let { it as? kotlinx.serialization.json.JsonPrimitive }?.content
+            val serverName = arguments["server_name"]?.let { it as? kotlinx.serialization.json.JsonPrimitive }?.content
+            
+            val response = toolManagementService.manageAutoApprove(com.orchestrator.mcp.management.ManageAutoApproveRequest(toolName, serverName, autoApprove))
+            CallToolResult(content = listOf(TextContent(text = json.encodeToString(com.orchestrator.mcp.management.ManageAutoApproveResponse.serializer(), response))))
+        } catch (e: Exception) {
+            errorResult("INTERNAL_ERROR", e.message ?: "Unknown error")
         }
     }
 

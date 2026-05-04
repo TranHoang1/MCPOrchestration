@@ -28,8 +28,18 @@ object ConfigValidator {
         }
 
         // Server validation
-        if (settings.server.transport !in listOf("stdio", "http")) {
-            errors.add("server.transport must be 'stdio' or 'http', got: ${settings.server.transport}")
+        if (settings.server.transport.lowercase() !in listOf("stdio", "http", "sse")) {
+            errors.add("server.transport must be 'stdio', 'http', or 'sse', got: ${settings.server.transport}")
+        }
+
+        // Mode-specific validation (MTO-10 Requirement)
+        if (settings.server.transport.lowercase() == "stdio") {
+            if (settings.embedding.provider.lowercase() == "openai" && settings.embedding.apiKey.isBlank()) {
+                errors.add("In stdio mode, OpenAI embedding provider requires an api_key")
+            }
+            if (settings.vectorDb.provider.lowercase() == "postgresql" && settings.vectorDb.connectionString.isBlank()) {
+                errors.add("In stdio mode, PostgreSQL vector_db provider requires a connection_string")
+            }
         }
 
         // Health validation

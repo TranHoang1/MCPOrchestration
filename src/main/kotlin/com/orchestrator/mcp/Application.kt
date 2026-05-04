@@ -5,6 +5,9 @@ import com.orchestrator.mcp.di.appModule
 import com.orchestrator.mcp.protocol.McpServerFactory
 import com.orchestrator.mcp.upstream.HealthMonitor
 import com.orchestrator.mcp.upstream.UpstreamServerManager
+import com.orchestrator.mcp.registry.ToolIndexer
+import com.orchestrator.mcp.vectordb.VectorDbClient
+import com.orchestrator.mcp.transport.ContentLengthStripper
 import io.modelcontextprotocol.kotlin.sdk.server.StdioServerTransport
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
@@ -15,10 +18,21 @@ import kotlinx.io.buffered
 import org.koin.core.context.startKoin
 import org.koin.java.KoinJavaComponent.getKoin
 import org.slf4j.LoggerFactory
+import io.ktor.server.engine.*
+import io.ktor.server.netty.*
+import io.ktor.server.routing.*
+import io.ktor.server.application.*
+import io.ktor.server.response.*
+import io.ktor.server.request.*
+import io.ktor.server.plugins.contentnegotiation.*
+import io.ktor.serialization.kotlinx.json.*
+import io.ktor.http.*
+import io.ktor.server.sse.*
 
 private val logger = LoggerFactory.getLogger("com.orchestrator.mcp.Application")
 
-fun main(args: Array<String>) = runBlocking {
+fun realMain(args: Array<String>) = runBlocking {
+
     logger.info("MCP Orchestration Server v1.0.0 starting...")
     logger.info("Working directory: ${System.getProperty("user.dir")}")
     logger.info("Java home: ${System.getProperty("java.home")}")
@@ -38,6 +52,37 @@ fun main(args: Array<String>) = runBlocking {
     val mcpServerFactory = koin.get<McpServerFactory>()
     val serverManager = koin.get<UpstreamServerManager>()
     val healthMonitor = koin.get<HealthMonitor>()
+    val dbSyncService = koin.get<com.orchestrator.mcp.config.ConfigDbSyncService>()
+    val dbInitializer = koin.get<com.orchestrator.mcp.vectordb.DatabaseInitializer>()
+    val toolIndexer = koin.get<ToolIndexer>()
+    val vectorDbClient = koin.get<VectorDbClient>()
+
+    // Initialize DB schema
+    try {
+        dbInitializer.initialize()
+    } catch (e: Exception) {
+        logger.error("Critical: Database schema initialization failed: ${e.message}")
+    }
+
+    // Initialize Vector DB collection
+    try {
+        vectorDbClient.createCollection(
+            config.orchestrator.vectorDb.collectionName,
+            config.orchestrator.embedding.dimensions
+        )
+    } catch (e: Exception) {
+        logger.error("Failed to ensure vector collection: ${e.message}")
+    }
+
+    // Sync configuration to database
+    this@runBlocking.launch {
+        try {
+            val result = dbSyncService.sync()
+            logger.info("Config-DB sync completed: ${result.syncedServers} servers synced")
+        } catch (e: Exception) {
+            logger.error("Config-DB sync failed: ${e.message}")
+        }
+    }
 
     // Log loaded upstream server configs
     logUpstreamServers(config)
@@ -46,8 +91,14 @@ fun main(args: Array<String>) = runBlocking {
         "stdio" -> {
             val mcpServer = mcpServerFactory.create()
 
+            // MCP Kotlin SDK 0.12.0 expects raw JSON-per-line on stdin,
+            // but kiro-cli sends Content-Length-framed messages per MCP spec.
+            // Bridge the two formats with ContentLengthStripper.
+            val stripper = ContentLengthStripper(System.`in`)
+            stripper.start()
+
             val transport = StdioServerTransport(
-                inputStream = System.`in`.asSource().buffered(),
+                inputStream = stripper.bridgedInput.asSource().buffered(),
                 outputStream = System.out.asSink().buffered()
             )
 
@@ -58,8 +109,13 @@ fun main(args: Array<String>) = runBlocking {
                 try {
                     serverManager.connectAll()
                     logConnectionResults(serverManager)
+
+                    // Trigger tool indexing after connection
+                    logger.info("Starting tool indexing...")
+                    val result = toolIndexer.indexAll()
+                    logger.info("Tool indexing completed: ${result.totalIndexed} tools indexed, ${result.totalFailed} servers failed")
                 } catch (e: Exception) {
-                    logger.error("Failed to connect to some upstream servers: ${e.message}")
+                    logger.error("Failed to connect or index upstream servers: ${e.message}")
                 }
             }
 
@@ -71,8 +127,71 @@ fun main(args: Array<String>) = runBlocking {
             mcpServer.onClose { done.complete() }
             done.join()
         }
+        "sse", "http" -> {
+            val mcpServer = mcpServerFactory.create()
+            logger.info("Starting MCP Orchestration Server in Standalone SSE Mode on port ${config.orchestrator.server.port}")
+
+            // Connect upstream servers in background
+            this@runBlocking.launch {
+                try {
+                    serverManager.connectAll()
+                    logConnectionResults(serverManager)
+
+                    // Trigger tool indexing after connection
+                    logger.info("Starting tool indexing...")
+                    val result = toolIndexer.indexAll()
+                    logger.info("Tool indexing completed: ${result.totalIndexed} tools indexed, ${result.totalFailed} servers failed")
+                } catch (e: Exception) {
+                    logger.error("Failed to connect or index upstream servers: ${e.message}")
+                }
+            }
+            healthMonitor.start(this)
+
+            // Simple session management: in production, use a Map of sessions
+            var activeTransport: com.orchestrator.mcp.transport.KtorSseServerTransport? = null
+
+            embeddedServer(Netty, port = config.orchestrator.server.port) {
+                install(SSE)
+                install(ContentNegotiation) {
+                    json()
+                }
+                routing {
+                    sse("/sse") {
+                        logger.info("Client connected via SSE: ${call.request.uri}")
+                        val transport = com.orchestrator.mcp.transport.KtorSseServerTransport(this)
+                        activeTransport = transport
+                        
+                        // Start MCP session
+                        mcpServer.createSession(transport)
+                        
+                        // Handle server close
+                        mcpServer.onClose {
+                            logger.info("MCP Session closed by server")
+                        }
+                        
+                        // Keep SSE open until client disconnects or server closes
+                        try {
+                            // Block this SSE session until closed
+                            val done = Job()
+                            mcpServer.onClose { done.complete() }
+                            done.join()
+                        } finally {
+                            activeTransport = null
+                            logger.info("SSE connection terminated")
+                        }
+                    }
+                    post("/message") {
+                        val message = call.receiveText()
+                        activeTransport?.onPostMessage(message) ?: run {
+                            logger.warn("Received message but no active SSE session found")
+                        }
+                        call.respond(HttpStatusCode.Accepted)
+                    }
+                }
+            }.start(wait = true)
+        }
         else -> {
-            logger.info("MCP Orchestration Server ready (HTTP transport on port ${config.orchestrator.server.port})")
+            logger.warn("Unknown transport: ${config.orchestrator.server.transport}. Defaulting to logging only.")
         }
     }
 }

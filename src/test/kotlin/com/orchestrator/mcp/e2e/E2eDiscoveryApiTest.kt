@@ -46,12 +46,18 @@ class E2eDiscoveryApiTest : FunSpec({
         vectorDbClient = mockk()
         serverManager = mockk()
         toolRegistry = ToolRegistryImpl()
+        val toolManagementService = mockk<com.orchestrator.mcp.management.ToolManagementService>(relaxed = true)
+        val sessionConfig = com.orchestrator.mcp.config.SessionConfig(id = "discovery-session")
         val keywordEngine = KeywordSearchEngine(toolRegistry)
         val discoveryService = ToolDiscoveryServiceImpl(
-            embeddingService, vectorDbClient, toolRegistry, keywordEngine
+            embeddingService, vectorDbClient, toolRegistry, keywordEngine,
+            toolManagementService, sessionConfig
         )
         val config = TestFixtures.testConfig()
-        val executionDispatcher = ToolExecutionDispatcherImpl(toolRegistry, serverManager, config)
+        val executionDispatcher = ToolExecutionDispatcherImpl(
+            toolRegistry, serverManager,
+            toolManagementService, sessionConfig, config
+        )
         val protocolHandler = McpProtocolHandler(discoveryService, executionDispatcher)
         handler = JsonRpcHandler(protocolHandler)
 
@@ -71,7 +77,7 @@ class E2eDiscoveryApiTest : FunSpec({
         val body = Json.parseToJsonElement(content).jsonObject
 
         body["tools"]!!.jsonArray.size shouldBe 3
-        body["search_mode"]!!.jsonPrimitive.content shouldBe "semantic"
+        body["search_mode"]!!.jsonPrimitive.content shouldBe "hybrid"
     }
 
     // STC: E2E-003 — Keyword fallback (no Qdrant)
@@ -101,12 +107,18 @@ class E2eDiscoveryApiTest : FunSpec({
     // STC: E2E-009 — Startup with no servers reachable
     test("E2E-009: find_tools with empty registry returns empty results") {
         val emptyRegistry = ToolRegistryImpl()
+        val toolManagementService = mockk<com.orchestrator.mcp.management.ToolManagementService>(relaxed = true)
+        val sessionConfig = com.orchestrator.mcp.config.SessionConfig(id = "empty-session")
         val keywordEngine = KeywordSearchEngine(emptyRegistry)
         val discoveryService = ToolDiscoveryServiceImpl(
-            embeddingService, vectorDbClient, emptyRegistry, keywordEngine
+            embeddingService, vectorDbClient, emptyRegistry, keywordEngine,
+            toolManagementService, sessionConfig
         )
         val config = TestFixtures.testConfig()
-        val executionDispatcher = ToolExecutionDispatcherImpl(emptyRegistry, serverManager, config)
+        val executionDispatcher = ToolExecutionDispatcherImpl(
+            emptyRegistry, serverManager,
+            toolManagementService, sessionConfig, config
+        )
         val protocolHandler = McpProtocolHandler(discoveryService, executionDispatcher)
         val emptyHandler = JsonRpcHandler(protocolHandler)
 

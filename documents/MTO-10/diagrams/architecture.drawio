@@ -1,0 +1,155 @@
+<mxGraphModel adaptiveColors="auto">
+  <root>
+    <mxCell id="0"/>
+    <mxCell id="1" parent="0"/>
+
+    <!-- Title -->
+    <mxCell id="title" value="MTO-10 Architecture — MCP Orchestration Server (Upgraded)" style="text;html=1;fontSize=18;fontStyle=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
+      <mxGeometry x="200" y="10" width="700" height="30" as="geometry"/>
+    </mxCell>
+
+    <!-- AI IDE Layer -->
+    <mxCell id="kiro" value="Kiro IDE&#xa;(AI Agent)" style="rounded=1;whiteSpace=wrap;fillColor=#e1f5fe;strokeColor=#0288d1;fontStyle=1;" vertex="1" parent="1">
+      <mxGeometry x="420" y="60" width="160" height="60" as="geometry"/>
+    </mxCell>
+
+    <!-- Transport Layer Container -->
+    <mxCell id="transport_box" value="Transport Layer" style="swimlane;startSize=25;fillColor=#fff3e0;strokeColor=#f57c00;rounded=1;" vertex="1" parent="1">
+      <mxGeometry x="340" y="160" width="320" height="60" as="geometry"/>
+    </mxCell>
+    <mxCell id="stdio_t" value="stdio" style="rounded=1;whiteSpace=wrap;fontSize=10;" vertex="1" parent="transport_box">
+      <mxGeometry x="10" y="30" width="70" height="25" as="geometry"/>
+    </mxCell>
+    <mxCell id="http_t" value="HTTP/SSE" style="rounded=1;whiteSpace=wrap;fontSize=10;" vertex="1" parent="transport_box">
+      <mxGeometry x="90" y="30" width="70" height="25" as="geometry"/>
+    </mxCell>
+
+    <!-- Protocol Layer Container -->
+    <mxCell id="protocol_box" value="MCP Protocol Layer (5 tools: find, execute, toggle, reset, auto_approve)" style="swimlane;startSize=25;fillColor=#fff3e0;strokeColor=#f57c00;rounded=1;" vertex="1" parent="1">
+      <mxGeometry x="200" y="260" width="600" height="60" as="geometry"/>
+    </mxCell>
+    <mxCell id="jsonrpc" value="JsonRpcHandler" style="rounded=1;whiteSpace=wrap;fontSize=10;" vertex="1" parent="protocol_box">
+      <mxGeometry x="10" y="30" width="100" height="25" as="geometry"/>
+    </mxCell>
+    <mxCell id="registrar" value="McpToolRegistrar [MOD]" style="rounded=1;whiteSpace=wrap;fontSize=10;fillColor=#ffe0b2;" vertex="1" parent="protocol_box">
+      <mxGeometry x="120" y="30" width="130" height="25" as="geometry"/>
+    </mxCell>
+    <mxCell id="serverfactory" value="McpServerFactory [MOD]" style="rounded=1;whiteSpace=wrap;fontSize=10;fillColor=#ffe0b2;" vertex="1" parent="protocol_box">
+      <mxGeometry x="260" y="30" width="130" height="25" as="geometry"/>
+    </mxCell>
+
+    <!-- Orchestration Layer Container -->
+    <mxCell id="orch_box" value="Orchestration Layer" style="swimlane;startSize=25;fillColor=#e8f5e9;strokeColor=#388e3c;rounded=1;" vertex="1" parent="1">
+      <mxGeometry x="120" y="360" width="760" height="80" as="geometry"/>
+    </mxCell>
+    <mxCell id="discovery" value="ToolDiscoveryService&#xa;[MODIFIED]" style="rounded=1;whiteSpace=wrap;fontSize=10;fillColor=#ffe0b2;strokeColor=#f57c00;" vertex="1" parent="orch_box">
+      <mxGeometry x="10" y="30" width="140" height="40" as="geometry"/>
+    </mxCell>
+    <mxCell id="dispatcher" value="ToolExecutionDispatcher&#xa;[MODIFIED]" style="rounded=1;whiteSpace=wrap;fontSize=10;fillColor=#ffe0b2;strokeColor=#f57c00;" vertex="1" parent="orch_box">
+      <mxGeometry x="160" y="30" width="150" height="40" as="geometry"/>
+    </mxCell>
+    <mxCell id="toolmgmt" value="ToolManagementService&#xa;[NEW]" style="rounded=1;whiteSpace=wrap;fontSize=10;fillColor=#c8e6c9;strokeColor=#2e7d32;fontStyle=1;" vertex="1" parent="orch_box">
+      <mxGeometry x="320" y="30" width="150" height="40" as="geometry"/>
+    </mxCell>
+    <mxCell id="toolfilter" value="ToolFilterService&#xa;[NEW]" style="rounded=1;whiteSpace=wrap;fontSize=10;fillColor=#c8e6c9;strokeColor=#2e7d32;fontStyle=1;" vertex="1" parent="orch_box">
+      <mxGeometry x="480" y="30" width="120" height="40" as="geometry"/>
+    </mxCell>
+    <mxCell id="toolreg" value="ToolRegistry" style="rounded=1;whiteSpace=wrap;fontSize=10;" vertex="1" parent="orch_box">
+      <mxGeometry x="610" y="30" width="100" height="40" as="geometry"/>
+    </mxCell>
+
+    <!-- Infrastructure Layer Container -->
+    <mxCell id="infra_box" value="Infrastructure Layer" style="swimlane;startSize=25;fillColor=#fce4ec;strokeColor=#c62828;rounded=1;" vertex="1" parent="1">
+      <mxGeometry x="120" y="480" width="760" height="80" as="geometry"/>
+    </mxCell>
+    <mxCell id="pgvector" value="PgVectorDbClient&#xa;[NEW]" style="rounded=1;whiteSpace=wrap;fontSize=10;fillColor=#c8e6c9;strokeColor=#2e7d32;fontStyle=1;" vertex="1" parent="infra_box">
+      <mxGeometry x="10" y="30" width="120" height="40" as="geometry"/>
+    </mxCell>
+    <mxCell id="ollama_emb" value="OllamaEmbedding&#xa;[NEW]" style="rounded=1;whiteSpace=wrap;fontSize=10;fillColor=#c8e6c9;strokeColor=#2e7d32;fontStyle=1;" vertex="1" parent="infra_box">
+      <mxGeometry x="140" y="30" width="120" height="40" as="geometry"/>
+    </mxCell>
+    <mxCell id="lmstudio_emb" value="LmStudioEmbedding&#xa;[NEW]" style="rounded=1;whiteSpace=wrap;fontSize=10;fillColor=#c8e6c9;strokeColor=#2e7d32;fontStyle=1;" vertex="1" parent="infra_box">
+      <mxGeometry x="270" y="30" width="120" height="40" as="geometry"/>
+    </mxCell>
+    <mxCell id="configsync" value="ConfigDbSyncService&#xa;[NEW]" style="rounded=1;whiteSpace=wrap;fontSize=10;fillColor=#c8e6c9;strokeColor=#2e7d32;fontStyle=1;" vertex="1" parent="infra_box">
+      <mxGeometry x="400" y="30" width="130" height="40" as="geometry"/>
+    </mxCell>
+    <mxCell id="usm" value="UpstreamServerMgr" style="rounded=1;whiteSpace=wrap;fontSize=10;" vertex="1" parent="infra_box">
+      <mxGeometry x="540" y="30" width="120" height="40" as="geometry"/>
+    </mxCell>
+    <mxCell id="openai_emb" value="OpenAiEmbedding&#xa;(existing)" style="rounded=1;whiteSpace=wrap;fontSize=10;strokeColor=#9e9e9e;fontColor=#757575;" vertex="1" parent="infra_box">
+      <mxGeometry x="670" y="30" width="80" height="40" as="geometry"/>
+    </mxCell>
+
+    <!-- External Services -->
+    <mxCell id="postgres" value="PostgreSQL 16+&#xa;pgvector" style="shape=cylinder3;whiteSpace=wrap;boundedLbl=1;size=10;fillColor=#f3e5f5;strokeColor=#7b1fa2;fontStyle=1;" vertex="1" parent="1">
+      <mxGeometry x="160" y="610" width="120" height="60" as="geometry"/>
+    </mxCell>
+    <mxCell id="ollama_svc" value="Ollama&#xa;(Local)" style="rounded=1;whiteSpace=wrap;fillColor=#f3e5f5;strokeColor=#7b1fa2;" vertex="1" parent="1">
+      <mxGeometry x="320" y="610" width="100" height="50" as="geometry"/>
+    </mxCell>
+    <mxCell id="lmstudio_svc" value="LMStudio&#xa;(Local)" style="rounded=1;whiteSpace=wrap;fillColor=#f3e5f5;strokeColor=#7b1fa2;" vertex="1" parent="1">
+      <mxGeometry x="440" y="610" width="100" height="50" as="geometry"/>
+    </mxCell>
+    <mxCell id="openai_svc" value="OpenAI API&#xa;(Optional)" style="rounded=1;whiteSpace=wrap;fillColor=#f3e5f5;strokeColor=#7b1fa2;strokeDashPattern=8 8;" vertex="1" parent="1">
+      <mxGeometry x="740" y="610" width="100" height="50" as="geometry"/>
+    </mxCell>
+
+    <!-- Upstream MCP Servers -->
+    <mxCell id="mcp1" value="Jira MCP" style="rounded=1;whiteSpace=wrap;fillColor=#e3f2fd;strokeColor=#1565c0;" vertex="1" parent="1">
+      <mxGeometry x="580" y="610" width="80" height="40" as="geometry"/>
+    </mxCell>
+    <mxCell id="mcp2" value="Git MCP" style="rounded=1;whiteSpace=wrap;fillColor=#e3f2fd;strokeColor=#1565c0;" vertex="1" parent="1">
+      <mxGeometry x="580" y="660" width="80" height="40" as="geometry"/>
+    </mxCell>
+
+    <!-- Edges -->
+    <mxCell id="e1" edge="1" source="kiro" target="transport_box" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e2" edge="1" source="transport_box" target="protocol_box" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e3" edge="1" source="protocol_box" target="orch_box" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e4" edge="1" source="orch_box" target="infra_box" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e5" edge="1" source="pgvector" target="postgres" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e6" edge="1" source="ollama_emb" target="ollama_svc" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e7" edge="1" source="lmstudio_emb" target="lmstudio_svc" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e8" edge="1" source="configsync" target="postgres" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e9" edge="1" source="usm" target="mcp1" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e10" edge="1" source="usm" target="mcp2" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e11" edge="1" source="openai_emb" target="openai_svc" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+
+    <!-- Legend -->
+    <mxCell id="legend_box" value="Legend" style="swimlane;startSize=20;fontSize=11;fillColor=#fafafa;strokeColor=#bdbdbd;" vertex="1" parent="1">
+      <mxGeometry x="10" y="60" width="170" height="110" as="geometry"/>
+    </mxCell>
+    <mxCell id="leg1" value="NEW component" style="rounded=1;whiteSpace=wrap;fontSize=9;fillColor=#c8e6c9;strokeColor=#2e7d32;" vertex="1" parent="legend_box">
+      <mxGeometry x="10" y="25" width="100" height="20" as="geometry"/>
+    </mxCell>
+    <mxCell id="leg2" value="MODIFIED" style="rounded=1;whiteSpace=wrap;fontSize=9;fillColor=#ffe0b2;strokeColor=#f57c00;" vertex="1" parent="legend_box">
+      <mxGeometry x="10" y="50" width="100" height="20" as="geometry"/>
+    </mxCell>
+    <mxCell id="leg3" value="Existing (unchanged)" style="rounded=1;whiteSpace=wrap;fontSize=9;" vertex="1" parent="legend_box">
+      <mxGeometry x="10" y="75" width="100" height="20" as="geometry"/>
+    </mxCell>
+  </root>
+</mxGraphModel>

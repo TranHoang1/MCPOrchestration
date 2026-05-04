@@ -57,3 +57,57 @@ internal fun executeDynamicToolSchema(): ToolSchema = ToolSchema(
     },
     required = listOf("tool_name")
 )
+
+internal fun toggleToolDescription(): String =
+    "Enable or disable a specific tool or an entire server for the current session."
+
+internal fun toggleToolSchema(): ToolSchema = ToolSchema(
+    properties = buildJsonObject {
+        putJsonObject("tool_name") {
+            put("type", "string")
+            put("description", "Name of the tool to toggle")
+        }
+        putJsonObject("server_name") {
+            put("type", "string")
+            put("description", "Name of the server to toggle (disables all its tools)")
+        }
+        putJsonObject("enabled") {
+            put("type", "boolean")
+            put("description", "Whether to enable or disable")
+        }
+    },
+    required = listOf("enabled")
+)
+
+internal fun resetToolsDescription(): String =
+    "Reset all tool/server toggle states to their default enabled state for the session."
+
+internal fun resetToolsSchema(): ToolSchema = ToolSchema(
+    properties = buildJsonObject {
+        putJsonObject("server_name") {
+            put("type", "string")
+            put("description", "Optional. If provided, only resets tools for this server.")
+        }
+    }
+)
+
+internal fun manageAutoApproveDescription(): String =
+    "Add or remove tools from the auto-approve list (persists across restarts)."
+
+internal fun manageAutoApproveSchema(): ToolSchema = ToolSchema(
+    properties = buildJsonObject {
+        putJsonObject("tool_name") {
+            put("type", "string")
+            put("description", "Name of the tool to update")
+        }
+        putJsonObject("server_name") {
+            put("type", "string")
+            put("description", "Name of the server (if updating all tools of a server)")
+        }
+        putJsonObject("auto_approve") {
+            put("type", "boolean")
+            put("description", "Whether to add or remove from auto-approve list")
+        }
+    },
+    required = listOf("auto_approve")
+)

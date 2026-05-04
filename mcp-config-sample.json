@@ -1,0 +1,19 @@
+{
+  "mcpServers": {
+    "mcp-orchestrator": {
+      "command": "java",
+      "args": [
+        "-jar",
+        "C:/projects/kotlin/MCPOrchestration_AntiGravity/build/libs/mcp-orchestration-1.0.0.jar"
+      ],
+      "env": {
+        "VECTOR_DB_PROVIDER": "postgres",
+        "VECTOR_DB_CONNECTION_STRING": "postgresql://postgres:postgres@localhost:5432/mcp_db",
+        "EMBEDDING_PROVIDER": "openai",
+        "EMBEDDING_MODEL": "text-embedding-3-small",
+        "EMBEDDING_API_KEY": "your-api-key-here",
+        "SERVER_PROTOCOL": "stdio"
+      }
+    }
+  }
+}

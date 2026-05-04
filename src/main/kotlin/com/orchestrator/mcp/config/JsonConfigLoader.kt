@@ -77,6 +77,25 @@ object JsonConfigLoader {
         }
     }
 
+    /**
+     * Parse JSON content and extract full Orchestrator configuration sections
+     * if present (embedding, vector_db, etc).
+     */
+    fun parseOrchestratorSettings(content: String): OrchestratorSettings? {
+        return try {
+            val resolved = ConfigurationManagerImpl.resolveEnvVars(content)
+            val root = json.parseToJsonElement(resolved).jsonObject
+            
+            // Look for "orchestrator" block or try to parse root as settings
+            val settingsObj = root["orchestrator"]?.jsonObject ?: root
+            
+            json.decodeFromJsonElement(OrchestratorSettings.serializer(), settingsObj)
+        } catch (e: Exception) {
+            logger.debug("JSON does not contain full orchestrator settings: ${e.message}")
+            null
+        }
+    }
+
     private fun findServersArray(
         root: JsonObject
     ): List<kotlinx.serialization.json.JsonElement> {

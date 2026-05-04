@@ -1031,6 +1031,15 @@ The file `.analysis/code-intelligence/index-config.json` contains indexer config
 - For Kotlin/JVM projects, ensure `.kt`, `.java`, `.gradle.kts`, `.sql`, `.properties`, `.yml` are included
 - Exclude `build/`, `dist/`, `.gradle/`, `node_modules/`, `.git/`, `.idea/`
 
+## ⛔ Anti-Loop Rules (CRITICAL)
+
+1. **KHÔNG được loop lại cùng một phase** — nếu document đã tạo xong (file exists + có nội dung thực) thì chuyển sang phase tiếp theo
+2. **Trong quá trình review giữa các agent (BA ↔ TA), PHẢI output kết quả review cho user thấy** — user cần biết agent nào đã review gì, kết quả ra sao
+3. **Follow đúng quy trình SDLC**: BA tạo BRD → BA+TA tạo FSD → SA tạo TDD
+4. **Mỗi sub-agent chỉ được invoke TỐI ĐA 2 lần cho cùng 1 document** — nếu sau 2 lần vẫn chưa đạt, report cho user và hỏi cách xử lý
+5. **Khi chạy "tạo tài liệu đầy đủ"**: Sau khi Phase N hoàn thành, PHẢI chuyển sang Phase N+1. KHÔNG quay lại Phase N trừ khi user yêu cầu "tạo lại"
+6. **Detect empty/placeholder documents**: Nếu file exists nhưng nội dung chỉ là placeholder (< 100 chars, chỉ có "test", "TODO", etc.) → coi như chưa tạo, invoke agent tạo lại
+
 ## Important Rules
 
 - **NEVER write documents yourself** — always invoke the appropriate agent

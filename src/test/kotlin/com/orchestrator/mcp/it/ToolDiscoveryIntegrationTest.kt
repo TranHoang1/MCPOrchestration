@@ -40,7 +40,7 @@ class ToolDiscoveryIntegrationTest : FunSpec({
         )
 
         resp.tools shouldHaveSize 3
-        resp.searchMode shouldBe "semantic"
+        resp.searchMode shouldBe "hybrid"
         resp.tools.zipWithNext().forEach { (a, b) ->
             a.similarityScore shouldBeGreaterThanOrEqual
                 b.similarityScore

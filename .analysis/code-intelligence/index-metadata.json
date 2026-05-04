@@ -1,9 +1,541 @@
 {
   "version": "1.0",
-  "lastFullIndexTimestamp": null,
+  "lastFullIndexTimestamp": "2026-05-03T03:51:59.558Z",
   "projectName": "MCPOrchestration",
   "projectType": "gradle-kotlin",
-  "totalFiles": 0,
-  "files": {},
-  "note": "Greenfield project — no source code yet. Code intelligence will be populated after Phase 5 (Implementation)."
+  "totalFiles": 76,
+  "files": {
+    "src/main/kotlin/com/orchestrator/mcp/Application.kt": {
+      "contentHash": "sha256:ca9884fe1c1909d55cbbe22bdc298c5b9b695f69582a8b8ab969f954bc544658",
+      "lastIndexedTimestamp": "2026-05-03T03:51:58.702Z",
+      "language": "kotlin",
+      "moduleName": "root",
+      "indexingStatus": "success"
+    },
+    "src/main/kotlin/com/orchestrator/mcp/config/ConfigValidator.kt": {
+      "contentHash": "sha256:91b08ddf1513747ffa3022972ee60842c68a3ebda1d37a700b12867daff37d42",
+      "lastIndexedTimestamp": "2026-05-03T03:51:58.713Z",
+      "language": "kotlin",
+      "moduleName": "root",
+      "indexingStatus": "success"
+    },
+    "src/main/kotlin/com/orchestrator/mcp/config/ConfigurationManager.kt": {
+      "contentHash": "sha256:f6f6881fdf4e735ce242d63c9fec33612ea6a5b781e2f5fe6e1ca094b6f9ca26",
+      "lastIndexedTimestamp": "2026-05-03T03:51:58.724Z",
+      "language": "kotlin",
+      "moduleName": "root",
+      "indexingStatus": "success"
+    },
+    "src/main/kotlin/com/orchestrator/mcp/config/ExternalConfigScanner.kt": {
+      "contentHash": "sha256:540b25fda179858cd252437a5f50277e29a8de0df00e745c8ca7d8e0f7fa173c",
+      "lastIndexedTimestamp": "2026-05-03T03:51:58.735Z",
+      "language": "kotlin",
+      "moduleName": "root",
+      "indexingStatus": "success"
+    },
+    "src/main/kotlin/com/orchestrator/mcp/config/JsonConfigLoader.kt": {
+      "contentHash": "sha256:be5e61068df155bcf03b823e73ab4d689484ba99b2005e5c77be138e4edf6419",
+      "lastIndexedTimestamp": "2026-05-03T03:51:58.745Z",
+      "language": "kotlin",
+      "moduleName": "root",
+      "indexingStatus": "success"
+    },
+    "src/main/kotlin/com/orchestrator/mcp/config/OrchestratorConfig.kt": {
+      "contentHash": "sha256:2bd82608204c72b75b6eba2b7ceee4757db1a35b756752acbfdca391b56417ce",
+      "lastIndexedTimestamp": "2026-05-03T03:51:58.756Z",
+      "language": "kotlin",
+      "moduleName": "root",
+      "indexingStatus": "success"
+    },
+    "src/main/kotlin/com/orchestrator/mcp/di/AppModule.kt": {
+      "contentHash": "sha256:e2693bbe5e59c36b48dcaf30f9aacbdcecc79b0f563837357050983307055cd4",
+      "lastIndexedTimestamp": "2026-05-03T03:51:58.766Z",
+      "language": "kotlin",
+      "moduleName": "root",
+      "indexingStatus": "success"
+    },
+    "src/main/kotlin/com/orchestrator/mcp/discovery/KeywordSearchEngine.kt": {
+      "contentHash": "sha256:3715f863a10bc769ac4bc5915269ad4545f6f7c9d45392b65f936781c8cd8bce",
+      "lastIndexedTimestamp": "2026-05-03T03:51:58.777Z",
+      "language": "kotlin",
+      "moduleName": "root",
+      "indexingStatus": "success"
+    },
+    "src/main/kotlin/com/orchestrator/mcp/discovery/ToolDiscoveryService.kt": {
+      "contentHash": "sha256:fd7eeea822a78f8ee0fbd3f7a1f6e1d8925c2dbc46f9f68b9cece2ca65421454",
+      "lastIndexedTimestamp": "2026-05-03T03:51:58.789Z",
+      "language": "kotlin",
+      "moduleName": "root",
+      "indexingStatus": "success"
+    },
+    "src/main/kotlin/com/orchestrator/mcp/discovery/ToolDiscoveryServiceImpl.kt": {
+      "contentHash": "sha256:9195de9eafdbdd7b1858c2bd176f583faf242a50284b79cd4ee0df27be6628cd",
+      "lastIndexedTimestamp": "2026-05-03T03:51:58.801Z",
+      "language": "kotlin",
+      "moduleName": "root",
+      "indexingStatus": "success"
+    },
+    "src/main/kotlin/com/orchestrator/mcp/discovery/model/FindToolsResponse.kt": {
+      "contentHash": "sha256:02369dcb7125eeae210b9e4a15c61ab0cd5b3f5f56aec4fac8aceb641864d7ee",
+      "lastIndexedTimestamp": "2026-05-03T03:51:58.812Z",
+      "language": "kotlin",
+      "moduleName": "root",
+      "indexingStatus": "success"
+    },
+    "src/main/kotlin/com/orchestrator/mcp/embedding/EmbeddingService.kt": {
+      "contentHash": "sha256:722dbd1aad6f9b18bc7d0c54e277c3fdfedd1cb4ab238cad4f2ab07a62217167",
+      "lastIndexedTimestamp": "2026-05-03T03:51:58.822Z",
+      "language": "kotlin",
+      "moduleName": "root",
+      "indexingStatus": "success"
+    },
+    "src/main/kotlin/com/orchestrator/mcp/embedding/OpenAiEmbeddingService.kt": {
+      "contentHash": "sha256:3e0e68485cb4a28d27f37e1cda1400751425bf4543108e53a43476f9037a0a89",
+      "lastIndexedTimestamp": "2026-05-03T03:51:58.832Z",
+      "language": "kotlin",
+      "moduleName": "root",
+      "indexingStatus": "success"
+    },
+    "src/main/kotlin/com/orchestrator/mcp/execution/ToolExecutionDispatcher.kt": {
+      "contentHash": "sha256:e225ae087eca423a6f33f3fa77598f54cd75b18c5c2e5e9d47e9231ddc24995e",
+      "lastIndexedTimestamp": "2026-05-03T03:51:58.842Z",
+      "language": "kotlin",
+      "moduleName": "root",
+      "indexingStatus": "success"
+    },
+    "src/main/kotlin/com/orchestrator/mcp/execution/ToolExecutionDispatcherImpl.kt": {
+      "contentHash": "sha256:8927eb5c9087de5b095b0ded9803c35a3c8323c536a6e0bcaa7409095ab61424",
+      "lastIndexedTimestamp": "2026-05-03T03:51:58.852Z",
+      "language": "kotlin",
+      "moduleName": "root",
+      "indexingStatus": "success"
+    },
+    "src/main/kotlin/com/orchestrator/mcp/execution/model/ExecuteToolResponse.kt": {
+      "contentHash": "sha256:36713d005a3325b6b39aca284d6bade880fb81981e908effbfe10494d4fd94f1",
+      "lastIndexedTimestamp": "2026-05-03T03:51:58.863Z",
+      "language": "kotlin",
+      "moduleName": "root",
+      "indexingStatus": "success"
+    },
+    "src/main/kotlin/com/orchestrator/mcp/model/ErrorCodes.kt": {
+      "contentHash": "sha256:4bc03a58b17daa1f3947d63401dc3b8fa73927f3c6fc5bce3166ff717392f1b6",
+      "lastIndexedTimestamp": "2026-05-03T03:51:58.873Z",
+      "language": "kotlin",
+      "moduleName": "root",
+      "indexingStatus": "success"
+    },
+    "src/main/kotlin/com/orchestrator/mcp/model/Exceptions.kt": {
+      "contentHash": "sha256:12775f2150fa0f90dbd31e882e28c306eeedecf155f62cedfa35ace49e1a39be",
+      "lastIndexedTimestamp": "2026-05-03T03:51:58.883Z",
+      "language": "kotlin",
+      "moduleName": "root",
+      "indexingStatus": "success"
+    },
+    "src/main/kotlin/com/orchestrator/mcp/model/ToolDefinition.kt": {
+      "contentHash": "sha256:6777ee31a41a9bc768fcfd7aaff9d6fe53aeaf38460df6c7fa2c016b8152888a",
+      "lastIndexedTimestamp": "2026-05-03T03:51:58.895Z",
+      "language": "kotlin",
+      "moduleName": "root",
+      "indexingStatus": "success"
+    },
+    "src/main/kotlin/com/orchestrator/mcp/protocol/JsonRpcHandler.kt": {
+      "contentHash": "sha256:71010249a1bd74b0a3069c3c4566bb9e7efb215d6adffd21847631069f797bd2",
+      "lastIndexedTimestamp": "2026-05-03T03:51:58.905Z",
+      "language": "kotlin",
+      "moduleName": "root",
+      "indexingStatus": "success"
+    },
+    "src/main/kotlin/com/orchestrator/mcp/protocol/McpProtocolHandler.kt": {
+      "contentHash": "sha256:b3e60b582539892e4b6f21c3ed11874f7820876a0c8013aa9c381c5d75aecba2",
+      "lastIndexedTimestamp": "2026-05-03T03:51:58.915Z",
+      "language": "kotlin",
+      "moduleName": "root",
+      "indexingStatus": "success"
+    },
+    "src/main/kotlin/com/orchestrator/mcp/protocol/McpServerFactory.kt": {
+      "contentHash": "sha256:9c2e0d83006791af9168c4c1f70cf5216c431471a4bc4933df6d443fcddaa779",
+      "lastIndexedTimestamp": "2026-05-03T03:51:58.925Z",
+      "language": "kotlin",
+      "moduleName": "root",
+      "indexingStatus": "success"
+    },
+    "src/main/kotlin/com/orchestrator/mcp/protocol/McpToolRegistrar.kt": {
+      "contentHash": "sha256:20ba71ffadc26a9128cece10c6ef5ce72915cc59d070c9a806c30490c0a21889",
+      "lastIndexedTimestamp": "2026-05-03T03:51:58.936Z",
+      "language": "kotlin",
+      "moduleName": "root",
+      "indexingStatus": "success"
+    },
+    "src/main/kotlin/com/orchestrator/mcp/protocol/McpToolSchemas.kt": {
+      "contentHash": "sha256:cf014f4539cb3f2d2dbd0a8b1936a12f648169b075c2ca69c7a3eb7b8a800be1",
+      "lastIndexedTimestamp": "2026-05-03T03:51:58.945Z",
+      "language": "kotlin",
+      "moduleName": "root",
+      "indexingStatus": "success"
+    },
+    "src/main/kotlin/com/orchestrator/mcp/protocol/model/JsonRpcMessage.kt": {
+      "contentHash": "sha256:99fe6fbc34b76f34cc7dadb2fa3c3be21b1ab59640ab2b0e8f7129fa17e6c4d0",
+      "lastIndexedTimestamp": "2026-05-03T03:51:58.956Z",
+      "language": "kotlin",
+      "moduleName": "root",
+      "indexingStatus": "success"
+    },
+    "src/main/kotlin/com/orchestrator/mcp/protocol/model/McpMessages.kt": {
+      "contentHash": "sha256:c9d29eaceabad56d35e2e03385ae941ba1c8d13faf77dd357c5f5619b6caf371",
+      "lastIndexedTimestamp": "2026-05-03T03:51:58.974Z",
+      "language": "kotlin",
+      "moduleName": "root",
+      "indexingStatus": "success"
+    },
+    "src/main/kotlin/com/orchestrator/mcp/registry/ToolIndexer.kt": {
+      "contentHash": "sha256:c31c4103a2b3183cf8d8b24a31642a46ab584972b778974bd1e8c99c2245697c",
+      "lastIndexedTimestamp": "2026-05-03T03:51:58.990Z",
+      "language": "kotlin",
+      "moduleName": "root",
+      "indexingStatus": "success"
+    },
+    "src/main/kotlin/com/orchestrator/mcp/registry/ToolRegistry.kt": {
+      "contentHash": "sha256:6c60530e1250cb99608222c79474e95212ccf4fcc8aa38b21060120d91231a82",
+      "lastIndexedTimestamp": "2026-05-03T03:51:59.003Z",
+      "language": "kotlin",
+      "moduleName": "root",
+      "indexingStatus": "success"
+    },
+    "src/main/kotlin/com/orchestrator/mcp/registry/ToolRegistryImpl.kt": {
+      "contentHash": "sha256:9f23d04ed076303372ea1387b162d6c05428ee11b2a7d8e27d59e6ca06924f53",
+      "lastIndexedTimestamp": "2026-05-03T03:51:59.019Z",
+      "language": "kotlin",
+      "moduleName": "root",
+      "indexingStatus": "success"
+    },
+    "src/main/kotlin/com/orchestrator/mcp/transport/McpTransport.kt": {
+      "contentHash": "sha256:5cda39ebc4a9c5608590d85329ac4b85ef6556a8e008a15cb7669ca6a9e8a79a",
+      "lastIndexedTimestamp": "2026-05-03T03:51:59.030Z",
+      "language": "kotlin",
+      "moduleName": "root",
+      "indexingStatus": "success"
+    },
+    "src/main/kotlin/com/orchestrator/mcp/transport/StdioTransport.kt": {
+      "contentHash": "sha256:a1191a8516f27c823d35ad5e5dfb279a793bbb537934cbf6644abc127095b307",
+      "lastIndexedTimestamp": "2026-05-03T03:51:59.041Z",
+      "language": "kotlin",
+      "moduleName": "root",
+      "indexingStatus": "success"
+    },
+    "src/main/kotlin/com/orchestrator/mcp/upstream/HealthMonitor.kt": {
+      "contentHash": "sha256:4fa7138c8cf4cdbdbae3ef744223fe07f8227f417c9371f9287ca8e27106728b",
+      "lastIndexedTimestamp": "2026-05-03T03:51:59.053Z",
+      "language": "kotlin",
+      "moduleName": "root",
+      "indexingStatus": "success"
+    },
+    "src/main/kotlin/com/orchestrator/mcp/upstream/HttpMcpConnection.kt": {
+      "contentHash": "sha256:bd9feb4aadeae117f0448b7e44eee923407b33cf911ef518e3f73f1fe514788d",
+      "lastIndexedTimestamp": "2026-05-03T03:51:59.062Z",
+      "language": "kotlin",
+      "moduleName": "root",
+      "indexingStatus": "success"
+    },
+    "src/main/kotlin/com/orchestrator/mcp/upstream/McpConnection.kt": {
+      "contentHash": "sha256:aa1359298ce90b513687ff4550c9527c5f8c542d49ce51753faf4af308bb8a8f",
+      "lastIndexedTimestamp": "2026-05-03T03:51:59.075Z",
+      "language": "kotlin",
+      "moduleName": "root",
+      "indexingStatus": "success"
+    },
+    "src/main/kotlin/com/orchestrator/mcp/upstream/StdioMcpConnection.kt": {
+      "contentHash": "sha256:2e98df6d3d473abcdd836aa3e06f0b1053c371700f954d4a376d551416896442",
+      "lastIndexedTimestamp": "2026-05-03T03:51:59.088Z",
+      "language": "kotlin",
+      "moduleName": "root",
+      "indexingStatus": "success"
+    },
+    "src/main/kotlin/com/orchestrator/mcp/upstream/UpstreamServerManager.kt": {
+      "contentHash": "sha256:b3c72f5305556f44d8282d01b0326ad25fe14364c20a84adddea1ec61d1937e7",
+      "lastIndexedTimestamp": "2026-05-03T03:51:59.101Z",
+      "language": "kotlin",
+      "moduleName": "root",
+      "indexingStatus": "success"
+    },
+    "src/main/kotlin/com/orchestrator/mcp/upstream/UpstreamServerManagerImpl.kt": {
+      "contentHash": "sha256:9e4d6dc65f119f572f7bcc8a6c6a0888a8549aaf22086606c33dc232cfda7db1",
+      "lastIndexedTimestamp": "2026-05-03T03:51:59.114Z",
+      "language": "kotlin",
+      "moduleName": "root",
+      "indexingStatus": "success"
+    },
+    "src/main/kotlin/com/orchestrator/mcp/upstream/model/ServerState.kt": {
+      "contentHash": "sha256:7457aad81e3e0f1f66f96a96fc74aaa1b3d29eaa708b387f37ca2f2fa524d7bb",
+      "lastIndexedTimestamp": "2026-05-03T03:51:59.126Z",
+      "language": "kotlin",
+      "moduleName": "root",
+      "indexingStatus": "success"
+    },
+    "src/main/kotlin/com/orchestrator/mcp/upstream/model/UpstreamServerInfo.kt": {
+      "contentHash": "sha256:b058e8f796d865a023321fd3e106ea96c7c2235086f4f100f1099c24a2632691",
+      "lastIndexedTimestamp": "2026-05-03T03:51:59.135Z",
+      "language": "kotlin",
+      "moduleName": "root",
+      "indexingStatus": "success"
+    },
+    "src/main/kotlin/com/orchestrator/mcp/util/RetryUtils.kt": {
+      "contentHash": "sha256:a662844aded82ac2e6b13ea9fb93388b06bda85d25b35787f00427de4760f708",
+      "lastIndexedTimestamp": "2026-05-03T03:51:59.145Z",
+      "language": "kotlin",
+      "moduleName": "root",
+      "indexingStatus": "success"
+    },
+    "src/main/kotlin/com/orchestrator/mcp/vectordb/FaissVectorDbClient.kt": {
+      "contentHash": "sha256:dc7e39a454fb42a353e3a605b08828af848eab824d5859563f725ade467d4fdd",
+      "lastIndexedTimestamp": "2026-05-03T03:51:59.159Z",
+      "language": "kotlin",
+      "moduleName": "root",
+      "indexingStatus": "success"
+    },
+    "src/main/kotlin/com/orchestrator/mcp/vectordb/QdrantVectorDbClient.kt": {
+      "contentHash": "sha256:03ecf2199ac461549e0cb197c1489ee0ea5c5a729128b89b17b5edce721c7a82",
+      "lastIndexedTimestamp": "2026-05-03T03:51:59.172Z",
+      "language": "kotlin",
+      "moduleName": "root",
+      "indexingStatus": "success"
+    },
+    "src/main/kotlin/com/orchestrator/mcp/vectordb/VectorDbClient.kt": {
+      "contentHash": "sha256:b7986502affe38f96cdc01f9e5318e2872cf6d6b8e5d8e3135bfb573fed5c79e",
+      "lastIndexedTimestamp": "2026-05-03T03:51:59.183Z",
+      "language": "kotlin",
+      "moduleName": "root",
+      "indexingStatus": "success"
+    },
+    "src/main/kotlin/com/orchestrator/mcp/vectordb/model/VectorPoint.kt": {
+      "contentHash": "sha256:db9814fd9f16b47ada77da0df74caf7888826acf8f0a954ebd413c2bbb5cbda7",
+      "lastIndexedTimestamp": "2026-05-03T03:51:59.194Z",
+      "language": "kotlin",
+      "moduleName": "root",
+      "indexingStatus": "success"
+    },
+    "src/main/resources/application.yml": {
+      "contentHash": "sha256:85dab465a6f76ee70bf7d6e1c483364536b0539f2f380c7465f187ac0c525a0f",
+      "lastIndexedTimestamp": "2026-05-03T03:51:59.203Z",
+      "language": "yaml",
+      "moduleName": "root",
+      "indexingStatus": "success"
+    },
+    "src/main/resources/logback.xml": {
+      "contentHash": "sha256:0294c3fdfeea76c4085c5e31320eb8b2c27aa38658fcbf9cc3e2f223490ea660",
+      "lastIndexedTimestamp": "2026-05-03T03:51:59.211Z",
+      "language": "xml",
+      "moduleName": "root",
+      "indexingStatus": "success"
+    },
+    "src/test/kotlin/com/orchestrator/mcp/ApplicationTest.kt": {
+      "contentHash": "sha256:389494e8291e55481746febcca485c209a7a8df4099f8a3d8f6ec7b2e09e6724",
+      "lastIndexedTimestamp": "2026-05-03T03:51:59.220Z",
+      "language": "kotlin",
+      "moduleName": "root",
+      "indexingStatus": "success"
+    },
+    "src/test/kotlin/com/orchestrator/mcp/config/CliConfigTest.kt": {
+      "contentHash": "sha256:d4982203097fe686ed7e85bdb516a3979ec05f7b7eb081fbde6e6d3cfc91fed6",
+      "lastIndexedTimestamp": "2026-05-03T03:51:59.231Z",
+      "language": "kotlin",
+      "moduleName": "root",
+      "indexingStatus": "success"
+    },
+    "src/test/kotlin/com/orchestrator/mcp/config/ConfigurationManagerTest.kt": {
+      "contentHash": "sha256:0f9b2d44f9a8e2b3c97815ccabe30ecc3c001269cf96ab8ff4a6303c2982e6e2",
+      "lastIndexedTimestamp": "2026-05-03T03:51:59.243Z",
+      "language": "kotlin",
+      "moduleName": "root",
+      "indexingStatus": "success"
+    },
+    "src/test/kotlin/com/orchestrator/mcp/config/ExternalConfigScannerTest.kt": {
+      "contentHash": "sha256:5dea272b7905abf6ea79174e5954e8de9f59c4456bbcba5b34575fedd7246573",
+      "lastIndexedTimestamp": "2026-05-03T03:51:59.255Z",
+      "language": "kotlin",
+      "moduleName": "root",
+      "indexingStatus": "success"
+    },
+    "src/test/kotlin/com/orchestrator/mcp/config/JsonConfigLoaderTest.kt": {
+      "contentHash": "sha256:4181430aeb7b25b8fb38f81a43a9d57d6def048881a3018973ca67d2d6ff96c6",
+      "lastIndexedTimestamp": "2026-05-03T03:51:59.267Z",
+      "language": "kotlin",
+      "moduleName": "root",
+      "indexingStatus": "success"
+    },
+    "src/test/kotlin/com/orchestrator/mcp/config/JsonConfigMergeTest.kt": {
+      "contentHash": "sha256:0139276dbdb1147faaf3ddb93c64f9d35976dd9040d19de03f93157ee440c96a",
+      "lastIndexedTimestamp": "2026-05-03T03:51:59.277Z",
+      "language": "kotlin",
+      "moduleName": "root",
+      "indexingStatus": "success"
+    },
+    "src/test/kotlin/com/orchestrator/mcp/config/McpServersFormatTest.kt": {
+      "contentHash": "sha256:89ed11e879e07e28c262d095fb0203d411c2533d04fe97524e8b70023d12eae7",
+      "lastIndexedTimestamp": "2026-05-03T03:51:59.288Z",
+      "language": "kotlin",
+      "moduleName": "root",
+      "indexingStatus": "success"
+    },
+    "src/test/kotlin/com/orchestrator/mcp/discovery/ToolDiscoveryServiceImplTest.kt": {
+      "contentHash": "sha256:c329ae7f5bd55dadf968c0634d285bd390402bd6921be685a4c5f8efe8638d9c",
+      "lastIndexedTimestamp": "2026-05-03T03:51:59.300Z",
+      "language": "kotlin",
+      "moduleName": "root",
+      "indexingStatus": "success"
+    },
+    "src/test/kotlin/com/orchestrator/mcp/e2e/E2eConfigApiTest.kt": {
+      "contentHash": "sha256:dd1d99397d27478c24fbf998774b1cc4f9ccf491d1f7e44f3761a3febf798de5",
+      "lastIndexedTimestamp": "2026-05-03T03:51:59.312Z",
+      "language": "kotlin",
+      "moduleName": "root",
+      "indexingStatus": "success"
+    },
+    "src/test/kotlin/com/orchestrator/mcp/e2e/E2eDiscoveryApiTest.kt": {
+      "contentHash": "sha256:2eb26e0e76cd9a8fdb48eaf34b0c9b6674b754da1c3f5e7af1ac3e3bb05de5bd",
+      "lastIndexedTimestamp": "2026-05-03T03:51:59.323Z",
+      "language": "kotlin",
+      "moduleName": "root",
+      "indexingStatus": "success"
+    },
+    "src/test/kotlin/com/orchestrator/mcp/e2e/E2eExecutionApiTest.kt": {
+      "contentHash": "sha256:e17ddf35a5af49a5289267d48d593fbfe0d18ce08ee9b09e1f6c5ab2808923e6",
+      "lastIndexedTimestamp": "2026-05-03T03:51:59.333Z",
+      "language": "kotlin",
+      "moduleName": "root",
+      "indexingStatus": "success"
+    },
+    "src/test/kotlin/com/orchestrator/mcp/e2e/E2ePerformanceApiTest.kt": {
+      "contentHash": "sha256:1b2e0a100ada7fe27bc4b717e1759e58a532baf98bffb03706284e56a52f4ed9",
+      "lastIndexedTimestamp": "2026-05-03T03:51:59.345Z",
+      "language": "kotlin",
+      "moduleName": "root",
+      "indexingStatus": "success"
+    },
+    "src/test/kotlin/com/orchestrator/mcp/e2e/E2eProtocolApiTest.kt": {
+      "contentHash": "sha256:bc1348b7acc4fb3f3490213a746abbf998dae8b6dd53927d1010d197688034fb",
+      "lastIndexedTimestamp": "2026-05-03T03:51:59.356Z",
+      "language": "kotlin",
+      "moduleName": "root",
+      "indexingStatus": "success"
+    },
+    "src/test/kotlin/com/orchestrator/mcp/embedding/OpenAiEmbeddingServiceTest.kt": {
+      "contentHash": "sha256:c19a7a3bb39a6d6882cc19a2af4fc76ffff84e824b128a4220aa5868861bbbe9",
+      "lastIndexedTimestamp": "2026-05-03T03:51:59.368Z",
+      "language": "kotlin",
+      "moduleName": "root",
+      "indexingStatus": "success"
+    },
+    "src/test/kotlin/com/orchestrator/mcp/execution/ToolExecutionDispatcherImplTest.kt": {
+      "contentHash": "sha256:0c4581d1f9524bf6d55c193305f1a6fa9c48466cb946a763a91ebfc42ef16085",
+      "lastIndexedTimestamp": "2026-05-03T03:51:59.379Z",
+      "language": "kotlin",
+      "moduleName": "root",
+      "indexingStatus": "success"
+    },
+    "src/test/kotlin/com/orchestrator/mcp/it/ConfigIntegrationTest.kt": {
+      "contentHash": "sha256:c33b32e17fa03644bfd96f4f592422db716cf3fba8c0ebf3999b191c8a09e222",
+      "lastIndexedTimestamp": "2026-05-03T03:51:59.390Z",
+      "language": "kotlin",
+      "moduleName": "root",
+      "indexingStatus": "success"
+    },
+    "src/test/kotlin/com/orchestrator/mcp/it/HealthMonitorIntegrationTest.kt": {
+      "contentHash": "sha256:0c154bae87b99457745a0d1b481ebccb237941c75c557360e1029dc0c370c950",
+      "lastIndexedTimestamp": "2026-05-03T03:51:59.402Z",
+      "language": "kotlin",
+      "moduleName": "root",
+      "indexingStatus": "success"
+    },
+    "src/test/kotlin/com/orchestrator/mcp/it/IntegrationTestBase.kt": {
+      "contentHash": "sha256:118a58a9176cef6d8b47a302b12d6fec4e7a576c6ce87bbc480f3edf809e7967",
+      "lastIndexedTimestamp": "2026-05-03T03:51:59.414Z",
+      "language": "kotlin",
+      "moduleName": "root",
+      "indexingStatus": "success"
+    },
+    "src/test/kotlin/com/orchestrator/mcp/it/McpProtocolIntegrationTest.kt": {
+      "contentHash": "sha256:051858e90f6df3f70bf8c78a7edfa2dff16df4a5a0dc51b418ee02ea58da2163",
+      "lastIndexedTimestamp": "2026-05-03T03:51:59.424Z",
+      "language": "kotlin",
+      "moduleName": "root",
+      "indexingStatus": "success"
+    },
+    "src/test/kotlin/com/orchestrator/mcp/it/TestFixtures.kt": {
+      "contentHash": "sha256:c98324c7d16a7f59337404d9740e8b820a3642d09f5b08dcc86d12df4bba3925",
+      "lastIndexedTimestamp": "2026-05-03T03:51:59.435Z",
+      "language": "kotlin",
+      "moduleName": "root",
+      "indexingStatus": "success"
+    },
+    "src/test/kotlin/com/orchestrator/mcp/it/ToolDiscoveryIntegrationTest.kt": {
+      "contentHash": "sha256:4664fb662f68eb517195ad62f9d4f88e65355401297b96ab055220fe0e61d4ca",
+      "lastIndexedTimestamp": "2026-05-03T03:51:59.447Z",
+      "language": "kotlin",
+      "moduleName": "root",
+      "indexingStatus": "success"
+    },
+    "src/test/kotlin/com/orchestrator/mcp/it/ToolExecutionIntegrationTest.kt": {
+      "contentHash": "sha256:842e437847ec9040dc91da9fcabb7f3ed77660268a6b4480fc18afda4eae981d",
+      "lastIndexedTimestamp": "2026-05-03T03:51:59.458Z",
+      "language": "kotlin",
+      "moduleName": "root",
+      "indexingStatus": "success"
+    },
+    "src/test/kotlin/com/orchestrator/mcp/it/ToolIndexingIntegrationTest.kt": {
+      "contentHash": "sha256:07217771f360280c158949424a608be483dbab87c2b4c0f8c97bbfbc3394bff1",
+      "lastIndexedTimestamp": "2026-05-03T03:51:59.470Z",
+      "language": "kotlin",
+      "moduleName": "root",
+      "indexingStatus": "success"
+    },
+    "src/test/kotlin/com/orchestrator/mcp/protocol/JsonRpcHandlerTest.kt": {
+      "contentHash": "sha256:f5c7e3d350a889d7d4943a09e9b76033debcc998d6941c22d0df54e2e3f9c8f7",
+      "lastIndexedTimestamp": "2026-05-03T03:51:59.481Z",
+      "language": "kotlin",
+      "moduleName": "root",
+      "indexingStatus": "success"
+    },
+    "src/test/kotlin/com/orchestrator/mcp/protocol/McpServerFactoryTest.kt": {
+      "contentHash": "sha256:0c79ae39c92060926a9dc104dbcfa8e216876a0e738e1cad2e03c15ecf8a20f3",
+      "lastIndexedTimestamp": "2026-05-03T03:51:59.494Z",
+      "language": "kotlin",
+      "moduleName": "root",
+      "indexingStatus": "success"
+    },
+    "src/test/kotlin/com/orchestrator/mcp/registry/ToolIndexerTest.kt": {
+      "contentHash": "sha256:c1ea016967507726c5e88670045d9b94931233ce5187dca96fff49115880a532",
+      "lastIndexedTimestamp": "2026-05-03T03:51:59.505Z",
+      "language": "kotlin",
+      "moduleName": "root",
+      "indexingStatus": "success"
+    },
+    "src/test/kotlin/com/orchestrator/mcp/registry/ToolRegistryImplTest.kt": {
+      "contentHash": "sha256:425ad9eeb6b244129b5fc7a7947924865456f3c4c9c0509babc025064a010ea8",
+      "lastIndexedTimestamp": "2026-05-03T03:51:59.517Z",
+      "language": "kotlin",
+      "moduleName": "root",
+      "indexingStatus": "success"
+    },
+    "src/test/kotlin/com/orchestrator/mcp/upstream/HealthMonitorTest.kt": {
+      "contentHash": "sha256:18814cfb3d725f5c4201161bebbef382f7a417b52d87f9f7e41d9042d475f5ff",
+      "lastIndexedTimestamp": "2026-05-03T03:51:59.529Z",
+      "language": "kotlin",
+      "moduleName": "root",
+      "indexingStatus": "success"
+    },
+    "src/test/kotlin/com/orchestrator/mcp/util/RetryUtilsTest.kt": {
+      "contentHash": "sha256:3ad74d1cd9b12698b484151d34833db87d1ff1e5532ae6ae23167a7f1dd19ff7",
+      "lastIndexedTimestamp": "2026-05-03T03:51:59.543Z",
+      "language": "kotlin",
+      "moduleName": "root",
+      "indexingStatus": "success"
+    },
+    "src/test/kotlin/com/orchestrator/mcp/vectordb/FaissVectorDbClientTest.kt": {
+      "contentHash": "sha256:f711dd4ba31a45244c8cb7e6b7c1e22ab1e543624f5eb31cb2ff3b107d01c419",
+      "lastIndexedTimestamp": "2026-05-03T03:51:59.555Z",
+      "language": "kotlin",
+      "moduleName": "root",
+      "indexingStatus": "success"
+    }
+  }
 }

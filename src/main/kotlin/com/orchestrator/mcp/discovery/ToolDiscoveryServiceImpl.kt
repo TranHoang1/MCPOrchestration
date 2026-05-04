@@ -20,6 +20,8 @@ class ToolDiscoveryServiceImpl(
     private val vectorDbClient: VectorDbClient,
     private val toolRegistry: ToolRegistry,
     private val keywordEngine: KeywordSearchEngine,
+    private val toolManagementService: com.orchestrator.mcp.management.ToolManagementService,
+    private val sessionConfig: com.orchestrator.mcp.config.SessionConfig,
     private val collectionName: String = "mcp_tools",
     private val maxQueryLength: Int = 2000
 ) : ToolDiscoveryService {
@@ -44,29 +46,44 @@ class ToolDiscoveryServiceImpl(
         logger.info("find_tools query=\"$truncatedQuery\", topK=$effectiveTopK, threshold=$effectiveThreshold")
 
         return try {
-            // Semantic search path
+            // Semantic / Hybrid search path
             val embedding = embeddingService.generateEmbedding(trimmedQuery)
-            val results = vectorDbClient.search(collectionName, embedding, effectiveTopK, effectiveThreshold)
+            
+            val results = if (vectorDbClient is com.orchestrator.mcp.vectordb.PgVectorDbClient) {
+                vectorDbClient.hybridSearch(collectionName, embedding, trimmedQuery, effectiveTopK * 2, effectiveThreshold)
+            } else {
+                vectorDbClient.search(collectionName, embedding, effectiveTopK, effectiveThreshold)
+            }
 
-            val tools = results.map { result ->
+            val sessionId = sessionConfig.id
+            val allTools = results.mapNotNull { result ->
+                val name = result.payload["name"] ?: ""
                 val serverName = result.payload["server_name"] ?: "unknown"
-                val serverStatus = toolRegistry.lookupTool(result.payload["name"] ?: "")?.serverStatus ?: "UNKNOWN"
+                
+                // Skip if tool or server is disabled for this session
+                // In a production environment, we'd batch this or cache it
+                val isDisabled = kotlinx.coroutines.runBlocking { 
+                    toolManagementService.isToolDisabled(name, serverName, sessionId)
+                }
+                if (isDisabled) return@mapNotNull null
+
+                val serverStatus = toolRegistry.lookupTool(name)?.serverStatus ?: "UNKNOWN"
 
                 ToolResult(
-                    name = result.payload["name"] ?: "",
+                    name = name,
                     description = result.payload["description"] ?: "",
                     inputSchema = result.schemaPayload,
                     serverName = serverName,
                     serverStatus = serverStatus,
                     similarityScore = result.score
                 )
-            }
+            }.take(effectiveTopK)
 
-            logger.info("find_tools results=${tools.size}, mode=semantic, duration=N/A")
+            logger.info("find_tools results=${allTools.size}, mode=hybrid, duration=N/A")
 
             FindToolsResponse(
-                tools = tools,
-                searchMode = "semantic",
+                tools = allTools,
+                searchMode = "hybrid",
                 totalIndexed = toolRegistry.getToolCount()
             )
         } catch (e: VectorDbUnavailableException) {

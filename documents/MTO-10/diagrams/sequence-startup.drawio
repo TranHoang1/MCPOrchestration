@@ -1,0 +1,159 @@
+<mxGraphModel adaptiveColors="auto">
+  <root>
+    <mxCell id="0"/>
+    <mxCell id="1" parent="0"/>
+    <mxCell id="title" value="&lt;b&gt;Sequence: Startup — Config-DB Sync &amp;amp; Tool Indexing&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;fontSize=14;fontStyle=1;fillColor=none;strokeColor=none;" vertex="1" parent="1">
+      <mxGeometry x="150" y="10" width="500" height="30" as="geometry"/>
+    </mxCell>
+    <mxCell id="h_app" value="&lt;b&gt;Application&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8f5e9;strokeColor=#388e3c;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="40" y="50" width="110" height="40" as="geometry"/>
+    </mxCell>
+    <mxCell id="h_cfg" value="&lt;b&gt;ConfigManager&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff3e0;strokeColor=#f57c00;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="200" y="50" width="110" height="40" as="geometry"/>
+    </mxCell>
+    <mxCell id="h_sync" value="&lt;b&gt;ConfigDbSync&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1f5fe;strokeColor=#0288d1;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="360" y="50" width="110" height="40" as="geometry"/>
+    </mxCell>
+    <mxCell id="h_db" value="&lt;b&gt;PostgreSQL&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f3e5f5;strokeColor=#7b1fa2;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="520" y="50" width="110" height="40" as="geometry"/>
+    </mxCell>
+    <mxCell id="h_up" value="&lt;b&gt;UpstreamMgr&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8f5e9;strokeColor=#388e3c;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="680" y="50" width="110" height="40" as="geometry"/>
+    </mxCell>
+    <mxCell id="h_emb" value="&lt;b&gt;EmbeddingService&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1f5fe;strokeColor=#0288d1;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="840" y="50" width="120" height="40" as="geometry"/>
+    </mxCell>
+    <mxCell id="l1" style="dashed=1;endArrow=none;html=1;strokeColor=#388e3c;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="95" y="90" as="sourcePoint"/>
+        <mxPoint x="95" y="520" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="l2" style="dashed=1;endArrow=none;html=1;strokeColor=#f57c00;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="255" y="90" as="sourcePoint"/>
+        <mxPoint x="255" y="520" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="l3" style="dashed=1;endArrow=none;html=1;strokeColor=#0288d1;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="415" y="90" as="sourcePoint"/>
+        <mxPoint x="415" y="520" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="l4" style="dashed=1;endArrow=none;html=1;strokeColor=#7b1fa2;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="575" y="90" as="sourcePoint"/>
+        <mxPoint x="575" y="520" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="l5" style="dashed=1;endArrow=none;html=1;strokeColor=#388e3c;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="735" y="90" as="sourcePoint"/>
+        <mxPoint x="735" y="520" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="l6" style="dashed=1;endArrow=none;html=1;strokeColor=#0288d1;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="900" y="90" as="sourcePoint"/>
+        <mxPoint x="900" y="520" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="s1" value="1. loadConfig()" style="html=1;endArrow=classic;endSize=6;strokeColor=#388e3c;fontSize=10;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="95" y="115" as="sourcePoint"/>
+        <mxPoint x="255" y="115" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="s2" value="read mcp-servers.json + application.yml" style="html=1;endArrow=classic;endSize=6;strokeColor=#f57c00;dashed=1;fontSize=10;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="255" y="140" as="sourcePoint"/>
+        <mxPoint x="95" y="140" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="s3" value="2. syncConfigToDb(servers)" style="html=1;endArrow=classic;endSize=6;strokeColor=#388e3c;fontSize=10;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="95" y="170" as="sourcePoint"/>
+        <mxPoint x="415" y="170" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="s4" value="UPSERT server_config for each server" style="html=1;endArrow=classic;endSize=6;strokeColor=#0288d1;fontSize=10;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="415" y="195" as="sourcePoint"/>
+        <mxPoint x="575" y="195" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="s5" value="Mark removed servers is_active=false" style="html=1;endArrow=classic;endSize=6;strokeColor=#0288d1;fontSize=10;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="415" y="220" as="sourcePoint"/>
+        <mxPoint x="575" y="220" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="s6" value="sync complete" style="html=1;endArrow=classic;endSize=6;strokeColor=#7b1fa2;dashed=1;fontSize=10;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="575" y="245" as="sourcePoint"/>
+        <mxPoint x="95" y="245" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="s7" value="3. connectAll()" style="html=1;endArrow=classic;endSize=6;strokeColor=#388e3c;fontSize=10;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="95" y="275" as="sourcePoint"/>
+        <mxPoint x="735" y="275" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="s8" value="connect to each upstream MCP server" style="html=1;endArrow=classic;endSize=6;strokeColor=#388e3c;dashed=1;fontSize=10;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="735" y="300" as="sourcePoint"/>
+        <mxPoint x="95" y="300" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="s9" value="4. discoverTools() per server" style="html=1;endArrow=classic;endSize=6;strokeColor=#388e3c;fontSize=10;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="95" y="330" as="sourcePoint"/>
+        <mxPoint x="735" y="330" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="s10" value="tools/list response" style="html=1;endArrow=classic;endSize=6;strokeColor=#388e3c;dashed=1;fontSize=10;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="735" y="355" as="sourcePoint"/>
+        <mxPoint x="95" y="355" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="s11" value="5. applyToolFilter(tools, config.toolFilter)" style="html=1;endArrow=classic;endSize=6;strokeColor=#388e3c;fontSize=10;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="95" y="385" as="sourcePoint"/>
+        <mxPoint x="415" y="385" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="s12" value="filtered tools" style="html=1;endArrow=classic;endSize=6;strokeColor=#0288d1;dashed=1;fontSize=10;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="415" y="405" as="sourcePoint"/>
+        <mxPoint x="95" y="405" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="s13" value="6. generateEmbedding(description) per tool" style="html=1;endArrow=classic;endSize=6;strokeColor=#388e3c;fontSize=10;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="95" y="435" as="sourcePoint"/>
+        <mxPoint x="900" y="435" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="s14" value="FloatArray (local Ollama/LMStudio)" style="html=1;endArrow=classic;endSize=6;strokeColor=#0288d1;dashed=1;fontSize=10;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="900" y="455" as="sourcePoint"/>
+        <mxPoint x="95" y="455" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="s15" value="7. UPSERT tool_embeddings (vector + tsvector)" style="html=1;endArrow=classic;endSize=6;strokeColor=#388e3c;fontSize=10;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="95" y="485" as="sourcePoint"/>
+        <mxPoint x="575" y="485" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="s16" value="indexed OK" style="html=1;endArrow=classic;endSize=6;strokeColor=#7b1fa2;dashed=1;fontSize=10;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="575" y="505" as="sourcePoint"/>
+        <mxPoint x="95" y="505" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+  </root>
+</mxGraphModel>

@@ -40,13 +40,16 @@ object IntegrationTestBase {
      */
     fun discoveryStack(
         embeddingService: EmbeddingService = mockk(),
-        vectorDbClient: VectorDbClient = mockk()
+        vectorDbClient: VectorDbClient = mockk(),
+        toolManagementService: com.orchestrator.mcp.management.ToolManagementService = mockk(relaxed = true)
     ): DiscoveryStack {
         val registry = ToolRegistryImpl()
         val keywordEngine = KeywordSearchEngine(registry)
         val service = ToolDiscoveryServiceImpl(
             embeddingService, vectorDbClient,
             registry, keywordEngine,
+            toolManagementService,
+            com.orchestrator.mcp.config.SessionConfig(id = "it-session"),
             "mcp_tools", 2000
         )
         return DiscoveryStack(
@@ -61,11 +64,15 @@ object IntegrationTestBase {
      */
     fun executionStack(
         serverManager: UpstreamServerManager = mockk(relaxed = true),
-        config: OrchestratorConfig = createConfig()
+        config: OrchestratorConfig = createConfig(),
+        toolManagementService: com.orchestrator.mcp.management.ToolManagementService = mockk(relaxed = true)
     ): ExecutionStack {
         val registry = ToolRegistryImpl()
         val dispatcher = ToolExecutionDispatcherImpl(
-            registry, serverManager, config
+            registry, serverManager,
+            toolManagementService,
+            com.orchestrator.mcp.config.SessionConfig(id = "it-session"),
+            config
         )
         return ExecutionStack(registry, dispatcher, serverManager)
     }
@@ -78,17 +85,23 @@ object IntegrationTestBase {
         embeddingService: EmbeddingService = mockk(),
         vectorDbClient: VectorDbClient = mockk(),
         serverManager: UpstreamServerManager = mockk(relaxed = true),
-        config: OrchestratorConfig = createConfig()
+        config: OrchestratorConfig = createConfig(),
+        toolManagementService: com.orchestrator.mcp.management.ToolManagementService = mockk(relaxed = true)
     ): ProtocolStack {
         val registry = ToolRegistryImpl()
         val keywordEngine = KeywordSearchEngine(registry)
         val discovery = ToolDiscoveryServiceImpl(
             embeddingService, vectorDbClient,
             registry, keywordEngine,
+            toolManagementService,
+            com.orchestrator.mcp.config.SessionConfig(id = "it-session"),
             "mcp_tools", 2000
         )
         val execution = ToolExecutionDispatcherImpl(
-            registry, serverManager, config
+            registry, serverManager,
+            toolManagementService,
+            com.orchestrator.mcp.config.SessionConfig(id = "it-session"),
+            config
         )
         val protocol = McpProtocolHandler(discovery, execution)
         val handler = JsonRpcHandler(protocol)
@@ -107,7 +120,8 @@ object IntegrationTestBase {
         val registry = ToolRegistryImpl()
         val indexer = ToolIndexer(
             serverManager, embeddingService,
-            vectorDbClient, registry
+            vectorDbClient, registry,
+            "mcp_tools" // Collection name
         )
         return IndexerStack(
             registry, indexer, serverManager,

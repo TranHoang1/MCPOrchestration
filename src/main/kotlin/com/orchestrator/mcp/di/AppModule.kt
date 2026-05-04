@@ -13,6 +13,7 @@ import com.orchestrator.mcp.execution.ToolExecutionDispatcherImpl
 import com.orchestrator.mcp.protocol.McpServerFactory
 import com.orchestrator.mcp.registry.ToolRegistry
 import com.orchestrator.mcp.registry.ToolRegistryImpl
+import com.orchestrator.mcp.registry.ToolIndexer
 import com.orchestrator.mcp.upstream.HealthMonitor
 import com.orchestrator.mcp.upstream.UpstreamServerManager
 import com.orchestrator.mcp.upstream.UpstreamServerManagerImpl
@@ -23,6 +24,11 @@ import io.ktor.client.engine.cio.*
 import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.serialization.kotlinx.json.*
 import kotlinx.serialization.json.Json
+import com.orchestrator.mcp.management.*
+import com.orchestrator.mcp.embedding.*
+import com.orchestrator.mcp.vectordb.*
+import com.orchestrator.mcp.config.ConfigDbSyncService
+import com.orchestrator.mcp.config.ConfigDbSyncServiceImpl
 import org.koin.dsl.module
 
 fun appModule(configPath: String? = null) = module {
@@ -44,28 +50,65 @@ fun appModule(configPath: String? = null) = module {
         }
     }
 
-    // Embedding
+    // Database
+    single { DatabaseFactory.createDataSource(get<OrchestratorConfig>().orchestrator.vectorDb) }
+
+    // Embedding (Provider selection)
     single<EmbeddingService> {
         val config = get<OrchestratorConfig>()
-        OpenAiEmbeddingService(
-            httpClient = get(),
-            apiKey = config.orchestrator.embedding.apiKey,
-            model = config.orchestrator.embedding.model,
-            dimensions = config.orchestrator.embedding.dimensions
-        )
+        val embConfig = config.orchestrator.embedding
+        val provider = embConfig.provider.lowercase()
+        
+        val effectiveBaseUrl = when {
+            embConfig.baseUrl.isNotBlank() -> embConfig.baseUrl
+            provider == "ollama" -> "http://localhost:11434"
+            provider == "lmstudio" -> "http://localhost:1234/v1"
+            else -> ""
+        }
+
+        when (provider) {
+            "ollama" -> OllamaEmbeddingService(get(), effectiveBaseUrl, embConfig.model, embConfig.dimensions)
+            "lmstudio" -> LmStudioEmbeddingService(get(), effectiveBaseUrl, embConfig.model, embConfig.dimensions)
+            else -> OpenAiEmbeddingService(
+                httpClient = get(),
+                apiKey = embConfig.apiKey,
+                model = embConfig.model,
+                dimensions = embConfig.dimensions
+            )
+        }
     }
 
-    // Vector DB
+    // Vector DB (Provider selection)
     single<VectorDbClient> {
         val config = get<OrchestratorConfig>()
-        QdrantVectorDbClient(
-            httpClient = get(),
-            baseUrl = "http://${config.orchestrator.vectorDb.host}:${config.orchestrator.vectorDb.port}"
-        )
+        val provider = config.orchestrator.vectorDb.provider.lowercase()
+        when (provider) {
+            "postgresql", "pgvector" -> PgVectorDbClient(get())
+            else -> QdrantVectorDbClient(
+                httpClient = get(),
+                baseUrl = "http://${config.orchestrator.vectorDb.host}:${config.orchestrator.vectorDb.port}"
+            )
+        }
     }
+
+    // Tool Management & Filtering
+    single<ToolFilterService> { ToolFilterServiceImpl() }
+    single<ToolManagementService> { ToolManagementServiceImpl(get(), get(), get()) }
+    single<ConfigDbSyncService> { ConfigDbSyncServiceImpl(get(), get()) }
+    single { DatabaseInitializer(get()) }
 
     // Registry
     single<ToolRegistry> { ToolRegistryImpl() }
+    single { 
+        val config = get<OrchestratorConfig>()
+        ToolIndexer(
+            serverManager = get(),
+            embeddingService = get(),
+            vectorDbClient = get(),
+            toolRegistry = get(),
+            collectionName = config.orchestrator.vectorDb.collectionName
+        )
+    }
 
     // Upstream
     single<UpstreamServerManager> { UpstreamServerManagerImpl(get(), get()) }
@@ -80,6 +123,8 @@ fun appModule(configPath: String? = null) = module {
             vectorDbClient = get(),
             toolRegistry = get(),
             keywordEngine = get(),
+            toolManagementService = get(),
+            sessionConfig = config.orchestrator.session,
             collectionName = config.orchestrator.vectorDb.collectionName,
             maxQueryLength = config.orchestrator.discovery.maxQueryLength
         )
@@ -87,9 +132,10 @@ fun appModule(configPath: String? = null) = module {
 
     // Execution
     single<ToolExecutionDispatcher> {
-        ToolExecutionDispatcherImpl(get(), get(), get())
+        val config = get<OrchestratorConfig>()
+        ToolExecutionDispatcherImpl(get(), get(), get(), config.orchestrator.session, config)
     }
 
-    // MCP Server Factory (replaces old JsonRpcHandler + McpProtocolHandler)
-    single { McpServerFactory(get(), get()) }
+    // MCP Server Factory
+    single { McpServerFactory(get(), get(), get(), get<OrchestratorConfig>().orchestrator.session) }
 }

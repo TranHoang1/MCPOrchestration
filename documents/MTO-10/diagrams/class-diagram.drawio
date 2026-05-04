@@ -1,0 +1,70 @@
+<mxGraphModel adaptiveColors="auto">
+  <root>
+    <mxCell id="0"/>
+    <mxCell id="1" parent="0"/>
+
+    <!-- Title -->
+    <mxCell id="title" value="MTO-10 Class Diagram — New Interfaces &amp; Implementations" style="text;html=1;fontSize=16;fontStyle=1;align=center;" vertex="1" parent="1">
+      <mxGeometry x="200" y="10" width="600" height="30" as="geometry"/>
+    </mxCell>
+
+    <!-- EmbeddingService Interface -->
+    <mxCell id="emb_iface" value="&lt;&lt;interface&gt;&gt;&#xa;EmbeddingService&#xa;─────────────────&#xa;+ generateEmbedding(text): FloatArray&#xa;+ generateEmbeddings(texts): List&lt;FloatArray&gt;&#xa;+ isHealthy(): Boolean" style="shape=mxgraph.uml25.classFrame;fontStyle=1;align=center;spacingLeft=8;spacingRight=8;overflow=hidden;whiteSpace=wrap;fillColor=#e1f5fe;strokeColor=#0288d1;" vertex="1" parent="1">
+      <mxGeometry x="40" y="60" width="280" height="100" as="geometry"/>
+    </mxCell>
+
+    <!-- OllamaEmbeddingService -->
+    <mxCell id="ollama_cls" value="OllamaEmbeddingService [NEW]&#xa;─────────────────&#xa;- httpClient: HttpClient&#xa;- baseUrl: String&#xa;- model: String&#xa;- dimensions: Int&#xa;─────────────────&#xa;+ generateEmbedding(text): FloatArray&#xa;+ generateEmbeddings(texts): List&lt;FloatArray&gt;&#xa;+ isHealthy(): Boolean" style="shape=mxgraph.uml25.classFrame;align=center;spacingLeft=8;spacingRight=8;overflow=hidden;whiteSpace=wrap;fillColor=#c8e6c9;strokeColor=#2e7d32;" vertex="1" parent="1">
+      <mxGeometry x="40" y="220" width="280" height="150" as="geometry"/>
+    </mxCell>
+
+    <!-- LmStudioEmbeddingService -->
+    <mxCell id="lmstudio_cls" value="LmStudioEmbeddingService [NEW]&#xa;─────────────────&#xa;- httpClient: HttpClient&#xa;- baseUrl: String&#xa;- model: String&#xa;- dimensions: Int&#xa;─────────────────&#xa;+ generateEmbedding(text): FloatArray&#xa;+ generateEmbeddings(texts): List&lt;FloatArray&gt;&#xa;+ isHealthy(): Boolean" style="shape=mxgraph.uml25.classFrame;align=center;spacingLeft=8;spacingRight=8;overflow=hidden;whiteSpace=wrap;fillColor=#c8e6c9;strokeColor=#2e7d32;" vertex="1" parent="1">
+      <mxGeometry x="40" y="410" width="280" height="150" as="geometry"/>
+    </mxCell>
+
+    <!-- VectorDbClient Interface -->
+    <mxCell id="vdb_iface" value="&lt;&lt;interface&gt;&gt;&#xa;VectorDbClient&#xa;─────────────────&#xa;+ createCollection(name, dims)&#xa;+ upsert(collection, points)&#xa;+ search(collection, vector, limit, threshold): List&lt;SearchResult&gt;&#xa;+ delete(collection, filter)&#xa;+ isHealthy(): Boolean" style="shape=mxgraph.uml25.classFrame;fontStyle=1;align=center;spacingLeft=8;spacingRight=8;overflow=hidden;whiteSpace=wrap;fillColor=#e1f5fe;strokeColor=#0288d1;" vertex="1" parent="1">
+      <mxGeometry x="380" y="60" width="300" height="120" as="geometry"/>
+    </mxCell>
+
+    <!-- PgVectorDbClient -->
+    <mxCell id="pgvec_cls" value="PgVectorDbClient [NEW]&#xa;─────────────────&#xa;- dataSource: HikariDataSource&#xa;- collectionName: String&#xa;- hnswM: Int&#xa;- hnswEfConstruction: Int&#xa;─────────────────&#xa;+ createCollection(name, dims)&#xa;+ upsert(collection, points)&#xa;+ search(collection, vector, limit, threshold)&#xa;+ hybridSearch(collection, vector, queryText,&#xa;    limit, threshold, vectorWeight, keywordWeight)&#xa;+ delete(collection, filter)&#xa;+ isHealthy(): Boolean" style="shape=mxgraph.uml25.classFrame;align=center;spacingLeft=8;spacingRight=8;overflow=hidden;whiteSpace=wrap;fillColor=#c8e6c9;strokeColor=#2e7d32;" vertex="1" parent="1">
+      <mxGeometry x="380" y="240" width="300" height="190" as="geometry"/>
+    </mxCell>
+
+    <!-- ToolManagementService Interface -->
+    <mxCell id="mgmt_iface" value="&lt;&lt;interface&gt;&gt;&#xa;ToolManagementService [NEW]&#xa;─────────────────&#xa;+ toggleTool(req: ToggleToolRequest): ToggleToolResponse&#xa;+ resetTools(req: ResetToolsRequest): ResetToolsResponse&#xa;+ manageAutoApprove(req: ManageAutoApproveRequest):&#xa;    ManageAutoApproveResponse&#xa;+ isToolDisabled(toolName, serverName, sessionId): Boolean&#xa;+ loadDisabledTools(sessionId): DisabledState" style="shape=mxgraph.uml25.classFrame;fontStyle=1;align=center;spacingLeft=8;spacingRight=8;overflow=hidden;whiteSpace=wrap;fillColor=#c8e6c9;strokeColor=#2e7d32;" vertex="1" parent="1">
+      <mxGeometry x="720" y="60" width="320" height="130" as="geometry"/>
+    </mxCell>
+
+    <!-- ToolManagementServiceImpl -->
+    <mxCell id="mgmt_impl" value="ToolManagementServiceImpl [NEW]&#xa;─────────────────&#xa;- dataSource: HikariDataSource&#xa;- toolRegistry: ToolRegistry&#xa;- toolIndexer: ToolIndexer&#xa;- configManager: ConfigurationManager&#xa;- sessionId: String&#xa;─────────────────&#xa;+ toggleTool(req): ToggleToolResponse&#xa;+ resetTools(req): ResetToolsResponse&#xa;+ manageAutoApprove(req): ManageAutoApproveResponse&#xa;+ isToolDisabled(toolName, serverName, sessionId): Boolean&#xa;+ loadDisabledTools(sessionId): DisabledState" style="shape=mxgraph.uml25.classFrame;align=center;spacingLeft=8;spacingRight=8;overflow=hidden;whiteSpace=wrap;fillColor=#c8e6c9;strokeColor=#2e7d32;" vertex="1" parent="1">
+      <mxGeometry x="720" y="240" width="320" height="190" as="geometry"/>
+    </mxCell>
+
+    <!-- ConfigDbSyncService Interface -->
+    <mxCell id="sync_iface" value="&lt;&lt;interface&gt;&gt;&#xa;ConfigDbSyncService [NEW]&#xa;─────────────────&#xa;+ sync(): SyncResult&#xa;+ getSyncResult(): SyncResult?" style="shape=mxgraph.uml25.classFrame;fontStyle=1;align=center;spacingLeft=8;spacingRight=8;overflow=hidden;whiteSpace=wrap;fillColor=#c8e6c9;strokeColor=#2e7d32;" vertex="1" parent="1">
+      <mxGeometry x="380" y="480" width="280" height="80" as="geometry"/>
+    </mxCell>
+
+    <!-- ToolFilterService Interface -->
+    <mxCell id="filter_iface" value="&lt;&lt;interface&gt;&gt;&#xa;ToolFilterService [NEW]&#xa;─────────────────&#xa;+ filterTools(tools: List&lt;ToolDefinition&gt;,&#xa;    serverName: String,&#xa;    toolFilter: ToolFilterConfig?): List&lt;ToolDefinition&gt;" style="shape=mxgraph.uml25.classFrame;fontStyle=1;align=center;spacingLeft=8;spacingRight=8;overflow=hidden;whiteSpace=wrap;fillColor=#c8e6c9;strokeColor=#2e7d32;" vertex="1" parent="1">
+      <mxGeometry x="720" y="480" width="320" height="90" as="geometry"/>
+    </mxCell>
+
+    <!-- Inheritance arrows -->
+    <mxCell id="inh1" edge="1" source="ollama_cls" target="emb_iface" style="endArrow=block;endFill=0;endSize=12;strokeColor=#0288d1;" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="inh2" edge="1" source="lmstudio_cls" target="emb_iface" style="endArrow=block;endFill=0;endSize=12;strokeColor=#0288d1;" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="inh3" edge="1" source="pgvec_cls" target="vdb_iface" style="endArrow=block;endFill=0;endSize=12;strokeColor=#0288d1;" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="inh4" edge="1" source="mgmt_impl" target="mgmt_iface" style="endArrow=block;endFill=0;endSize=12;strokeColor=#2e7d32;" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+  </root>
+</mxGraphModel>

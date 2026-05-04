@@ -43,11 +43,17 @@ class E2eExecutionApiTest : FunSpec({
         serverManager = mockk()
         toolRegistry = ToolRegistryImpl()
         val keywordEngine = KeywordSearchEngine(toolRegistry)
+        val toolManagementService = mockk<com.orchestrator.mcp.management.ToolManagementService>(relaxed = true)
+        val sessionConfig = com.orchestrator.mcp.config.SessionConfig(id = "exec-session")
         val discoveryService = ToolDiscoveryServiceImpl(
-            embeddingService, vectorDbClient, toolRegistry, keywordEngine
+            embeddingService, vectorDbClient, toolRegistry, keywordEngine,
+            toolManagementService, sessionConfig
         )
         val config = TestFixtures.testConfig(timeoutSeconds = 2)
-        val executionDispatcher = ToolExecutionDispatcherImpl(toolRegistry, serverManager, config)
+        val executionDispatcher = ToolExecutionDispatcherImpl(
+            toolRegistry, serverManager,
+            toolManagementService, sessionConfig, config
+        )
         val protocolHandler = McpProtocolHandler(discoveryService, executionDispatcher)
         handler = JsonRpcHandler(protocolHandler)
     }

@@ -1,0 +1,76 @@
+<mxGraphModel adaptiveColors="auto">
+  <root>
+    <mxCell id="0"/>
+    <mxCell id="1" parent="0"/>
+    <!-- Title -->
+    <mxCell id="title" value="Sequence: toggle_tool (UC-03)" style="text;html=1;fontSize=16;fontStyle=1;align=center;" vertex="1" parent="1">
+      <mxGeometry x="150" y="10" width="400" height="30" as="geometry"/>
+    </mxCell>
+    <!-- Lifelines -->
+    <mxCell id="a1" value="AI Client" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=0;participant=umlEntity;size=16;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+      <mxGeometry x="60" y="60" width="100" height="500" as="geometry"/>
+    </mxCell>
+    <mxCell id="a2" value="ToolManagement&#xa;Service" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=0;participant=umlEntity;size=16;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+      <mxGeometry x="240" y="60" width="120" height="500" as="geometry"/>
+    </mxCell>
+    <mxCell id="a3" value="ToolRegistry" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=0;participant=umlEntity;size=16;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="1">
+      <mxGeometry x="430" y="60" width="100" height="500" as="geometry"/>
+    </mxCell>
+    <mxCell id="a4" value="PostgreSQL" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=0;participant=umlEntity;size=16;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+      <mxGeometry x="600" y="60" width="100" height="500" as="geometry"/>
+    </mxCell>
+    <!-- Messages -->
+    <mxCell id="m1" value="toggle_tool(tool_name, enabled)" style="html=1;verticalAlign=bottom;endArrow=block;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="110" y="150" as="sourcePoint"/>
+        <mxPoint x="300" y="150" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="m2" value="validate params" style="html=1;verticalAlign=bottom;endArrow=block;dashed=1;strokeColor=#999999;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="300" y="180" as="sourcePoint"/>
+        <mxPoint x="300" y="200" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="m3" value="lookupTool(tool_name)" style="html=1;verticalAlign=bottom;endArrow=block;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="300" y="210" as="sourcePoint"/>
+        <mxPoint x="480" y="210" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="m4" value="ToolEntry" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="480" y="240" as="sourcePoint"/>
+        <mxPoint x="300" y="240" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="m5" value="UPSERT tool_toggle_state&#xa;(session_id, tool_name, enabled)" style="html=1;verticalAlign=bottom;endArrow=block;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="300" y="280" as="sourcePoint"/>
+        <mxPoint x="650" y="280" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="m6" value="OK" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="650" y="310" as="sourcePoint"/>
+        <mxPoint x="300" y="310" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="m7" value="{success: true, affected_tools: 1}" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="300" y="360" as="sourcePoint"/>
+        <mxPoint x="110" y="360" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <!-- Alt: tool not found -->
+    <mxCell id="alt" value="alt [tool not found]" style="shape=umlFrame;whiteSpace=wrap;html=1;width=120;height=20;fillColor=#f8cecc;strokeColor=#b85450;opacity=30;" vertex="1" parent="1">
+      <mxGeometry x="80" y="400" width="600" height="80" as="geometry"/>
+    </mxCell>
+    <mxCell id="m8" value="error: TOOL_NOT_FOUND" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;strokeColor=#b85450;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="300" y="450" as="sourcePoint"/>
+        <mxPoint x="110" y="450" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+  </root>
+</mxGraphModel>

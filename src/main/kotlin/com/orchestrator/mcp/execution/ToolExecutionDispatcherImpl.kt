@@ -20,6 +20,8 @@ import kotlin.system.measureTimeMillis
 class ToolExecutionDispatcherImpl(
     private val toolRegistry: ToolRegistry,
     private val serverManager: UpstreamServerManager,
+    private val toolManagementService: com.orchestrator.mcp.management.ToolManagementService,
+    private val sessionConfig: com.orchestrator.mcp.config.SessionConfig,
     private val config: OrchestratorConfig
 ) : ToolExecutionDispatcher {
 
@@ -30,9 +32,16 @@ class ToolExecutionDispatcherImpl(
         arguments: JsonObject?
     ): ExecuteToolResponse {
         logger.info("execute_dynamic_tool: tool=$toolName")
+        
+        val toolEntry = toolRegistry.lookupTool(toolName) ?: throw ToolNotFoundException(toolName)
+        
+        // Check if tool is disabled for current session
+        if (toolManagementService.isToolDisabled(toolName, toolEntry.serverName, sessionConfig.id)) {
+            throw ToolDisabledException(toolName)
+        }
 
-        val toolEntry = lookupAndValidate(toolName)
-        val connection = getConnection(toolName, toolEntry.serverName)
+        val validatedEntry = lookupAndValidate(toolName)
+        val connection = getConnection(toolName, validatedEntry.serverName)
 
         val params = buildJsonObject {
             put("name", toolName)

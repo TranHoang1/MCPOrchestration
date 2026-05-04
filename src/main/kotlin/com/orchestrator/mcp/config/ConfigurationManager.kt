@@ -3,6 +3,7 @@ package com.orchestrator.mcp.config
 import com.charleskorn.kaml.Yaml
 import com.charleskorn.kaml.YamlConfiguration
 import com.orchestrator.mcp.model.ConfigException
+import kotlinx.serialization.json.Json
 import org.slf4j.LoggerFactory
 import java.io.File
 
@@ -12,6 +13,8 @@ import java.io.File
 interface ConfigurationManager {
     fun getConfig(): OrchestratorConfig
     fun reload(): OrchestratorConfig
+    fun updateConfig(newConfig: OrchestratorConfig)
+    fun saveConfig(newConfig: OrchestratorConfig)
     fun watchForChanges(onChange: (OrchestratorConfig) -> Unit)
 }
 
@@ -72,12 +75,72 @@ class ConfigurationManagerImpl(
         this.onChangeCallback = onChange
     }
 
+    override fun updateConfig(newConfig: OrchestratorConfig) {
+        currentConfig = newConfig
+        onChangeCallback?.invoke(newConfig)
+    }
+
+    override fun saveConfig(newConfig: OrchestratorConfig) {
+        updateConfig(newConfig)
+        
+        // Try to save back to the source file (JSON preferred for upstream servers)
+        val path = configPath ?: "mcp-servers.json"
+        val file = File(path).let {
+            if (it.isAbsolute) it
+            else File(workingDirectory, path)
+        }
+        
+        try {
+            val jsonFormat = Json { prettyPrint = true }
+            val serversJson = jsonFormat.encodeToString(
+                kotlinx.serialization.builtins.ListSerializer(UpstreamServerConfig.serializer()),
+                newConfig.orchestrator.upstreamServers
+            )
+            
+            file.writeText(serversJson)
+            logger.info("Configuration saved to ${file.absolutePath}")
+        } catch (e: Exception) {
+            logger.error("Failed to save configuration to ${file.absolutePath}: ${e.message}")
+            throw ConfigException("Failed to save configuration", e)
+        }
+    }
+
     private fun loadConfig(): OrchestratorConfig {
         return try {
             val yamlConfig = loadYamlConfig()
+            
+            // Try settings from --config file (if provided) first, then config.json
+            val cliSettings = configPath?.let { path ->
+                val file = File(path).let { if (it.isAbsolute) it else File(workingDirectory, path) }
+                if (file.exists()) JsonConfigLoader.parseOrchestratorSettings(file.readText()) else null
+            }
+            val jsonSettings = if (cliSettings == null) loadJsonSettings() else null
+            val mergedSettings = cliSettings ?: jsonSettings
+
             val jsonServers = loadJsonServers()
             val cliServers = loadCliConfigServers()
-            mergeAllServers(yamlConfig, jsonServers, cliServers)
+
+            // Start with YAML, then overlay JSON settings (embedding, vectorDb, etc.)
+            val baseConfig = if (mergedSettings != null) {
+                logger.info("Merging Orchestrator settings from JSON source")
+                yamlConfig.copy(
+                    orchestrator = yamlConfig.orchestrator.copy(
+                        embedding = mergedSettings.embedding,
+                        vectorDb = mergedSettings.vectorDb,
+                        discovery = mergedSettings.discovery,
+                        execution = mergedSettings.execution,
+                        server = mergedSettings.server
+                    )
+                )
+            } else {
+                yamlConfig
+            }
+
+            val finalConfig = mergeAllServers(baseConfig, jsonServers, cliServers)
+            
+            // Apply environment variable overrides (highest priority)
+            val finalSettingsWithEnv = applyEnvOverrides(finalConfig.orchestrator)
+            finalConfig.copy(orchestrator = finalSettingsWithEnv)
         } catch (e: ConfigException) {
             throw e
         } catch (e: Exception) {
@@ -88,24 +151,17 @@ class ConfigurationManagerImpl(
         }
     }
 
-    /**
-     * Load YAML config with priority:
-     * configContent > configPath > external YAML > classpath
-     */
     private fun loadYamlConfig(): OrchestratorConfig {
         val rawContent = configContent
             ?: configPath?.let { File(it).readText() }
             ?: loadYamlWithExternalFallback()
 
-        val resolved = resolveEnvVars(rawContent)
+        val resolved = ConfigurationManagerImpl.resolveEnvVars(rawContent)
         return yaml.decodeFromString(
             OrchestratorConfig.serializer(), resolved
         )
     }
 
-    /**
-     * Try external YAML first, fall back to classpath.
-     */
     private fun loadYamlWithExternalFallback(): String {
         val external = ExternalConfigScanner
             .findExternalYaml(workingDirectory)
@@ -118,10 +174,6 @@ class ConfigurationManagerImpl(
         return loadFromClasspath()
     }
 
-    /**
-     * Load upstream servers from external JSON file.
-     * Returns empty list if no JSON config found.
-     */
     private fun loadJsonServers(): List<UpstreamServerConfig> {
         if (configContent != null) return emptyList()
 
@@ -136,12 +188,14 @@ class ConfigurationManagerImpl(
             .parseUpstreamServers(jsonContent)
     }
 
-    /**
-     * Load upstream servers from --config CLI argument.
-     * Supports mcpServers format (MCP setting format).
-     * Returns empty list if no --config provided or file
-     * not found.
-     */
+    private fun loadJsonSettings(): OrchestratorSettings? {
+        val jsonContent = ExternalConfigScanner
+            .findExternalJson(workingDirectory)
+            ?: return null
+
+        return JsonConfigLoader.parseOrchestratorSettings(jsonContent)
+    }
+
     private fun loadCliConfigServers(): List<UpstreamServerConfig> {
         val path = configPath ?: return emptyList()
         val file = File(path).let {
@@ -165,11 +219,6 @@ class ConfigurationManagerImpl(
             .parseMcpServersFormat(content)
     }
 
-    /**
-     * Merge JSON upstream servers into YAML config.
-     * JSON servers are appended (not replaced) to YAML servers.
-     * Duplicate names: JSON wins (higher priority).
-     */
     private fun mergeJsonServers(
         yamlConfig: OrchestratorConfig,
         jsonServers: List<UpstreamServerConfig>
@@ -202,10 +251,6 @@ class ConfigurationManagerImpl(
         )
     }
 
-    /**
-     * Merge all server sources: YAML + JSON + CLI.
-     * Priority: CLI > JSON > YAML (for same name).
-     */
     private fun mergeAllServers(
         yamlConfig: OrchestratorConfig,
         jsonServers: List<UpstreamServerConfig>,
@@ -214,6 +259,34 @@ class ConfigurationManagerImpl(
         val afterJson = mergeJsonServers(yamlConfig, jsonServers)
         if (cliServers.isEmpty()) return afterJson
         return mergeJsonServers(afterJson, cliServers)
+    }
+
+    private fun applyEnvOverrides(settings: OrchestratorSettings): OrchestratorSettings {
+        var embedding = settings.embedding
+        var vectorDb = settings.vectorDb
+        var server = settings.server
+
+        System.getenv("EMBEDDING_PROVIDER")?.let { embedding = embedding.copy(provider = it) }
+        System.getenv("EMBEDDING_MODEL")?.let { embedding = embedding.copy(model = it) }
+        System.getenv("EMBEDDING_API_KEY")?.let { embedding = embedding.copy(apiKey = it) }
+        System.getenv("EMBEDDING_DIMENSIONS")?.toIntOrNull()?.let { embedding = embedding.copy(dimensions = it) }
+        System.getenv("EMBEDDING_BASE_URL")?.let { embedding = embedding.copy(baseUrl = it) }
+
+        System.getenv("VECTOR_DB_PROVIDER")?.let { vectorDb = vectorDb.copy(provider = it) }
+        System.getenv("VECTOR_DB_CONNECTION_STRING")?.let { vectorDb = vectorDb.copy(connectionString = it) }
+        System.getenv("VECTOR_DB_HOST")?.let { vectorDb = vectorDb.copy(host = it) }
+        System.getenv("VECTOR_DB_PORT")?.toIntOrNull()?.let { vectorDb = vectorDb.copy(port = it) }
+        System.getenv("VECTOR_DB_USER")?.let { vectorDb = vectorDb.copy(user = it) }
+        System.getenv("VECTOR_DB_PASSWORD")?.let { vectorDb = vectorDb.copy(password = it) }
+
+        System.getenv("SERVER_PORT")?.toIntOrNull()?.let { server = server.copy(port = it) }
+        System.getenv("SERVER_PROTOCOL")?.let { server = server.copy(protocol = it) }
+
+        return settings.copy(
+            embedding = embedding,
+            vectorDb = vectorDb,
+            server = server
+        )
     }
 
     private fun loadFromClasspath(): String {

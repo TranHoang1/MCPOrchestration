@@ -15,12 +15,16 @@ class McpServerFactoryTest : FunSpec({
 
     lateinit var discoveryService: ToolDiscoveryService
     lateinit var executionDispatcher: ToolExecutionDispatcher
+    lateinit var toolManagementService: com.orchestrator.mcp.management.ToolManagementService
+    lateinit var sessionConfig: com.orchestrator.mcp.config.SessionConfig
     lateinit var factory: McpServerFactory
 
     beforeEach {
         discoveryService = mockk()
         executionDispatcher = mockk()
-        factory = McpServerFactory(discoveryService, executionDispatcher)
+        toolManagementService = mockk()
+        sessionConfig = com.orchestrator.mcp.config.SessionConfig(id = "test-session")
+        factory = McpServerFactory(discoveryService, executionDispatcher, toolManagementService, sessionConfig)
     }
 
     test("create returns a non-null Server instance") {

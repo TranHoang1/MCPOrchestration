@@ -18,18 +18,22 @@ class ToolExecutionDispatcherImplTest : FunSpec({
 
     lateinit var toolRegistry: ToolRegistry
     lateinit var serverManager: UpstreamServerManager
+    lateinit var toolManagementService: com.orchestrator.mcp.management.ToolManagementService
+    lateinit var sessionConfig: SessionConfig
     lateinit var config: OrchestratorConfig
     lateinit var dispatcher: ToolExecutionDispatcherImpl
 
     beforeEach {
         toolRegistry = mockk()
         serverManager = mockk()
+        toolManagementService = mockk(relaxed = true)
+        sessionConfig = SessionConfig(id = "test-session")
         config = OrchestratorConfig(
             orchestrator = OrchestratorSettings(
                 execution = ExecutionConfig(timeoutSeconds = 1) // Short timeout for tests
             )
         )
-        dispatcher = ToolExecutionDispatcherImpl(toolRegistry, serverManager, config)
+        dispatcher = ToolExecutionDispatcherImpl(toolRegistry, serverManager, toolManagementService, sessionConfig, config)
     }
 
     fun mockToolEntry(name: String = "read_logs", serverName: String = "log-server") = ToolEntry(

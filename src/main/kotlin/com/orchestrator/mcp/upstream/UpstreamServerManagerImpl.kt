@@ -31,6 +31,7 @@ class UpstreamServerManagerImpl(
                     try {
                         val transport = when (serverConfig.transport.lowercase()) {
                             "http" -> TransportType.HTTP
+                            "sse" -> TransportType.SSE
                             else -> TransportType.STDIO
                         }
                         serverStates[serverConfig.name] = UpstreamServerInfo(
@@ -55,7 +56,11 @@ class UpstreamServerManagerImpl(
         val info = serverStates.getOrPut(serverName) {
             UpstreamServerInfo(
                 name = serverName,
-                transport = if (serverConfig.transport == "http") TransportType.HTTP else TransportType.STDIO
+                transport = when(serverConfig.transport.lowercase()) {
+                    "http" -> TransportType.HTTP
+                    "sse" -> TransportType.SSE
+                    else -> TransportType.STDIO
+                }
             )
         }
 
@@ -64,15 +69,20 @@ class UpstreamServerManagerImpl(
             logger.info("Connecting to upstream server: $serverName (${serverConfig.transport})")
 
             val connection: McpConnection = when (serverConfig.transport.lowercase()) {
-                "http" -> {
+                "http", "sse" -> {
                     val client = httpClient ?: throw IllegalStateException("HTTP client not available")
-                    HttpMcpConnection(client, serverConfig.url ?: throw IllegalArgumentException("URL required for HTTP"))
+                    HttpMcpConnection(client, serverConfig.url ?: throw IllegalArgumentException("URL required for HTTP/SSE"))
                 }
                 else -> {
+                    val framing = when (serverConfig.framingMode.lowercase()) {
+                        "content-length", "content_length" -> McpFramingMode.CONTENT_LENGTH
+                        else -> McpFramingMode.NEWLINE_DELIMITED
+                    }
                     val conn = StdioMcpConnection(
                         command = serverConfig.command ?: throw IllegalArgumentException("Command required for stdio"),
                         args = serverConfig.args,
-                        env = serverConfig.env
+                        env = serverConfig.env,
+                        framingMode = framing
                     )
                     conn.start()
                     conn

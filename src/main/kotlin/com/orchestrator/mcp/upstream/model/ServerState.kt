@@ -17,5 +17,6 @@ enum class ServerState {
 /** Transport type for upstream MCP server connections */
 enum class TransportType {
     STDIO,
-    HTTP
+    HTTP,
+    SSE
 }

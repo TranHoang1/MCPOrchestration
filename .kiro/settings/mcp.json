@@ -1,6 +1,6 @@
 {
   "mcpServers": {
-    "mcp-atlassian": {
+    "atlassian": {
       "command": "uvx",
       "args": [
         "mcp-atlassian",
@@ -27,16 +27,21 @@
         "jira_delete_issue"
       ]
     },
-    "mcp-orchestrator": {
+    "orchestrator": {
       "command": "java",
       "args": [
         "-jar",
-        ".\\TempRelease\\mcp-orchestrator-all.jar",
-        "--config", ".\\TempRelease\\mcp-servers.json"
+        "./TempRelease/mcp-orchestrator-all.jar",
+        "--config",
+        "./TempRelease/mcp-servers.json"
       ],
       "env": {
         "OPENAI_API_KEY": "not-configured"
-      }
+      },
+      "autoApprove": [
+        "find_tools",
+        "execute_dynamic_tool"
+      ]
     }
   }
 }

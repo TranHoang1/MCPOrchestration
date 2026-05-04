@@ -38,11 +38,15 @@ class ToolDiscoveryServiceImplTest : FunSpec({
         vectorDbClient = mockk()
         toolRegistry = ToolRegistryImpl()
         keywordEngine = KeywordSearchEngine(toolRegistry)
+        val toolManagementService = mockk<com.orchestrator.mcp.management.ToolManagementService>(relaxed = true)
+        val sessionConfig = com.orchestrator.mcp.config.SessionConfig(id = "test-session")
         service = ToolDiscoveryServiceImpl(
             embeddingService = embeddingService,
             vectorDbClient = vectorDbClient,
             toolRegistry = toolRegistry,
             keywordEngine = keywordEngine,
+            toolManagementService = toolManagementService,
+            sessionConfig = sessionConfig,
             collectionName = "mcp_tools",
             maxQueryLength = 2000
         )
@@ -72,7 +76,7 @@ class ToolDiscoveryServiceImplTest : FunSpec({
         val response = service.findTools("read log files", topK = 5, threshold = 0.7f)
 
         response.tools shouldHaveSize 3
-        response.searchMode shouldBe "semantic"
+        response.searchMode shouldBe "hybrid"
         coVerify(exactly = 1) { embeddingService.generateEmbedding("read log files") }
         coVerify(exactly = 1) { vectorDbClient.search("mcp_tools", any(), 5, 0.7f) }
     }
@@ -103,7 +107,7 @@ class ToolDiscoveryServiceImplTest : FunSpec({
         val response = service.findTools("quantum computing simulation", topK = 5, threshold = 0.7f)
 
         response.tools.shouldBeEmpty()
-        response.searchMode shouldBe "semantic"
+        response.searchMode shouldBe "hybrid"
     }
 
     // STC: UT-005 — findTools VectorDB unavailable falls back to keyword search

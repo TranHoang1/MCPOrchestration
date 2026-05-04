@@ -1,0 +1,99 @@
+<mxGraphModel dx="1422" dy="762" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="900" math="0" shadow="0">
+  <root>
+    <mxCell id="0"/>
+    <mxCell id="1" parent="0"/>
+    <mxCell id="boundary" value="MCP Orchestrator System" style="shape=mxgraph.sysml.package;html=1;overflow=fill;whiteSpace=wrap;fillColor=#f5f5f5;strokeColor=#666666;fontColor=#333333;fontSize=14;fontStyle=1;verticalAlign=top;spacingTop=10;align=center;dashed=1;dashPattern=5 5;" vertex="1" parent="1">
+      <mxGeometry x="320" y="40" width="700" height="780" as="geometry"/>
+    </mxCell>
+    <mxCell id="actor_dev" value="Developer" style="shape=mxgraph.basic.person;html=1;whiteSpace=wrap;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+      <mxGeometry x="80" y="120" width="80" height="80" as="geometry"/>
+    </mxCell>
+    <mxCell id="actor_op" value="Operator" style="shape=mxgraph.basic.person;html=1;whiteSpace=wrap;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+      <mxGeometry x="80" y="440" width="80" height="80" as="geometry"/>
+    </mxCell>
+    <mxCell id="actor_sys" value="System&#xa;(Startup)" style="shape=mxgraph.basic.person;html=1;whiteSpace=wrap;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+      <mxGeometry x="80" y="700" width="80" height="80" as="geometry"/>
+    </mxCell>
+    <mxCell id="actor_ai" value="AI Client" style="shape=mxgraph.basic.person;html=1;whiteSpace=wrap;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+      <mxGeometry x="1160" y="200" width="80" height="80" as="geometry"/>
+    </mxCell>
+    <mxCell id="uc1" value="UC-1: Configure&#xa;Local Embedding&#xa;(Ollama/LMStudio)" style="ellipse;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="400" y="80" width="200" height="80" as="geometry"/>
+    </mxCell>
+    <mxCell id="uc2" value="UC-2: Store Embeddings&#xa;in pgvector" style="ellipse;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="700" y="80" width="200" height="80" as="geometry"/>
+    </mxCell>
+    <mxCell id="uc3" value="UC-3: Toggle Tool&#xa;(Enable/Disable)" style="ellipse;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="400" y="220" width="200" height="80" as="geometry"/>
+    </mxCell>
+    <mxCell id="uc4" value="UC-4: Reset Tools" style="ellipse;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="700" y="220" width="200" height="80" as="geometry"/>
+    </mxCell>
+    <mxCell id="uc5" value="UC-5: Manage&#xa;Auto-Approve" style="ellipse;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="400" y="360" width="200" height="80" as="geometry"/>
+    </mxCell>
+    <mxCell id="uc6" value="UC-6: Find Tools&#xa;(Hybrid Search)" style="ellipse;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="700" y="360" width="200" height="80" as="geometry"/>
+    </mxCell>
+    <mxCell id="uc7" value="UC-7: Execute Tool" style="ellipse;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="700" y="500" width="200" height="80" as="geometry"/>
+    </mxCell>
+    <mxCell id="uc8" value="UC-8: Config-DB&#xa;Sync on Startup" style="ellipse;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="400" y="560" width="200" height="80" as="geometry"/>
+    </mxCell>
+    <mxCell id="uc9" value="UC-9: Tool Filtering&#xa;(Allowlist/Blocklist)" style="ellipse;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="400" y="700" width="200" height="80" as="geometry"/>
+    </mxCell>
+    <mxCell id="uc10" value="UC-10: Index Tools&#xa;into pgvector" style="ellipse;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="700" y="640" width="200" height="80" as="geometry"/>
+    </mxCell>
+    <mxCell id="e_dev_uc1" edge="1" source="actor_dev" target="uc1" style="html=1;endArrow=none;strokeColor=#6c8ebf;" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e_dev_uc2" edge="1" source="actor_dev" target="uc2" style="html=1;endArrow=none;strokeColor=#6c8ebf;" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e_dev_uc9" edge="1" source="actor_dev" target="uc9" style="html=1;endArrow=none;strokeColor=#6c8ebf;" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e_op_uc3" edge="1" source="actor_op" target="uc3" style="html=1;endArrow=none;strokeColor=#82b366;" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e_op_uc4" edge="1" source="actor_op" target="uc4" style="html=1;endArrow=none;strokeColor=#82b366;" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e_op_uc5" edge="1" source="actor_op" target="uc5" style="html=1;endArrow=none;strokeColor=#82b366;" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e_ai_uc6" edge="1" source="actor_ai" target="uc6" style="html=1;endArrow=none;strokeColor=#9673a6;" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e_ai_uc7" edge="1" source="actor_ai" target="uc7" style="html=1;endArrow=none;strokeColor=#9673a6;" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e_sys_uc8" edge="1" source="actor_sys" target="uc8" style="html=1;endArrow=none;strokeColor=#d6b656;" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e_sys_uc10" edge="1" source="actor_sys" target="uc10" style="html=1;endArrow=none;strokeColor=#d6b656;" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e_uc1_uc10" edge="1" source="uc1" target="uc10" style="html=1;dashed=1;strokeColor=#999999;endArrow=open;endSize=12;" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint as="offset"/>
+        <Array as="points">
+          <mxPoint x="660" y="130"/>
+          <mxPoint x="660" y="680"/>
+        </Array>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="lbl_include1" value="&lt;i&gt;&amp;laquo;include&amp;raquo;&lt;/i&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;fontSize=10;fontColor=#999999;" vertex="1" parent="1">
+      <mxGeometry x="620" y="400" width="80" height="30" as="geometry"/>
+    </mxCell>
+    <mxCell id="e_uc9_uc10" edge="1" source="uc9" target="uc10" style="html=1;dashed=1;strokeColor=#999999;endArrow=open;endSize=12;" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="lbl_include2" value="&lt;i&gt;&amp;laquo;include&amp;raquo;&lt;/i&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;fontSize=10;fontColor=#999999;" vertex="1" parent="1">
+      <mxGeometry x="600" y="700" width="80" height="30" as="geometry"/>
+    </mxCell>
+  </root>
+</mxGraphModel>

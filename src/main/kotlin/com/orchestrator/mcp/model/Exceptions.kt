@@ -61,6 +61,15 @@ class EmbeddingServiceException(cause: Throwable? = null) :
 class ConfigException(message: String, cause: Throwable? = null) :
     McpOrchestratorException(ErrorCodes.CONFIG_INVALID, message, cause)
 
+class ToolDisabledException(toolName: String) :
+    McpOrchestratorException(
+        ErrorCodes.TOOL_DISABLED,
+        "Tool '$toolName' is currently disabled. Use toggle_tool to re-enable."
+    )
+
+class ConfigWriteException(message: String, cause: Throwable? = null) :
+    McpOrchestratorException(ErrorCodes.CONFIG_WRITE_FAILED, message, cause)
+
 /** Generic exception for protocol-level errors */
 class GenericMcpException(errorCode: String, message: String) :
     McpOrchestratorException(errorCode, message)

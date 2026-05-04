@@ -1,0 +1,61 @@
+<mxGraphModel adaptiveColors="auto">
+  <root>
+    <mxCell id="0"/>
+    <mxCell id="1" parent="0"/>
+    <mxCell id="title" value="State Diagram: Tool Toggle Lifecycle" style="text;html=1;fontSize=16;fontStyle=1;align=center;" vertex="1" parent="1">
+      <mxGeometry x="150" y="10" width="400" height="30" as="geometry"/>
+    </mxCell>
+    <!-- States -->
+    <mxCell id="start" value="" style="ellipse;html=1;shape=doubleEllipse;whiteSpace=wrap;aspect=fixed;fillColor=#000000;strokeColor=#000000;" vertex="1" parent="1">
+      <mxGeometry x="340" y="60" width="30" height="30" as="geometry"/>
+    </mxCell>
+    <mxCell id="s1" value="ENABLED&#xa;(Default)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=13;fontStyle=1;" vertex="1" parent="1">
+      <mxGeometry x="280" y="140" width="150" height="60" as="geometry"/>
+    </mxCell>
+    <mxCell id="s2" value="DISABLED&#xa;(Session-scoped)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=13;fontStyle=1;" vertex="1" parent="1">
+      <mxGeometry x="280" y="300" width="150" height="60" as="geometry"/>
+    </mxCell>
+    <mxCell id="s3" value="FILTERED&#xa;(Config-based)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=13;fontStyle=1;" vertex="1" parent="1">
+      <mxGeometry x="560" y="140" width="150" height="60" as="geometry"/>
+    </mxCell>
+    <mxCell id="s4" value="NOT REGISTERED&#xa;(Not in vector DB)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="560" y="300" width="150" height="60" as="geometry"/>
+    </mxCell>
+    <!-- Notes -->
+    <mxCell id="n1" value="Visible in find_tools ✓&#xa;Executable ✓" style="shape=note;whiteSpace=wrap;html=1;size=14;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;" vertex="1" parent="1">
+      <mxGeometry x="60" y="130" width="150" height="50" as="geometry"/>
+    </mxCell>
+    <mxCell id="n2" value="Hidden from find_tools ✗&#xa;Blocked from execute ✗&#xa;Still in vector DB" style="shape=note;whiteSpace=wrap;html=1;size=14;fillColor=#f8cecc;strokeColor=#b85450;fontSize=10;" vertex="1" parent="1">
+      <mxGeometry x="60" y="290" width="160" height="60" as="geometry"/>
+    </mxCell>
+    <mxCell id="n3" value="Never indexed&#xa;Never embedded&#xa;Does not exist in system" style="shape=note;whiteSpace=wrap;html=1;size=14;fillColor=#f5f5f5;strokeColor=#666666;fontSize=10;" vertex="1" parent="1">
+      <mxGeometry x="560" y="400" width="160" height="60" as="geometry"/>
+    </mxCell>
+    <!-- Transitions -->
+    <mxCell id="e1" value="Tool discovered&#xa;&amp; indexed" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="start" target="s1" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e2" value="toggle_tool(enabled=false)" style="edgeStyle=orthogonalEdgeStyle;curved=1;" edge="1" source="s1" target="s2" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <Array as="points">
+          <mxPoint x="430" y="230"/>
+          <mxPoint x="430" y="230"/>
+        </Array>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="e3" value="toggle_tool(enabled=true)&#xa;OR reset_tools()" style="edgeStyle=orthogonalEdgeStyle;curved=1;" edge="1" source="s2" target="s1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <Array as="points">
+          <mxPoint x="280" y="250"/>
+          <mxPoint x="280" y="250"/>
+        </Array>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="e4" value="toolFilter applied&#xa;(allowlist/blocklist)" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="start" target="s3" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e5" value="Tool excluded&#xa;by filter" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="s3" target="s4" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+  </root>
+</mxGraphModel>

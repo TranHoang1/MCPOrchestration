@@ -15,7 +15,7 @@ import kotlin.math.pow
 class RetryUtilsTest : FunSpec({
 
     // STC: PBT-010 — Exponential backoff timing correctness
-    test("PBT-010: backoff delay = baseDelay * 2^attempt, capped at maxDelay") {
+    test("PBT-010: backoff delay equals baseDelay x 2-to-the-attempt, capped at maxDelay") {
         forAll(1000, Arb.int(0..10), Arb.long(100L..5000L)) { attempt, baseDelay ->
             val maxDelay = 60_000L
             val expected = min(baseDelay * 2.0.pow(attempt.toDouble()).toLong(), maxDelay)

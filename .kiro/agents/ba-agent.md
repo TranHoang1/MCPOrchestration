@@ -294,23 +294,23 @@ After creating ALL `.drawio` files, you MUST export each one to PNG using the dr
 
 **CRITICAL — This step MUST be executed. Do NOT skip it.**
 
-After the BRD is finalized, automatically convert it to MS Word format:
+**Flow: embed_images → export_docx(file_path=...)**
 
-1. Use `readFile` to read the full content of `documents/{TICKET-KEY}/BRD.md` with `skipPruning=true`.
-2. **Convert relative image paths to absolute paths** before exporting:
-   - Get the workspace root path by running: `(Get-Location).Path` via shell command
-   - Replace all `![...](diagrams/...)` with `![...](WORKSPACE_ROOT/documents/{TICKET-KEY}/diagrams/...)` using forward slashes.
-   - This ensures diagram images are embedded directly into the DOCX file.
-3. Use the discovered **markdown-to-DOCX export tool** to convert the modified markdown content to DOCX:
-   - `file_name`: `BRD-v{VERSION}-{TICKET-KEY}.docx` (e.g., `BRD-v1-MTO-5.docx`)
-   - `markdown`: the markdown content with absolute image paths from step 2
-   - **VERSION** comes from the BRD's Document Information table or Revision History (latest version number)
-4. The MCP tool returns the path where the DOCX was saved (in an artifacts/exports folder). Use `executePwsh` to copy the file:
+1. Call `embed_images` tool (via `execute_dynamic_tool`) to create self-contained markdown:
+   - `file_path`: absolute path to `documents/{TICKET-KEY}/BRD.md`
+   - `output_path`: absolute path to `documents/{TICKET-KEY}/BRD-embedded.md`
+   - This replaces all `![](diagrams/...)` with inline base64 data URIs
+2. Call `export_docx` tool (via `execute_dynamic_tool`) with **file_path** (NOT content):
+   - `file_path`: absolute path to `documents/{TICKET-KEY}/BRD-embedded.md`
+   - `file_name`: `BRD-v{VERSION}-{TICKET-KEY}`
+3. Copy the returned DOCX artifact to project folder:
    ```powershell
    Copy-Item -Path "<returned_path>" -Destination "documents/{TICKET-KEY}/BRD-v{VERSION}-{TICKET-KEY}.docx" -Force
    ```
-5. **Verify** the DOCX file exists at `documents/{TICKET-KEY}/BRD-v{VERSION}-{TICKET-KEY}.docx` using `Test-Path`.
-6. Inform the user that the DOCX file has been created with embedded diagrams.
+4. Delete temp file: `Remove-Item "documents/{TICKET-KEY}/BRD-embedded.md" -Force`
+5. Verify DOCX exists using `Test-Path`.
+
+**⛔ NEVER pass full markdown content as parameter — always use file_path. File Proxy reads the file from disk.**
 
 ---
 
@@ -421,23 +421,22 @@ Verify all PNGs exist after export. Embed PNGs in FSD.
 
 **CRITICAL — This step MUST be executed. Do NOT skip it.**
 
-After the FSD is finalized, automatically convert it to MS Word format:
+**Flow: embed_images → export_docx(file_path=...)**
 
-1. Use `readFile` to read the full content of `documents/{TICKET-KEY}/FSD.md` with `skipPruning=true`.
-2. **Convert relative image paths to absolute paths** before exporting:
-   - Get the workspace root path by running: `(Get-Location).Path` via shell command (or reuse from Step 8.5)
-   - Replace all `![...](diagrams/...)` with `![...](WORKSPACE_ROOT/documents/{TICKET-KEY}/diagrams/...)` using forward slashes.
-   - This ensures diagram images are embedded directly into the DOCX file.
-3. Use the discovered **markdown-to-DOCX export tool** to convert the modified markdown content to DOCX:
-   - `file_name`: `FSD-v{VERSION}-{TICKET-KEY}.docx` (e.g., `FSD-v1-MTO-5.docx`)
-   - `markdown`: the markdown content with absolute image paths from step 2
-   - **VERSION** comes from the FSD's Document Information table or Revision History
-4. The MCP tool returns the path where the DOCX was saved. Use `executePwsh` to copy the file:
+1. Call `embed_images` tool (via `execute_dynamic_tool`) to create self-contained markdown:
+   - `file_path`: absolute path to `documents/{TICKET-KEY}/FSD.md`
+   - `output_path`: absolute path to `documents/{TICKET-KEY}/FSD-embedded.md`
+2. Call `export_docx` tool (via `execute_dynamic_tool`) with **file_path**:
+   - `file_path`: absolute path to `documents/{TICKET-KEY}/FSD-embedded.md`
+   - `file_name`: `FSD-v{VERSION}-{TICKET-KEY}`
+3. Copy returned DOCX to project folder:
    ```powershell
    Copy-Item -Path "<returned_path>" -Destination "documents/{TICKET-KEY}/FSD-v{VERSION}-{TICKET-KEY}.docx" -Force
    ```
-5. **Verify** the DOCX file exists at `documents/{TICKET-KEY}/FSD-v{VERSION}-{TICKET-KEY}.docx` using `Test-Path`.
-6. Inform the user that the DOCX file has been created with embedded diagrams.
+4. Delete temp: `Remove-Item "documents/{TICKET-KEY}/FSD-embedded.md" -Force`
+5. Verify DOCX exists.
+
+**⛔ NEVER pass full markdown content as parameter — always use file_path.**
 
 ## Important Rules
 

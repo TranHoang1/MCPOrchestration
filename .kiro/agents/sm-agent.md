@@ -539,15 +539,16 @@ SM **không dừng lại để hỏi** về template. Thông báo rồi chạy t
    // Tên file trong Jira: {DOC}-v{version}-{TICKET}.docx
    // Ví dụ: BRD-v1-SCRUM-50.docx, FSD-v1-SCRUM-50.docx, TDD-v1-SCRUM-50.docx
    
-   // Step 7a: Export DOCX (MANDATORY)
-   the discovered markdown-to-DOCX export tool (markdown: BRD content, file_name: "BRD-v1-{TICKET}.docx")
-   the discovered markdown-to-DOCX export tool (markdown: FSD content, file_name: "FSD-v1-{TICKET}.docx")
-   the discovered markdown-to-DOCX export tool (markdown: TDD content, file_name: "TDD-v1-{TICKET}.docx")
+   // Step 7a: Export DOCX (MANDATORY) — Flow: embed_images → export_docx(file_path=...)
+   // ⛔ NEVER pass markdown content directly — always use file_path
+   embed_images(file_path=".../{TICKET}/BRD.md", output_path=".../{TICKET}/BRD-embedded.md")
+   export_docx(file_path=".../{TICKET}/BRD-embedded.md", file_name="BRD-v1-{TICKET}")
+   // Repeat for FSD, TDD (embed_images first, then export_docx with file_path)
    
    // Step 7b: Attach to Jira (MANDATORY)
-   the discovered project tracker "add attachment" tool (issue_key: "{TICKET}", filename: "BRD-v{version}-{TICKET}.docx", content_base64: ...)
-   the discovered project tracker "add attachment" tool (issue_key: "{TICKET}", filename: "FSD-v{version}-{TICKET}.docx", content_base64: ...)
-   the discovered project tracker "add attachment" tool (issue_key: "{TICKET}", filename: "TDD-v{version}-{TICKET}.docx", content_base64: ...)
+   the discovered project tracker "update issue" tool (issue_key: "{TICKET}", attachments: "documents/{TICKET}/BRD-v{version}-{TICKET}.docx")
+   the discovered project tracker "update issue" tool (issue_key: "{TICKET}", attachments: "documents/{TICKET}/FSD-v{version}-{TICKET}.docx")
+   the discovered project tracker "update issue" tool (issue_key: "{TICKET}", attachments: "documents/{TICKET}/TDD-v{version}-{TICKET}.docx")
    ```
 8. **Verify diagrams exist** (MANDATORY):
    - Check `documents/{TICKET}/diagrams/` directory exists and has `.drawio` + `.png` files

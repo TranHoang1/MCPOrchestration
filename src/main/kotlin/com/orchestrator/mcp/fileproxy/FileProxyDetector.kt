@@ -107,7 +107,7 @@ class FileProxyDetector {
             )
         }
 
-        // Check by name pattern
+        // Check by name pattern (file content params)
         if (isFileParamByName(paramName)) {
             return DetectionResult(
                 toolName, serverName, paramName,
@@ -115,12 +115,20 @@ class FileProxyDetector {
             )
         }
 
-        // Check by description keywords
+        // Check by description keywords (file/binary content)
         val desc = paramSchema["description"]?.jsonPrimitive?.content ?: ""
         if (isFileParamByDescription(desc)) {
             return DetectionResult(
                 toolName, serverName, paramName,
                 ProxyDirection.INPUT, DetectionMethod.DESCRIPTION_KEYWORD, 0.8f
+            )
+        }
+
+        // Check for large-text params (markdown, document body, etc.)
+        if (isLargeTextParam(paramName, paramSchema)) {
+            return DetectionResult(
+                toolName, serverName, paramName,
+                ProxyDirection.INPUT, DetectionMethod.DESCRIPTION_KEYWORD, 0.75f
             )
         }
 
@@ -155,6 +163,19 @@ class FileProxyDetector {
             "encoded content", "file data", "raw bytes"
         )
 
+        private val LARGE_TEXT_PARAM_NAMES = setOf(
+            "markdown", "body", "text", "html", "source",
+            "template", "code", "script", "yaml", "json_content"
+        )
+
+        private val LARGE_TEXT_DESCRIPTION_KEYWORDS = listOf(
+            "markdown", "document content", "full content",
+            "text content", "html content", "source code",
+            "template content", "file content to"
+        )
+
+        private const val LARGE_TEXT_MAX_LENGTH_THRESHOLD = 10000
+
         private val OUTPUT_INDICATORS = setOf(
             "artifacts", "output_file", "file_path",
             "generated_file", "result_file"
@@ -167,6 +188,22 @@ class FileProxyDetector {
         private fun isFileParamByDescription(desc: String): Boolean {
             val lower = desc.lowercase()
             return FILE_DESCRIPTION_KEYWORDS.any { lower.contains(it) }
+        }
+
+        private fun isLargeTextParam(paramName: String, paramSchema: JsonObject): Boolean {
+            val type = paramSchema["type"]?.jsonPrimitive?.content
+            if (type != "string") return false
+
+            // Check if param has a small maxLength constraint — if so, it's not large text
+            val maxLength = paramSchema["maxLength"]?.jsonPrimitive?.content?.toIntOrNull()
+            if (maxLength != null && maxLength <= LARGE_TEXT_MAX_LENGTH_THRESHOLD) return false
+
+            // Check by param name
+            if (paramName.lowercase() in LARGE_TEXT_PARAM_NAMES) return true
+
+            // Check by description keywords
+            val desc = paramSchema["description"]?.jsonPrimitive?.content?.lowercase() ?: ""
+            return LARGE_TEXT_DESCRIPTION_KEYWORDS.any { desc.contains(it) }
         }
     }
 }

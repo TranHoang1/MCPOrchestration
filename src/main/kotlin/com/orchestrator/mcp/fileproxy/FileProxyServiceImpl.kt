@@ -153,8 +153,11 @@ class FileProxyServiceImpl(
         val otherArgs = arguments.filterKeys { it != "file_path" && it != "output_path" }
             .mapValues { it.value.jsonPrimitive.content }
 
+        // Large-text params (confidence 0.75) are read as raw text, not base64
+        val encodeBase64 = detection.confidence > 0.8f
+
         return inputHandler.processInputProxy(
-            toolName, serverName, filePath, detection.paramName, otherArgs
+            toolName, serverName, filePath, detection.paramName, otherArgs, encodeBase64
         )
     }
 

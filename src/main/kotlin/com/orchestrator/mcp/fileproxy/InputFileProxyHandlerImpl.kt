@@ -33,7 +33,8 @@ class InputFileProxyHandlerImpl(
         serverName: String,
         filePath: String,
         fileParamName: String,
-        otherArgs: Map<String, Any?>
+        otherArgs: Map<String, Any?>,
+        encodeBase64: Boolean
     ): ExecuteToolResponse {
         FilePathValidator.validateInputPath(filePath)
         validateFileSize(filePath, serverName)
@@ -42,7 +43,8 @@ class InputFileProxyHandlerImpl(
         val path = Path.of(filePath)
         val fileSize = withContext(Dispatchers.IO) { Files.size(path) }
 
-        logger.info("[FileProxy] INPUT proxy: tool={}, server={}, file_size={}", toolName, serverName, fileSize)
+        logger.info("[FileProxy] INPUT proxy: tool={}, server={}, file_size={}, mode={}",
+            toolName, serverName, fileSize, if (encodeBase64) "base64" else "text")
 
         // Create registry entry
         val entry = FileProxyEntry(
@@ -60,8 +62,8 @@ class InputFileProxyHandlerImpl(
         createRegistryEntrySafe(entry)
 
         return try {
-            val base64Content = readAndEncode(path)
-            val upstreamArgs = buildUpstreamArgs(fileParamName, base64Content, otherArgs)
+            val content = if (encodeBase64) readAndEncode(path) else readAsText(path)
+            val upstreamArgs = buildUpstreamArgs(fileParamName, content, otherArgs)
             val response = executionDispatcher.execute(toolName, upstreamArgs)
 
             updateStatusSafe(fileId, FileProxyStatus.PROCESSED)
@@ -95,6 +97,12 @@ class InputFileProxyHandlerImpl(
         return withContext(Dispatchers.IO) {
             val bytes = Files.readAllBytes(path)
             Base64.getEncoder().encodeToString(bytes)
+        }
+    }
+
+    private suspend fun readAsText(path: Path): String {
+        return withContext(Dispatchers.IO) {
+            Files.readString(path, Charsets.UTF_8)
         }
     }
 

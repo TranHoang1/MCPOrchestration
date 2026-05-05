@@ -239,7 +239,7 @@ function processTicketAnalysis(ticket: Ticket): AnalysisResult {
 - Numbered lists for sequential processes and use case steps
 - Code blocks for API schemas, pseudocode, and diagrams
 - Mermaid or draw.io XML for visual representations
-- **File writing**: Use `stream_write_file` (MCP tool) with `mode="write"` for first section, then `mode="append"` for subsequent sections. Writes directly to disk without RAM buffering — critical for large FSD files. Fallback to `fsWrite`/`fsAppend` if unavailable.
+- **File writing**: **⛔ MUST** use `stream_write_file` (MCP tool) with `mode="write"` for first section, then `mode="append"` for subsequent sections. Writes directly to disk without RAM buffering — critical for large FSD files. **NEVER use fsWrite/fsAppend for documents > 50 lines.**
 
 ---
 

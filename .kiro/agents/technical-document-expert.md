@@ -168,7 +168,7 @@ fun processTicketAnalysis(ticket: JiraTicket): AnalysisResult {
 - Numbered lists for sequential processes and use case steps
 - Code blocks for API schemas, pseudocode, and diagrams
 - Mermaid or draw.io XML for visual representations
-- **File writing**: Use `stream_write_file` (MCP tool) with `mode="write"` for first section, then `mode="append"` for subsequent sections. Writes directly to disk without RAM buffering. Fallback to `fsWrite`/`fsAppend` if unavailable.
+- **File writing**: **⛔ MUST** use `stream_write_file` (MCP tool) with `mode="write"` for first section, then `mode="append"` for subsequent sections. Writes directly to disk without RAM buffering. **NEVER use fsWrite/fsAppend for documents > 50 lines.**
 
 ---
 

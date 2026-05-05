@@ -461,7 +461,7 @@ After the FSD is finalized, automatically convert it to MS Word format:
 - Always cite the source ticket key when listing requirements or details.
 - If API calls fail, inform the user and suggest manual steps.
 - Create the output directory `documents/{TICKET-KEY}/` if it does not exist.
-- Use `stream_write_file` (MCP tool, mode="write" then "append") for creating large markdown files — writes directly to disk, no RAM buffering. Fallback to `fsWrite`/`fsAppend` if unavailable.
+- Use `stream_write_file` (MCP tool, mode="write" then "append") for creating large markdown files — writes directly to disk, no RAM buffering. **⛔ NEVER use fsWrite/fsAppend for documents > 50 lines.**
 - Be thorough but concise — documents should be actionable, not verbose.
 - For User Stories, always use the format: "As a [role], I want [goal] so that [benefit]"
 - Include UI specifications in table format when screen/interface details are available.

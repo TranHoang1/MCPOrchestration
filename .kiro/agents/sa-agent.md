@@ -269,7 +269,12 @@ For each FSD Use Case, create API specifications:
 - Rollback strategy
 - Database migration execution plan
 
-Use `stream_write_file` (MCP tool) for creating large documents: first call with `mode="write"`, then `mode="append"` for each section. Writes directly to disk without RAM buffering. Fallback to `fsWrite`/`fsAppend` if unavailable.
+**⛔ MANDATORY FILE WRITING RULE:**
+- **MUST** use `stream_write_file` MCP tool (via `execute_dynamic_tool`) for ALL markdown file creation > 50 lines
+- First call: `stream_write_file(file_path=..., content=..., mode="write")` — creates file
+- Subsequent calls: `stream_write_file(file_path=..., content=..., mode="append")` — appends sections
+- **NEVER** use `fsWrite` or `fsAppend` for documents > 50 lines — these buffer entire content in RAM
+- Fallback to `fsWrite` ONLY if `stream_write_file` tool is genuinely unavailable (returns error)
 
 ### Step 4: Generate Diagrams
 
@@ -296,7 +301,24 @@ Create draw.io XML diagrams and export to PNG:
 2. A link reference: `*[Edit in draw.io](diagrams/{name}.drawio)*` below the PNG embed
 3. Be ingested into KB: `the discovered KB "ingest" tool (title: "{TICKET-KEY} Diagram — {name}", content: <full XML>, tags: "drawio, diagram, {type}, {TICKET-KEY}")`
 
-### Step 5: Final Review
+### Step 5: Export DOCX (MANDATORY)
+
+**After completing TDD.md, you MUST export to DOCX using our tools:**
+
+1. Call `embed_images` tool to create self-contained markdown:
+   ```
+   embed_images(file_path="C:/projects/.../documents/{TICKET-KEY}/TDD.md", output_path="C:/projects/.../documents/{TICKET-KEY}/TDD-embedded.md")
+   ```
+2. Call `export_docx` via `execute_dynamic_tool` with file_path (NOT content):
+   ```
+   export_docx(file_path="C:/projects/.../documents/{TICKET-KEY}/TDD-embedded.md", file_name="TDD-v{VERSION}-{TICKET-KEY}")
+   ```
+3. Copy exported DOCX to `documents/{TICKET-KEY}/TDD-v{VERSION}-{TICKET-KEY}.docx`
+4. Delete temp `TDD-embedded.md` file
+
+**⛔ NEVER pass full markdown content as parameter — use file_path. File Proxy reads the file from disk.**
+
+### Step 6: Final Review
 
 1. Re-read TDD.md to verify completeness.
 2. Ensure every FSD Use Case has corresponding API design.

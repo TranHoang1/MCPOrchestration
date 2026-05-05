@@ -1,0 +1,109 @@
+<mxGraphModel adaptiveColors="auto">
+  <root>
+    <mxCell id="0"/>
+    <mxCell id="1" parent="0"/>
+    <mxCell id="title" value="&lt;b&gt;Sequence: HTTP/SSE Upload + Input Proxy&lt;/b&gt;" style="text;html=1;align=center;fontSize=13;fontStyle=1;" vertex="1" parent="1">
+      <mxGeometry x="200" y="10" width="450" height="30" as="geometry"/>
+    </mxCell>
+    <mxCell id="agent_h" value="&lt;b&gt;AI Agent&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1f5fe;strokeColor=#0288d1;" vertex="1" parent="1">
+      <mxGeometry x="60" y="60" width="120" height="40" as="geometry"/>
+    </mxCell>
+    <mxCell id="agent_l" value="" style="shape=umlLifeline;perimeter=lifelinePerimeter;size=16;html=1;" vertex="1" parent="1">
+      <mxGeometry x="115" y="100" width="10" height="600" as="geometry"/>
+    </mxCell>
+    <mxCell id="proxy_h" value="&lt;b&gt;FileUploadHandler&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8f5e9;strokeColor=#388e3c;" vertex="1" parent="1">
+      <mxGeometry x="270" y="60" width="140" height="40" as="geometry"/>
+    </mxCell>
+    <mxCell id="proxy_l" value="" style="shape=umlLifeline;perimeter=lifelinePerimeter;size=16;html=1;" vertex="1" parent="1">
+      <mxGeometry x="335" y="100" width="10" height="600" as="geometry"/>
+    </mxCell>
+    <mxCell id="fs_h" value="&lt;b&gt;Temp Storage&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f3e5f5;strokeColor=#7b1fa2;" vertex="1" parent="1">
+      <mxGeometry x="480" y="60" width="120" height="40" as="geometry"/>
+    </mxCell>
+    <mxCell id="fs_l" value="" style="shape=umlLifeline;perimeter=lifelinePerimeter;size=16;html=1;" vertex="1" parent="1">
+      <mxGeometry x="535" y="100" width="10" height="600" as="geometry"/>
+    </mxCell>
+    <mxCell id="db_h" value="&lt;b&gt;Registry (DB)&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f3e5f5;strokeColor=#7b1fa2;" vertex="1" parent="1">
+      <mxGeometry x="660" y="60" width="120" height="40" as="geometry"/>
+    </mxCell>
+    <mxCell id="db_l" value="" style="shape=umlLifeline;perimeter=lifelinePerimeter;size=16;html=1;" vertex="1" parent="1">
+      <mxGeometry x="715" y="100" width="10" height="600" as="geometry"/>
+    </mxCell>
+    <mxCell id="svc_h" value="&lt;b&gt;FileProxyService&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8f5e9;strokeColor=#388e3c;" vertex="1" parent="1">
+      <mxGeometry x="840" y="60" width="140" height="40" as="geometry"/>
+    </mxCell>
+    <mxCell id="svc_l" value="" style="shape=umlLifeline;perimeter=lifelinePerimeter;size=16;html=1;" vertex="1" parent="1">
+      <mxGeometry x="905" y="100" width="10" height="600" as="geometry"/>
+    </mxCell>
+    <mxCell id="note1" value="&lt;b&gt;Phase 1: Upload&lt;/b&gt;" style="text;html=1;fontSize=10;fillColor=#fff3e0;strokeColor=#f57c00;rounded=1;" vertex="1" parent="1">
+      <mxGeometry x="60" y="130" width="120" height="25" as="geometry"/>
+    </mxCell>
+    <mxCell id="m1" value="upload_file(file_path)" style="html=1;endSize=6;startSize=6;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="120" y="170" as="sourcePoint"/>
+        <mxPoint x="340" y="170" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="m2" value="copy to temp dir" style="html=1;endSize=6;startSize=6;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="340" y="210" as="sourcePoint"/>
+        <mxPoint x="540" y="210" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="m3" value="INSERT (direction=INPUT)" style="html=1;endSize=6;startSize=6;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="340" y="250" as="sourcePoint"/>
+        <mxPoint x="720" y="250" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="m4" value="{file_id, file_name, expires_in}" style="html=1;endSize=6;startSize=6;dashed=1;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="340" y="290" as="sourcePoint"/>
+        <mxPoint x="120" y="290" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="note2" value="&lt;b&gt;Phase 2: Use file_id&lt;/b&gt;" style="text;html=1;fontSize=10;fillColor=#fff3e0;strokeColor=#f57c00;rounded=1;" vertex="1" parent="1">
+      <mxGeometry x="60" y="330" width="140" height="25" as="geometry"/>
+    </mxCell>
+    <mxCell id="m5" value="convert_pdf(file_id)" style="html=1;endSize=6;startSize=6;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="120" y="370" as="sourcePoint"/>
+        <mxPoint x="910" y="370" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="m6" value="resolve file_id → read temp file" style="html=1;endSize=6;startSize=6;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="910" y="410" as="sourcePoint"/>
+        <mxPoint x="540" y="410" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="m6r" value="bytes" style="html=1;endSize=6;startSize=6;dashed=1;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="540" y="440" as="sourcePoint"/>
+        <mxPoint x="910" y="440" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="m7" value="encode base64 → call upstream" style="html=1;endSize=6;startSize=6;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="910" y="480" as="sourcePoint"/>
+        <mxPoint x="910" y="510" as="targetPoint"/>
+        <Array as="points">
+          <mxPoint x="960" y="480"/>
+          <mxPoint x="960" y="510"/>
+        </Array>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="m8" value="delete temp file + registry" style="html=1;endSize=6;startSize=6;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="910" y="550" as="sourcePoint"/>
+        <mxPoint x="540" y="550" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="m9" value="response (no file content)" style="html=1;endSize=6;startSize=6;dashed=1;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="910" y="600" as="sourcePoint"/>
+        <mxPoint x="120" y="600" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+  </root>
+</mxGraphModel>

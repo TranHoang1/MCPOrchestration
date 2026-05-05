@@ -1,0 +1,93 @@
+<mxGraphModel adaptiveColors="auto">
+  <root>
+    <mxCell id="0"/>
+    <mxCell id="1" parent="0"/>
+    <mxCell id="title" value="&lt;b&gt;Sequence: STDIO Input File Proxy&lt;/b&gt;" style="text;html=1;align=center;fontSize=13;fontStyle=1;" vertex="1" parent="1">
+      <mxGeometry x="200" y="10" width="400" height="30" as="geometry"/>
+    </mxCell>
+    <mxCell id="agent_h" value="&lt;b&gt;AI Agent&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1f5fe;strokeColor=#0288d1;" vertex="1" parent="1">
+      <mxGeometry x="60" y="60" width="120" height="40" as="geometry"/>
+    </mxCell>
+    <mxCell id="agent_l" value="" style="shape=umlLifeline;perimeter=lifelinePerimeter;size=16;html=1;" vertex="1" parent="1">
+      <mxGeometry x="115" y="100" width="10" height="500" as="geometry"/>
+    </mxCell>
+    <mxCell id="proxy_h" value="&lt;b&gt;FileProxyService&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8f5e9;strokeColor=#388e3c;" vertex="1" parent="1">
+      <mxGeometry x="260" y="60" width="140" height="40" as="geometry"/>
+    </mxCell>
+    <mxCell id="proxy_l" value="" style="shape=umlLifeline;perimeter=lifelinePerimeter;size=16;html=1;" vertex="1" parent="1">
+      <mxGeometry x="325" y="100" width="10" height="500" as="geometry"/>
+    </mxCell>
+    <mxCell id="fs_h" value="&lt;b&gt;File System&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f3e5f5;strokeColor=#7b1fa2;" vertex="1" parent="1">
+      <mxGeometry x="460" y="60" width="120" height="40" as="geometry"/>
+    </mxCell>
+    <mxCell id="fs_l" value="" style="shape=umlLifeline;perimeter=lifelinePerimeter;size=16;html=1;" vertex="1" parent="1">
+      <mxGeometry x="515" y="100" width="10" height="500" as="geometry"/>
+    </mxCell>
+    <mxCell id="db_h" value="&lt;b&gt;Registry (DB)&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f3e5f5;strokeColor=#7b1fa2;" vertex="1" parent="1">
+      <mxGeometry x="640" y="60" width="120" height="40" as="geometry"/>
+    </mxCell>
+    <mxCell id="db_l" value="" style="shape=umlLifeline;perimeter=lifelinePerimeter;size=16;html=1;" vertex="1" parent="1">
+      <mxGeometry x="695" y="100" width="10" height="500" as="geometry"/>
+    </mxCell>
+    <mxCell id="up_h" value="&lt;b&gt;Upstream Tool&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff3e0;strokeColor=#f57c00;" vertex="1" parent="1">
+      <mxGeometry x="820" y="60" width="120" height="40" as="geometry"/>
+    </mxCell>
+    <mxCell id="up_l" value="" style="shape=umlLifeline;perimeter=lifelinePerimeter;size=16;html=1;" vertex="1" parent="1">
+      <mxGeometry x="875" y="100" width="10" height="500" as="geometry"/>
+    </mxCell>
+    <mxCell id="m1" value="convert_pdf(file_path)" style="html=1;endSize=6;startSize=6;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="120" y="160" as="sourcePoint"/>
+        <mxPoint x="330" y="160" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="m2" value="validateInputPath()" style="html=1;endSize=6;startSize=6;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="330" y="200" as="sourcePoint"/>
+        <mxPoint x="520" y="200" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="m3" value="readAllBytes(path)" style="html=1;endSize=6;startSize=6;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="330" y="240" as="sourcePoint"/>
+        <mxPoint x="520" y="240" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="m3r" value="bytes" style="html=1;endSize=6;startSize=6;dashed=1;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="520" y="270" as="sourcePoint"/>
+        <mxPoint x="330" y="270" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="m4" value="INSERT (status=PENDING)" style="html=1;endSize=6;startSize=6;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="330" y="310" as="sourcePoint"/>
+        <mxPoint x="700" y="310" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="m5" value="call(content=base64)" style="html=1;endSize=6;startSize=6;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="330" y="360" as="sourcePoint"/>
+        <mxPoint x="880" y="360" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="m5r" value="response" style="html=1;endSize=6;startSize=6;dashed=1;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="880" y="400" as="sourcePoint"/>
+        <mxPoint x="330" y="400" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="m6" value="DELETE record" style="html=1;endSize=6;startSize=6;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="330" y="440" as="sourcePoint"/>
+        <mxPoint x="700" y="440" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="m7" value="response (no file content)" style="html=1;endSize=6;startSize=6;dashed=1;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="330" y="490" as="sourcePoint"/>
+        <mxPoint x="120" y="490" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+  </root>
+</mxGraphModel>

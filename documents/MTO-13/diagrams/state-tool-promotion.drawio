@@ -1,0 +1,50 @@
+<mxGraphModel adaptiveColors="auto">
+  <root>
+    <mxCell id="0"/>
+    <mxCell id="1" parent="0"/>
+    <mxCell id="title" value="&lt;b&gt;State Diagram: Smart Tool Promotion&lt;/b&gt;" style="text;html=1;align=center;fontSize=13;fontStyle=1;" vertex="1" parent="1">
+      <mxGeometry x="200" y="10" width="400" height="30" as="geometry"/>
+    </mxCell>
+    <mxCell id="start" value="" style="ellipse;fillColor=#000000;strokeColor=#000000;" vertex="1" parent="1">
+      <mxGeometry x="380" y="60" width="40" height="40" as="geometry"/>
+    </mxCell>
+    <mxCell id="minimal" value="&lt;b&gt;MINIMAL&lt;/b&gt;&lt;br&gt;tools/list = [find_tools,&lt;br&gt;execute_dynamic_tool, ...]" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1f5fe;strokeColor=#0288d1;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="310" y="150" width="180" height="80" as="geometry"/>
+    </mxCell>
+    <mxCell id="discovering" value="&lt;b&gt;DISCOVERING&lt;/b&gt;&lt;br&gt;AI calls find_tools(query)&lt;br&gt;Semantic search running" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff3e0;strokeColor=#f57c00;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="310" y="310" width="180" height="80" as="geometry"/>
+    </mxCell>
+    <mxCell id="promoted" value="&lt;b&gt;PROMOTED&lt;/b&gt;&lt;br&gt;tools/list += [promoted tools]&lt;br&gt;AI calls directly (0 tokens)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8f5e9;strokeColor=#388e3c;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="310" y="470" width="180" height="80" as="geometry"/>
+    </mxCell>
+    <mxCell id="demoted" value="&lt;b&gt;DEMOTED&lt;/b&gt;&lt;br&gt;Tool removed from list&lt;br&gt;Retry via execute_dynamic_tool" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fce4ec;strokeColor=#c62828;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="600" y="310" width="180" height="80" as="geometry"/>
+    </mxCell>
+    <mxCell id="e_start" value="Session Start" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;fontSize=10;" edge="1" source="start" target="minimal" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e_find" value="AI calls find_tools" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;fontSize=10;" edge="1" source="minimal" target="discovering" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e_promote" value="Tools found &amp; promoted" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;fontSize=10;" edge="1" source="discovering" target="promoted" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e_fail" value="Tool call fails" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;fontSize=10;strokeColor=#c62828;" edge="1" source="promoted" target="demoted" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e_retry" value="Retry via execute_dynamic_tool" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;fontSize=10;dashed=1;" edge="1" source="demoted" target="discovering" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e_reset" value="reset_tools / TTL expired / restart" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;fontSize=10;dashed=1;strokeColor=#666666;" edge="1" source="promoted" target="minimal" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <Array as="points">
+          <mxPoint x="150" y="510"/>
+          <mxPoint x="150" y="190"/>
+        </Array>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="e_success" value="Tool call success" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;fontSize=10;strokeColor=#388e3c;" edge="1" source="promoted" target="promoted" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+  </root>
+</mxGraphModel>

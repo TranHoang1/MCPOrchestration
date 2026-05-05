@@ -1,0 +1,112 @@
+<mxGraphModel adaptiveColors="auto">
+  <root>
+    <mxCell id="0"/>
+    <mxCell id="1" parent="0"/>
+    <mxCell id="title" value="&lt;b&gt;Sequence: Smart Tool Promotion Flow&lt;/b&gt;" style="text;html=1;align=center;fontSize=13;fontStyle=1;" vertex="1" parent="1">
+      <mxGeometry x="200" y="10" width="500" height="30" as="geometry"/>
+    </mxCell>
+    <mxCell id="ide_h" value="&lt;b&gt;IDE (AI Agent)&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1f5fe;strokeColor=#0288d1;" vertex="1" parent="1">
+      <mxGeometry x="60" y="60" width="120" height="40" as="geometry"/>
+    </mxCell>
+    <mxCell id="ide_l" value="" style="shape=umlLifeline;perimeter=lifelinePerimeter;size=16;html=1;" vertex="1" parent="1">
+      <mxGeometry x="115" y="100" width="10" height="550" as="geometry"/>
+    </mxCell>
+    <mxCell id="bridge_h" value="&lt;b&gt;Bridge / Orchestrator&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8f5e9;strokeColor=#388e3c;" vertex="1" parent="1">
+      <mxGeometry x="300" y="60" width="160" height="40" as="geometry"/>
+    </mxCell>
+    <mxCell id="bridge_l" value="" style="shape=umlLifeline;perimeter=lifelinePerimeter;size=16;html=1;" vertex="1" parent="1">
+      <mxGeometry x="375" y="100" width="10" height="550" as="geometry"/>
+    </mxCell>
+    <mxCell id="orch_h" value="&lt;b&gt;Upstream Servers&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff3e0;strokeColor=#f57c00;" vertex="1" parent="1">
+      <mxGeometry x="560" y="60" width="140" height="40" as="geometry"/>
+    </mxCell>
+    <mxCell id="orch_l" value="" style="shape=umlLifeline;perimeter=lifelinePerimeter;size=16;html=1;" vertex="1" parent="1">
+      <mxGeometry x="625" y="100" width="10" height="550" as="geometry"/>
+    </mxCell>
+    <mxCell id="note1" value="&lt;b&gt;Phase 1: Minimal tools/list&lt;/b&gt;" style="text;html=1;fontSize=10;fillColor=#f5f5f5;strokeColor=#666666;rounded=1;" vertex="1" parent="1">
+      <mxGeometry x="60" y="130" width="180" height="25" as="geometry"/>
+    </mxCell>
+    <mxCell id="m1" value="tools/list" style="html=1;endSize=6;startSize=6;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="120" y="170" as="sourcePoint"/>
+        <mxPoint x="380" y="170" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="m1r" value="[find_tools, execute_dynamic_tool, stream_write_file]" style="html=1;endSize=6;startSize=6;dashed=1;fontSize=9;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="380" y="200" as="sourcePoint"/>
+        <mxPoint x="120" y="200" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="note2" value="&lt;b&gt;Phase 2: Discovery + Promotion&lt;/b&gt;" style="text;html=1;fontSize=10;fillColor=#fff3e0;strokeColor=#f57c00;rounded=1;" vertex="1" parent="1">
+      <mxGeometry x="60" y="230" width="200" height="25" as="geometry"/>
+    </mxCell>
+    <mxCell id="m2" value="find_tools(&quot;jira ticket&quot;)" style="html=1;endSize=6;startSize=6;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="120" y="270" as="sourcePoint"/>
+        <mxPoint x="380" y="270" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="m3" value="semantic search" style="html=1;endSize=6;startSize=6;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="380" y="300" as="sourcePoint"/>
+        <mxPoint x="630" y="300" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="m3r" value="[jira_get_issue, jira_search, ...]" style="html=1;endSize=6;startSize=6;dashed=1;fontSize=9;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="630" y="330" as="sourcePoint"/>
+        <mxPoint x="380" y="330" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="m4" value="PROMOTE: add tools to tools/list" style="html=1;endSize=6;startSize=6;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="380" y="360" as="sourcePoint"/>
+        <mxPoint x="380" y="390" as="targetPoint"/>
+        <Array as="points">
+          <mxPoint x="430" y="360"/>
+          <mxPoint x="430" y="390"/>
+        </Array>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="m5" value="notifications/tools/list_changed" style="html=1;endSize=6;startSize=6;dashed=1;strokeColor=#388e3c;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="380" y="410" as="sourcePoint"/>
+        <mxPoint x="120" y="410" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="m5b" value="find_tools result" style="html=1;endSize=6;startSize=6;dashed=1;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="380" y="440" as="sourcePoint"/>
+        <mxPoint x="120" y="440" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="note3" value="&lt;b&gt;Phase 3: Direct call (0 tokens discovery)&lt;/b&gt;" style="text;html=1;fontSize=10;fillColor=#e8f5e9;strokeColor=#388e3c;rounded=1;" vertex="1" parent="1">
+      <mxGeometry x="60" y="470" width="240" height="25" as="geometry"/>
+    </mxCell>
+    <mxCell id="m6" value="jira_get_issue(issue_key: &quot;MTO-13&quot;)" style="html=1;endSize=6;startSize=6;strokeColor=#388e3c;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="120" y="510" as="sourcePoint"/>
+        <mxPoint x="380" y="510" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="m7" value="route directly to upstream" style="html=1;endSize=6;startSize=6;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="380" y="540" as="sourcePoint"/>
+        <mxPoint x="630" y="540" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="m7r" value="result" style="html=1;endSize=6;startSize=6;dashed=1;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="630" y="570" as="sourcePoint"/>
+        <mxPoint x="380" y="570" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="m8" value="result (no find_tools overhead!)" style="html=1;endSize=6;startSize=6;dashed=1;strokeColor=#388e3c;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="380" y="600" as="sourcePoint"/>
+        <mxPoint x="120" y="600" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+  </root>
+</mxGraphModel>

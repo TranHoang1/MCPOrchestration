@@ -1,0 +1,69 @@
+<mxGraphModel adaptiveColors="auto">
+  <root>
+    <mxCell id="0"/>
+    <mxCell id="1" parent="0"/>
+    <mxCell id="title" value="&lt;b&gt;MTO-13 System Architecture&lt;/b&gt;" style="text;html=1;align=center;fontSize=13;fontStyle=1;" vertex="1" parent="1">
+      <mxGeometry x="300" y="10" width="400" height="30" as="geometry"/>
+    </mxCell>
+    <mxCell id="ide_box" value="IDE (Kiro / Cursor)" style="swimlane;startSize=30;fillColor=#e1f5fe;strokeColor=#0288d1;html=1;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="60" y="60" width="180" height="100" as="geometry"/>
+    </mxCell>
+    <mxCell id="ai_agent" value="AI Agent" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1f5fe;strokeColor=#0288d1;fontSize=11;" vertex="1" parent="ide_box">
+      <mxGeometry x="30" y="40" width="120" height="50" as="geometry"/>
+    </mxCell>
+    <mxCell id="bridge_box" value="MCP Client Bridge" style="swimlane;startSize=30;fillColor=#e8f5e9;strokeColor=#388e3c;html=1;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="320" y="60" width="220" height="160" as="geometry"/>
+    </mxCell>
+    <mxCell id="kt_bridge" value="Kotlin Bridge&lt;br&gt;mcp-bridge-all.jar" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8f5e9;strokeColor=#388e3c;fontSize=10;" vertex="1" parent="bridge_box">
+      <mxGeometry x="20" y="40" width="180" height="50" as="geometry"/>
+    </mxCell>
+    <mxCell id="node_bridge" value="Node.js Bridge&lt;br&gt;npx runnable" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8f5e9;strokeColor=#388e3c;fontSize=10;" vertex="1" parent="bridge_box">
+      <mxGeometry x="20" y="100" width="180" height="50" as="geometry"/>
+    </mxCell>
+    <mxCell id="orch_box" value="MCP Orchestrator (Refactored)" style="swimlane;startSize=30;fillColor=#fff3e0;strokeColor=#f57c00;html=1;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="620" y="60" width="260" height="220" as="geometry"/>
+    </mxCell>
+    <mxCell id="orch_server" value="orchestrator-server&lt;br&gt;HTTP Streamable + stdio + SSE" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff3e0;strokeColor=#f57c00;fontSize=10;" vertex="1" parent="orch_box">
+      <mxGeometry x="20" y="40" width="220" height="50" as="geometry"/>
+    </mxCell>
+    <mxCell id="orch_core" value="orchestrator-core&lt;br&gt;Shared models" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=10;" vertex="1" parent="orch_box">
+      <mxGeometry x="20" y="100" width="100" height="50" as="geometry"/>
+    </mxCell>
+    <mxCell id="orch_client" value="orchestrator-client&lt;br&gt;Upstream connections" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=10;" vertex="1" parent="orch_box">
+      <mxGeometry x="130" y="100" width="110" height="50" as="geometry"/>
+    </mxCell>
+    <mxCell id="upstream_box" value="Upstream MCP Servers" style="swimlane;startSize=30;fillColor=#f3e5f5;strokeColor=#7b1fa2;html=1;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="620" y="340" width="260" height="160" as="geometry"/>
+    </mxCell>
+    <mxCell id="up_kb" value="Knowledge Base" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f3e5f5;strokeColor=#7b1fa2;fontSize=10;" vertex="1" parent="upstream_box">
+      <mxGeometry x="20" y="40" width="100" height="40" as="geometry"/>
+    </mxCell>
+    <mxCell id="up_jira" value="Atlassian/Jira" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f3e5f5;strokeColor=#7b1fa2;fontSize=10;" vertex="1" parent="upstream_box">
+      <mxGeometry x="140" y="40" width="100" height="40" as="geometry"/>
+    </mxCell>
+    <mxCell id="up_db" value="Database" style="shape=cylinder3;whiteSpace=wrap;html=1;fillColor=#f3e5f5;strokeColor=#7b1fa2;fontSize=10;" vertex="1" parent="upstream_box">
+      <mxGeometry x="20" y="95" width="100" height="50" as="geometry"/>
+    </mxCell>
+    <mxCell id="up_other" value="Other Tools" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f3e5f5;strokeColor=#7b1fa2;fontSize=10;" vertex="1" parent="upstream_box">
+      <mxGeometry x="140" y="100" width="100" height="40" as="geometry"/>
+    </mxCell>
+    <mxCell id="e1" value="stdio" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;fontSize=10;" edge="1" source="ai_agent" target="kt_bridge" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e2" value="stdio" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;fontSize=10;" edge="1" source="ai_agent" target="node_bridge" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e3" value="HTTP Streamable" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;fontSize=10;strokeColor=#f57c00;" edge="1" source="kt_bridge" target="orch_server" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e4" value="HTTP Streamable" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;fontSize=10;strokeColor=#f57c00;" edge="1" source="node_bridge" target="orch_server" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e5" value="stdio direct" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;dashed=1;fontSize=10;" edge="1" source="ai_agent" target="orch_server" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e6" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;" edge="1" source="orch_client" target="upstream_box" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+  </root>
+</mxGraphModel>

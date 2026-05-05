@@ -55,6 +55,7 @@ fun appModule(configPath: String? = null) = module {
 
     // Database
     single { DatabaseFactory.createDataSource(get<OrchestratorConfig>().orchestrator.vectorDb) }
+    single<javax.sql.DataSource> { get<com.zaxxer.hikari.HikariDataSource>() }
 
     // Embedding (Provider selection)
     single<EmbeddingService> {

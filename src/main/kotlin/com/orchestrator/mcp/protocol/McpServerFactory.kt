@@ -55,8 +55,9 @@ class McpServerFactory(
         registerResetTools(server)
         registerManageAutoApprove(server)
         registerAgentLog(server)
+        StreamWriteToolRegistrar.register(server)
 
-        logger.info("MCP SDK Server created with 6 tools registered")
+        logger.info("MCP SDK Server created with 7 tools registered")
         return server
     }
 

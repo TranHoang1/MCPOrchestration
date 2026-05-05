@@ -47,13 +47,16 @@ class FileProxyServiceImpl(
         transportMode: String
     ): ExecuteToolResponse {
         val detections = wrapperGenerator.getDetections(toolName)
+        val resolvedServerName = serverName.ifEmpty {
+            detections.firstOrNull()?.serverName ?: ""
+        }
         val inputDetections = detections.filter { it.direction == ProxyDirection.INPUT }
         val outputDetections = detections.filter { it.direction == ProxyDirection.OUTPUT }
 
         // Handle input proxy
         var response: ExecuteToolResponse? = null
         if (inputDetections.isNotEmpty() && config.inputProxyEnabled) {
-            response = handleInputProxy(toolName, serverName, arguments, inputDetections, transportMode)
+            response = handleInputProxy(toolName, resolvedServerName, arguments, inputDetections, transportMode)
         }
 
         // If no input proxy, execute normally

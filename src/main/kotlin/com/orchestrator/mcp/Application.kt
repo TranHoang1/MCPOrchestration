@@ -2,6 +2,9 @@ package com.orchestrator.mcp
 
 import com.orchestrator.mcp.config.OrchestratorConfig
 import com.orchestrator.mcp.di.appModule
+import com.orchestrator.mcp.fileproxy.FileProxyCleanupService
+import com.orchestrator.mcp.fileproxy.FileProxyMigration
+import com.orchestrator.mcp.fileproxy.FileProxyService
 import com.orchestrator.mcp.protocol.McpServerFactory
 import com.orchestrator.mcp.upstream.HealthMonitor
 import com.orchestrator.mcp.upstream.UpstreamServerManager
@@ -16,6 +19,7 @@ import kotlinx.io.asSink
 import kotlinx.io.asSource
 import kotlinx.io.buffered
 import org.koin.core.context.startKoin
+import org.koin.core.qualifier.named
 import org.koin.java.KoinJavaComponent.getKoin
 import org.slf4j.LoggerFactory
 import io.ktor.server.engine.*
@@ -28,6 +32,7 @@ import io.ktor.server.plugins.contentnegotiation.*
 import io.ktor.serialization.kotlinx.json.*
 import io.ktor.http.*
 import io.ktor.server.sse.*
+import java.util.UUID
 
 private val logger = LoggerFactory.getLogger("com.orchestrator.mcp.Application")
 
@@ -56,12 +61,23 @@ fun realMain(args: Array<String>) = runBlocking {
     val dbInitializer = koin.get<com.orchestrator.mcp.vectordb.DatabaseInitializer>()
     val toolIndexer = koin.get<ToolIndexer>()
     val vectorDbClient = koin.get<VectorDbClient>()
+    val fileProxyService = koin.get<FileProxyService>()
+    val fileProxyMigration = koin.get<FileProxyMigration>()
+    val fileProxyCleanup = koin.get<FileProxyCleanupService>()
+    val fileProxySessionId = koin.get<UUID>(named("fileProxySessionId"))
 
     // Initialize DB schema
     try {
         dbInitializer.initialize()
     } catch (e: Exception) {
         logger.error("Critical: Database schema initialization failed: ${e.message}")
+    }
+
+    // Initialize File Proxy DB schema
+    try {
+        fileProxyMigration.migrate()
+    } catch (e: Exception) {
+        logger.error("File proxy migration failed: ${e.message}")
     }
 
     // Initialize Vector DB collection
@@ -114,6 +130,12 @@ fun realMain(args: Array<String>) = runBlocking {
                     logger.info("Starting tool indexing...")
                     val result = toolIndexer.indexAll()
                     logger.info("Tool indexing completed: ${result.totalIndexed} tools indexed, ${result.totalFailed} servers failed")
+
+                    // Initialize File Proxy: detect file params and generate wrappers
+                    fileProxyService.initialize(fileProxySessionId)
+
+                    // Start background cleanup job
+                    fileProxyCleanup.startBackgroundCleanup(this)
                 } catch (e: Exception) {
                     logger.error("Failed to connect or index upstream servers: ${e.message}")
                 }
@@ -141,6 +163,12 @@ fun realMain(args: Array<String>) = runBlocking {
                     logger.info("Starting tool indexing...")
                     val result = toolIndexer.indexAll()
                     logger.info("Tool indexing completed: ${result.totalIndexed} tools indexed, ${result.totalFailed} servers failed")
+
+                    // Initialize File Proxy: detect file params and generate wrappers
+                    fileProxyService.initialize(fileProxySessionId)
+
+                    // Start background cleanup job
+                    fileProxyCleanup.startBackgroundCleanup(this)
                 } catch (e: Exception) {
                     logger.error("Failed to connect or index upstream servers: ${e.message}")
                 }

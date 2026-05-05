@@ -31,6 +31,7 @@ import com.orchestrator.mcp.vectordb.*
 import com.orchestrator.mcp.config.ConfigDbSyncService
 import com.orchestrator.mcp.config.ConfigDbSyncServiceImpl
 import org.koin.dsl.module
+import org.koin.core.qualifier.named
 import java.util.UUID
 
 fun appModule(configPath: String? = null) = module {
@@ -142,21 +143,20 @@ fun appModule(configPath: String? = null) = module {
     single { com.orchestrator.mcp.logging.AgentLogService(get()) }
 
     // MCP Server Factory
-    single { McpServerFactory(get(), get(), get(), get<OrchestratorConfig>().orchestrator.session, get()) }
+    single { McpServerFactory(get(), get(), get(), get<OrchestratorConfig>().orchestrator.session, get(), get()) }
 
-    // File Proxy
+    // File Proxy — shared session ID for all proxy components
+    single<UUID>(named("fileProxySessionId")) { UUID.randomUUID() }
     single<FileProxyConfig> { get<OrchestratorConfig>().orchestrator.fileProxy }
     single<FileProxyRegistry> { FileProxyRegistryImpl(get()) }
     single { FileProxyDetector() }
     single { WrapperToolGenerator(get()) }
     single { FileProxyCleanupService(get<FileProxyRegistry>(), get<FileProxyConfig>()) }
     single {
-        val sessionId = UUID.randomUUID()
-        FileUploadHandler(get<FileProxyRegistry>(), get<FileProxyConfig>(), sessionId)
+        FileUploadHandler(get<FileProxyRegistry>(), get<FileProxyConfig>(), get(named("fileProxySessionId")))
     }
     single<InputFileProxyHandler> {
-        val sessionId = UUID.randomUUID()
-        InputFileProxyHandlerImpl(get(), get<FileProxyConfig>(), get(), sessionId)
+        InputFileProxyHandlerImpl(get(), get<FileProxyConfig>(), get(), get(named("fileProxySessionId")))
     }
     single<OutputFileProxyHandler> { OutputFileProxyHandlerImpl(get<FileProxyRegistry>(), get<FileProxyConfig>()) }
     single<FileProxyService> {

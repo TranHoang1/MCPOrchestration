@@ -2,6 +2,7 @@ package com.orchestrator.mcp.protocol
 
 import com.orchestrator.mcp.discovery.ToolDiscoveryService
 import com.orchestrator.mcp.execution.ToolExecutionDispatcher
+import com.orchestrator.mcp.fileproxy.FileProxyService
 import com.orchestrator.mcp.model.McpOrchestratorException
 import io.modelcontextprotocol.kotlin.sdk.server.Server
 import io.modelcontextprotocol.kotlin.sdk.server.ServerOptions
@@ -26,7 +27,8 @@ class McpServerFactory(
     private val executionDispatcher: ToolExecutionDispatcher,
     private val toolManagementService: com.orchestrator.mcp.management.ToolManagementService,
     private val sessionConfig: com.orchestrator.mcp.config.SessionConfig,
-    private val agentLogService: com.orchestrator.mcp.logging.AgentLogService? = null
+    private val agentLogService: com.orchestrator.mcp.logging.AgentLogService? = null,
+    private val fileProxyService: FileProxyService? = null
 ) {
     private val logger = LoggerFactory.getLogger(McpServerFactory::class.java)
     private val json = Json {
@@ -124,7 +126,12 @@ class McpServerFactory(
             val toolArguments = arguments["arguments"]
                 ?.let { it as? JsonObject }
 
-            val response = executionDispatcher.execute(toolName, toolArguments)
+            // Route through FileProxyService if this is a proxy-wrapped tool
+            val response = if (fileProxyService?.isProxyTool(toolName) == true && toolArguments != null) {
+                fileProxyService.handleProxyCall(toolName, "", toolArguments, "stdio")
+            } else {
+                executionDispatcher.execute(toolName, toolArguments)
+            }
 
             CallToolResult(
                 content = response.content.map { TextContent(text = it.text) }

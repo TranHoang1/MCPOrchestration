@@ -267,3 +267,32 @@ Before delivering the FSD, verify:
    - `tags`: `fsd, {TICKET-KEY}, {PROJECT-KEY}, specification, sdlc`
 2. If ingestion fails, log a warning but continue — the file-based FSD is the primary artifact.
 3. Report: "📚 FSD ingested into Knowledge Base for cross-agent access."
+
+## DOCX Export (MANDATORY)
+
+**After completing the FSD, you MUST export to DOCX format.**
+
+1. Use `embed_images` tool to create a self-contained markdown (images as base64):
+   - `file_path`: absolute path to FSD.md
+   - `output_path`: absolute path to FSD-embedded.md (temp file)
+2. Use the discovered **DOCX export tool** (query: "convert markdown to docx") to export:
+   - Output: `documents/{TICKET-KEY}/FSD-v{VERSION}-{TICKET-KEY}.docx`
+3. Delete the temp embedded file after export.
+4. If export fails, log warning and continue — markdown FSD is the primary artifact.
+
+## Execution Logging (MANDATORY)
+
+**You MUST log your execution steps using the `agent_log` MCP tool throughout your work.**
+
+Log at minimum:
+- `START`: When beginning FSD enrichment
+- `ARTIFACT`: When FSD file is written/appended
+- `DONE`: When enrichment is complete
+- `ERROR`: If any step fails
+
+Example:
+```
+agent_log(ticket_key="MTO-13", agent_name="TA", step="FSD-Enrich", status="START", message="Beginning FSD technical enrichment")
+agent_log(ticket_key="MTO-13", agent_name="TA", step="FSD-Enrich", status="ARTIFACT", message="Appended sections 6-11", artifacts="{\"file\": \"documents/MTO-13/FSD.md\"}")
+agent_log(ticket_key="MTO-13", agent_name="TA", step="FSD-Enrich", status="DONE", message="FSD enrichment complete: 3372 lines, 143KB")
+```

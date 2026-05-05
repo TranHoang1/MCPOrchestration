@@ -1,0 +1,46 @@
+<mxGraphModel adaptiveColors="auto">
+  <root>
+    <mxCell id="0"/>
+    <mxCell id="1" parent="0"/>
+    <mxCell id="title" value="&lt;b&gt;MTO-12: File Proxy — Class Diagram&lt;/b&gt;" style="text;html=1;align=center;fontSize=14;fontStyle=1;" vertex="1" parent="1">
+      <mxGeometry x="200" y="10" width="500" height="30" as="geometry"/>
+    </mxCell>
+    <!-- FileProxyService Interface -->
+    <mxCell id="fps_if" value="&lt;b&gt;«interface»&lt;br&gt;FileProxyService&lt;/b&gt;&lt;hr&gt;+initialize(sessionId: UUID)&lt;br&gt;+handleProxyCall(...): ExecuteToolResponse&lt;br&gt;+isProxyTool(toolName): Boolean&lt;br&gt;+redetectServer(serverName)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#e8f5e9;strokeColor=#388e3c;fontSize=10;align=left;spacingLeft=5;" vertex="1" parent="1">
+      <mxGeometry x="280" y="60" width="300" height="110" as="geometry"/>
+    </mxCell>
+    <!-- FileProxyServiceImpl -->
+    <mxCell id="fps_impl" value="&lt;b&gt;FileProxyServiceImpl&lt;/b&gt;&lt;hr&gt;-detector: FileProxyDetector&lt;br&gt;-wrapperGenerator: WrapperToolGenerator&lt;br&gt;-inputHandler: InputFileProxyHandler&lt;br&gt;-outputHandler: OutputFileProxyHandler&lt;br&gt;-registry: FileProxyRegistry&lt;br&gt;-config: FileProxyConfig&lt;br&gt;-sessionId: UUID" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#e1f5fe;strokeColor=#0288d1;fontSize=10;align=left;spacingLeft=5;" vertex="1" parent="1">
+      <mxGeometry x="280" y="220" width="300" height="140" as="geometry"/>
+    </mxCell>
+    <!-- FileProxyDetector -->
+    <mxCell id="fpd" value="&lt;b&gt;FileProxyDetector&lt;/b&gt;&lt;hr&gt;-detectionCache: Map&lt;br&gt;&lt;hr&gt;+detectInputFileParams(...): List&lt;br&gt;+detectOutputFileResponse(...): Boolean&lt;br&gt;+detectOutputFromResponse(...): Boolean" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#e1f5fe;strokeColor=#0288d1;fontSize=10;align=left;spacingLeft=5;" vertex="1" parent="1">
+      <mxGeometry x="40" y="420" width="260" height="110" as="geometry"/>
+    </mxCell>
+    <!-- WrapperToolGenerator -->
+    <mxCell id="wtg" value="&lt;b&gt;WrapperToolGenerator&lt;/b&gt;&lt;hr&gt;-toolRegistry: ToolRegistry&lt;br&gt;-toolIndexer: ToolIndexer&lt;hr&gt;+generateWrapper(...): ToolDefinition?&lt;br&gt;+hasWrapper(toolName): Boolean&lt;br&gt;+getOriginalTool(name): ToolDefinition?" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#e1f5fe;strokeColor=#0288d1;fontSize=10;align=left;spacingLeft=5;" vertex="1" parent="1">
+      <mxGeometry x="320" y="420" width="260" height="120" as="geometry"/>
+    </mxCell>
+    <!-- FileProxyRegistry Interface -->
+    <mxCell id="fpr_if" value="&lt;b&gt;«interface»&lt;br&gt;FileProxyRegistry&lt;/b&gt;&lt;hr&gt;+createEntry(entry): FileProxyEntry&lt;br&gt;+updateStatus(fileId, status)&lt;br&gt;+deleteEntry(fileId)&lt;br&gt;+findByFileId(fileId): FileProxyEntry?&lt;br&gt;+deleteBySessionId(sessionId): Int&lt;br&gt;+deleteExpiredEntries(olderThan): Int" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f3e5f5;strokeColor=#7b1fa2;fontSize=10;align=left;spacingLeft=5;" vertex="1" parent="1">
+      <mxGeometry x="600" y="420" width="260" height="130" as="geometry"/>
+    </mxCell>
+    <!-- FileProxyCleanupService -->
+    <mxCell id="fpc" value="&lt;b&gt;FileProxyCleanupService&lt;/b&gt;&lt;hr&gt;+startupCleanup(sessionId): CleanupSummary&lt;br&gt;+shutdownCleanup(sessionId, timeout)&lt;br&gt;+startBackgroundCleanup(scope, interval, ttl): Job&lt;br&gt;+cleanupEntry(fileId)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#e8f5e9;strokeColor=#388e3c;fontSize=10;align=left;spacingLeft=5;" vertex="1" parent="1">
+      <mxGeometry x="600" y="220" width="280" height="100" as="geometry"/>
+    </mxCell>
+    <!-- Edges -->
+    <mxCell id="e1" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endSize=10;endFill=0;dashed=1;" edge="1" source="fps_impl" target="fps_if" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e2" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;" edge="1" source="fps_impl" target="fpd" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e3" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;" edge="1" source="fps_impl" target="wtg" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e4" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;" edge="1" source="fpc" target="fpr_if" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+  </root>
+</mxGraphModel>

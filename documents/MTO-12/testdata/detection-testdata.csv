@@ -1,0 +1,16 @@
+test_case_id,tool_name,param_name,param_type,param_description,expected_detected,expected_method,expected_confidence,description
+TC-001,convert_pdf,content,base64,PDF file content,true,SCHEMA_TYPE,1.0,Explicit base64 type — highest confidence
+UT-02,analyze_image,image_data,binary,Binary image data,true,SCHEMA_TYPE,1.0,Explicit binary type
+UT-03,process_doc,file_content,string,Base64 encoded file content,true,DESCRIPTION_KEYWORD,0.9,Description contains "base64 encoded"
+UT-04,send_message,content,string,Message text content to send,false,,,False positive prevention — BR-002
+PBT-01,upload_data,data,string,File data in base64 format,true,DESCRIPTION_KEYWORD,0.9,Description keyword match
+PBT-02,transform,binary_data,object,Binary content for processing,true,NAME_PATTERN,0.7,Name pattern match (non-string type)
+TC-100,multi_tool,file_content,base64,First file,true,SCHEMA_TYPE,1.0,Multiple params — first detected
+TC-100,multi_tool,image_data,base64,Second file,true,SCHEMA_TYPE,1.0,Multiple params — second detected
+TC-212,broken_tool,,,null inputSchema,false,,,Malformed schema — skipped with WARN
+TC-213,normal_tool,query,string,Search query text,false,,,No file params — zero detection
+TC-008,export_report,,,outputSchema with file type,true,SCHEMA_TYPE,1.0,Output detection — schema type
+TC-008,generate_pdf,,,Tool name matches export_* pattern,true,NAME_PATTERN,0.8,Output detection — name pattern
+TC-308,data_tool,result,,500-char base64 string in response,false,,,Below 1000-char threshold — not detected
+TC-308,file_tool,result,,2000-char valid base64 in response,true,RUNTIME_RESPONSE,0.9,Above threshold — detected
+TC-308,text_tool,result,,2000-char non-base64 string,false,,,Invalid base64 charset — not detected

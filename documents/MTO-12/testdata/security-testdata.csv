@@ -1,0 +1,13 @@
+test_case_id,file_path,attack_type,expected_http_code,expected_error_code,description
+TC-203,/home/user/../etc/passwd,PATH_TRAVERSAL,400,INVALID_PATH,Basic path traversal with ../
+TC-404,/home/user/..\\etc\\passwd,PATH_TRAVERSAL_BACKSLASH,400,INVALID_PATH,Backslash path traversal
+TC-604,/home/%2e%2e/etc/passwd,URL_ENCODED_TRAVERSAL,400,INVALID_PATH,URL-encoded dot-dot traversal
+TC-404,/home/user/....//etc/passwd,DOUBLE_DOT_VARIANT,400,INVALID_PATH,Double dot variation
+TC-404,/tmp/safe/../../etc/shadow,NESTED_TRAVERSAL,400,INVALID_PATH,Nested traversal from safe dir
+TC-605,/tmp/safe/link.pdf,SYMLINK_ATTACK,400,INVALID_PATH,Symlink pointing to /etc/shadow
+TC-403,,EMPTY_PATH,400,INVALID_PATH,Empty string path
+TC-403,file.pdf,RELATIVE_NO_SEPARATOR,400,INVALID_PATH,Relative path without separator
+TC-403,./relative/file.pdf,RELATIVE_DOT_SLASH,400,INVALID_PATH,Relative path with ./
+TC-403,~/home/file.pdf,TILDE_PATH,400,INVALID_PATH,Tilde expansion path
+TC-607,/tmp/test/1gb-file.bin,DOS_LARGE_FILE,400,FILE_TOO_LARGE,1GB file — DoS prevention
+TC-609,/tmp/mcp-file-proxy/../outside/file.pdf,TEMP_DIR_ESCAPE,400,INVALID_PATH,Escape from temp directory

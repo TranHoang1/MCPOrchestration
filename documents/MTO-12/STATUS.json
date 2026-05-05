@@ -1,0 +1,17 @@
+{
+  "ticket": "MTO-12",
+  "currentPhase": "test_planning",
+  "phases": {
+    "requirements": { "status": "done", "file": "BRD.md", "version": 1, "completedAt": "2026-05-05T03:00:00Z" },
+    "specification": { "status": "done", "file": "FSD.md", "version": 1, "completedAt": "2026-05-05T04:00:00Z" },
+    "design": { "status": "done", "file": "TDD.md", "version": 1, "completedAt": "2026-05-05T05:00:00Z" },
+    "feedback_loop": { "status": "done", "iterations": 1, "maxIterations": 5, "note": "DISCREPANCY.md has 0 Critical, 1 High (addressed in TDD), 2 Low. No FSD revision needed." },
+    "test_planning": { "status": "not_started" },
+    "implementation": { "status": "not_started" },
+    "user_guide": { "status": "not_started" },
+    "testing": { "status": "not_started" },
+    "deployment": { "status": "not_started" }
+  },
+  "lastUpdated": "2026-05-05T11:00:00Z",
+  "lastCommentProcessed": null
+}

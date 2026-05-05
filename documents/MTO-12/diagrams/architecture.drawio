@@ -1,0 +1,83 @@
+<mxGraphModel adaptiveColors="auto">
+  <root>
+    <mxCell id="0"/>
+    <mxCell id="1" parent="0"/>
+    <!-- Title -->
+    <mxCell id="title" value="&lt;b&gt;MTO-12: Auto File Proxy — Architecture Overview&lt;/b&gt;" style="text;html=1;align=center;fontSize=14;fontStyle=1;" vertex="1" parent="1">
+      <mxGeometry x="200" y="10" width="500" height="30" as="geometry"/>
+    </mxCell>
+    <!-- AI Agent -->
+    <mxCell id="agent" value="&lt;b&gt;AI Agent&lt;/b&gt;&lt;br&gt;(MCP Client)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1f5fe;strokeColor=#0288d1;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="60" y="80" width="160" height="70" as="geometry"/>
+    </mxCell>
+    <!-- Orchestrator Container -->
+    <mxCell id="orch" value="MCP Orchestrator Server" style="swimlane;startSize=30;fillColor=#f5f5f5;strokeColor=#666666;html=1;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="60" y="200" width="780" height="320" as="geometry"/>
+    </mxCell>
+    <!-- Protocol Layer -->
+    <mxCell id="protocol" value="&lt;b&gt;Protocol Layer&lt;/b&gt;&lt;br&gt;McpProtocolHandler" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1f5fe;strokeColor=#0288d1;fontSize=10;" vertex="1" parent="orch">
+      <mxGeometry x="20" y="50" width="160" height="60" as="geometry"/>
+    </mxCell>
+    <!-- File Proxy Layer -->
+    <mxCell id="fproxy" value="File Proxy Layer (NEW)" style="swimlane;startSize=24;fillColor=#fff3e0;strokeColor=#f57c00;html=1;fontSize=10;" vertex="1" parent="orch">
+      <mxGeometry x="20" y="130" width="740" height="170" as="geometry"/>
+    </mxCell>
+    <mxCell id="fps" value="&lt;b&gt;FileProxyService&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8f5e9;strokeColor=#388e3c;fontSize=10;" vertex="1" parent="fproxy">
+      <mxGeometry x="20" y="35" width="140" height="50" as="geometry"/>
+    </mxCell>
+    <mxCell id="fpd" value="FileProxy&lt;br&gt;Detector" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8f5e9;strokeColor=#388e3c;fontSize=10;" vertex="1" parent="fproxy">
+      <mxGeometry x="180" y="35" width="110" height="50" as="geometry"/>
+    </mxCell>
+    <mxCell id="wtg" value="Wrapper&lt;br&gt;ToolGenerator" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8f5e9;strokeColor=#388e3c;fontSize=10;" vertex="1" parent="fproxy">
+      <mxGeometry x="310" y="35" width="110" height="50" as="geometry"/>
+    </mxCell>
+    <mxCell id="ifph" value="Input&lt;br&gt;FileProxyHandler" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8f5e9;strokeColor=#388e3c;fontSize=10;" vertex="1" parent="fproxy">
+      <mxGeometry x="440" y="35" width="130" height="50" as="geometry"/>
+    </mxCell>
+    <mxCell id="ofph" value="Output&lt;br&gt;FileProxyHandler" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8f5e9;strokeColor=#388e3c;fontSize=10;" vertex="1" parent="fproxy">
+      <mxGeometry x="590" y="35" width="130" height="50" as="geometry"/>
+    </mxCell>
+    <mxCell id="fpr" value="FileProxy&lt;br&gt;Registry" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f3e5f5;strokeColor=#7b1fa2;fontSize=10;" vertex="1" parent="fproxy">
+      <mxGeometry x="20" y="105" width="110" height="50" as="geometry"/>
+    </mxCell>
+    <mxCell id="fpc" value="Cleanup&lt;br&gt;Service" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8f5e9;strokeColor=#388e3c;fontSize=10;" vertex="1" parent="fproxy">
+      <mxGeometry x="150" y="105" width="110" height="50" as="geometry"/>
+    </mxCell>
+    <mxCell id="fuh" value="FileUpload&lt;br&gt;Handler" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8f5e9;strokeColor=#388e3c;fontSize=10;" vertex="1" parent="fproxy">
+      <mxGeometry x="280" y="105" width="110" height="50" as="geometry"/>
+    </mxCell>
+    <!-- Existing Services -->
+    <mxCell id="ted" value="&lt;b&gt;ToolExecution&lt;br&gt;Dispatcher&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1f5fe;strokeColor=#0288d1;fontSize=10;" vertex="1" parent="orch">
+      <mxGeometry x="220" y="50" width="140" height="60" as="geometry"/>
+    </mxCell>
+    <mxCell id="tr" value="ToolRegistry" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1f5fe;strokeColor=#0288d1;fontSize=10;" vertex="1" parent="orch">
+      <mxGeometry x="400" y="50" width="120" height="60" as="geometry"/>
+    </mxCell>
+    <mxCell id="ti" value="ToolIndexer" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1f5fe;strokeColor=#0288d1;fontSize=10;" vertex="1" parent="orch">
+      <mxGeometry x="560" y="50" width="120" height="60" as="geometry"/>
+    </mxCell>
+    <!-- External Systems -->
+    <mxCell id="db" value="&lt;b&gt;PostgreSQL&lt;/b&gt;&lt;br&gt;file_proxy_registry" style="shape=cylinder3;whiteSpace=wrap;html=1;fillColor=#f3e5f5;strokeColor=#7b1fa2;fontSize=10;size=10;" vertex="1" parent="1">
+      <mxGeometry x="100" y="580" width="140" height="70" as="geometry"/>
+    </mxCell>
+    <mxCell id="fs" value="&lt;b&gt;File System&lt;/b&gt;&lt;br&gt;/tmp/mcp-file-proxy" style="shape=mxgraph.flowchart.document;whiteSpace=wrap;html=1;fillColor=#f3e5f5;strokeColor=#7b1fa2;fontSize=10;" vertex="1" parent="1">
+      <mxGeometry x="360" y="580" width="160" height="70" as="geometry"/>
+    </mxCell>
+    <mxCell id="upstream" value="&lt;b&gt;Upstream MCP Servers&lt;/b&gt;&lt;br&gt;(STDIO / HTTP)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff3e0;strokeColor=#f57c00;fontSize=10;" vertex="1" parent="1">
+      <mxGeometry x="620" y="580" width="180" height="70" as="geometry"/>
+    </mxCell>
+    <!-- Edges -->
+    <mxCell id="e1" value="MCP JSON-RPC" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;fontSize=9;" edge="1" source="agent" target="protocol" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e2" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;" edge="1" source="fpr" target="db" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e3" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;" edge="1" source="ifph" target="fs" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e4" value="tools/call" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;fontSize=9;" edge="1" source="ted" target="upstream" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+  </root>
+</mxGraphModel>

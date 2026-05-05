@@ -34,4 +34,16 @@ orchestrator:
     auto_reconnect: true
     max_reconnect_attempts: 5
 
+  file-proxy:
+    enabled: true
+    max-size-mb: 50
+    temp-directory: "/tmp/mcp-file-proxy"
+    ttl-minutes: 60
+    cleanup-interval-minutes: 15
+    shutdown-timeout-seconds: 30
+    input-proxy-enabled: true
+    output-proxy-enabled: true
+    runtime-detection-enabled: true
+    servers: {}
+
   upstream_servers: []

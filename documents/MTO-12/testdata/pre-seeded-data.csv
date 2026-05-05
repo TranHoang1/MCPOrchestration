@@ -1,0 +1,6 @@
+id,session_id,file_path,file_name,file_size,direction,status,created_at,description
+old-session-001,aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa,/tmp/mcp-file-proxy/stale1.pdf,stale1.pdf,1024,INPUT,PENDING,2026-05-04T08:00:00Z,Stale record from previous session — for startup cleanup tests
+old-session-002,aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa,/tmp/mcp-file-proxy/stale2.pdf,stale2.pdf,2048,INPUT,PENDING,2026-05-04T09:00:00Z,Stale record from previous session — for startup cleanup tests
+old-session-003,aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa,/tmp/mcp-file-proxy/stale3.bin,stale3.bin,4096,OUTPUT,FAILED,2026-05-04T10:00:00Z,Failed output record — for cleanup verification
+expired-001,bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb,/tmp/mcp-file-proxy/expired1.pdf,expired1.pdf,5120,INPUT,PENDING,2026-05-04T06:00:00Z,Expired record (>60min TTL) — for TTL cleanup tests
+expired-002,bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb,/tmp/mcp-file-proxy/expired2.pdf,expired2.pdf,3072,INPUT,PENDING,2026-05-04T05:00:00Z,Expired record (>60min TTL) — for TTL cleanup tests

@@ -1,0 +1,12 @@
+test_case_id,max_size_mb,server_name,server_override_mb,file_size_mb,expected_result,description
+TC-306,50,pdf-tools,100,60,ACCEPTED,Per-server override (100MB) allows 60MB file
+TC-306,50,other-server,,60,REJECTED,Global limit (50MB) rejects 60MB file
+TC-400,50,,,50,ACCEPTED,File exactly at boundary (50MB)
+TC-400,50,,,50.000001,REJECTED,File 1 byte over boundary
+TC-401,50,,,0,ACCEPTED,Empty file (0 bytes)
+TC-711,0,,,1,DEFAULT_50,Invalid config (0) — uses default 50MB
+TC-711,-1,,,1,DEFAULT_50,Invalid config (-1) — uses default 50MB
+TC-307,50,,,60,REJECTED_FAST,Size check uses metadata — no file read
+PBT-08,50,,,1,ACCEPTED,50 concurrent 1KB files — all succeed
+TC-601,50,,,10,ACCEPTED,10MB file encode performance test
+TC-608,50,,,0.001,ACCEPTED,Throughput test — 1KB files at 20 req/s

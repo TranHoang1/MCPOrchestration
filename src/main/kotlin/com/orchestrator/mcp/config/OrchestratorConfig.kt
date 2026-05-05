@@ -1,5 +1,6 @@
 package com.orchestrator.mcp.config
 
+import com.orchestrator.mcp.fileproxy.FileProxyConfig
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -23,7 +24,9 @@ data class OrchestratorSettings(
     val health: HealthConfig = HealthConfig(),
     val session: SessionConfig = SessionConfig(),
     @SerialName("upstream_servers")
-    val upstreamServers: List<UpstreamServerConfig> = emptyList()
+    val upstreamServers: List<UpstreamServerConfig> = emptyList(),
+    @SerialName("file-proxy")
+    val fileProxy: FileProxyConfig = FileProxyConfig()
 )
 
 @Serializable

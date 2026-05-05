@@ -1,0 +1,39 @@
+<mxGraphModel adaptiveColors="auto">
+  <root>
+    <mxCell id="0"/>
+    <mxCell id="1" parent="0"/>
+    <mxCell id="title" value="&lt;b&gt;System Context — Auto File Proxy (MTO-12)&lt;/b&gt;" style="text;html=1;align=center;fontSize=14;fontStyle=1;" vertex="1" parent="1">
+      <mxGeometry x="200" y="10" width="400" height="30" as="geometry"/>
+    </mxCell>
+    <mxCell id="agent" value="&lt;b&gt;AI Agent&lt;/b&gt;&#xa;(MCP Client)" style="shape=actor;whiteSpace=wrap;html=1;fillColor=#e1f5fe;strokeColor=#0288d1;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="60" y="200" width="80" height="100" as="geometry"/>
+    </mxCell>
+    <mxCell id="orchestrator" value="&lt;b&gt;MCP Orchestrator&lt;/b&gt;&#xa;(File Proxy Layer)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8f5e9;strokeColor=#388e3c;fontSize=11;fontStyle=1;" vertex="1" parent="1">
+      <mxGeometry x="280" y="180" width="200" height="80" as="geometry"/>
+    </mxCell>
+    <mxCell id="upstream" value="&lt;b&gt;Upstream MCP Servers&lt;/b&gt;&#xa;(pdf-tools, image-processor, etc.)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff3e0;strokeColor=#f57c00;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="560" y="180" width="200" height="80" as="geometry"/>
+    </mxCell>
+    <mxCell id="filesystem" value="&lt;b&gt;File System&lt;/b&gt;&#xa;(Local Disk)" style="shape=cylinder3;whiteSpace=wrap;html=1;fillColor=#f3e5f5;strokeColor=#7b1fa2;fontSize=11;size=10;" vertex="1" parent="1">
+      <mxGeometry x="320" y="360" width="120" height="80" as="geometry"/>
+    </mxCell>
+    <mxCell id="postgres" value="&lt;b&gt;PostgreSQL&lt;/b&gt;&#xa;(file_proxy_registry)" style="shape=cylinder3;whiteSpace=wrap;html=1;fillColor=#f3e5f5;strokeColor=#7b1fa2;fontSize=11;size=10;" vertex="1" parent="1">
+      <mxGeometry x="320" y="60" width="120" height="80" as="geometry"/>
+    </mxCell>
+    <mxCell id="e1" value="file_path / file_id" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;fontSize=10;" edge="1" source="agent" target="orchestrator" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e2" value="base64 content" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;fontSize=10;" edge="1" source="orchestrator" target="upstream" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e3" value="read / write files" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;fontSize=10;" edge="1" source="orchestrator" target="filesystem" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e4" value="registry CRUD" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;fontSize=10;" edge="1" source="orchestrator" target="postgres" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e5" value="response" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;dashed=1;fontSize=10;" edge="1" source="upstream" target="orchestrator" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+  </root>
+</mxGraphModel>

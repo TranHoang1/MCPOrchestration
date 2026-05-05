@@ -1,0 +1,54 @@
+<mxGraphModel adaptiveColors="auto">
+  <root>
+    <mxCell id="0"/>
+    <mxCell id="1" parent="0"/>
+    <mxCell id="title" value="&lt;b&gt;MTO-12: Database Schema — file_proxy_registry&lt;/b&gt;" style="text;html=1;align=center;fontSize=14;fontStyle=1;" vertex="1" parent="1">
+      <mxGeometry x="100" y="10" width="500" height="30" as="geometry"/>
+    </mxCell>
+    <!-- Table -->
+    <mxCell id="table" value="&lt;b&gt;file_proxy_registry&lt;/b&gt;" style="swimlane;startSize=30;fillColor=#f3e5f5;strokeColor=#7b1fa2;html=1;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+      <mxGeometry x="100" y="60" width="500" height="380" as="geometry"/>
+    </mxCell>
+    <mxCell id="col1" value="&lt;b&gt;PK&lt;/b&gt; file_id : UUID NOT NULL" style="text;html=1;align=left;fontSize=11;fillColor=#e8eaf6;" vertex="1" parent="table">
+      <mxGeometry x="10" y="40" width="480" height="25" as="geometry"/>
+    </mxCell>
+    <mxCell id="col2" value="&lt;b&gt;IDX&lt;/b&gt; session_id : UUID NOT NULL" style="text;html=1;align=left;fontSize=11;" vertex="1" parent="table">
+      <mxGeometry x="10" y="70" width="480" height="25" as="geometry"/>
+    </mxCell>
+    <mxCell id="col3" value="file_path : VARCHAR(500) NOT NULL" style="text;html=1;align=left;fontSize=11;" vertex="1" parent="table">
+      <mxGeometry x="10" y="100" width="480" height="25" as="geometry"/>
+    </mxCell>
+    <mxCell id="col4" value="file_name : VARCHAR(255) NULL" style="text;html=1;align=left;fontSize=11;" vertex="1" parent="table">
+      <mxGeometry x="10" y="130" width="480" height="25" as="geometry"/>
+    </mxCell>
+    <mxCell id="col5" value="file_size : BIGINT NULL" style="text;html=1;align=left;fontSize=11;" vertex="1" parent="table">
+      <mxGeometry x="10" y="160" width="480" height="25" as="geometry"/>
+    </mxCell>
+    <mxCell id="col6" value="real_tool_name : VARCHAR(255) NULL" style="text;html=1;align=left;fontSize=11;" vertex="1" parent="table">
+      <mxGeometry x="10" y="190" width="480" height="25" as="geometry"/>
+    </mxCell>
+    <mxCell id="col7" value="upstream_server : VARCHAR(255) NULL" style="text;html=1;align=left;fontSize=11;" vertex="1" parent="table">
+      <mxGeometry x="10" y="220" width="480" height="25" as="geometry"/>
+    </mxCell>
+    <mxCell id="col8" value="&lt;b&gt;CHK&lt;/b&gt; direction : VARCHAR(10) NOT NULL DEFAULT 'INPUT' — IN ('INPUT','OUTPUT')" style="text;html=1;align=left;fontSize=11;" vertex="1" parent="table">
+      <mxGeometry x="10" y="250" width="480" height="25" as="geometry"/>
+    </mxCell>
+    <mxCell id="col9" value="&lt;b&gt;CHK IDX&lt;/b&gt; status : VARCHAR(20) NOT NULL DEFAULT 'PENDING' — IN ('PENDING','PROCESSED','FAILED','EXPIRED')" style="text;html=1;align=left;fontSize=10;" vertex="1" parent="table">
+      <mxGeometry x="10" y="280" width="480" height="25" as="geometry"/>
+    </mxCell>
+    <mxCell id="col10" value="&lt;b&gt;IDX&lt;/b&gt; created_at : TIMESTAMP NOT NULL DEFAULT NOW()" style="text;html=1;align=left;fontSize=11;" vertex="1" parent="table">
+      <mxGeometry x="10" y="310" width="480" height="25" as="geometry"/>
+    </mxCell>
+    <mxCell id="col11" value="processed_at : TIMESTAMP NULL" style="text;html=1;align=left;fontSize=11;" vertex="1" parent="table">
+      <mxGeometry x="10" y="340" width="480" height="25" as="geometry"/>
+    </mxCell>
+    <!-- Indexes box -->
+    <mxCell id="indexes" value="&lt;b&gt;Indexes&lt;/b&gt;&lt;br&gt;• idx_file_proxy_session (session_id)&lt;br&gt;• idx_file_proxy_status (status)&lt;br&gt;• idx_file_proxy_created (created_at)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8f5e9;strokeColor=#388e3c;fontSize=10;align=left;spacingLeft=10;" vertex="1" parent="1">
+      <mxGeometry x="100" y="460" width="300" height="80" as="geometry"/>
+    </mxCell>
+    <!-- Constraints box -->
+    <mxCell id="constraints" value="&lt;b&gt;Constraints&lt;/b&gt;&lt;br&gt;• pk_file_proxy_registry (file_id)&lt;br&gt;• chk_direction IN ('INPUT','OUTPUT')&lt;br&gt;• chk_status IN ('PENDING','PROCESSED','FAILED','EXPIRED')" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff3e0;strokeColor=#f57c00;fontSize=10;align=left;spacingLeft=10;" vertex="1" parent="1">
+      <mxGeometry x="420" y="460" width="300" height="80" as="geometry"/>
+    </mxCell>
+  </root>
+</mxGraphModel>

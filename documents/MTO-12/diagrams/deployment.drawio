@@ -1,0 +1,53 @@
+<mxGraphModel adaptiveColors="auto">
+  <root>
+    <mxCell id="0"/>
+    <mxCell id="1" parent="0"/>
+    <mxCell id="title" value="&lt;b&gt;MTO-12: Deployment Architecture&lt;/b&gt;" style="text;html=1;align=center;fontSize=14;fontStyle=1;" vertex="1" parent="1">
+      <mxGeometry x="150" y="10" width="400" height="30" as="geometry"/>
+    </mxCell>
+    <!-- JVM Process -->
+    <mxCell id="jvm" value="JVM Process (JDK 21)" style="swimlane;startSize=30;fillColor=#e1f5fe;strokeColor=#0288d1;html=1;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="60" y="60" width="360" height="200" as="geometry"/>
+    </mxCell>
+    <mxCell id="jar" value="&lt;b&gt;mcp-orchestrator-all.jar&lt;/b&gt;&lt;br&gt;(Fat JAR — Ktor + Netty)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8f5e9;strokeColor=#388e3c;fontSize=10;" vertex="1" parent="jvm">
+      <mxGeometry x="20" y="40" width="320" height="50" as="geometry"/>
+    </mxCell>
+    <mxCell id="fp_pkg" value="&lt;b&gt;fileproxy package&lt;/b&gt; (NEW)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff3e0;strokeColor=#f57c00;fontSize=10;" vertex="1" parent="jvm">
+      <mxGeometry x="20" y="100" width="150" height="40" as="geometry"/>
+    </mxCell>
+    <mxCell id="existing" value="Existing packages&lt;br&gt;(discovery, execution, registry...)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=10;" vertex="1" parent="jvm">
+      <mxGeometry x="190" y="100" width="150" height="40" as="geometry"/>
+    </mxCell>
+    <mxCell id="hikari" value="HikariCP Pool (10 conn)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f3e5f5;strokeColor=#7b1fa2;fontSize=10;" vertex="1" parent="jvm">
+      <mxGeometry x="20" y="150" width="150" height="35" as="geometry"/>
+    </mxCell>
+    <!-- PostgreSQL -->
+    <mxCell id="pg" value="&lt;b&gt;PostgreSQL 16+&lt;/b&gt;&lt;br&gt;Database: jira_assistant&lt;br&gt;Table: file_proxy_registry" style="shape=cylinder3;whiteSpace=wrap;html=1;fillColor=#f3e5f5;strokeColor=#7b1fa2;fontSize=10;size=10;" vertex="1" parent="1">
+      <mxGeometry x="500" y="80" width="180" height="90" as="geometry"/>
+    </mxCell>
+    <!-- File System -->
+    <mxCell id="tmpfs" value="&lt;b&gt;File System&lt;/b&gt;&lt;br&gt;/tmp/mcp-file-proxy/&lt;br&gt;(temp uploads)" style="shape=mxgraph.flowchart.document;whiteSpace=wrap;html=1;fillColor=#fff3e0;strokeColor=#f57c00;fontSize=10;" vertex="1" parent="1">
+      <mxGeometry x="500" y="200" width="180" height="70" as="geometry"/>
+    </mxCell>
+    <!-- Upstream Servers -->
+    <mxCell id="up1" value="Upstream MCP Server 1&lt;br&gt;(STDIO process)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fce4ec;strokeColor=#c62828;fontSize=10;" vertex="1" parent="1">
+      <mxGeometry x="60" y="320" width="180" height="50" as="geometry"/>
+    </mxCell>
+    <mxCell id="up2" value="Upstream MCP Server 2&lt;br&gt;(HTTP/SSE)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fce4ec;strokeColor=#c62828;fontSize=10;" vertex="1" parent="1">
+      <mxGeometry x="280" y="320" width="180" height="50" as="geometry"/>
+    </mxCell>
+    <!-- Edges -->
+    <mxCell id="e1" value="JDBC" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;fontSize=9;" edge="1" source="hikari" target="pg" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e2" value="kotlinx.io" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;fontSize=9;" edge="1" source="fp_pkg" target="tmpfs" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e3" value="STDIO" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;fontSize=9;" edge="1" source="jvm" target="up1" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e4" value="HTTP" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;fontSize=9;" edge="1" source="jvm" target="up2" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+  </root>
+</mxGraphModel>

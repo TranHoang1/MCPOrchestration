@@ -14,4 +14,6 @@ interface ToolRegistry {
     fun getAllTools(): List<ToolEntry>
     fun getToolsByServer(serverName: String): List<ToolEntry>
     fun getToolCount(): Int
+    fun setHidden(toolName: String, hidden: Boolean)
+    fun isHidden(toolName: String): Boolean
 }

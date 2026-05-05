@@ -1,0 +1,12 @@
+test_case_id,scenario,num_records,num_files,session_id,ttl_minutes,expected_records_deleted,expected_files_deleted,description
+TC-009,STARTUP_CLEANUP,5,5,aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa,60,5,5,Startup purge — all old session records + files
+TC-702,STARTUP_CLEANUP,10,10,aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa,60,10,10,IT — startup cleanup with real DB
+TC-703,TTL_CLEANUP,3,3,{current_session},60,3,3,Background TTL — expired records (>60min old)
+TC-215,SHUTDOWN_TIMEOUT,1000,1000,{current_session},60,partial,partial,Shutdown timeout (1s) — partial cleanup
+TC-214,PER_REQUEST_LOCKED,1,1,{current_session},60,0,0,File locked — cleanup fails gracefully
+TC-309,PER_REQUEST_DB_ERROR,1,0,{current_session},60,0,0,DB error during cleanup — tool result not masked
+TC-303,SESSION_CHANGE,0,0,,60,0,0,Verify session_id changes on restart
+TC-603,STARTUP_PERF,1000,1000,aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa,60,1000,1000,Performance — 1000 records cleanup < 5s
+SIT-02,STARTUP_BLOCKING,100,0,aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa,60,100,0,Manual — verify blocking before accepting requests
+SIT-03,SHUTDOWN_SIGTERM,5,5,{current_session},60,5,5,Manual — graceful shutdown on SIGTERM
+SIT-06,STABILITY_24H,0,0,{current_session},60,0,0,Manual — zero orphans after 24h operation

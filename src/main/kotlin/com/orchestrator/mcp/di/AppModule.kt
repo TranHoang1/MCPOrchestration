@@ -10,6 +10,7 @@ import com.orchestrator.mcp.embedding.EmbeddingService
 import com.orchestrator.mcp.embedding.OpenAiEmbeddingService
 import com.orchestrator.mcp.execution.ToolExecutionDispatcher
 import com.orchestrator.mcp.execution.ToolExecutionDispatcherImpl
+import com.orchestrator.mcp.fileproxy.*
 import com.orchestrator.mcp.protocol.McpServerFactory
 import com.orchestrator.mcp.registry.ToolRegistry
 import com.orchestrator.mcp.registry.ToolRegistryImpl
@@ -30,6 +31,7 @@ import com.orchestrator.mcp.vectordb.*
 import com.orchestrator.mcp.config.ConfigDbSyncService
 import com.orchestrator.mcp.config.ConfigDbSyncServiceImpl
 import org.koin.dsl.module
+import java.util.UUID
 
 fun appModule(configPath: String? = null) = module {
     // Configuration
@@ -136,6 +138,32 @@ fun appModule(configPath: String? = null) = module {
         ToolExecutionDispatcherImpl(get(), get(), get(), config.orchestrator.session, config)
     }
 
+    // Agent Logging
+    single { com.orchestrator.mcp.logging.AgentLogService(get()) }
+
     // MCP Server Factory
-    single { McpServerFactory(get(), get(), get(), get<OrchestratorConfig>().orchestrator.session) }
+    single { McpServerFactory(get(), get(), get(), get<OrchestratorConfig>().orchestrator.session, get()) }
+
+    // File Proxy
+    single<FileProxyConfig> { get<OrchestratorConfig>().orchestrator.fileProxy }
+    single<FileProxyRegistry> { FileProxyRegistryImpl(get()) }
+    single { FileProxyDetector() }
+    single { WrapperToolGenerator(get()) }
+    single { FileProxyCleanupService(get<FileProxyRegistry>(), get<FileProxyConfig>()) }
+    single {
+        val sessionId = UUID.randomUUID()
+        FileUploadHandler(get<FileProxyRegistry>(), get<FileProxyConfig>(), sessionId)
+    }
+    single<InputFileProxyHandler> {
+        val sessionId = UUID.randomUUID()
+        InputFileProxyHandlerImpl(get(), get<FileProxyConfig>(), get(), sessionId)
+    }
+    single<OutputFileProxyHandler> { OutputFileProxyHandlerImpl(get<FileProxyRegistry>(), get<FileProxyConfig>()) }
+    single<FileProxyService> {
+        FileProxyServiceImpl(
+            get(), get(), get(), get(), get<FileProxyRegistry>(),
+            get<FileProxyConfig>(), get(), get(), get()
+        )
+    }
+    single { FileProxyMigration(get()) }
 }

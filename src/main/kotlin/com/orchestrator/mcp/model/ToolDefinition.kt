@@ -23,5 +23,7 @@ data class ToolEntry(
     val description: String,
     val inputSchema: JsonObject?,
     val serverName: String,
-    val serverStatus: String = "CONNECTED"
+    val serverStatus: String = "CONNECTED",
+    val isProxy: Boolean = false,
+    val originalToolRef: String? = null
 )

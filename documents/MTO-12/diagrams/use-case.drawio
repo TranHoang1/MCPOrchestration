@@ -1,0 +1,69 @@
+<mxGraphModel adaptiveColors="auto">
+  <root>
+    <mxCell id="0"/>
+    <mxCell id="1" parent="0"/>
+    <mxCell id="sys" value="MCP Orchestrator — Auto File Proxy" style="swimlane;startSize=30;fillColor=#e1f5fe;strokeColor=#0288d1;html=1;fontSize=13;fontStyle=1;" vertex="1" parent="1">
+      <mxGeometry x="200" y="20" width="600" height="520" as="geometry"/>
+    </mxCell>
+    <mxCell id="uc1" value="Detect Input File&#xa;Parameters" style="ellipse;whiteSpace=wrap;html=1;fillColor=#e1f5fe;strokeColor=#0288d1;fontSize=11;" vertex="1" parent="sys">
+      <mxGeometry x="40" y="50" width="160" height="70" as="geometry"/>
+    </mxCell>
+    <mxCell id="uc2" value="Create Wrapper Tool&#xa;(Hide Original)" style="ellipse;whiteSpace=wrap;html=1;fillColor=#e1f5fe;strokeColor=#0288d1;fontSize=11;" vertex="1" parent="sys">
+      <mxGeometry x="40" y="140" width="160" height="70" as="geometry"/>
+    </mxCell>
+    <mxCell id="uc3" value="Input Proxy: file_path&#xa;to base64 (STDIO)" style="ellipse;whiteSpace=wrap;html=1;fillColor=#e8f5e9;strokeColor=#388e3c;fontSize=11;" vertex="1" parent="sys">
+      <mxGeometry x="250" y="50" width="160" height="70" as="geometry"/>
+    </mxCell>
+    <mxCell id="uc4" value="Input Proxy: file_id&#xa;to base64 (HTTP/SSE)" style="ellipse;whiteSpace=wrap;html=1;fillColor=#e8f5e9;strokeColor=#388e3c;fontSize=11;" vertex="1" parent="sys">
+      <mxGeometry x="250" y="140" width="160" height="70" as="geometry"/>
+    </mxCell>
+    <mxCell id="uc5" value="Detect Output File&#xa;Responses" style="ellipse;whiteSpace=wrap;html=1;fillColor=#fff3e0;strokeColor=#f57c00;fontSize=11;" vertex="1" parent="sys">
+      <mxGeometry x="40" y="240" width="160" height="70" as="geometry"/>
+    </mxCell>
+    <mxCell id="uc6" value="Output Proxy: Copy&#xa;file to output_path" style="ellipse;whiteSpace=wrap;html=1;fillColor=#fff3e0;strokeColor=#f57c00;fontSize=11;" vertex="1" parent="sys">
+      <mxGeometry x="250" y="240" width="160" height="70" as="geometry"/>
+    </mxCell>
+    <mxCell id="uc7" value="Output Proxy: Decode&#xa;base64 to output_path" style="ellipse;whiteSpace=wrap;html=1;fillColor=#fff3e0;strokeColor=#f57c00;fontSize=11;" vertex="1" parent="sys">
+      <mxGeometry x="250" y="330" width="160" height="70" as="geometry"/>
+    </mxCell>
+    <mxCell id="uc8" value="Track File Lifecycle&#xa;(DB Registry)" style="ellipse;whiteSpace=wrap;html=1;fillColor=#f3e5f5;strokeColor=#7b1fa2;fontSize=11;" vertex="1" parent="sys">
+      <mxGeometry x="40" y="420" width="160" height="70" as="geometry"/>
+    </mxCell>
+    <mxCell id="uc9" value="Cleanup: Startup /&#xa;Shutdown / Per-Request" style="ellipse;whiteSpace=wrap;html=1;fillColor=#f3e5f5;strokeColor=#7b1fa2;fontSize=11;" vertex="1" parent="sys">
+      <mxGeometry x="250" y="420" width="160" height="70" as="geometry"/>
+    </mxCell>
+    <mxCell id="actor1" value="AI Agent" style="shape=mxgraph.flowchart.annotation_2;align=left;labelPosition=right;pointerEvents=1;html=1;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="60" y="180" width="30" height="100" as="geometry"/>
+    </mxCell>
+    <mxCell id="actor2" value="System Admin" style="shape=mxgraph.flowchart.annotation_2;align=left;labelPosition=right;pointerEvents=1;html=1;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="60" y="420" width="30" height="100" as="geometry"/>
+    </mxCell>
+    <mxCell id="actor3" value="Upstream MCP&#xa;Server" style="shape=mxgraph.flowchart.annotation_2;align=left;labelPosition=right;pointerEvents=1;html=1;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="900" y="180" width="30" height="100" as="geometry"/>
+    </mxCell>
+    <mxCell id="e1" edge="1" parent="1" source="actor1" target="uc3" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=none;endSize=6;">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e2" edge="1" parent="1" source="actor1" target="uc4" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=none;endSize=6;">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e3" edge="1" parent="1" source="actor1" target="uc6" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=none;endSize=6;">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e4" edge="1" parent="1" source="actor1" target="uc7" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=none;endSize=6;">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e5" edge="1" parent="1" source="actor2" target="uc8" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=none;endSize=6;">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e6" edge="1" parent="1" source="actor2" target="uc9" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=none;endSize=6;">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e7" edge="1" parent="1" source="actor3" target="uc3" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=none;endSize=6;">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e8" edge="1" parent="1" source="actor3" target="uc6" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=none;endSize=6;">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+  </root>
+</mxGraphModel>

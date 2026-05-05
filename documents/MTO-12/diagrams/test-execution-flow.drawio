@@ -1,0 +1,44 @@
+<mxGraphModel adaptiveColors="auto"><root><mxCell id="0"/><mxCell id="1" parent="0"/>
+<!-- Title -->
+<mxCell id="title" value="Test Execution Pipeline — MTO-12" style="text;html=1;align=center;verticalAlign=middle;fontSize=16;fontStyle=1;fillColor=none;strokeColor=none;" vertex="1" parent="1"><mxGeometry x="150" y="10" width="400" height="40" as="geometry"/></mxCell>
+<!-- PBT Phase -->
+<mxCell id="pbt" value="PBT&#xa;(Property-Based)&#xa;8 tests" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=11;" vertex="1" parent="1"><mxGeometry x="20" y="80" width="120" height="60" as="geometry"/></mxCell>
+<!-- UT Phase -->
+<mxCell id="ut" value="UT&#xa;(Unit Tests)&#xa;24 tests" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;" vertex="1" parent="1"><mxGeometry x="180" y="80" width="120" height="60" as="geometry"/></mxCell>
+<!-- IT Phase -->
+<mxCell id="it" value="IT&#xa;(Integration)&#xa;12 tests" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;" vertex="1" parent="1"><mxGeometry x="340" y="80" width="120" height="60" as="geometry"/></mxCell>
+<!-- E2E-API Phase -->
+<mxCell id="e2e" value="E2E-API&#xa;(End-to-End)&#xa;18 tests" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;" vertex="1" parent="1"><mxGeometry x="500" y="80" width="120" height="60" as="geometry"/></mxCell>
+<!-- SIT Phase -->
+<mxCell id="sit" value="SIT&#xa;(Manual)&#xa;6 tests" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=11;" vertex="1" parent="1"><mxGeometry x="660" y="80" width="120" height="60" as="geometry"/></mxCell>
+<!-- Arrows between phases -->
+<mxCell id="e1" edge="1" parent="1" source="pbt" target="ut" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#333333;">
+  <mxGeometry relative="1" as="geometry"/>
+</mxCell>
+<mxCell id="e2" edge="1" parent="1" source="ut" target="it" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#333333;">
+  <mxGeometry relative="1" as="geometry"/>
+</mxCell>
+<mxCell id="e3" edge="1" parent="1" source="it" target="e2e" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#333333;">
+  <mxGeometry relative="1" as="geometry"/>
+</mxCell>
+<mxCell id="e4" edge="1" parent="1" source="e2e" target="sit" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#333333;">
+  <mxGeometry relative="1" as="geometry"/>
+</mxCell>
+<!-- Entry/Exit Criteria -->
+<mxCell id="ec1" value="Entry: Code compiles" style="text;html=1;align=center;fontSize=9;fillColor=none;strokeColor=none;" vertex="1" parent="1"><mxGeometry x="20" y="145" width="120" height="20" as="geometry"/></mxCell>
+<mxCell id="ec2" value="Entry: PBT pass" style="text;html=1;align=center;fontSize=9;fillColor=none;strokeColor=none;" vertex="1" parent="1"><mxGeometry x="180" y="145" width="120" height="20" as="geometry"/></mxCell>
+<mxCell id="ec3" value="Entry: UT pass + DB ready" style="text;html=1;align=center;fontSize=9;fillColor=none;strokeColor=none;" vertex="1" parent="1"><mxGeometry x="340" y="145" width="120" height="20" as="geometry"/></mxCell>
+<mxCell id="ec4" value="Entry: IT pass" style="text;html=1;align=center;fontSize=9;fillColor=none;strokeColor=none;" vertex="1" parent="1"><mxGeometry x="500" y="145" width="120" height="20" as="geometry"/></mxCell>
+<mxCell id="ec5" value="Entry: E2E pass" style="text;html=1;align=center;fontSize=9;fillColor=none;strokeColor=none;" vertex="1" parent="1"><mxGeometry x="660" y="145" width="120" height="20" as="geometry"/></mxCell>
+<!-- Defect Feedback Loop -->
+<mxCell id="defect" value="Defect Found" style="rhombus;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=10;" vertex="1" parent="1"><mxGeometry x="320" y="200" width="100" height="60" as="geometry"/></mxCell>
+<mxCell id="fix" value="Fix &amp; Retest" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=10;" vertex="1" parent="1"><mxGeometry x="320" y="290" width="100" height="40" as="geometry"/></mxCell>
+<mxCell id="e5" edge="1" parent="1" source="defect" target="fix" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#b85450;">
+  <mxGeometry relative="1" as="geometry"/>
+</mxCell>
+<mxCell id="e6" edge="1" parent="1" source="fix" target="it" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#82b366;exitX=0;exitY=0.5;entryX=0.5;entryY=1;">
+  <mxGeometry relative="1" as="geometry"/>
+</mxCell>
+<!-- Summary box -->
+<mxCell id="summary" value="Total: 68 tests | Automated: 62 (91%) | Manual: 6 (9%)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=11;fontStyle=1;" vertex="1" parent="1"><mxGeometry x="180" y="360" width="400" height="30" as="geometry"/></mxCell>
+</root></mxGraphModel>

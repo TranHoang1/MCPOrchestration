@@ -1,0 +1,10 @@
+test_case_id,output_path,upstream_response_type,upstream_file_size,expected_http_code,expected_error_code,expected_error_message,description
+TC-006,/tmp/output/result.pdf,ARTIFACTS_PATH,5120,200,,,Output proxy — copy artifacts path to output_path
+TC-007,/tmp/output/decoded.bin,BASE64_CONTENT,3072,200,,,Output proxy — decode base64 response to output_path
+TC-103,,ARTIFACTS_PATH,5120,200,,,No output_path — passthrough mode (response unchanged)
+TC-104,/tmp/output/result.pdf,ARTIFACTS_PATH,5120,200,,,File already exists at output_path — overwrite
+TC-108,/tmp/output/result.pdf,ARTIFACTS_PATH,5120,200,,,Both input + output proxy in single call
+TC-209,/nonexistent/dir/file.pdf,ARTIFACTS_PATH,5120,400,OUTPUT_DIR_NOT_FOUND,Output directory does not exist: /nonexistent/dir,Parent directory missing
+TC-210,/readonly/dir/file.pdf,ARTIFACTS_PATH,5120,400,OUTPUT_NOT_WRITABLE,Cannot write to output path: /readonly/dir/file.pdf — permission denied,Directory not writable
+TC-211,/tmp/output/result.pdf,TEXT_ONLY,0,200,NO_FILE_IN_RESPONSE,,Upstream has no file content — passthrough with WARN
+TC-216,/home/user/../../etc/shadow,ARTIFACTS_PATH,5120,400,INVALID_PATH,Invalid file path: path traversal not allowed,Path traversal in output_path

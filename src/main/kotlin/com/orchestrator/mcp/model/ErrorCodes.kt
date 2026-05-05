@@ -21,6 +21,20 @@ object ErrorCodes {
     const val PGVECTOR_UNAVAILABLE = "PGVECTOR_UNAVAILABLE"
     const val SYNC_FAILED = "SYNC_FAILED"
 
+    // File Proxy error codes
+    const val FILE_NOT_FOUND = "FILE_NOT_FOUND"
+    const val FILE_TOO_LARGE = "FILE_TOO_LARGE"
+    const val FILE_NOT_READABLE = "FILE_NOT_READABLE"
+    const val INVALID_PATH = "INVALID_PATH"
+    const val INVALID_FILE_ID = "INVALID_FILE_ID"
+    const val FILE_ID_NOT_FOUND = "FILE_ID_NOT_FOUND"
+    const val FILE_EXPIRED = "FILE_EXPIRED"
+    const val FILE_MISSING_ON_DISK = "FILE_MISSING_ON_DISK"
+    const val OUTPUT_DIR_NOT_FOUND = "OUTPUT_DIR_NOT_FOUND"
+    const val OUTPUT_NOT_WRITABLE = "OUTPUT_NOT_WRITABLE"
+    const val OUTPUT_SAVE_FAILED = "OUTPUT_SAVE_FAILED"
+    const val ENCODING_FAILED = "ENCODING_FAILED"
+
     // JSON-RPC standard error codes
     const val JSON_RPC_PARSE_ERROR = -32700
     const val JSON_RPC_INVALID_REQUEST = -32600

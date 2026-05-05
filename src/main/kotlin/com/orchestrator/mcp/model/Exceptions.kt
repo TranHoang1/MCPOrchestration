@@ -73,3 +73,32 @@ class ConfigWriteException(message: String, cause: Throwable? = null) :
 /** Generic exception for protocol-level errors */
 class GenericMcpException(errorCode: String, message: String) :
     McpOrchestratorException(errorCode, message)
+
+// --- File Proxy Exceptions ---
+
+class FileNotFoundException(filePath: String) :
+    McpOrchestratorException(ErrorCodes.FILE_NOT_FOUND, "File not found: $filePath")
+
+class FileTooLargeException(maxMb: Int, actualMb: String) :
+    McpOrchestratorException(ErrorCodes.FILE_TOO_LARGE, "File exceeds maximum size (${maxMb}MB). Actual: ${actualMb}MB")
+
+class FileNotReadableException(filePath: String) :
+    McpOrchestratorException(ErrorCodes.FILE_NOT_READABLE, "Cannot read file: $filePath — permission denied")
+
+class InvalidFilePathException(reason: String) :
+    McpOrchestratorException(ErrorCodes.INVALID_PATH, "Invalid file path: $reason")
+
+class InvalidFileIdException(fileId: String) :
+    McpOrchestratorException(ErrorCodes.INVALID_FILE_ID, "Invalid file_id format — expected UUID: $fileId")
+
+class FileIdNotFoundException(fileId: String) :
+    McpOrchestratorException(ErrorCodes.FILE_ID_NOT_FOUND, "File not found — file_id may have expired: $fileId")
+
+class FileExpiredException(fileId: String) :
+    McpOrchestratorException(ErrorCodes.FILE_EXPIRED, "File expired — please re-upload")
+
+class FileMissingOnDiskException(fileId: String) :
+    McpOrchestratorException(ErrorCodes.FILE_MISSING_ON_DISK, "File not found on disk — please re-upload")
+
+class OutputSaveFailedException(reason: String) :
+    McpOrchestratorException(ErrorCodes.OUTPUT_SAVE_FAILED, "Failed to save output file: $reason")

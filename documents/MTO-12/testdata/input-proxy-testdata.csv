@@ -1,0 +1,15 @@
+test_case_id,file_path,file_size_bytes,file_name,transport_mode,expected_http_code,expected_error_code,expected_error_message,description
+TC-002,/tmp/test/sample.pdf,10240,sample.pdf,STDIO,200,,,Valid input proxy — happy path (10KB PDF)
+TC-003,/tmp/test/report.pdf,5120,report.pdf,HTTP,200,,,Valid HTTP upload + proxy — happy path (5KB PDF)
+TC-102,./test.pdf,1024,test.pdf,STDIO,200,,,Relative path — resolved with WARN log
+TC-200,/tmp/nonexistent/file.pdf,0,,STDIO,400,FILE_NOT_FOUND,File not found: /tmp/nonexistent/file.pdf,File does not exist
+TC-201,/tmp/test/large60mb.bin,62914560,large60mb.bin,STDIO,400,FILE_TOO_LARGE,"File exceeds maximum size (50MB). Actual: 60.00MB",File exceeds 50MB limit
+TC-202,/tmp/test/noperm.pdf,1024,noperm.pdf,STDIO,400,FILE_NOT_READABLE,Cannot read file: /tmp/test/noperm.pdf — permission denied,File with no read permission
+TC-203,/home/user/../etc/passwd,0,,STDIO,400,INVALID_PATH,Invalid file path: path traversal not allowed,Path traversal attack
+TC-204,/tmp/test/valid.pdf,1024,valid.pdf,STDIO,500,,,Upstream tool returns error — cleanup verified
+TC-205,not-a-uuid,0,,HTTP,400,INVALID_FILE_ID,Invalid file_id format — expected UUID,Invalid UUID format
+TC-206,550e8400-e29b-41d4-a716-446655440000,0,,HTTP,400,FILE_ID_NOT_FOUND,File not found — file_id may have expired,Valid UUID but not in registry
+TC-207,{expired_file_id},5120,,HTTP,400,FILE_EXPIRED,File expired — please re-upload,TTL exceeded (>60min)
+TC-208,/tmp/test/valid.pdf,1024,valid.pdf,HTTP,500,UPLOAD_FAILED,Upload failed — insufficient storage,Disk full during upload
+TC-400,/tmp/test/exact50mb.bin,52428800,exact50mb.bin,STDIO,200,,,File exactly at 50MB boundary — accepted
+TC-401,/tmp/test/empty.txt,0,empty.txt,STDIO,200,,,Empty file (0 bytes) — accepted

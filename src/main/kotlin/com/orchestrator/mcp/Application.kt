@@ -218,6 +218,10 @@ fun realMain(args: Array<String>) = runBlocking {
                 }
             }.start(wait = true)
         }
+        "http-streamable" -> {
+            startHttpStreamableServer(config, mcpServerFactory, serverManager, healthMonitor,
+                toolIndexer, fileProxyService, fileProxySessionId, fileProxyCleanup)
+        }
         else -> {
             logger.warn("Unknown transport: ${config.orchestrator.server.transport}. Defaulting to logging only.")
         }

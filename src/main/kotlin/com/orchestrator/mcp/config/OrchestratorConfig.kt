@@ -23,6 +23,8 @@ data class OrchestratorSettings(
     val vectorDb: VectorDbConfig = VectorDbConfig(),
     val health: HealthConfig = HealthConfig(),
     val session: SessionConfig = SessionConfig(),
+    @SerialName("http_session")
+    val httpSession: com.orchestrator.mcp.session.HttpSessionConfig = com.orchestrator.mcp.session.HttpSessionConfig(),
     @SerialName("upstream_servers")
     val upstreamServers: List<UpstreamServerConfig> = emptyList(),
     @SerialName("file-proxy")

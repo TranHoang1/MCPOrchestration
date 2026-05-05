@@ -35,6 +35,12 @@ object ErrorCodes {
     const val OUTPUT_SAVE_FAILED = "OUTPUT_SAVE_FAILED"
     const val ENCODING_FAILED = "ENCODING_FAILED"
 
+    // HTTP Streamable Transport error codes
+    const val SESSION_NOT_FOUND = "SESSION_NOT_FOUND"
+    const val SESSION_EXPIRED = "SESSION_EXPIRED"
+    const val EVENT_NOT_FOUND = "EVENT_NOT_FOUND"
+    const val SERVER_OVERLOADED = "SERVER_OVERLOADED"
+
     // JSON-RPC standard error codes
     const val JSON_RPC_PARSE_ERROR = -32700
     const val JSON_RPC_INVALID_REQUEST = -32600

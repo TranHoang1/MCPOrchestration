@@ -102,3 +102,17 @@ class FileMissingOnDiskException(fileId: String) :
 
 class OutputSaveFailedException(reason: String) :
     McpOrchestratorException(ErrorCodes.OUTPUT_SAVE_FAILED, "Failed to save output file: $reason")
+
+// --- HTTP Streamable Transport Exceptions ---
+
+class SessionNotFoundException(sessionId: String) :
+    McpOrchestratorException(ErrorCodes.SESSION_NOT_FOUND, "Session not found: $sessionId")
+
+class SessionExpiredException(sessionId: String) :
+    McpOrchestratorException(ErrorCodes.SESSION_EXPIRED, "Session expired: $sessionId")
+
+class StreamResumeException(eventId: String) :
+    McpOrchestratorException(ErrorCodes.EVENT_NOT_FOUND, "Event not found for resumption: $eventId")
+
+class ServerOverloadedException(maxSessions: Int) :
+    McpOrchestratorException(ErrorCodes.SERVER_OVERLOADED, "Max sessions reached ($maxSessions). Retry later.")

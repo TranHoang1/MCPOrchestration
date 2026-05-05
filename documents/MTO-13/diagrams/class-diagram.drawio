@@ -1,0 +1,87 @@
+<mxfile host="app.diagrams.net" modified="2026-05-06T10:00:00.000Z" agent="SA Agent" version="24.0.0" type="device">
+  <diagram id="class-1" name="Key Interfaces">
+    <mxGraphModel dx="1400" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="900" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <!-- McpTransport interface -->
+        <mxCell id="2" value="&lt;&lt;interface&gt;&gt;&#xa;McpTransport" style="swimlane;fontStyle=3;align=center;startSize=40;fontSize=11;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="400" y="40" width="220" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="2a" value="+start(scope: CoroutineScope)&#xa;+stop()&#xa;+isActive(): Boolean&#xa;+onMessage(handler)" style="text;align=left;verticalAlign=top;fontSize=9;" vertex="1" parent="2">
+          <mxGeometry x="5" y="45" width="210" height="70" as="geometry" />
+        </mxCell>
+        <!-- StdioTransport -->
+        <mxCell id="3" value="StdioTransport" style="swimlane;fontStyle=1;align=center;startSize=26;fontSize=11;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="200" y="220" width="180" height="60" as="geometry" />
+        </mxCell>
+        <!-- HttpStreamableTransport -->
+        <mxCell id="4" value="HttpStreamableTransport" style="swimlane;fontStyle=1;align=center;startSize=26;fontSize=11;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="420" y="220" width="200" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="4a" value="-sessionManager: SessionManager&#xa;+handleRequest(call)" style="text;align=left;verticalAlign=top;fontSize=9;" vertex="1" parent="4">
+          <mxGeometry x="5" y="30" width="190" height="45" as="geometry" />
+        </mxCell>
+        <!-- SseTransport -->
+        <mxCell id="5" value="SseTransport" style="swimlane;fontStyle=1;align=center;startSize=26;fontSize=11;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="660" y="220" width="160" height="60" as="geometry" />
+        </mxCell>
+        <!-- SessionManager interface -->
+        <mxCell id="6" value="&lt;&lt;interface&gt;&gt;&#xa;SessionManager" style="swimlane;fontStyle=3;align=center;startSize=40;fontSize=11;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="40" y="380" width="260" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="6a" value="+createSession(clientInfo): HttpSession&#xa;+getSession(id: UUID): HttpSession?&#xa;+validateSession(id: UUID): HttpSession&#xa;+terminateSession(id: UUID)&#xa;+addEvent(sessionId, event)&#xa;+getEventsAfter(sessionId, eventId): List" style="text;align=left;verticalAlign=top;fontSize=9;" vertex="1" parent="6">
+          <mxGeometry x="5" y="45" width="250" height="90" as="geometry" />
+        </mxCell>
+        <!-- SmartToolPromoter interface -->
+        <mxCell id="7" value="&lt;&lt;interface&gt;&gt;&#xa;SmartToolPromoter" style="swimlane;fontStyle=3;align=center;startSize=40;fontSize=11;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="380" y="380" width="260" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="7a" value="+promoteTools(tools): PromotionResult&#xa;+getPromotedTools(): List&#xa;+executePromotedTool(name, args): Result&#xa;+demoteTool(name)&#xa;+resetAll()&#xa;+isPromoted(toolName): Boolean" style="text;align=left;verticalAlign=top;fontSize=9;" vertex="1" parent="7">
+          <mxGeometry x="5" y="45" width="250" height="90" as="geometry" />
+        </mxCell>
+        <!-- ToolDiscoveryService -->
+        <mxCell id="8" value="&lt;&lt;interface&gt;&gt;&#xa;ToolDiscoveryService" style="swimlane;fontStyle=3;align=center;startSize=40;fontSize=11;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="720" y="380" width="240" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="8a" value="+findTools(query, topK, threshold):&#xa;  FindToolsResponse" style="text;align=left;verticalAlign=top;fontSize=9;" vertex="1" parent="8">
+          <mxGeometry x="5" y="45" width="230" height="50" as="geometry" />
+        </mxCell>
+        <!-- PromotedTool data class -->
+        <mxCell id="9" value="&lt;&lt;data class&gt;&gt;&#xa;PromotedTool" style="swimlane;fontStyle=1;align=center;startSize=36;fontSize=11;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="1">
+          <mxGeometry x="380" y="580" width="220" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="9a" value="name: String&#xa;upstreamServer: String&#xa;compactSchema: JsonObject&#xa;compactDescription: String&#xa;promotedAt: Instant&#xa;lastUsedAt: Instant&#xa;callCount: Int&#xa;status: PromotionStatus" style="text;align=left;verticalAlign=top;fontSize=9;" vertex="1" parent="9">
+          <mxGeometry x="5" y="40" width="210" height="95" as="geometry" />
+        </mxCell>
+        <!-- HttpSession data class -->
+        <mxCell id="10" value="&lt;&lt;data class&gt;&gt;&#xa;HttpSession" style="swimlane;fontStyle=1;align=center;startSize=36;fontSize=11;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="1">
+          <mxGeometry x="40" y="580" width="220" height="130" as="geometry" />
+        </mxCell>
+        <mxCell id="10a" value="id: UUID&#xa;createdAt: Instant&#xa;lastActivity: Instant&#xa;state: SessionState&#xa;eventBuffer: List&lt;SseEvent&gt;&#xa;lastEventId: Long" style="text;align=left;verticalAlign=top;fontSize=9;" vertex="1" parent="10">
+          <mxGeometry x="5" y="40" width="210" height="85" as="geometry" />
+        </mxCell>
+        <!-- Inheritance arrows -->
+        <mxCell id="20" style="edgeStyle=orthogonalEdgeStyle;endArrow=block;endFill=0;dashed=1;" edge="1" source="3" target="2" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="21" style="edgeStyle=orthogonalEdgeStyle;endArrow=block;endFill=0;dashed=1;" edge="1" source="4" target="2" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="22" style="edgeStyle=orthogonalEdgeStyle;endArrow=block;endFill=0;dashed=1;" edge="1" source="5" target="2" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <!-- Composition arrows -->
+        <mxCell id="23" style="edgeStyle=orthogonalEdgeStyle;endArrow=diamond;endFill=1;" edge="1" source="4" target="6" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="24" style="edgeStyle=orthogonalEdgeStyle;endArrow=open;endFill=0;dashed=1;" edge="1" source="7" target="9" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="25" style="edgeStyle=orthogonalEdgeStyle;endArrow=open;endFill=0;dashed=1;" edge="1" source="6" target="10" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

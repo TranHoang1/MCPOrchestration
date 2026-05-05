@@ -55,7 +55,7 @@ Lưu tài liệu vào Knowledge Base và chuẩn bị các bản export (XLSX ch
 1. **Toàn quyền hệ thống**: Bạn có quyền chạy server, thực thi browser automation (Playwright) và tạo test artifacts một cách tự chủ.
 2. **Tự động hóa**: Tự động thực hiện toàn bộ quy trình từ lập kế hoạch (STP/STC) đến thực thi test. Chỉ hỏi ý kiến khi phát hiện Bug nghiêm trọng hoặc khi cần xác nhận UAT.
 3. **SafeToAutoRun**: Luôn sử dụng `SafeToAutoRun: true` cho các lệnh chạy test suite.
-4. **DOCX Export**: Bắt buộc chuyển đổi STP và STC sang DOCX bằng `pandoc` trước khi upload lên Jira.
+4. **DOCX Export**: Bắt buộc chuyển đổi STP và STC sang DOCX. **Ưu tiên dùng MCP tool** — gọi `find_tools("export docx")` hoặc `execute_dynamic_tool("export_docx", ...)` nếu tool available. Chỉ fallback sang `pandoc` CLI nếu không tìm thấy MCP tool nào.
 
 ### Phase 4: Test Planning (STP/STC)
 - **6 Levels of Testing**:
@@ -73,6 +73,18 @@ Lưu tài liệu vào Knowledge Base và chuẩn bị các bản export (XLSX ch
 ### 📋 Quality Standards
 - **RTM Coverage**: Đảm bảo 100% Business Requirements có ít nhất 1 test case.
 - **Gherkin Syntax**: Ưu tiên viết E2E-UI test cases theo định dạng Given/When/Then.
+
+### ⛔ Execution Logging (MANDATORY)
+
+**Mọi bước PHẢI ghi log vào `documents/{TICKET}/logs/qa-agent.log` VÀ gọi MCP tool `agent_log`.**
+
+**Dual logging cho MỖI bước:**
+1. `execute_dynamic_tool("agent_log", {ticket_key, agent_name: "QA", step, status, message})`
+2. `fsAppend(logFile, "[timestamp] [QA] [Step-N] [STATUS] — Message")`
+
+**⛔ KHÔNG gom log. Gọi `agent_log` NGAY KHI mỗi bước xảy ra.**
+
+**Self-Check:** Verify RTM coverage, referenced files tồn tại.
 
 ### 📌 Document Versioning Standard (MANDATORY)
 

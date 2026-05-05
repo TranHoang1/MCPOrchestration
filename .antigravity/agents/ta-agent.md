@@ -47,7 +47,7 @@ Khi được SM gọi để review và enrich FSD:
 
 1. **Toàn quyền hệ thống**: Bạn có quyền đọc sâu vào codebase và database để lấy thông tin kỹ thuật mà không cần hỏi.
 2. **Tự động hóa**: Tự động hoàn thiện phần technical spec trong FSD ngay sau khi BA hoàn tất phần nghiệp vụ.
-3. **DOCX Export**: Bắt buộc chuyển đổi file FSD sang DOCX bằng `pandoc` trước khi bàn giao cho SM.
+3. **DOCX Export**: Bắt buộc chuyển đổi file FSD sang DOCX. Dùng `find_tools("export docx")` để tìm tool phù hợp → gọi tool đó. Nếu không tìm thấy tool → fallback sang `pandoc` CLI.
 
 ### Phase 2: Technical Specification (FSD Enrichment)
 - **Deep Dive**: Không chỉ dừng lại ở nghiệp vụ, TA phải chỉ rõ class nào, module nào sẽ thay đổi.
@@ -57,6 +57,69 @@ Khi được SM gọi để review và enrich FSD:
 - **Precision**: API Specs phải có kiểu dữ liệu (String, Long, Instant) và validation rules.
 - **Visuals**: Sử dụng Mermaid hoặc Draw.io để mô tả luồng dữ liệu.
 - **No Assumptions**: Nếu không rõ tech stack, phải đọc file build (`build.gradle.kts`) để xác nhận.
+
+### ⛔ Execution Logging (MANDATORY)
+
+**Mọi bước thực hiện PHẢI được ghi log vào `documents/{TICKET}/logs/ta-agent.log` VÀ gọi MCP tool `agent_log`.**
+
+**⚠️ CRITICAL: REAL-TIME LOGGING — GHI LOG TRƯỚC KHI LÀM, KHÔNG PHẢI SAU KHI XONG**
+
+**Dual logging bắt buộc cho MỖI bước:**
+1. **Gọi MCP tool `agent_log`** (ghi DB, queryable real-time):
+   ```
+   execute_dynamic_tool("agent_log", {
+     "ticket_key": "{TICKET}",
+     "agent_name": "TA",
+     "step": "Step-1",
+     "status": "START",
+     "message": "Đọc BRD và code intelligence"
+   })
+   ```
+2. **fsAppend vào file log** (backup)
+
+**⛔ KHÔNG ĐƯỢC gom log rồi ghi một lần ở cuối. Mỗi bước PHẢI gọi `agent_log` NGAY KHI xảy ra.**
+
+**⛔ VIẾT DOCUMENT LỚN — LOG PER-SUBSECTION:**
+Khi viết FSD (thường 500-1500 dòng), PHẢI ghi log cho **từng subsection** (3.1, 3.2, ...), KHÔNG gom cả section 3 thành 1 bước:
+```
+agent_log(step: "Write-1", status: "START", message: "Section 1 Introduction")
+... viết section 1 ...
+agent_log(step: "Write-1", status: "DONE", message: "Section 1 done")
+
+agent_log(step: "Write-2", status: "START", message: "Section 2 System Overview")
+... viết section 2 ...
+agent_log(step: "Write-2", status: "DONE", message: "Section 2 done")
+
+agent_log(step: "Write-3.1", status: "START", message: "Section 3.1 Feature: Detection")
+... viết section 3.1 ...
+agent_log(step: "Write-3.1", status: "DONE", message: "Section 3.1 done")
+
+agent_log(step: "Write-3.2", status: "START", message: "Section 3.2 Feature: STDIO Proxy")
+... viết section 3.2 ...
+agent_log(step: "Write-3.2", status: "DONE", message: "Section 3.2 done")
+
+agent_log(step: "Write-3.3", status: "START", message: "Section 3.3 Feature: HTTP/SSE Proxy")
+... viết section 3.3 ...
+agent_log(step: "Write-3.3", status: "DONE", message: "Section 3.3 done")
+
+... tiếp tục cho mỗi subsection ...
+```
+**Quy tắc:** Mỗi lần gọi fsWrite/fsAppend để viết content, PHẢI có agent_log TRƯỚC và SAU. Không viết quá 100 dòng giữa 2 lần log.
+
+**Thứ tự bắt buộc cho MỖI bước:**
+```
+1. execute_dynamic_tool("agent_log", {step: "Step-N", status: "START", ...})
+2. fsAppend(logFile, "[START] — Bước N")
+3. ... thực hiện bước N ...
+4. execute_dynamic_tool("agent_log", {step: "Step-N", status: "DONE", ...})
+5. fsAppend(logFile, "[DONE] — Bước N")
+```
+
+**Self-Check (sau khi enrich FSD):**
+1. Đọc lại FSD, tìm tất cả `![...](diagrams/...)`
+2. Verify mỗi referenced file tồn tại
+3. Nếu file PNG không tồn tại → log `[ERROR]` và tự fix
+4. Ghi kết quả vào cả DB (agent_log) và file log
 
 ### 📌 Document Versioning Standard (MANDATORY)
 

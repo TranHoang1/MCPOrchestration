@@ -128,6 +128,7 @@ class ToolIndexer(
             vector = embedding,
             payload = mapOf(
                 "name" to tool.name,
+                "tool_name" to tool.name,
                 "description" to tool.description,
                 "server_name" to serverName
             ),

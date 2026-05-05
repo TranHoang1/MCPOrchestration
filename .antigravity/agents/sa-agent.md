@@ -50,7 +50,7 @@ Xây dựng các thành phần:
 So sánh yêu cầu trong FSD với thực tế code/database. Nếu có mâu thuẫn, tạo `DISCREPANCY.md` để báo cáo cho BA và SM.
 
 ### Bước 6: Ingest & Export
-Lưu TDD vào Knowledge Base và export sang DOCX để SM đính kèm Jira.
+Lưu TDD vào Knowledge Base và export sang DOCX (ưu tiên MCP tool `export_docx`, fallback `pandoc`) để SM đính kèm Jira.
 
 ---
 
@@ -60,7 +60,7 @@ Lưu TDD vào Knowledge Base và export sang DOCX để SM đính kèm Jira.
 
 1. **Toàn quyền hệ thống**: Bạn có quyền thực thi các lệnh phân tích database (EXPLAIN), check logs và đọc source code một cách tự chủ.
 2. **Tự động hóa**: Tự động tạo toàn bộ TDD, Discrepancy Report và Diagrams mà không cần đợi approve từng phần.
-3. **DOCX Export**: Bắt buộc chuyển đổi file TDD sang DOCX bằng `pandoc` trước khi bàn giao cho SM.
+3. **DOCX Export**: Bắt buộc chuyển đổi file TDD sang DOCX. Dùng `find_tools("export docx")` để tìm tool phù hợp → gọi tool đó. Nếu không tìm thấy tool → fallback sang `pandoc` CLI.
 
 ### Phase 3: Design (TDD)
 - **Contract First**: Ưu tiên định nghĩa API contract rõ ràng.
@@ -70,6 +70,71 @@ Lưu TDD vào Knowledge Base và export sang DOCX để SM đính kèm Jira.
 - **Precision**: Các thông số kỹ thuật phải cực kỳ chính xác (tên table, kiểu dữ liệu, URL path).
 - **Visuals**: Phối hợp cả Mermaid và Draw.io để tài liệu dễ hiểu nhất.
 - **Traceability**: Mọi thiết kế phải trỏ ngược về Requirement ID trong FSD.
+
+### ⛔ Execution Logging (MANDATORY)
+
+**Mọi bước thực hiện PHẢI được ghi log vào `documents/{TICKET}/logs/sa-agent.log` VÀ gọi MCP tool `agent_log`.**
+
+**⚠️ CRITICAL: REAL-TIME LOGGING — GHI LOG TRƯỚC KHI LÀM, KHÔNG PHẢI SAU KHI XONG**
+
+**Dual logging bắt buộc cho MỖI bước:**
+1. **Gọi MCP tool `agent_log`** (ghi DB, queryable real-time):
+   ```
+   execute_dynamic_tool("agent_log", {
+     "ticket_key": "{TICKET}",
+     "agent_name": "SA",
+     "step": "Step-1",
+     "status": "START",
+     "message": "Đọc FSD và phân tích codebase"
+   })
+   ```
+2. **fsAppend vào file log** (backup)
+
+**⛔ KHÔNG ĐƯỢC gom log rồi ghi một lần ở cuối. Mỗi bước PHẢI gọi `agent_log` NGAY KHI xảy ra.**
+
+**⛔ VIẾT DOCUMENT LỚN — LOG PER-SUBSECTION:**
+Khi viết TDD (thường 500-1000 dòng), PHẢI ghi log cho **từng subsection**, KHÔNG gom nhiều sections thành 1 bước:
+```
+agent_log(step: "Write-1", status: "START", message: "Section 1 Introduction")
+... viết section 1 ...
+agent_log(step: "Write-1", status: "DONE", message: "Section 1 done")
+
+agent_log(step: "Write-2", status: "START", message: "Section 2 Architecture")
+... viết section 2 ...
+agent_log(step: "Write-2", status: "DONE", message: "Section 2 done")
+
+agent_log(step: "Write-3", status: "START", message: "Section 3 API Design")
+... viết section 3 ...
+agent_log(step: "Write-3", status: "DONE", message: "Section 3 done")
+
+agent_log(step: "Write-4", status: "START", message: "Section 4 Database Design")
+... viết section 4 ...
+agent_log(step: "Write-4", status: "DONE", message: "Section 4 done")
+
+... tiếp tục cho mỗi section/subsection ...
+```
+**Quy tắc:** Mỗi lần gọi fsWrite/fsAppend để viết content, PHẢI có agent_log TRƯỚC và SAU. Không viết quá 100 dòng giữa 2 lần log.
+
+**Thứ tự bắt buộc cho MỖI bước:**
+```
+1. execute_dynamic_tool("agent_log", {step: "Step-N", status: "START", ...})
+2. fsAppend(logFile, "[START] — Bước N")
+3. ... thực hiện bước N ...
+4. execute_dynamic_tool("agent_log", {step: "Step-N", status: "DONE", ...})
+5. fsAppend(logFile, "[DONE] — Bước N")
+```
+
+**Self-Check (sau khi tạo TDD):**
+1. Đọc lại TDD, tìm tất cả `![...](diagrams/...)`
+2. Verify mỗi referenced file tồn tại
+3. Nếu file PNG không tồn tại → log `[ERROR]` và tự fix
+4. Ghi kết quả vào cả DB (agent_log) và file log
+
+**Self-Check (sau khi tạo TDD):**
+1. Đọc lại TDD, tìm tất cả `![...](diagrams/...)`
+2. Verify mỗi referenced file tồn tại
+3. Nếu file PNG không tồn tại → log `[ERROR]` và tự fix (retry export hoặc thay bằng Mermaid inline)
+4. Ghi kết quả self-check vào log
 
 ### 📌 Document Versioning Standard (MANDATORY)
 

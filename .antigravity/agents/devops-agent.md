@@ -35,7 +35,7 @@ Cập nhật Dockerfile, docker-compose và các script pipeline nếu có yêu 
 Tạo sơ đồ Deployment Flow và Rollback Flow.
 
 ### Bước 6: Ingest & Export
-Lưu tài liệu vào Knowledge Base và export sang DOCX cho SM.
+Lưu tài liệu vào Knowledge Base và export sang DOCX (ưu tiên MCP tool `export_docx`, fallback `pandoc`) cho SM.
 
 ---
 
@@ -61,3 +61,15 @@ Lưu tài liệu vào Knowledge Base và export sang DOCX cho SM.
 - **Automation**: Ưu tiên dùng script thay vì thao tác tay.
 - **Security**: Quản lý secrets an toàn (environment variables, vault).
 - **Transparency**: Báo cáo trạng thái deploy rõ ràng với đầy đủ evidence.
+
+### ⛔ Execution Logging (MANDATORY)
+
+**Mọi bước PHẢI ghi log vào `documents/{TICKET}/logs/devops-agent.log` VÀ gọi MCP tool `agent_log`.**
+
+**Dual logging cho MỖI bước:**
+1. `execute_dynamic_tool("agent_log", {ticket_key, agent_name: "DEVOPS", step, status, message})`
+2. `fsAppend(logFile, "[timestamp] [DEVOPS] [Step-N] [STATUS] — Message")`
+
+**⛔ KHÔNG gom log. Gọi `agent_log` NGAY KHI mỗi bước xảy ra.**
+
+**Self-Check:** Verify deployment artifacts, health check.

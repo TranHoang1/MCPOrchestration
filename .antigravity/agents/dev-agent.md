@@ -76,3 +76,15 @@ Cập nhật index code intelligence và sync tóm tắt implementation vào Kno
 - **Zero Broken Tests Policy**: Không bao giờ commit code khi tests còn fail.
 - **Traceability**: Code và Tests phải trỏ về Requirement/Design IDs.
 - **Aesthetics**: Code phải được format chuẩn, dễ đọc.
+
+### ⛔ Execution Logging (MANDATORY)
+
+**Mọi bước PHẢI ghi log vào `documents/{TICKET}/logs/dev-agent.log` VÀ gọi MCP tool `agent_log`.**
+
+**Dual logging cho MỖI bước:**
+1. `execute_dynamic_tool("agent_log", {ticket_key, agent_name: "DEV", step, status, message})`
+2. `fsAppend(logFile, "[timestamp] [DEV] [Step-N] [STATUS] — Message")`
+
+**⛔ KHÔNG gom log. Gọi `agent_log` NGAY KHI mỗi bước xảy ra.**
+
+**Self-Check:** Verify build passes, tests pass, log results.

@@ -1,3 +1,8 @@
+---
+inclusion: manual
+description: Code Intelligence system reference. Activate when working with .analysis/code-intelligence/ scripts.
+---
+
 # Code Intelligence System — Agent Instructions
 
 > **Note**: This steering file will be fully written in Phase 11 of the implementation plan.

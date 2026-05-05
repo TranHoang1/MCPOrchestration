@@ -1,46 +1,24 @@
 {
   "mcpServers": {
-    "atlassian": {
-      "command": "uvx",
-      "args": [
-        "mcp-atlassian",
-        "--jira-url=https://jiraassist.atlassian.net",
-        "--jira-username=dnguyenminh@hotmail.com",
-        "--jira-token=ATATT3xFfGF0ais6wI-ix7FCWszdv_Z5iirFWPR_q-SXkYkuOdRCjeLQCGsv58yw_zdyPl7c4eWmgCKEtlaat7p0Obq-QFjogCSYgfCqc3J0GmhQgk97Y20PDapIftPZ2FDY9oDmUWpQeksMYGlGFC7KORSQF82mwzfktuu1t2rHgFNpSapFCeM=5B843418"
-      ],
-      "autoApprove": [
-        "jira_update_issue",
-        "jira_get_issue",
-        "jira_get_transitions",
-        "jira_transition_issue",
-        "jira_add_comment",
-        "jira_get_all_projects",
-        "jira_get_project_issues",
-        "jira_get_project_versions",
-        "jira_get_project_components",
-        "jira_get_agile_boards",
-        "jira_search",
-        "jira_create_issue",
-        "jira_delete_issue",
-        "jira_delete_issue",
-        "jira_delete_issue",
-        "jira_delete_issue"
-      ]
-    },
     "orchestrator": {
       "command": "java",
       "args": [
         "-jar",
-        "./TempRelease/mcp-orchestrator-all.jar",
+        "C:/projects/kotlin/MCPOrchestration/TempRelease/mcp-orchestrator-all.jar",
         "--config",
-        "./TempRelease/mcp-servers.json"
+        "C:/projects/kotlin/MCPOrchestration/TempRelease/mcp-servers.json"
       ],
       "env": {
-        "OPENAI_API_KEY": "not-configured"
+        "EMBEDDING_PROVIDER": "ollama",
+        "EMBEDDING_MODEL": "nomic-embed-text:latest",
+        "EMBEDDING_BASE_URL": "http://localhost:11434",
+        "VECTOR_DB_PROVIDER": "postgresql",
+        "VECTOR_DB_CONNECTION_STRING": "jdbc:postgresql://postgres:postgres@localhost:5432/mcp_db"
       },
       "autoApprove": [
         "find_tools",
-        "execute_dynamic_tool"
+        "execute_dynamic_tool",
+        "agent_log"
       ]
     }
   }

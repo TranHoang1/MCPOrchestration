@@ -25,7 +25,8 @@ class McpServerFactory(
     private val discoveryService: ToolDiscoveryService,
     private val executionDispatcher: ToolExecutionDispatcher,
     private val toolManagementService: com.orchestrator.mcp.management.ToolManagementService,
-    private val sessionConfig: com.orchestrator.mcp.config.SessionConfig
+    private val sessionConfig: com.orchestrator.mcp.config.SessionConfig,
+    private val agentLogService: com.orchestrator.mcp.logging.AgentLogService? = null
 ) {
     private val logger = LoggerFactory.getLogger(McpServerFactory::class.java)
     private val json = Json {
@@ -51,8 +52,9 @@ class McpServerFactory(
         registerToggleTool(server)
         registerResetTools(server)
         registerManageAutoApprove(server)
+        registerAgentLog(server)
 
-        logger.info("MCP SDK Server created with 5 tools registered")
+        logger.info("MCP SDK Server created with 6 tools registered")
         return server
     }
 
@@ -148,6 +150,10 @@ class McpServerFactory(
         server.addTool("manage_auto_approve", manageAutoApproveDescription(), manageAutoApproveSchema()) { request ->
             handleManageAutoApprove(request.arguments)
         }
+    }
+
+    private fun registerAgentLog(server: Server) {
+        AgentLogToolRegistrar.register(server, agentLogService)
     }
 
     private suspend fun handleToggleTool(arguments: JsonObject?): CallToolResult {

@@ -660,6 +660,7 @@ After manual execution, update `TEST-REPORT-{TICKET-KEY}.csv`:
 
 ## Important Rules
 
+- **MANDATORY: Use `stream_write_file` for large documents**: When creating STP.md, STC.md, or any file > 50 lines, use the MCP tool `stream_write_file` with `mode="write"` for the first section, then `mode="append"` for subsequent sections. This writes directly to disk without RAM buffering. Fallback to `fsWrite`/`fsAppend` only if `stream_write_file` is unavailable.
 - **MANDATORY UG VERIFICATION (when invoked by SM for Phase 5.5c)**: QA agent PHẢI thực sự chạy server theo User Guide instructions để verify tài liệu có thể sử dụng được. KHÔNG chỉ đọc text — phải execute commands và verify output. Checklist:
   1. Follow Quick Start: chạy `java -jar`, verify log output match UG
   2. Copy config examples từ UG vào file, verify YAML/JSON syntax hợp lệ

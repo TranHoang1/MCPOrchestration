@@ -304,6 +304,7 @@ For each document (DPG.md, RLN.md):
 
 ## Important Rules
 
+- **MANDATORY: Use `stream_write_file` for large documents**: When creating DPG.md, RLN.md, or any file > 50 lines, use the MCP tool `stream_write_file` with `mode="write"` for the first section, then `mode="append"` for subsequent sections. Writes directly to disk without RAM buffering. Fallback to `fsWrite`/`fsAppend` if unavailable.
 - **MANDATORY DOCUMENT EXPORT**: After creating DPG.md and RLN.md, you MUST export to DOCX and ingest into KB. SM will attach to Jira. If SM does not attach, report the gap.
 - NEVER assume infrastructure details — read existing configs first.
 - Deployment steps must be specific and executable — no vague instructions.

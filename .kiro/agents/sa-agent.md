@@ -269,7 +269,7 @@ For each FSD Use Case, create API specifications:
 - Rollback strategy
 - Database migration execution plan
 
-Use `fsWrite` for creating the file and `fsAppend` if content exceeds 50 lines per write.
+Use `stream_write_file` (MCP tool) for creating large documents: first call with `mode="write"`, then `mode="append"` for each section. Writes directly to disk without RAM buffering. Fallback to `fsWrite`/`fsAppend` if unavailable.
 
 ### Step 4: Generate Diagrams
 

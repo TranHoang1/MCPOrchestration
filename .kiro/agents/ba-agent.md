@@ -177,7 +177,7 @@ When given a Jira ticket key (e.g., PROJ-123), follow these steps strictly in or
    - Non-Functional Requirements
    - Related Tickets
    - Appendix (Glossary, Reference Documents)
-4. Use `fsWrite` for creating the BRD file and `fsAppend` if the content exceeds 50 lines per write.
+4. Use `stream_write_file` (MCP tool) for creating large documents: first call with `mode="write"` to create the file, then subsequent calls with `mode="append"` for each section. This writes directly to disk without buffering — critical for large BRD/FSD files. Fallback to `fsWrite`/`fsAppend` only if `stream_write_file` is unavailable.
 
 ### Step 7: Generate Diagrams
 
@@ -461,7 +461,7 @@ After the FSD is finalized, automatically convert it to MS Word format:
 - Always cite the source ticket key when listing requirements or details.
 - If API calls fail, inform the user and suggest manual steps.
 - Create the output directory `documents/{TICKET-KEY}/` if it does not exist.
-- Use `fsWrite` for creating files and `fsAppend` if the content is large.
+- Use `stream_write_file` (MCP tool, mode="write" then "append") for creating large markdown files — writes directly to disk, no RAM buffering. Fallback to `fsWrite`/`fsAppend` if unavailable.
 - Be thorough but concise — documents should be actionable, not verbose.
 - For User Stories, always use the format: "As a [role], I want [goal] so that [benefit]"
 - Include UI specifications in table format when screen/interface details are available.

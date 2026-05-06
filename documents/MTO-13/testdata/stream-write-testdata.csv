@@ -1,0 +1,22 @@
+test_case_id,file_path,content,mode,encoding,expected_http_code,expected_error_code,expected_bytes_written,description
+TC-019a,C:/temp/test-write.md,# Section 1\nContent here,write,utf-8,200,,25,Valid write mode â creates file
+TC-019b,C:/temp/test-write.md,\n## Section 2\nMore content,append,utf-8,200,,29,Valid append mode â adds to file
+TC-019c,C:/temp/test-write.md,## Section 3,append,utf-8,200,,12,Second append
+TC-400,C:/temp/empty-test.md,,write,utf-8,200,,0,Empty content â creates empty file
+TC-401,C:/temp/large-test.md,{10MB_REPEATED_PATTERN},write,utf-8,200,,10485760,Very large content (10MB)
+TC-209a,C:/temp/../../../etc/passwd,malicious,write,utf-8,400,INVALID_PATH,,Path traversal with ../
+TC-209b,relative/path.txt,test,write,utf-8,400,INVALID_PATH,,Relative path (no drive letter)
+TC-209c,C:/nonexistent/dir/file.txt,test,write,utf-8,400,OUTPUT_DIR_NOT_FOUND,,Parent directory does not exist
+TC-210,C:/readonly/file.txt,test,write,utf-8,400,OUTPUT_NOT_WRITABLE,,Read-only target
+TC-311a,C:/temp/mode-test.md,test,write,utf-8,200,,4,Valid mode: write
+TC-311b,C:/temp/mode-test.md,test,append,utf-8,200,,4,Valid mode: append
+TC-311c,C:/temp/mode-test.md,test,delete,utf-8,400,INVALID_PATH,,Invalid mode: delete
+TC-403a,C:/temp/../../windows/system32/test.txt,hack,write,utf-8,400,INVALID_PATH,,Traversal: double dot up
+TC-403b,C:/temp/./../../etc/passwd,hack,write,utf-8,400,INVALID_PATH,,Traversal: dot-slash combo
+TC-403c,C:/temp/..\\..\\windows\\test.txt,hack,write,utf-8,400,INVALID_PATH,,Traversal: backslash variant
+TC-404a,relative/path/file.txt,test,write,utf-8,400,INVALID_PATH,,Relative: no drive letter
+TC-404b,./file.txt,test,write,utf-8,400,INVALID_PATH,,Relative: dot-slash
+TC-404c,file.txt,test,write,utf-8,400,INVALID_PATH,,Relative: bare filename
+TC-404d,~/file.txt,test,write,utf-8,400,INVALID_PATH,,Relative: tilde
+TC-409a,C:/temp/unicode.md,ããã«ã¡ã¯ä¸ç ð,write,utf-8,200,,22,Unicode content (CJK + emoji)
+TC-409b,C:/temp/special.md,"line1\x00line2",write,utf-8,200,,11,Content with null byte

@@ -1,0 +1,65 @@
+# MTO-13 Part C: Physical Multi-Module Refactor — DEV Agent Log
+
+## Summary
+Successfully completed physical multi-module refactoring. All code moved from root `src/` to proper module directories.
+
+## Actions Performed
+
+### 1. Created orchestrator-server/src/ directory structure
+- Created `src/main/kotlin/com/orchestrator/mcp/` with all server packages
+- Created `src/test/kotlin/com/orchestrator/mcp/` with all test packages
+- Created `src/main/resources/` with application.yml and logback.xml
+
+### 2. Moved server-specific packages (72 main files, 42 test files)
+- `transport/` → server module (McpTransport, HttpStreamableTransport, StdioTransport, etc.)
+- `protocol/` → server module (McpServerFactory, McpToolRegistrar, JsonRpcHandler, etc.)
+- `discovery/` → server module (ToolDiscoveryService, KeywordSearchEngine)
+- `execution/` → server module (ToolExecutionDispatcher)
+- `promotion/` → server module (SmartToolPromoter, PromotionCache)
+- `session/` → server module (SessionManager, HttpStreamableTransport sessions)
+- `registry/` → server module (ToolRegistry, ToolIndexer)
+- `fileproxy/` → server module (FileProxyService, all proxy handlers)
+- `di/` → server module (AppModule - Koin DI wiring)
+- `logging/` → server module (AgentLogService)
+- `management/` → server module (ToolManagementService, ToolFilterService)
+- `config/` implementation → server module (ConfigurationManagerImpl, ConfigDbSyncService, etc.)
+- Top-level files → server module (Application.kt, Main.kt, StdioMain.kt, HttpStreamableServer.kt)
+
+### 3. Populated orchestrator-client module (19 files)
+- `embedding/` — EmbeddingService interface + OpenAI/Ollama/LmStudio implementations
+- `upstream/` — UpstreamServerManager, McpConnection, HealthMonitor, StdioMcpConnection, HttpMcpConnection
+- `vectordb/` — VectorDbClient, QdrantVectorDbClient, PgVectorDbClient, DatabaseFactory, DatabaseInitializer, FaissVectorDbClient
+
+### 4. Updated orchestrator-core module (7 files)
+- `model/` — ErrorCodes, Exceptions (full hierarchy), ToolDefinition/ToolEntry
+- `config/` — OrchestratorConfig, InfraConfig (all data classes), ConfigurationManager interface
+- `util/` — RetryUtils
+
+### 5. Import updates
+- `com.orchestrator.mcp.model.*` → `com.orchestrator.mcp.core.model.*`
+- `com.orchestrator.mcp.config.*` (data classes) → `com.orchestrator.mcp.core.config.*`
+- `com.orchestrator.mcp.util.*` → `com.orchestrator.mcp.core.util.*`
+- `com.orchestrator.mcp.upstream.*` → `com.orchestrator.mcp.client.upstream.*`
+- `com.orchestrator.mcp.embedding.*` → `com.orchestrator.mcp.client.embedding.*`
+- `com.orchestrator.mcp.vectordb.*` → `com.orchestrator.mcp.client.vectordb.*`
+- Server-specific packages kept original names (e.g., `com.orchestrator.mcp.transport`)
+
+### 6. Removed sourceSets override from orchestrator-server/build.gradle.kts
+
+### 7. Deleted root src/ directory
+
+## Verification
+- `./gradlew compileKotlin` — PASS (all 4 modules)
+- `./gradlew compileTestKotlin` — PASS
+- `./gradlew test` — PASS (1 test skipped due to Docker unavailability for Testcontainers)
+
+## Module Dependency Graph
+```
+orchestrator-core (standalone, no project deps)
+    ↑
+orchestrator-client (depends on core)
+    ↑
+orchestrator-server (depends on core + client)
+
+orchestrator-bridge (depends on core)
+```

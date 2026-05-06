@@ -1,0 +1,11 @@
+test_case_id,tool_name,query,file_path,format,expected_result,expected_error_code,description
+TC-007a,get_drawio_reference,draw.io diagram reference,,,content_returned,,Hidden tool discoverable via find_tools
+TC-007b,tools/list,,,,not_in_list,,Hidden tool NOT in tools/list
+TC-008,export_drawio,,test-fixtures/sample.drawio,png,"{output_path, bytes_written}",,Valid export to PNG
+TC-204,get_drawio_reference,,,,error,FILE_NOT_FOUND,Reference file missing
+TC-205,export_drawio,,test.drawio,png,error,CLI_NOT_FOUND,draw.io CLI not installed
+TC-206,export_drawio,,corrupted.drawio,png,error,EXPORT_FAILED,Corrupted drawio file
+TC-212,export_drawio,,test.drawio,bmp,error,INVALID_PARAMS,Unsupported format
+TC-407a,export_drawio,,test.xml,png,error,INVALID_PARAMS,Wrong file extension (.xml)
+TC-407b,export_drawio,,test.png,svg,error,INVALID_PARAMS,Wrong file extension (.png)
+TC-407c,export_drawio,,test,pdf,error,INVALID_PARAMS,No file extension

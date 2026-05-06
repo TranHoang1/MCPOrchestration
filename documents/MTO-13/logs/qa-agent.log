@@ -1,0 +1,12 @@
+[2026-05-06T10:00:00Z] [QA] [Step-0] [START] â Phase 4 Test Planning started. Read BRD, FSD, TDD documents and templates.
+[2026-05-06T10:01:00Z] [QA] [Step-1] [DONE] â Analyzed test scope: 9 parts (A-I), 56 ACs, 9 use cases, 17 business rules.
+[2026-05-06T10:02:00Z] [QA] [Step-2] [DONE] â Generated STP.md (15KB) with test strategy, 5 test levels, schedule, risks.
+[2026-05-06T10:05:00Z] [QA] [Step-3] [DONE] â Generated STC.md (88KB) with 103 test cases covering all 56 ACs (100% RTM).
+[2026-05-06T10:06:00Z] [QA] [Step-3.5] [DONE] â Generated 6 CSV test data files in testdata/ directory.
+[2026-05-06T10:07:00Z] [QA] [Step-4] [DONE] â Generated 2 draw.io diagrams + exported to PNG.
+[2026-05-06T10:08:00Z] [QA] [Step-8] [DONE] â Generated TEST-REPORT-MTO-13.csv with 20 pre-filled rows.
+[2026-05-06T10:09:00Z] [QA] [Step-7] [START] â Exporting to DOCX via MCP export_docx tool.
+
+[2026-05-06T10:09:30Z] [QA] [Step-7] [DONE] â Exported STP.md and STC.md to DOCX via pandoc (MCP export_docx tool returned INVALID_PARAMS error).
+[2026-05-06T10:10:00Z] [QA] [Step-7.5] [WARN] â KB ingestion failed (kb_ingest requires file_path not in schema). File-based documents are primary artifacts.
+[2026-05-06T10:10:30Z] [QA] [Self-Check] [VERIFY] â RTM: 56/56 ACs covered (100%). Test cases: 103. CSV files: 6. Diagrams: 2 (PNG exported). DOCX: 2 files.

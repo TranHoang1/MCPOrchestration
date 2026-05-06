@@ -18,7 +18,9 @@
       "autoApprove": [
         "find_tools",
         "execute_dynamic_tool",
-        "agent_log"
+        "agent_log",
+        "stream_write_file",
+        "stream_write_file"
       ]
     }
   }

@@ -1,0 +1,18 @@
+test_case_id,bridge_type,orchestrator_url,action,expected_result,description
+TC-011,kotlin,http://localhost:8080/mcp,start+initialize,connected,Kotlin bridge starts and connects
+TC-012,kotlin,http://localhost:8080/mcp,find_tools+execute,proxied,Kotlin bridge proxies tool calls
+TC-013,kotlin,http://localhost:8080/mcp,file_transfer,http_binary,File via HTTP binary (not base64)
+TC-014,kotlin,http://localhost:8080/mcp,reconnect_after_restart,reconnected_within_15s,Auto-reconnect on Orchestrator restart
+TC-015,kotlin,,build_fat_jar,mcp-bridge-all.jar,Fat JAR packaging
+TC-016,nodejs,http://localhost:8080/mcp,start+initialize,connected,Node.js bridge starts and connects
+TC-017,nodejs,http://localhost:8080/mcp,find_tools+execute,proxied,Node.js bridge proxies tool calls
+TC-106,nodejs,http://localhost:8080/mcp,file_transfer,http_binary,Node.js file via HTTP binary
+TC-107,nodejs,http://localhost:8080/mcp,reconnect_after_restart,reconnected,Node.js auto-reconnect
+TC-108,nodejs,,npx_start,running,npx packaging works
+TC-207,kotlin,http://localhost:9999/mcp,start_no_server,degraded_mode,Orchestrator unreachable at startup
+TC-213,kotlin,http://localhost:8080/mcp,timeout_call,timeout_error,HTTP timeout (>30s)
+TC-313a,kotlin,http://localhost:9090/mcp,connect_custom_port,connected,Custom URL via --url flag
+TC-313b,nodejs,http://localhost:9090/mcp,connect_custom_port,connected,Custom URL via ORCHESTRATOR_URL env
+TC-700,kotlin,http://localhost:8080/mcp,full_lifecycle,end_to_end_success,Full lifecycle: init â find â execute
+TC-703,nodejs,http://localhost:8080/mcp,full_lifecycle,end_to_end_success,Node.js full lifecycle
+TC-704,both,http://localhost:8080/mcp,parity_check,equivalent_responses,Kotlin vs Node.js produce same results

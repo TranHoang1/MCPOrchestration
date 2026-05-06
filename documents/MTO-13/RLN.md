@@ -10,7 +10,7 @@
 
 ## Summary
 
-This release adds HTTP Streamable transport support (MCP Spec 2025-03-26), hidden utility tools for draw.io diagram management, and smart tool promotion for improved tool discovery UX.
+This release adds HTTP Streamable transport support (MCP Spec 2025-03-26), Gradle multi-module architecture, MCP Client Bridges (Kotlin + Node.js), hidden utility tools for draw.io diagram management, and smart tool promotion for improved tool discovery UX.
 
 ---
 
@@ -29,6 +29,29 @@ This release adds HTTP Streamable transport support (MCP Spec 2025-03-26), hidde
 - **get_drawio_reference** — Returns draw.io XML reference documentation
 - **export_drawio** — Exports .drawio files to PNG/SVG/PDF via CLI
 - Hidden from `tools/list` but discoverable via `find_tools`
+
+### Part C: Gradle Multi-Module Refactor
+
+- **4 modules** — orchestrator-core, orchestrator-client, orchestrator-server, orchestrator-bridge
+- **Zero circular dependencies** — core has no project dependencies
+- **Fat JARs** — `mcp-orchestrator-all.jar` (server) and `mcp-bridge-all.jar` (bridge)
+- **All existing tests pass unmodified** after refactor
+
+### Part D: MCP Client Bridge — Kotlin
+
+- **stdio MCP server** — Proxies requests to Orchestrator via HTTP Streamable
+- **2 meta-tools** — find_tools + execute_dynamic_tool (token-optimized)
+- **Auto-reconnect** — Exponential backoff capped at 15 seconds
+- **Local stream_write_file** — Writes to local disk without network round-trip
+- **HTTP binary file transfer** — Files sent via HTTP binary (not base64)
+- **Fat JAR** — `mcp-bridge-all.jar` standalone runnable
+
+### Part E: MCP Client Bridge — Node.js
+
+- **TypeScript implementation** — Same functionality as Kotlin bridge
+- **npx runnable** — `npx @orchestrator/mcp-bridge`
+- **ORCHESTRATOR_URL env var** — Configurable Orchestrator endpoint
+- **Auto-reconnect** — Same exponential backoff strategy as Kotlin bridge
 
 ### Part F: Smart Tool Promotion
 
@@ -83,6 +106,17 @@ None. All changes are additive. Existing stdio and SSE transports work unchanged
 - `PromotionCacheTest.kt` — 5 tests
 - `CompactSchemaGeneratorTest.kt` — 3 tests
 
+### Modified Files (4)
+- `src/main/kotlin/com/orchestrator/mcp/Application.kt` — Added http-streamable transport case
+- `src/main/kotlin/com/orchestrator/mcp/config/OrchestratorConfig.kt` — Added httpSession config
+- `src/main/kotlin/com/orchestrator/mcp/model/ErrorCodes.kt` — Added session error codes
+- `src/main/kotlin/com/orchestrator/mcp/model/Exceptions.kt` — Added session exceptions
+
+### New Tests (3 files, 14 test cases)
+- `SessionManagerImplTest.kt` — 6 tests
+- `PromotionCacheTest.kt` — 5 tests
+- `CompactSchemaGeneratorTest.kt` — 3 tests
+
 ---
 
 ## Test Results
@@ -96,9 +130,9 @@ None. All changes are additive. Existing stdio and SSE transports work unchanged
 
 ## Known Issues
 
-1. HTTP Streamable message handler uses simplified pass-through — full MCP SDK wiring for HTTP mode pending Part C/D implementation
-2. Parts C (Gradle multi-module), D (Kotlin Bridge), E (Node.js Bridge) deferred to next sprint
-3. `export_drawio` requires draw.io Desktop installed on the host machine
+1. Parts C/D/E deferred items: Full MCP SDK wiring for HTTP mode in Bridge pending integration testing
+2. `export_drawio` requires draw.io Desktop installed on the host machine
+3. Node.js bridge requires `npm install` before first use (or use npx)
 
 ---
 

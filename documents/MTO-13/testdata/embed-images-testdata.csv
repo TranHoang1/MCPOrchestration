@@ -1,0 +1,8 @@
+test_case_id,markdown_content,image_refs,images_exist,output_path,expected_embedded,expected_failed,description
+TC-020,"# Test\n![logo](images/logo.png)\n![arch](images/arch.png)","images/logo.png,images/arch.png","true,true",,2,0,All images exist â both embedded
+TC-110a,"# Test\n![logo](images/logo.png)","images/logo.png","true",,,1,No output_path â returns content in response
+TC-110b,"# Test\n![logo](images/logo.png)","images/logo.png","true",C:/temp/embedded.md,,1,With output_path â saves to file
+TC-314,"# Test\n![a](img/a.png)\n![b](img/b.png)\n![c](img/c.png)","img/a.png,img/b.png,img/c.png","true,true,false",,2,1,Mixed: 2 exist + 1 missing
+TC-411,"# Test\n![img](data:image/png;base64,iVBOR...)","data:image/png;base64,iVBOR...","n/a",,0,0,Already embedded â skipped
+TC-611a,"# Test\n![img](../../etc/passwd)","../../etc/passwd","false",,0,1,Path traversal in image ref â not embedded
+TC-611b,"# Test\n![img](images/logo.png)","images/logo.png","true",,1,0,Valid relative path â resolved against markdown dir

@@ -1,0 +1,15 @@
+test_case_id,session_id,request_method,request_body,accept_header,mcp_session_id,last_event_id,expected_http_code,expected_content_type,expected_error_code,description
+TC-001,new,initialize,"{""jsonrpc"":""2.0"",""id"":1,""method"":""initialize"",""params"":{""protocolVersion"":""2025-03-26"",""capabilities"":{},""clientInfo"":{""name"":""test"",""version"":""1.0""}}}",application/json,,,,200,application/json,,Valid initialize â creates new session
+TC-002,existing,tools/list,"{""jsonrpc"":""2.0"",""id"":2,""method"":""tools/list""}",application/json,{valid_session_id},,200,application/json,,Valid tools/list with session
+TC-003,existing,tools/call,"{""jsonrpc"":""2.0"",""id"":3,""method"":""tools/call"",""params"":{""name"":""stream_write_file""}}",text/event-stream,{valid_session_id},,200,text/event-stream,,SSE streaming response
+TC-004,existing,tools/call,"{""jsonrpc"":""2.0"",""id"":4,""method"":""tools/call"",""params"":{""name"":""long_tool""}}",text/event-stream,{valid_session_id},evt-2,200,text/event-stream,,Stream resumption from evt-2
+TC-100,existing,tools/list,"{""jsonrpc"":""2.0"",""id"":5,""method"":""tools/list""}",text/event-stream,{valid_session_id},,200,text/event-stream,,Client requests SSE for tools/list
+TC-101,existing,tools/list,"{""jsonrpc"":""2.0"",""id"":6,""method"":""tools/list""}",application/json,{valid_session_id},,200,application/json,,Reconnect with existing session
+TC-200,new,invalid,"{not valid json",application/json,,,400,application/json,-32700,Malformed JSON body
+TC-201,none,tools/list,"{""jsonrpc"":""2.0"",""id"":7,""method"":""tools/list""}",application/json,invalid-not-uuid,,404,application/json,-32001,Invalid session ID format
+TC-201b,none,tools/list,"{""jsonrpc"":""2.0"",""id"":8,""method"":""tools/list""}",application/json,00000000-0000-4000-8000-000000000000,,404,application/json,-32001,Non-existent session UUID
+TC-202,max_reached,initialize,"{""jsonrpc"":""2.0"",""id"":9,""method"":""initialize"",""params"":{""protocolVersion"":""2025-03-26""}}",application/json,,,503,application/json,-32003,Server at max sessions
+TC-203,existing,tools/call,"{""jsonrpc"":""2.0"",""id"":10,""method"":""tools/call""}",text/event-stream,{valid_session_id},evt-99999,404,application/json,-32002,Last-Event-ID not in buffer
+TC-211a,new,invalid,"{""id"":1,""method"":""test""}",application/json,,,400,application/json,-32600,Missing jsonrpc field
+TC-211b,new,invalid,"{""jsonrpc"":""1.0"",""id"":1,""method"":""test""}",application/json,,,400,application/json,-32600,Wrong jsonrpc version
+TC-211c,new,invalid,"{""jsonrpc"":""2.0"",""id"":1}",application/json,,,400,application/json,-32600,Missing method field

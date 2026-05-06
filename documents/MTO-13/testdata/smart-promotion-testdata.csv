@@ -1,0 +1,33 @@
+test_case_id,action,query,tool_name,expected_tools_list_count,expected_notification,expected_result,description
+TC-018a,tools/list,,,6-7,,meta_tools_only,Initial tools/list â only meta-tools
+TC-018b,find_tools,jira,,,,tools_discovered,find_tools discovers upstream tools
+TC-018c,notification,,,,tools/list_changed,,IDE notified of promotion
+TC-018d,tools/list,,,>6,,includes_promoted,tools/list now includes promoted tools
+TC-018e,tools/call,,jira_get_issue,,,success,Direct call to promoted tool
+TC-102a,tools/list,,,2,,bridge_meta_tools,Bridge mode â 2 meta-tools only
+TC-102b,find_tools,knowledge base,,,,tools_discovered,Bridge find_tools
+TC-102c,tools/list,,,>2,,includes_promoted,Bridge tools/list expanded
+TC-103a,find_tools,jira,,,,jira_tools_promoted,First query â jira tools
+TC-103b,find_tools,database,,,,db_tools_promoted,Second query â db tools
+TC-103c,tools/list,,,,,both_jira_and_db,Both sets promoted
+TC-104,promote,,verbose_tool,,,compact_schema,Description truncated to â¤100 chars
+TC-105,tools/call,,promoted_tool,,,direct_route,Routed directly to upstream (no discovery)
+TC-208a,tools/call,,failing_tool,,,execution_fails,Promoted tool fails
+TC-208b,check_promotion,,failing_tool,,,demoted,Tool auto-demoted
+TC-208c,retry,,failing_tool,,,via_execute_dynamic_tool,Retry via fallback
+TC-214a,tools/list,,,>6,,has_promoted,Before reset â tools promoted
+TC-214b,reset_tools,,,,,cache_cleared,reset_tools called
+TC-214c,tools/list,,,6-7,,meta_tools_only,After reset â only meta-tools
+TC-215a,find_tools,test,,,,promoted,Tools promoted
+TC-215b,wait_ttl,,,,,ttl_expired,Wait for TTL expiry
+TC-215c,tools/list,,,6-7,,expired_removed,Expired tools removed
+TC-309a,promote,,kb_search,,,added,First promotion
+TC-309b,promote,,kb_search,,,replaced,Duplicate name â replaces existing
+TC-310a,promote,,tool_1 to tool_5,5,,all_added,Promote up to max
+TC-310b,promote,,tool_6,5,,lru_evicted,6th tool evicts LRU
+TC-312a,start_no_config,,,,,promotion_enabled,Default: smart-promotion enabled
+TC-312b,start_disabled,,,,,promotion_disabled,Explicit disable: tools not promoted
+TC-406a,promote,,test_tool,,,promoted_at_t0,Promote at T=0
+TC-406b,call_at_t8,,test_tool,,,ttl_reset,Call at T=8 resets TTL
+TC-406c,check_at_t16,,test_tool,,,still_active,Still active at T=16 (TTL reset at T=8)
+TC-410,find_tools,xyznonexistent123,,0,no_notification,empty_results,No matches â no promotion

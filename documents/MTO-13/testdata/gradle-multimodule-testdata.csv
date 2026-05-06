@@ -1,0 +1,21 @@
+test_case_id,module,command,expected_result,description
+TC-009a,orchestrator-core,./gradlew :orchestrator-core:build,BUILD SUCCESSFUL,Core module builds independently
+TC-009b,orchestrator-client,./gradlew :orchestrator-client:build,BUILD SUCCESSFUL,Client module builds
+TC-009c,orchestrator-server,./gradlew :orchestrator-server:build,BUILD SUCCESSFUL,Server module builds
+TC-009d,orchestrator-bridge,./gradlew :orchestrator-bridge:build,BUILD SUCCESSFUL,Bridge module builds
+TC-009e,root,./gradlew build,BUILD SUCCESSFUL,All modules build together
+TC-010,root,./gradlew test,ALL TESTS PASS,Existing tests pass after refactor
+TC-306,orchestrator-core,grep "project(" orchestrator-core/build.gradle.kts,NO_MATCH,Core has no project dependencies
+TC-307,root,./gradlew build,BUILD SUCCESSFUL (no circular dep error),No circular dependencies
+TC-308a,orchestrator-server,./gradlew :orchestrator-server:buildFatJar,mcp-orchestrator-all.jar exists,Server fat JAR
+TC-308b,orchestrator-bridge,./gradlew :orchestrator-bridge:buildFatJar,mcp-bridge-all.jar exists,Bridge fat JAR
+TC-609a,orchestrator-core,./gradlew :orchestrator-core:test,TESTS PASS,Core testable independently
+TC-609b,orchestrator-client,./gradlew :orchestrator-client:test,TESTS PASS,Client testable independently
+TC-609c,orchestrator-server,./gradlew :orchestrator-server:test,TESTS PASS,Server testable independently
+TC-609d,orchestrator-bridge,./gradlew :orchestrator-bridge:test,TESTS PASS,Bridge testable independently
+TC-707a,orchestrator-server,ls build/libs/mcp-orchestrator-all.jar,FILE EXISTS,Server JAR artifact exists
+TC-707b,orchestrator-bridge,ls build/libs/mcp-bridge-all.jar,FILE EXISTS,Bridge JAR artifact exists
+TC-712a,config,transport: httpstreamable,SERVER STARTS,Valid transport config
+TC-712b,config,transport: stdio,SERVER STARTS,Valid transport config
+TC-712c,config,transport: sse,SERVER STARTS,Valid transport config
+TC-712d,config,transport: invalid,STARTUP ERROR,Invalid transport rejected

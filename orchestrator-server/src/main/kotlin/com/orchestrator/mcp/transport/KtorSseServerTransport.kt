@@ -28,6 +28,14 @@ class KtorSseServerTransport(
 
     override suspend fun start() {
         logger.info("SSE Transport started")
+        // Send endpoint event so MCP SDK client knows
+        // where to POST messages
+        sseSession.send(
+            ServerSentEvent(
+                data = "/message",
+                event = "endpoint"
+            )
+        )
     }
 
     override suspend fun send(message: JSONRPCMessage, options: TransportSendOptions?) {

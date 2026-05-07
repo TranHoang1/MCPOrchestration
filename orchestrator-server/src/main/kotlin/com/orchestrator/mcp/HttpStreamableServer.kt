@@ -4,31 +4,28 @@ import com.orchestrator.mcp.core.config.OrchestratorConfig
 import com.orchestrator.mcp.fileproxy.FileProxyCleanupService
 import com.orchestrator.mcp.fileproxy.FileProxyService
 import com.orchestrator.mcp.protocol.McpServerFactory
+import com.orchestrator.mcp.protocol.HttpToolRouter
 import com.orchestrator.mcp.registry.ToolIndexer
-import com.orchestrator.mcp.session.SessionCleanupJob
-import com.orchestrator.mcp.session.SessionManagerImpl
-import com.orchestrator.mcp.transport.HttpStreamableTransport
 import com.orchestrator.mcp.client.upstream.HealthMonitor
 import com.orchestrator.mcp.client.upstream.UpstreamServerManager
-import io.ktor.http.*
-import io.ktor.serialization.kotlinx.json.*
-import io.ktor.server.application.*
-import io.ktor.server.engine.*
-import io.ktor.server.netty.*
-import io.ktor.server.plugins.contentnegotiation.*
-import io.ktor.server.request.*
-import io.ktor.server.response.*
-import io.ktor.server.routing.*
+import com.sun.net.httpserver.HttpServer
+import com.sun.net.httpserver.HttpExchange
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import org.slf4j.LoggerFactory
+import java.net.InetSocketAddress
 import java.util.UUID
+import java.util.concurrent.Executors
 
-private val httpLogger = LoggerFactory.getLogger("com.orchestrator.mcp.HttpStreamableServer")
+private val httpLogger = LoggerFactory.getLogger(
+    "com.orchestrator.mcp.HttpStreamableServer"
+)
 
 /**
- * Starts the MCP Orchestrator in HTTP Streamable transport mode.
- * Implements MCP Spec 2025-03-26 Streamable HTTP transport.
+ * HTTP Streamable mode using Java's built-in HttpServer.
+ * Avoids Ktor Netty event loop issues with suspend functions.
+ * Each request runs on its own thread from a thread pool.
  */
 suspend fun CoroutineScope.startHttpStreamableServer(
     config: OrchestratorConfig,
@@ -40,66 +37,101 @@ suspend fun CoroutineScope.startHttpStreamableServer(
     fileProxySessionId: UUID,
     fileProxyCleanup: FileProxyCleanupService
 ) {
-    httpLogger.info("Starting MCP Orchestration Server in HTTP Streamable mode on port ${config.orchestrator.server.port}")
+    val port = config.orchestrator.server.port
+    httpLogger.info(
+        "Starting MCP Orchestrator in HTTP Streamable " +
+            "mode on port $port"
+    )
 
-    val sessionConfig = config.orchestrator.httpSession
-    val sessionManager = SessionManagerImpl(sessionConfig)
-    val sessionCleanup = SessionCleanupJob(sessionManager, sessionConfig)
-    val httpTransport = HttpStreamableTransport(sessionManager, config.orchestrator.server)
-
-    // Wire message handler to MCP protocol
-    val mcpServer = mcpServerFactory.create()
-    httpTransport.messageHandler = { message ->
-        // Process through MCP SDK — simplified handler
-        processJsonRpcMessage(mcpServer, message)
-    }
+    val router = HttpToolRouter(mcpServerFactory)
 
     // Connect upstream servers in background
     launch {
-        connectUpstreamServers(serverManager, toolIndexer, fileProxyService, fileProxySessionId, fileProxyCleanup)
+        try {
+            serverManager.connectAll()
+            val states = serverManager.getAllServerStates()
+            val connected = states.count {
+                it.value.status ==
+                    com.orchestrator.mcp.client.upstream
+                        .model.ServerState.CONNECTED
+            }
+            httpLogger.info(
+                "Upstream: $connected connected, " +
+                    "${states.size - connected} failed"
+            )
+            httpLogger.info("Starting tool indexing...")
+            val result = toolIndexer.indexAll()
+            httpLogger.info(
+                "Tool indexing completed: " +
+                    "${result.totalIndexed} tools indexed"
+            )
+            // File Proxy wrapping disabled in server mode — bridges handle file transfer
+            httpLogger.info("File Proxy wrapping skipped (server mode)")
+        } catch (e: Exception) {
+            httpLogger.error(
+                "Failed to connect upstream: ${e.message}"
+            )
+        }
     }
 
     healthMonitor.start(this)
-    sessionCleanup.start(this)
 
-    embeddedServer(Netty, port = config.orchestrator.server.port) {
-        install(ContentNegotiation) { json() }
-        routing {
-            post("/mcp") { httpTransport.handleRequest(call) }
-            get("/health") { call.respondText("OK", ContentType.Text.Plain) }
-        }
-    }.start(wait = true)
-}
+    // Use Java HttpServer with thread pool
+    val executor = Executors.newFixedThreadPool(8)
+    val server = HttpServer.create(
+        InetSocketAddress(port), 0
+    )
+    server.executor = executor
 
-private suspend fun connectUpstreamServers(
-    serverManager: UpstreamServerManager,
-    toolIndexer: ToolIndexer,
-    fileProxyService: FileProxyService,
-    fileProxySessionId: UUID,
-    fileProxyCleanup: FileProxyCleanupService
-) {
-    try {
-        serverManager.connectAll()
-        httpLogger.info("Starting tool indexing...")
-        val result = toolIndexer.indexAll()
-        httpLogger.info("Tool indexing completed: ${result.totalIndexed} tools indexed")
-        fileProxyService.initialize(fileProxySessionId)
-    } catch (e: Exception) {
-        httpLogger.error("Failed to connect upstream servers: ${e.message}")
+    server.createContext("/mcp") { exchange ->
+        handleMcpRequest(exchange, router)
     }
+
+    server.createContext("/health") { exchange ->
+        val response = "OK"
+        exchange.sendResponseHeaders(200, response.length.toLong())
+        exchange.responseBody.use { it.write(response.toByteArray()) }
+    }
+
+    server.start()
+    httpLogger.info(
+        "HTTP Streamable server listening on port $port"
+    )
+
+    // Block forever
+    val done = kotlinx.coroutines.Job()
+    done.join()
 }
 
-/**
- * Simplified JSON-RPC message processor.
- * In production, this delegates to the MCP SDK server instance.
- */
-private suspend fun processJsonRpcMessage(
-    mcpServer: io.modelcontextprotocol.kotlin.sdk.server.Server,
-    message: String
-): String {
-    // The MCP SDK handles message routing internally via transport
-    // For HTTP Streamable, we need to process messages directly
-    // This is a simplified pass-through — full implementation would
-    // use the SDK's internal message handling
-    return """{"jsonrpc":"2.0","id":null,"error":{"code":-32603,"message":"HTTP Streamable handler not fully wired"}}"""
+private fun handleMcpRequest(
+    exchange: HttpExchange,
+    router: HttpToolRouter
+) {
+    if (exchange.requestMethod != "POST") {
+        exchange.sendResponseHeaders(405, -1)
+        exchange.close()
+        return
+    }
+
+    val body = exchange.requestBody.bufferedReader()
+        .use { it.readText() }
+
+    if (body.isBlank()) {
+        exchange.sendResponseHeaders(400, -1)
+        exchange.close()
+        return
+    }
+
+    // Run suspend function in blocking context
+    // (each request has its own thread from pool)
+    val response = runBlocking {
+        router.handle(body)
+    }
+
+    val bytes = response.toByteArray(Charsets.UTF_8)
+    exchange.responseHeaders.add(
+        "Content-Type", "application/json"
+    )
+    exchange.sendResponseHeaders(200, bytes.size.toLong())
+    exchange.responseBody.use { it.write(bytes) }
 }

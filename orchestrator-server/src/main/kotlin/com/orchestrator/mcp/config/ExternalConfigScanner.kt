@@ -25,6 +25,7 @@ object ExternalConfigScanner {
     )
 
     private val JSON_FILES = listOf(
+        "mcp-servers.json",
         "config.json",
         "application.json"
     )

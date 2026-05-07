@@ -1,0 +1,51 @@
+<mxGraphModel adaptiveColors="auto">
+  <root>
+    <mxCell id="0"/>
+    <mxCell id="1" parent="0"/>
+    <mxCell id="title" value="&lt;b&gt;MTO-16: Jira REST Client — Architecture Overview&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=13;fontStyle=1;" vertex="1" parent="1">
+      <mxGeometry x="200" y="10" width="420" height="30" as="geometry"/>
+    </mxCell>
+    <mxCell id="sync_job" value="&lt;b&gt;Sync Job Orchestrator&lt;/b&gt;&#xa;(MTO-17)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1f5fe;strokeColor=#0288d1;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="60" y="100" width="160" height="70" as="geometry"/>
+    </mxCell>
+    <mxCell id="jira_client" value="&lt;b&gt;JiraRestClient&lt;/b&gt;&#xa;(MTO-16)" style="swimlane;startSize=30;fillColor=#e8f5e9;strokeColor=#388e3c;html=1;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="300" y="60" width="320" height="280" as="geometry"/>
+    </mxCell>
+    <mxCell id="client_impl" value="&lt;b&gt;JiraRestClientImpl&lt;/b&gt;&#xa;4 API methods" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8f5e9;strokeColor=#388e3c;fontSize=11;" vertex="1" parent="jira_client">
+      <mxGeometry x="80" y="40" width="160" height="50" as="geometry"/>
+    </mxCell>
+    <mxCell id="rate_limiter" value="&lt;b&gt;TokenBucket&lt;/b&gt;&#xa;RateLimiter" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff3e0;strokeColor=#f57c00;fontSize=11;" vertex="1" parent="jira_client">
+      <mxGeometry x="20" y="120" width="130" height="50" as="geometry"/>
+    </mxCell>
+    <mxCell id="retry_handler" value="&lt;b&gt;RetryHandler&lt;/b&gt;&#xa;Exp. Backoff" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff3e0;strokeColor=#f57c00;fontSize=11;" vertex="1" parent="jira_client">
+      <mxGeometry x="170" y="120" width="130" height="50" as="geometry"/>
+    </mxCell>
+    <mxCell id="http_client" value="&lt;b&gt;Ktor HttpClient&lt;/b&gt;&#xa;CIO Engine" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f3e5f5;strokeColor=#7b1fa2;fontSize=11;" vertex="1" parent="jira_client">
+      <mxGeometry x="80" y="200" width="160" height="50" as="geometry"/>
+    </mxCell>
+    <mxCell id="config" value="&lt;b&gt;JiraClientConfig&lt;/b&gt;&#xa;(immutable)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=11;" vertex="1" parent="jira_client">
+      <mxGeometry x="20" y="200" width="50" height="50" as="geometry"/>
+    </mxCell>
+    <mxCell id="jira_api" value="&lt;b&gt;Jira REST API v3&lt;/b&gt;&#xa;(External)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fce4ec;strokeColor=#c62828;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="700" y="180" width="160" height="70" as="geometry"/>
+    </mxCell>
+    <mxCell id="ticket_cache" value="&lt;b&gt;Ticket Cache&lt;/b&gt;&#xa;(MTO-15)" style="shape=cylinder3;whiteSpace=wrap;html=1;fillColor=#f3e5f5;strokeColor=#7b1fa2;fontSize=11;size=10;" vertex="1" parent="1">
+      <mxGeometry x="60" y="250" width="160" height="70" as="geometry"/>
+    </mxCell>
+    <mxCell id="e1" value="suspend calls" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;fontSize=10;" edge="1" source="sync_job" target="client_impl" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e2" value="HTTPS/TLS 1.2+" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;fontSize=10;" edge="1" source="http_client" target="jira_api" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e3" value="acquire()" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;dashed=1;fontSize=10;" edge="1" source="client_impl" target="rate_limiter" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e4" value="withRetry()" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;dashed=1;fontSize=10;" edge="1" source="client_impl" target="retry_handler" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e5" value="stores results" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;fontSize=10;" edge="1" source="sync_job" target="ticket_cache" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+  </root>
+</mxGraphModel>

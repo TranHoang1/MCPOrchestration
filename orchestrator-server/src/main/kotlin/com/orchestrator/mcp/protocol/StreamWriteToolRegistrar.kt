@@ -7,6 +7,7 @@ import io.modelcontextprotocol.kotlin.sdk.types.CallToolResult
 import io.modelcontextprotocol.kotlin.sdk.types.TextContent
 import io.modelcontextprotocol.kotlin.sdk.types.ToolSchema
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.*
 import org.slf4j.LoggerFactory
@@ -23,6 +24,8 @@ object StreamWriteToolRegistrar {
 
     private val logger = LoggerFactory.getLogger(StreamWriteToolRegistrar::class.java)
     private val json = Json { encodeDefaults = true }
+    private val ioDispatcher = java.util.concurrent.Executors
+        .newFixedThreadPool(2).asCoroutineDispatcher()
 
     fun register(server: Server) {
         server.addTool(
@@ -32,6 +35,10 @@ object StreamWriteToolRegistrar {
         ) { request ->
             handleStreamWrite(request.arguments)
         }
+    }
+
+    suspend fun handleCall(arguments: JsonObject?): CallToolResult {
+        return handleStreamWrite(arguments)
     }
 
     private suspend fun handleStreamWrite(arguments: JsonObject?): CallToolResult {
@@ -54,7 +61,7 @@ object StreamWriteToolRegistrar {
             FilePathValidator.validateOutputPath(filePath)
 
             val bytesWritten = writeToFile(filePath, content, mode)
-            val totalSize = withContext(Dispatchers.IO) { Files.size(Path.of(filePath)) }
+            val totalSize = withContext(ioDispatcher) { Files.size(Path.of(filePath)) }
 
             val response = buildJsonObject {
                 put("file_path", JsonPrimitive(filePath))
@@ -73,7 +80,7 @@ object StreamWriteToolRegistrar {
     }
 
     private suspend fun writeToFile(filePath: String, content: String, mode: String): Long {
-        return withContext(Dispatchers.IO) {
+        return withContext(ioDispatcher) {
             val path = Path.of(filePath)
             val options = if (mode == "append") {
                 arrayOf(StandardOpenOption.CREATE, StandardOpenOption.APPEND)

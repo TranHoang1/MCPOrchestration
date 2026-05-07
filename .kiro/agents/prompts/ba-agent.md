@@ -407,12 +407,12 @@ After the FSD is finalized, automatically convert it to MS Word format:
   6. Sửa trực tiếp vào `documents/{TICKET-KEY}/UG.md` nếu cần
   7. Sau khi review xong, ingest UG vào KB (FULL content)
 
-- **MANDATORY MERMAID DIAGRAMS IN MARKDOWN**: Every BRD and FSD document MUST contain inline Mermaid diagrams directly in the markdown content. These are IN ADDITION to any draw.io diagrams. Mermaid diagrams ensure documents are readable and visual even without draw.io export. Required Mermaid diagrams:
+- **DIAGRAMS MUST USE DRAW.IO (NOT MERMAID)**: All diagrams MUST be created as `.drawio` files and exported to `.png`. Mermaid code blocks are FORBIDDEN in BRD/FSD documents unless draw.io export fails (fallback only). If draw.io export fails, log the error and use Mermaid as temporary fallback with a `<!-- TODO: Convert to drawio when export is fixed -->` comment.
 - **MANDATORY DOCUMENT EXPORT**: After creating any document (BRD, FSD), you MUST export to DOCX and ingest into KB. SM will attach to Jira. If SM does not attach, report the gap.
-  - **BRD**: At minimum — 1 flowchart (high-level process map), 1 sequence diagram (business flow overview)
-  - **FSD**: At minimum — 1 system context graph (graph TB), 1 sequence diagram (component interaction flow), 1 state diagram (entity lifecycle if applicable)
-  - Use ` ```mermaid ` code blocks with proper Mermaid syntax (flowchart, sequenceDiagram, stateDiagram-v2, classDiagram, graph TB/LR)
-  - Place diagrams INLINE next to the relevant section text, not in a separate appendix
+  - **BRD**: At minimum — 1 use-case diagram + 1 business-flow swimlane (as .drawio + .png)
+  - **FSD**: At minimum — 1 system context diagram + 1 sequence diagram + 1 state diagram if applicable (as .drawio + .png)
+  - All diagrams are `.drawio` files (source of truth) → exported to `.png` (for display) → referenced in markdown via `![alt](diagrams/file.png)` + `*[Edit in draw.io](diagrams/file.drawio)*`
+  - NEVER put Mermaid code blocks in final documents. Draw.io is the ONLY accepted format.
   - Diagrams must accurately reflect the actual system architecture, data flow, and component relationships described in the document
 - NEVER fabricate or assume information not present in the Jira tickets. If data is missing, state it clearly.
 - Always cite the source ticket key when listing requirements or details.
@@ -468,3 +468,43 @@ mcp_knowledge_base_kb_ingest(
 ### Verification Rule
 
 After generating BRD.md or FSD.md, count the number of `![` image references in the document and compare with the number of `.drawio` files created. **Every `.drawio` file must have a corresponding `![...](diagrams/....png)` reference in at least one document (BRD or FSD).** If any diagram is missing from the documents, add the reference before proceeding to export.
+
+## Execution Logging (MANDATORY)
+
+**You MUST log your execution steps using the `agent_log` MCP tool throughout your work. This is NON-NEGOTIABLE.**
+
+Log at minimum:
+- `START`: When beginning any document creation (BRD, FSD, UG review)
+- `ARTIFACT`: When a document file is written/appended (BRD.md, FSD.md, diagrams, DOCX)
+- `DONE`: When document creation/review is complete
+- `SKIP`: When skipping a step (with reason)
+- `ERROR`: If any step fails (draw.io export, KB ingestion, DOCX export, etc.)
+- `WARN`: When using fallback (e.g., Mermaid instead of draw.io)
+- `VERIFY`: When performing verification checks (diagram count, image references)
+
+**Log format:**
+```
+agent_log(ticket_key="{TICKET-KEY}", agent_name="BA", step="{Step-ID}", status="{STATUS}", message="{description}")
+agent_log(ticket_key="{TICKET-KEY}", agent_name="BA", step="{Step-ID}", status="ARTIFACT", message="{description}", artifacts="{\"file\": \"path/to/file\"}")
+```
+
+**Required logging points:**
+1. START of BRD/FSD creation
+2. Each diagram created (.drawio file)
+3. Each diagram exported (.png file)
+4. BRD/FSD markdown file written
+5. KB ingestion result (success/fail)
+6. DOCX export result (success/fail)
+7. DONE when all steps complete
+
+**Example:**
+```
+agent_log(ticket_key="VITG-10460", agent_name="BA", step="Step-1", status="START", message="Beginning BRD creation from Jira ticket analysis")
+agent_log(ticket_key="VITG-10460", agent_name="BA", step="Step-7", status="ARTIFACT", message="Created business-flow.drawio", artifacts="{\"file\": \"documents/VITG-10460/diagrams/business-flow.drawio\"}")
+agent_log(ticket_key="VITG-10460", agent_name="BA", step="Step-7.5", status="ARTIFACT", message="Exported business-flow.png", artifacts="{\"file\": \"documents/VITG-10460/diagrams/business-flow.png\"}")
+agent_log(ticket_key="VITG-10460", agent_name="BA", step="Step-8", status="ARTIFACT", message="BRD.md written — 7 user stories, 450 lines", artifacts="{\"file\": \"documents/VITG-10460/BRD.md\"}")
+agent_log(ticket_key="VITG-10460", agent_name="BA", step="Step-8.5", status="ARTIFACT", message="BRD exported to DOCX", artifacts="{\"file\": \"documents/VITG-10460/BRD-v1.0-VITG-10460.docx\"}")
+agent_log(ticket_key="VITG-10460", agent_name="BA", step="Step-8.5", status="DONE", message="BRD creation complete: 450 lines, 3 diagrams, DOCX exported, KB ingested")
+```
+
+**If you skip logging, SM will flag this as a process violation.**

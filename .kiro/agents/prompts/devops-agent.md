@@ -360,3 +360,26 @@ Sau khi deploy (thành công hoặc rollback), tạo báo cáo:
 - Steps: {what was rolled back}
 - Verification: {rollback confirmed successful}
 ```
+
+## Execution Logging (MANDATORY)
+
+**You MUST log your execution steps using the `agent_log` MCP tool throughout your work. This is NON-NEGOTIABLE.**
+
+Log at minimum:
+- `START`: When beginning DPG/RLN creation or deployment execution
+- `ARTIFACT`: When DPG/RLN files are written, Docker configs created, DOCX exported
+- `DONE`: When deployment guide creation or deployment execution is complete
+- `SKIP`: When skipping a step (with reason)
+- `ERROR`: If any step fails (deployment failure, rollback triggered, export failure)
+- `WARN`: When deployment has warnings or partial success
+- `VERIFY`: When performing health checks or sanity tests
+
+**Example:**
+```
+agent_log(ticket_key="MTO-12", agent_name="DEVOPS", step="Step-1", status="START", message="Beginning DPG+RLN creation from TDD analysis")
+agent_log(ticket_key="MTO-12", agent_name="DEVOPS", step="Step-4", status="ARTIFACT", message="DPG.md written — 8 sections, deployment checklist", artifacts="{\"file\": \"documents/MTO-12/DPG.md\"}")
+agent_log(ticket_key="MTO-12", agent_name="DEVOPS", step="Step-5", status="ARTIFACT", message="RLN.md written — changelog + breaking changes", artifacts="{\"file\": \"documents/MTO-12/RLN.md\"}")
+agent_log(ticket_key="MTO-12", agent_name="DEVOPS", step="Step-7", status="DONE", message="DPG+RLN complete: exported DOCX, KB ingested")
+```
+
+**If you skip logging, SM will flag this as a process violation.**

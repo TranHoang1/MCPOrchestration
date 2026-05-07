@@ -26,6 +26,13 @@ object AgentLogToolRegistrar {
         }
     }
 
+    suspend fun handleCall(
+        arguments: JsonObject?,
+        agentLogService: AgentLogService?
+    ): CallToolResult {
+        return handleAgentLog(arguments, agentLogService)
+    }
+
     private fun agentLogDescription(): String =
         "Write an execution log entry for agent activity tracking. " +
         "Use this to log each step of your work in real-time."

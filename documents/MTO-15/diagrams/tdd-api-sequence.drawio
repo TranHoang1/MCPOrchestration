@@ -1,0 +1,99 @@
+<mxGraphModel adaptiveColors="auto">
+  <root>
+    <mxCell id="0"/>
+    <mxCell id="1" parent="0"/>
+    <!-- Title -->
+    <mxCell id="title" value="&lt;b&gt;MTO-15 — Sync State Transition Sequence&lt;/b&gt;" style="text;html=1;align=center;fontSize=14;fontStyle=1;" vertex="1" parent="1">
+      <mxGeometry x="150" y="10" width="400" height="30" as="geometry"/>
+    </mxCell>
+    <!-- Lifelines -->
+    <mxCell id="ll_sched" value="Sync Job Scheduler" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=0;collapsible=0;recursiveResize=0;outlineConnect=0;fillColor=#e1f5fe;strokeColor=#0288d1;size=40;fontSize=10;" vertex="1" parent="1">
+      <mxGeometry x="80" y="50" width="120" height="500" as="geometry"/>
+    </mxCell>
+    <mxCell id="ll_ssm" value="SyncStateManager" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=0;collapsible=0;recursiveResize=0;outlineConnect=0;fillColor=#e8f5e9;strokeColor=#388e3c;size=40;fontSize=10;" vertex="1" parent="1">
+      <mxGeometry x="280" y="50" width="120" height="500" as="geometry"/>
+    </mxCell>
+    <mxCell id="ll_db" value="PostgreSQL" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=0;collapsible=0;recursiveResize=0;outlineConnect=0;fillColor=#f3e5f5;strokeColor=#7b1fa2;size=40;fontSize=10;" vertex="1" parent="1">
+      <mxGeometry x="480" y="50" width="120" height="500" as="geometry"/>
+    </mxCell>
+    <!-- Messages -->
+    <mxCell id="m1" value="1: getOrCreate(&quot;MTO&quot;)" style="html=1;endSize=6;startSize=6;fontSize=10;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="140" y="120" as="sourcePoint"/>
+        <mxPoint x="340" y="120" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="m2" value="2: SELECT * FROM jira_sync_state WHERE project_key=?" style="html=1;endSize=6;startSize=6;fontSize=9;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="340" y="145" as="sourcePoint"/>
+        <mxPoint x="540" y="145" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="m3" value="3: null (not found)" style="html=1;endSize=6;startSize=6;dashed=1;fontSize=9;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="540" y="170" as="sourcePoint"/>
+        <mxPoint x="340" y="170" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="m4" value="4: INSERT INTO jira_sync_state (IDLE)" style="html=1;endSize=6;startSize=6;fontSize=9;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="340" y="195" as="sourcePoint"/>
+        <mxPoint x="540" y="195" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="m5" value="5: SyncState(IDLE, offset=0)" style="html=1;endSize=6;startSize=6;dashed=1;fontSize=9;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="340" y="225" as="sourcePoint"/>
+        <mxPoint x="140" y="225" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="m6" value="6: markRunning(&quot;MTO&quot;)" style="html=1;endSize=6;startSize=6;fontSize=10;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="140" y="260" as="sourcePoint"/>
+        <mxPoint x="340" y="260" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="m7" value="7: UPDATE SET status='RUNNING' WHERE status IN ('IDLE','PAUSED','FAILED')" style="html=1;endSize=6;startSize=6;fontSize=9;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="340" y="285" as="sourcePoint"/>
+        <mxPoint x="540" y="285" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="m8" value="8: 1 row affected" style="html=1;endSize=6;startSize=6;dashed=1;fontSize=9;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="540" y="310" as="sourcePoint"/>
+        <mxPoint x="340" y="310" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="m9" value="9: updateProgress(&quot;MTO&quot;, 50, 25)" style="html=1;endSize=6;startSize=6;fontSize=10;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="140" y="350" as="sourcePoint"/>
+        <mxPoint x="340" y="350" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="m10" value="10: UPDATE SET last_offset=50, synced_issues=25 WHERE status='RUNNING'" style="html=1;endSize=6;startSize=6;fontSize=9;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="340" y="375" as="sourcePoint"/>
+        <mxPoint x="540" y="375" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="m11" value="11: markCompleted(&quot;MTO&quot;)" style="html=1;endSize=6;startSize=6;fontSize=10;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="140" y="420" as="sourcePoint"/>
+        <mxPoint x="340" y="420" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="m12" value="12: UPDATE SET status='COMPLETED', last_sync_at=NOW()" style="html=1;endSize=6;startSize=6;fontSize=9;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="340" y="445" as="sourcePoint"/>
+        <mxPoint x="540" y="445" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="m13" value="13: success" style="html=1;endSize=6;startSize=6;dashed=1;fontSize=9;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="540" y="470" as="sourcePoint"/>
+        <mxPoint x="340" y="470" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+  </root>
+</mxGraphModel>

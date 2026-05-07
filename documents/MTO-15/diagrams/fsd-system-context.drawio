@@ -1,0 +1,57 @@
+<mxGraphModel adaptiveColors="auto">
+  <root>
+    <mxCell id="0"/>
+    <mxCell id="1" parent="0"/>
+    <!-- Title -->
+    <mxCell id="title" value="&lt;b&gt;System Context — MTO-15: Database Schema &amp; Sync State Management&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;fontSize=13;fontStyle=1;" vertex="1" parent="1">
+      <mxGeometry x="200" y="10" width="500" height="30" as="geometry"/>
+    </mxCell>
+    <!-- External Actor: Sync Job Scheduler -->
+    <mxCell id="scheduler" value="&lt;b&gt;Sync Job Scheduler&lt;/b&gt;&lt;br&gt;(MTO-14 future story)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff3e0;strokeColor=#f57c00;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="340" y="60" width="200" height="60" as="geometry"/>
+    </mxCell>
+    <!-- Main Module: SyncStateManager -->
+    <mxCell id="ssm" value="&lt;b&gt;SyncStateManager&lt;/b&gt;&lt;br&gt;(This Module — MTO-15)&lt;br&gt;State Machine + CRUD" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1f5fe;strokeColor=#0288d1;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="320" y="220" width="240" height="80" as="geometry"/>
+    </mxCell>
+    <!-- Infrastructure: PostgreSQL -->
+    <mxCell id="postgres" value="&lt;b&gt;PostgreSQL&lt;/b&gt;&lt;br&gt;4 tables: sync_state,&lt;br&gt;ticket_cache, ticket_graph,&lt;br&gt;attachment_queue" style="shape=cylinder3;whiteSpace=wrap;html=1;fillColor=#f3e5f5;strokeColor=#7b1fa2;fontSize=11;size=12;" vertex="1" parent="1">
+      <mxGeometry x="360" y="420" width="160" height="100" as="geometry"/>
+    </mxCell>
+    <!-- Infrastructure: HikariCP -->
+    <mxCell id="hikari" value="&lt;b&gt;HikariCP&lt;/b&gt;&lt;br&gt;Connection Pool" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="100" y="340" width="140" height="60" as="geometry"/>
+    </mxCell>
+    <!-- Framework: Koin DI -->
+    <mxCell id="koin" value="&lt;b&gt;Koin DI&lt;/b&gt;&lt;br&gt;Service Registration" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="640" y="340" width="140" height="60" as="geometry"/>
+    </mxCell>
+    <!-- Downstream: KB Ingestion -->
+    <mxCell id="kb" value="&lt;b&gt;KB Ingestion&lt;/b&gt;&lt;br&gt;(Future Story)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8f5e9;strokeColor=#388e3c;fontSize=11;dashed=1;" vertex="1" parent="1">
+      <mxGeometry x="60" y="180" width="160" height="60" as="geometry"/>
+    </mxCell>
+    <!-- Downstream: Attachment Processor -->
+    <mxCell id="attproc" value="&lt;b&gt;Attachment Processor&lt;/b&gt;&lt;br&gt;(Future Story)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8f5e9;strokeColor=#388e3c;fontSize=11;dashed=1;" vertex="1" parent="1">
+      <mxGeometry x="660" y="180" width="160" height="60" as="geometry"/>
+    </mxCell>
+    <!-- Edges -->
+    <mxCell id="e1" value="getOrCreate()&lt;br&gt;markRunning()&lt;br&gt;updateProgress()" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;fontSize=10;" edge="1" source="scheduler" target="ssm" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e2" value="SQL (JDBC)" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;fontSize=10;" edge="1" source="ssm" target="postgres" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e3" value="provides connections" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;fontSize=10;dashed=1;" edge="1" source="hikari" target="ssm" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e4" value="registers" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;fontSize=10;dashed=1;" edge="1" source="koin" target="ssm" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e5" value="reads kb_ingested flag" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;fontSize=10;dashed=1;" edge="1" source="kb" target="ssm" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e6" value="polls queue" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;fontSize=10;dashed=1;" edge="1" source="attproc" target="ssm" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+  </root>
+</mxGraphModel>

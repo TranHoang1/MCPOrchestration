@@ -661,3 +661,27 @@ After manual execution, update `TEST-REPORT-{TICKET-KEY}.csv`:
 - Error messages in expected results must match FSD error codes (NG-xxx).
 - Non-functional test cases must have measurable acceptance criteria (e.g., "response time ≤ 5 seconds").
 - RTM must show 100% coverage — no requirement left untested.
+
+## Execution Logging (MANDATORY)
+
+**You MUST log your execution steps using the `agent_log` MCP tool throughout your work. This is NON-NEGOTIABLE.**
+
+Log at minimum:
+- `START`: When beginning STP/STC creation or test execution
+- `ARTIFACT`: When STP/STC files are written, test data CSVs created, DOCX/XLSX exported
+- `DONE`: When test planning or execution is complete
+- `SKIP`: When skipping a step (with reason)
+- `ERROR`: If any step fails (export, KB ingestion, test execution failure, etc.)
+- `WARN`: When test coverage is incomplete or assumptions made
+- `VERIFY`: When performing RTM verification or test result validation
+
+**Example:**
+```
+agent_log(ticket_key="MTO-12", agent_name="QA", step="Step-1", status="START", message="Beginning STP+STC creation from FSD/TDD analysis")
+agent_log(ticket_key="MTO-12", agent_name="QA", step="Step-4", status="ARTIFACT", message="STP.md written — 5 test levels, 45 test cases planned", artifacts="{\"file\": \"documents/MTO-12/STP.md\"}")
+agent_log(ticket_key="MTO-12", agent_name="QA", step="Step-5", status="ARTIFACT", message="STC.md written — 45 test cases with steps", artifacts="{\"file\": \"documents/MTO-12/STC.md\"}")
+agent_log(ticket_key="MTO-12", agent_name="QA", step="Step-7", status="ARTIFACT", message="Exported STP to DOCX, STC to XLSX", artifacts="{\"files\": [\"documents/MTO-12/STP-v1.0-MTO-12.docx\", \"documents/MTO-12/STC-v1.0-MTO-12.xlsx\"]}")
+agent_log(ticket_key="MTO-12", agent_name="QA", step="Step-8", status="DONE", message="Test planning complete: 45 cases, RTM 100% coverage, exported + KB ingested")
+```
+
+**If you skip logging, SM will flag this as a process violation.**

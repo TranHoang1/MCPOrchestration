@@ -23,6 +23,9 @@ class FileProxyDetector {
         serverName: String,
         inputSchema: JsonObject
     ): List<DetectionResult> {
+        // Skip wrapping for tools with short content (e.g., comment tools)
+        if (isExcludedTool(toolName)) return emptyList()
+
         val cacheKey = "$serverName::$toolName::INPUT"
         detectionCache[cacheKey]?.let { return it }
 
@@ -151,7 +154,17 @@ class FileProxyDetector {
         }
     }
 
+    private fun isExcludedTool(toolName: String): Boolean {
+        val lower = toolName.lowercase()
+        return EXCLUDED_TOOL_PATTERNS.any { lower.contains(it) }
+    }
+
     companion object {
+        /** Tool name patterns that should NOT be wrapped (content is typically short). */
+        private val EXCLUDED_TOOL_PATTERNS = listOf(
+            "comment"
+        )
+
         private val FILE_PARAM_NAMES = setOf(
             "content", "file_content", "data", "file_data",
             "base64", "base64_content", "file_base64",

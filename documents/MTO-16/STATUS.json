@@ -1,0 +1,26 @@
+{
+  "ticket": "MTO-16",
+  "currentPhase": "done",
+  "phases": {
+    "requirements": { "status": "done", "file": "BRD.md", "version": 1, "completedAt": "2025-07-14T10:00:00Z" },
+    "specification": { "status": "done", "file": "FSD.md", "version": 1, "completedAt": "2025-07-14T15:06:00Z" },
+    "design": { "status": "done", "file": "TDD.md", "version": 1, "completedAt": "2025-07-14T16:05:00Z" },
+    "feedback_loop": { "status": "not_started", "iterations": 0, "maxIterations": 5 },
+    "test_planning": { "status": "done", "file": "STP.md", "version": 1, "completedAt": "2025-07-14T18:10:00Z" },
+    "implementation": { "status": "done", "completedAt": "2025-07-15T10:30:00Z" },
+    "testing": { "status": "done", "file": "TEST-REPORT-MTO-16.md", "version": 1, "completedAt": "2025-07-15T10:45:00Z" },
+    "user_guide": { "status": "done", "file": "UG.md", "version": 1, "completedAt": "2025-07-15T11:00:00Z" },
+    "deployment": { "status": "done", "file": "DPG.md", "version": 1, "completedAt": "2025-07-15T12:00:00Z" }
+  },
+  "jiraStatus": "Done",
+  "jiraTransitions": [
+    { "from": "To Do", "to": "Docs Review", "at": "2025-07-15T10:02:15Z" },
+    { "from": "Docs Review", "to": "In Progress", "at": "2025-07-15T10:02:36Z" },
+    { "from": "In Progress", "to": "In Review", "at": "2025-07-15T10:02:55Z" },
+    { "from": "In Review", "to": "QA Test", "at": "2025-07-15T10:03:16Z" },
+    { "from": "QA Test", "to": "UAT", "at": "2025-07-15T10:03:35Z" },
+    { "from": "UAT", "to": "Ready for product", "at": "2025-07-15T10:03:54Z" },
+    { "from": "Ready for product", "to": "Done", "at": "2025-07-15T10:04:15Z" }
+  ],
+  "lastUpdated": "2025-07-15T12:00:00Z"
+}

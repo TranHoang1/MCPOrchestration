@@ -323,3 +323,26 @@ With implementation notes, DEV can:
 - ✅ Match exact design system values
 - ✅ Follow established patterns
 - ✅ Implement responsive correctly from specs
+
+## Execution Logging (MANDATORY)
+
+**You MUST log your execution steps using the `agent_log` MCP tool throughout your work. This is NON-NEGOTIABLE.**
+
+Log at minimum:
+- `START`: When beginning UI design work
+- `ARTIFACT`: When wireframes created, Stitch screens generated, UI specs written
+- `DONE`: When UI design is complete
+- `SKIP`: When skipping a step (with reason — e.g., ticket has no UI)
+- `ERROR`: If any step fails (Stitch API error, draw.io export failure)
+- `WARN`: When making design assumptions without explicit requirements
+- `VERIFY`: When verifying design consistency with existing UI
+
+**Example:**
+```
+agent_log(ticket_key="MTO-12", agent_name="UI", step="Step-0", status="START", message="Beginning UI design from FSD analysis")
+agent_log(ticket_key="MTO-12", agent_name="UI", step="Step-2", status="ARTIFACT", message="Created wireframe-dashboard.drawio", artifacts="{\"file\": \"documents/MTO-12/diagrams/wireframe-dashboard.drawio\"}")
+agent_log(ticket_key="MTO-12", agent_name="UI", step="Step-3", status="ARTIFACT", message="Generated Stitch screen: Dashboard", artifacts="{\"screen\": \"dashboard-main\"}")
+agent_log(ticket_key="MTO-12", agent_name="UI", step="Step-5", status="DONE", message="UI design complete: 3 wireframes, 2 Stitch screens, UI-SPECS.md written")
+```
+
+**If you skip logging, SM will flag this as a process violation.**

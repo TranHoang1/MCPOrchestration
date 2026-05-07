@@ -208,7 +208,7 @@ function processTicketAnalysis(ticket: Ticket): AnalysisResult {
 - Tables for structured data (API contracts, field specs, data mappings)
 - Numbered lists for sequential processes and use case steps
 - Code blocks for API schemas, pseudocode, and diagrams
-- Mermaid or draw.io XML for visual representations
+- Draw.io XML for visual representations (NEVER use Mermaid — draw.io is the ONLY accepted format)
 
 ---
 
@@ -236,3 +236,25 @@ Before delivering the FSD, verify:
    - `tags`: `fsd, {TICKET-KEY}, {PROJECT-KEY}, specification, sdlc`
 2. If ingestion fails, log a warning but continue — the file-based FSD is the primary artifact.
 3. Report: "📚 FSD ingested into Knowledge Base for cross-agent access."
+
+## Execution Logging (MANDATORY)
+
+**You MUST log your execution steps using the `agent_log` MCP tool throughout your work. This is NON-NEGOTIABLE.**
+
+Log at minimum:
+- `START`: When beginning FSD technical enrichment
+- `ARTIFACT`: When FSD file is written/appended, diagrams created
+- `DONE`: When enrichment is complete
+- `SKIP`: When skipping a step (with reason)
+- `ERROR`: If any step fails (draw.io export, KB ingestion, etc.)
+- `WARN`: When using fallback approaches or making assumptions
+- `VERIFY`: When performing verification checks
+
+**Example:**
+```
+agent_log(ticket_key="MTO-13", agent_name="TA", step="FSD-Enrich", status="START", message="Beginning FSD technical enrichment")
+agent_log(ticket_key="MTO-13", agent_name="TA", step="FSD-Enrich", status="ARTIFACT", message="Appended sections 6-11", artifacts="{\"file\": \"documents/MTO-13/FSD.md\"}")
+agent_log(ticket_key="MTO-13", agent_name="TA", step="FSD-Enrich", status="DONE", message="FSD enrichment complete: 3372 lines, 143KB")
+```
+
+**If you skip logging, SM will flag this as a process violation.**

@@ -17,6 +17,10 @@ class BridgeToolPromoter(private val httpClient: HttpStreamableClient) {
     fun registerMetaTools(server: Server) {
         registerFindTools(server)
         registerExecuteDynamicTool(server)
+        registerToggleTool(server)
+        registerResetTools(server)
+        registerManageAutoApprove(server)
+        registerAgentLog(server)
     }
 
     private fun registerFindTools(server: Server) {
@@ -71,6 +75,57 @@ class BridgeToolPromoter(private val httpClient: HttpStreamableClient) {
         }
     }
 
+    private fun registerToggleTool(server: Server) {
+        server.addTool(
+            name = "toggle_tool",
+            description = "Enable or disable a specific tool or an entire server for the current session.",
+            inputSchema = toggleToolSchema()
+        ) { request ->
+            proxyToOrchestrator("toggle_tool", request.arguments)
+        }
+    }
+
+    private fun registerResetTools(server: Server) {
+        server.addTool(
+            name = "reset_tools",
+            description = "Reset all tool/server toggle states to their default enabled state for the session.",
+            inputSchema = resetToolsSchema()
+        ) { request ->
+            proxyToOrchestrator("reset_tools", request.arguments)
+        }
+    }
+
+    private fun registerManageAutoApprove(server: Server) {
+        server.addTool(
+            name = "manage_auto_approve",
+            description = "Add or remove tools from the auto-approve list (persists across restarts).",
+            inputSchema = manageAutoApproveSchema()
+        ) { request ->
+            proxyToOrchestrator("manage_auto_approve", request.arguments)
+        }
+    }
+
+    private fun registerAgentLog(server: Server) {
+        server.addTool(
+            name = "agent_log",
+            description = "Write an execution log entry for agent activity tracking.",
+            inputSchema = agentLogSchema()
+        ) { request ->
+            proxyToOrchestrator("agent_log", request.arguments)
+        }
+    }
+
+    private suspend fun proxyToOrchestrator(toolName: String, args: JsonObject?): CallToolResult {
+        return try {
+            val params = args ?: buildJsonObject {}
+            val response = httpClient.sendRequest(toolName, params)
+            val result = response["result"]?.toString() ?: "{}"
+            CallToolResult(content = listOf(TextContent(text = result)))
+        } catch (e: Exception) {
+            errorResult("$toolName failed: ${e.message}")
+        }
+    }
+
     private fun errorResult(message: String): CallToolResult {
         return CallToolResult(content = listOf(TextContent(text = message)), isError = true)
     }
@@ -100,4 +155,79 @@ private fun executeDynamicToolSchema(): ToolSchema = ToolSchema(
         }
     },
     required = listOf("tool_name")
+)
+
+private fun toggleToolSchema(): ToolSchema = ToolSchema(
+    properties = buildJsonObject {
+        putJsonObject("tool_name") {
+            put("type", "string")
+            put("description", "Name of the tool to toggle")
+        }
+        putJsonObject("server_name") {
+            put("type", "string")
+            put("description", "Name of the server to toggle (disables all its tools)")
+        }
+        putJsonObject("enabled") {
+            put("type", "boolean")
+            put("description", "Whether to enable or disable")
+        }
+    },
+    required = listOf("enabled")
+)
+
+private fun resetToolsSchema(): ToolSchema = ToolSchema(
+    properties = buildJsonObject {
+        putJsonObject("server_name") {
+            put("type", "string")
+            put("description", "Optional. If provided, only resets tools for this server.")
+        }
+    }
+)
+
+private fun manageAutoApproveSchema(): ToolSchema = ToolSchema(
+    properties = buildJsonObject {
+        putJsonObject("tool_name") {
+            put("type", "string")
+            put("description", "Name of the tool to update")
+        }
+        putJsonObject("server_name") {
+            put("type", "string")
+            put("description", "Name of the server (if updating all tools of a server)")
+        }
+        putJsonObject("auto_approve") {
+            put("type", "boolean")
+            put("description", "Whether to add or remove from auto-approve list")
+        }
+    },
+    required = listOf("auto_approve")
+)
+
+private fun agentLogSchema(): ToolSchema = ToolSchema(
+    properties = buildJsonObject {
+        putJsonObject("ticket_key") {
+            put("type", "string")
+            put("description", "Jira ticket key (e.g. MTO-12)")
+        }
+        putJsonObject("agent_name") {
+            put("type", "string")
+            put("description", "Agent: SM, BA, TA, SA, QA, DEV, DEVOPS")
+        }
+        putJsonObject("step") {
+            put("type", "string")
+            put("description", "Step ID (e.g. Step-1, Self-Check)")
+        }
+        putJsonObject("status") {
+            put("type", "string")
+            put("description", "START|DONE|ARTIFACT|SKIP|ERROR|WARN|VERIFY")
+        }
+        putJsonObject("message") {
+            put("type", "string")
+            put("description", "What happened")
+        }
+        putJsonObject("artifacts") {
+            put("type", "string")
+            put("description", "Optional JSON of artifact paths")
+        }
+    },
+    required = listOf("ticket_key", "agent_name", "step", "status", "message")
 )

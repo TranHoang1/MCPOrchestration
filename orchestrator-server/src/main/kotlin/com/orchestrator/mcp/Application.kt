@@ -5,6 +5,7 @@ import com.orchestrator.mcp.di.appModule
 import com.orchestrator.mcp.fileproxy.FileProxyCleanupService
 import com.orchestrator.mcp.fileproxy.FileProxyMigration
 import com.orchestrator.mcp.fileproxy.FileProxyService
+import com.orchestrator.mcp.sync.JiraSyncDatabaseInitializer
 import com.orchestrator.mcp.protocol.McpServerFactory
 import com.orchestrator.mcp.client.upstream.HealthMonitor
 import com.orchestrator.mcp.client.upstream.UpstreamServerManager
@@ -65,12 +66,20 @@ fun realMain(args: Array<String>) = runBlocking {
     val fileProxyMigration = koin.get<FileProxyMigration>()
     val fileProxyCleanup = koin.get<FileProxyCleanupService>()
     val fileProxySessionId = koin.get<UUID>(named("fileProxySessionId"))
+    val jiraSyncDbInitializer = koin.get<JiraSyncDatabaseInitializer>()
 
     // Initialize DB schema
     try {
         dbInitializer.initialize()
     } catch (e: Exception) {
         logger.error("Critical: Database schema initialization failed: ${e.message}")
+    }
+
+    // Initialize Jira Sync DB schema
+    try {
+        jiraSyncDbInitializer.initialize()
+    } catch (e: Exception) {
+        logger.error("Jira sync schema initialization failed: ${e.message}")
     }
 
     // Initialize File Proxy DB schema
@@ -164,11 +173,8 @@ fun realMain(args: Array<String>) = runBlocking {
                     val result = toolIndexer.indexAll()
                     logger.info("Tool indexing completed: ${result.totalIndexed} tools indexed, ${result.totalFailed} servers failed")
 
-                    // Initialize File Proxy: detect file params and generate wrappers
-                    fileProxyService.initialize(fileProxySessionId)
-
-                    // Start background cleanup job
-                    fileProxyCleanup.startBackgroundCleanup(this)
+                    // File Proxy wrapping disabled in server mode — bridges handle file transfer
+                    logger.info("File Proxy wrapping skipped (server mode)")
                 } catch (e: Exception) {
                     logger.error("Failed to connect or index upstream servers: ${e.message}")
                 }

@@ -13,6 +13,7 @@ import { BridgeConfig } from './bridge-config.js';
 import { HttpStreamableClient } from './http-streamable-client.js';
 import { ReconnectionManager } from './reconnection-manager.js';
 import { handleStreamWrite, StreamWriteArgs } from './local-stream-write.js';
+import { handleEmbedImages, EmbedImagesArgs } from './local-embed-images.js';
 
 export class BridgeServer {
   private readonly httpClient: HttpStreamableClient;
@@ -102,6 +103,62 @@ export class BridgeServer {
       },
     ];
 
+    tools.push(
+      {
+        name: 'toggle_tool',
+        description: 'Enable or disable a specific tool or an entire server for the current session.',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            tool_name: { type: 'string', description: 'Name of the tool to toggle' },
+            server_name: { type: 'string', description: 'Name of the server to toggle (disables all its tools)' },
+            enabled: { type: 'boolean', description: 'Whether to enable or disable' },
+          },
+          required: ['enabled'],
+        },
+      },
+      {
+        name: 'reset_tools',
+        description: 'Reset all tool/server toggle states to their default enabled state for the session.',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            server_name: { type: 'string', description: 'Optional. If provided, only resets tools for this server.' },
+          },
+          required: [],
+        },
+      },
+      {
+        name: 'manage_auto_approve',
+        description: 'Add or remove tools from the auto-approve list (persists across restarts).',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            tool_name: { type: 'string', description: 'Name of the tool to update' },
+            server_name: { type: 'string', description: 'Name of the server (if updating all tools of a server)' },
+            auto_approve: { type: 'boolean', description: 'Whether to add or remove from auto-approve list' },
+          },
+          required: ['auto_approve'],
+        },
+      },
+      {
+        name: 'agent_log',
+        description: 'Write an execution log entry for agent activity tracking.',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            ticket_key: { type: 'string', description: 'Jira ticket key (e.g. MTO-12)' },
+            agent_name: { type: 'string', description: 'Agent: SM, BA, TA, SA, QA, DEV, DEVOPS' },
+            step: { type: 'string', description: 'Step ID (e.g. Step-1, Self-Check)' },
+            status: { type: 'string', description: 'START|DONE|ARTIFACT|SKIP|ERROR|WARN|VERIFY' },
+            message: { type: 'string', description: 'What happened' },
+            artifacts: { type: 'string', description: 'Optional JSON of artifact paths' },
+          },
+          required: ['ticket_key', 'agent_name', 'step', 'status', 'message'],
+        },
+      },
+    );
+
     if (this.config.enableLocalStreamWrite) {
       tools.push({
         name: 'stream_write_file',
@@ -117,6 +174,18 @@ export class BridgeServer {
           required: ['file_path', 'content'],
         },
       });
+
+      tools.push({
+        name: 'embed_images',
+        description: 'Read a markdown file and embed all local image references as base64 data URIs. Use before export_docx to include images in the document.',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            file_path: { type: 'string', description: 'Absolute path to the markdown file' },
+          },
+          required: ['file_path'],
+        },
+      });
     }
 
     return tools;
@@ -128,8 +197,18 @@ export class BridgeServer {
         return this.handleFindTools(args);
       case 'execute_dynamic_tool':
         return this.handleExecuteDynamicTool(args);
+      case 'toggle_tool':
+        return this.handleProxyToOrchestrator('toggle_tool', args);
+      case 'reset_tools':
+        return this.handleProxyToOrchestrator('reset_tools', args);
+      case 'manage_auto_approve':
+        return this.handleProxyToOrchestrator('manage_auto_approve', args);
+      case 'agent_log':
+        return this.handleProxyToOrchestrator('agent_log', args);
       case 'stream_write_file':
         return this.handleLocalStreamWrite(args);
+      case 'embed_images':
+        return this.handleLocalEmbedImages(args);
       default:
         return { content: [{ type: 'text' as const, text: `Unknown tool: ${name}` }], isError: true };
     }
@@ -141,9 +220,9 @@ export class BridgeServer {
       return { content: [{ type: 'text' as const, text: "Missing 'query' parameter" }], isError: true };
     }
     try {
-      const response = await this.httpClient.sendRequest('find_tools', { query });
-      const result = JSON.stringify(response.result ?? response);
-      return { content: [{ type: 'text' as const, text: result }] };
+      const response = await this.httpClient.callTool('find_tools', { query });
+      const text = response.content?.[0]?.text ?? '{}';
+      return { content: [{ type: 'text' as const, text }] };
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : String(err);
       return { content: [{ type: 'text' as const, text: `find_tools failed: ${msg}` }], isError: true };
@@ -156,12 +235,12 @@ export class BridgeServer {
       return { content: [{ type: 'text' as const, text: "Missing 'tool_name' parameter" }], isError: true };
     }
     try {
-      const response = await this.httpClient.sendRequest('execute_dynamic_tool', {
+      const response = await this.httpClient.callTool('execute_dynamic_tool', {
         tool_name: toolName,
         arguments: args.arguments ?? {},
       });
-      const result = JSON.stringify(response.result ?? response);
-      return { content: [{ type: 'text' as const, text: result }] };
+      const text = response.content?.[0]?.text ?? '{}';
+      return { content: [{ type: 'text' as const, text }] };
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : String(err);
       return { content: [{ type: 'text' as const, text: `execute_dynamic_tool failed: ${msg}` }], isError: true };
@@ -175,6 +254,32 @@ export class BridgeServer {
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : String(err);
       return { content: [{ type: 'text' as const, text: `stream_write_file failed: ${msg}` }], isError: true };
+    }
+  }
+
+  private handleLocalEmbedImages(args: Record<string, unknown>) {
+    try {
+      const result = handleEmbedImages(args as unknown as EmbedImagesArgs);
+      return { content: [{ type: 'text' as const, text: JSON.stringify({
+        markdown: result.markdown,
+        images_embedded: result.images_embedded,
+        images_failed: result.images_failed,
+        total_size_bytes: result.total_size_bytes,
+      }) }] };
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : String(err);
+      return { content: [{ type: 'text' as const, text: `embed_images failed: ${msg}` }], isError: true };
+    }
+  }
+
+  private async handleProxyToOrchestrator(toolName: string, args: Record<string, unknown>) {
+    try {
+      const response = await this.httpClient.callTool(toolName, args);
+      const text = response.content?.[0]?.text ?? '{}';
+      return { content: [{ type: 'text' as const, text }] };
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : String(err);
+      return { content: [{ type: 'text' as const, text: `${toolName} failed: ${msg}` }], isError: true };
     }
   }
 }

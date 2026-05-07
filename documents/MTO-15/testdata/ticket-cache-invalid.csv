@@ -1,0 +1,16 @@
+ticket_key,project_key,summary,issue_type,status,content_hash,labels,error_expected
+invalid-key,MTO,Test,Story,Open,a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2,null,IllegalArgumentException
+,MTO,Test,Story,Open,a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2,null,IllegalArgumentException
+mto-15,MTO,Test,Story,Open,a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2,null,IllegalArgumentException
+MTO-15,MTO,Test,Story,Open,abc,null,IllegalArgumentException
+MTO-15,MTO,Test,Story,Open,gggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg,null,IllegalArgumentException
+MTO-15,MTO,,Story,Open,a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2,null,IllegalArgumentException
+MTO-15,,Test,Story,Open,a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2,null,IllegalArgumentException
+MTO-15,MTO,Test,,Open,a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2,null,IllegalArgumentException
+MTO-15,MTO,Test,Story,,a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2,null,IllegalArgumentException
+MTO-15,MTO,Test,Story,Open,a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2,not-json,DataIntegrityViolationException
+MTO-15,MTO,Test,Story,Open,a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2,"{""key"":""val""}",DataIntegrityViolationException
+MTO-15,MTO,Test,Story,Open,a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2,"[""valid""]",NoError
+MTO-15,MTO,Test,Story,Open,a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2,"[]",NoError
+MTO-15,MTO,Test,Story,Open,a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2,null,NoError
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA,MTO,Test,Story,Open,a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2,null,IllegalArgumentException

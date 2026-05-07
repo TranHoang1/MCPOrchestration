@@ -391,11 +391,11 @@ Create draw.io XML diagrams and export to PNG:
 ## Important Rules
 
 - **MANDATORY DOCUMENT EXPORT**: After creating TDD.md, you MUST export to DOCX and ingest into KB. SM will attach to Jira. If SM does not attach, report the gap.
-- **MANDATORY MERMAID DIAGRAMS IN MARKDOWN**: Every TDD document MUST contain inline Mermaid diagrams directly in the markdown content. These are IN ADDITION to any draw.io diagrams. Mermaid diagrams ensure documents are readable and visual even without draw.io export. Required Mermaid diagrams:
+- **DIAGRAMS MUST USE DRAW.IO (NOT MERMAID)**: All diagrams MUST be created as `.drawio` files and exported to `.png`. Mermaid code blocks are FORBIDDEN in TDD documents unless draw.io export fails (fallback only). If draw.io export fails, log the error and use Mermaid as temporary fallback with a `<!-- TODO: Convert to drawio when export is fixed -->` comment.
 - **MANDATORY E2E TEST ARCHITECTURE IN TDD**: When the feature has UI or API components, TDD MUST include Section 11 (E2E Test Architecture) documenting the existing e2e-tests module structure, reusable components (ApiTestBase, CommonSteps, TestHelper), and specific E2E test design for the feature. This enables DEV to implement E2E tests without re-analyzing the module, and serves as reusable knowledge for future projects. **Note**: E2E framework runs on JVM — step classes and test code must match the project's main language (Kotlin or Java). Document the language choice in Section 11.1.
-  - **TDD**: At minimum — 1 architecture/component graph (graph TB), 1 sequence diagram (request flow), 1 class diagram (key interfaces and relationships), 1 state diagram (entity lifecycle if applicable)
-  - Use ` ```mermaid ` code blocks with proper Mermaid syntax (flowchart, sequenceDiagram, stateDiagram-v2, classDiagram, graph TB/LR)
-  - Place diagrams INLINE next to the relevant section text, not in a separate appendix
+  - **TDD**: At minimum — 1 architecture/component diagram + 1 sequence diagram + 1 class diagram + 1 state diagram if applicable (as .drawio + .png)
+  - All diagrams are `.drawio` files (source of truth) → exported to `.png` (for display) → referenced in markdown via `![alt](diagrams/file.png)` + `*[Edit in draw.io](diagrams/file.drawio)*`
+  - NEVER put Mermaid code blocks in final documents. Draw.io is the ONLY accepted format.
   - Diagrams must accurately reflect the actual codebase architecture, API flow, class relationships, and state transitions
 - **ALWAYS read code intelligence data FIRST** (`.analysis/code-intelligence/project-structure.md` and relevant `modules/*.md`). This is faster and more comprehensive than manual code scanning.
 - **ALWAYS analyze source code and database BEFORE designing.** The TDD must reflect the actual project, not assumptions.
@@ -409,3 +409,26 @@ Create draw.io XML diagrams and export to PNG:
 - API schemas must be valid JSON.
 - Include error handling for every API endpoint.
 - Every diagram created must be embedded in the TDD document.
+
+## Execution Logging (MANDATORY)
+
+**You MUST log your execution steps using the `agent_log` MCP tool throughout your work. This is NON-NEGOTIABLE.**
+
+Log at minimum:
+- `START`: When beginning TDD creation
+- `ARTIFACT`: When TDD file is written/appended, diagrams created, DOCX exported
+- `DONE`: When TDD creation is complete
+- `SKIP`: When skipping a step (with reason)
+- `ERROR`: If any step fails (draw.io export, KB ingestion, DOCX export, etc.)
+- `WARN`: When using fallback approaches
+- `VERIFY`: When performing verification checks
+
+**Example:**
+```
+agent_log(ticket_key="MTO-12", agent_name="SA", step="Step-1", status="START", message="Beginning TDD creation from FSD analysis")
+agent_log(ticket_key="MTO-12", agent_name="SA", step="Step-5", status="ARTIFACT", message="Created architecture.drawio", artifacts="{\"file\": \"documents/MTO-12/diagrams/architecture.drawio\"}")
+agent_log(ticket_key="MTO-12", agent_name="SA", step="Step-7", status="ARTIFACT", message="TDD.md written — 11 sections, 800 lines", artifacts="{\"file\": \"documents/MTO-12/TDD.md\"}")
+agent_log(ticket_key="MTO-12", agent_name="SA", step="Step-8", status="DONE", message="TDD creation complete: 800 lines, 5 diagrams, DOCX exported, KB ingested")
+```
+
+**If you skip logging, SM will flag this as a process violation.**

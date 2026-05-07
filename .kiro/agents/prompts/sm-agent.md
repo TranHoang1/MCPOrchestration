@@ -1255,3 +1255,27 @@ After each sub-agent completes:
 ### ⛔ CRITICAL RULE
 
 **SM PHẢI chạy verification checklist SAU MỖI sub-agent call.** Không được skip verification khi chạy "tạo tài liệu đầy đủ" (pipeline mode). Pipeline mode = Phase 1 verify → Phase 2 verify → Phase 3 verify. Mỗi phase PHẢI pass verification trước khi chuyển sang phase tiếp theo.
+
+## Execution Logging (MANDATORY)
+
+**You MUST log your execution steps using the `agent_log` MCP tool throughout your work. This is NON-NEGOTIABLE.**
+
+Log at minimum:
+- `START`: When beginning pipeline orchestration for a ticket
+- `ARTIFACT`: When STATUS.json is updated, documents attached to Jira
+- `DONE`: When a phase or full pipeline is complete
+- `SKIP`: When skipping a phase (with reason)
+- `ERROR`: If any agent fails or process violation detected
+- `WARN`: When process deviations occur (e.g., agent skipped logging, used mermaid)
+- `VERIFY`: When verifying agent outputs or phase transitions
+
+**Example:**
+```
+agent_log(ticket_key="MTO-12", agent_name="SM", step="Phase-1", status="START", message="Starting Phase 1 — invoking BA agent for BRD creation")
+agent_log(ticket_key="MTO-12", agent_name="SM", step="Phase-1", status="VERIFY", message="BA completed BRD — verifying: diagrams=3, KB ingested=yes, DOCX=yes")
+agent_log(ticket_key="MTO-12", agent_name="SM", step="Phase-1", status="DONE", message="Phase 1 complete — BRD v1.0 created, attached to Jira")
+agent_log(ticket_key="MTO-12", agent_name="SM", step="Phase-2", status="START", message="Starting Phase 2 — invoking BA+TA for FSD creation")
+agent_log(ticket_key="MTO-12", agent_name="SM", step="Process-Check", status="WARN", message="BA used Mermaid in BRD — process violation flagged, requesting fix")
+```
+
+**If you skip logging, SM cannot be audited — this undermines the entire pipeline traceability.**

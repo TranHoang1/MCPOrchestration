@@ -47,6 +47,8 @@
 
 ## 1. Introduction
 
+> **Scope Boundary:** This TDD specifies HOW to implement the requirements defined in the FSD. It does NOT repeat functional requirements, business rules, use cases, or UI specifications — refer to the FSD for those. This document focuses on: technology choices, architecture decisions, implementation patterns, and deployment concerns.
+
 ### 1.1 Purpose
 
 {Describe the purpose of this TDD — what system/feature is being designed and why.}
@@ -119,6 +121,8 @@
 
 ## 3. API Design
 
+> **Prerequisite:** Functional API contracts (parameters, business errors, data flows) are defined in FSD §3.x.6. This section specifies the technical implementation: headers, authentication mechanism, rate limiting, request/response JSON schemas, HTTP status codes, and error code mapping.
+
 ### 3.1 API Overview
 
 | # | Endpoint | Method | Description | Source |
@@ -190,6 +194,8 @@
 ---
 
 ## 4. Database Design
+
+> **Prerequisite:** Logical data model (entities, relationships, business attributes) is defined in FSD §4. This section specifies the physical implementation: DDL scripts, indexes, migration plans, and query performance patterns.
 
 ### 4.1 Schema Overview
 
@@ -277,6 +283,8 @@ interface {ServiceInterface} {
 
 ## 6. Integration Design
 
+> **Prerequisite:** Business integration requirements (what systems, what data is exchanged, business rules) are defined in FSD §5. This section specifies the technical implementation: protocols, timeouts, retry policies, circuit breakers, and sequence diagrams.
+
 ### 6.1 External System: {System Name}
 
 | Attribute | Value |
@@ -301,6 +309,8 @@ interface {ServiceInterface} {
 ---
 
 ## 7. Security Design
+
+> **Prerequisite:** Business security requirements (roles, permissions, data classification, audit needs) are defined in FSD §7. This section specifies the technical implementation: authentication mechanism, token configuration, encryption algorithms, and input validation rules.
 
 ### 7.1 Authentication
 
@@ -327,6 +337,8 @@ interface {ServiceInterface} {
 ---
 
 ## 8. Performance & Scalability
+
+> **Prerequisite:** Business NFR targets (response time, availability, scalability expectations) are defined in FSD §8. This section specifies how to achieve those targets: caching strategy, connection pooling, and technical performance benchmarks.
 
 ### 8.1 Caching Strategy
 

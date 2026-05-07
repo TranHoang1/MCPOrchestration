@@ -1,6 +1,6 @@
 orchestrator:
   server:
-    port: 8080
+    port: 9180
     transport: stdio
 
   discovery:
@@ -15,19 +15,21 @@ orchestrator:
     max_retries: 1
 
   embedding:
-    provider: openai
-    model: text-embedding-3-small
-    api_key: ${OPENAI_API_KEY}
+    provider: ollama
+    model: nomic-embed-text:latest
+    api_key: "unused"
     dimensions: 768
     cache_enabled: true
     cache_max_size: 100
     cache_ttl_minutes: 5
 
   vector_db:
-    provider: qdrant
+    provider: postgres
     host: localhost
-    port: 6333
-    collection_name: mcp_tools
+    port: 5432
+    collection_name: mcp_db
+    user: postgres
+    password: postgres
 
   health:
     check_interval_seconds: 30
@@ -37,7 +39,7 @@ orchestrator:
   file-proxy:
     enabled: true
     max-size-mb: 50
-    temp-directory: "/tmp/mcp-file-proxy"
+    temp-directory: "./tmp/mcp-file-proxy"
     ttl-minutes: 60
     cleanup-interval-minutes: 15
     shutdown-timeout-seconds: 30

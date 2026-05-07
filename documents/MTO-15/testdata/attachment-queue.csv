@@ -1,0 +1,31 @@
+ticket_key,attachment_id,filename,mime_type,size_bytes,download_url,status,retry_count,error_message
+MTO-15,att-001,screenshot.png,image/png,102400,https://jira.example.com/att/001,PENDING,0,
+MTO-15,att-002,design.pdf,application/pdf,2048000,https://jira.example.com/att/002,PENDING,0,
+MTO-15,att-003,log.txt,text/plain,5120,https://jira.example.com/att/003,DOWNLOADING,0,
+MTO-15,att-004,report.xlsx,application/vnd.ms-excel,1024000,https://jira.example.com/att/004,PROCESSING,0,
+MTO-15,att-005,readme.md,text/markdown,2048,https://jira.example.com/att/005,DONE,0,
+MTO-16,att-006,error.log,text/plain,10240,https://jira.example.com/att/006,FAILED,3,Max retries exceeded
+MTO-16,att-007,config.yml,text/yaml,512,https://jira.example.com/att/007,FAILED,1,Connection timeout
+MTO-17,att-008,diagram.drawio,application/xml,8192,https://jira.example.com/att/008,PENDING,0,
+MTO-17,att-009,video.mp4,video/mp4,52428800,https://jira.example.com/att/009,PENDING,0,
+MTO-18,att-010,archive.zip,application/zip,10485760,https://jira.example.com/att/010,DOWNLOADING,0,
+MTO-18,att-011,notes.txt,text/plain,256,https://jira.example.com/att/011,DONE,0,
+MTO-19,att-012,spec.docx,application/docx,4096000,https://jira.example.com/att/012,PENDING,0,
+MTO-19,att-013,test-data.csv,text/csv,1024,https://jira.example.com/att/013,PROCESSING,0,
+MTO-20,att-014,mockup.fig,application/octet-stream,2048000,https://jira.example.com/att/014,FAILED,2,Server 500
+MTO-20,att-015,api-response.json,application/json,4096,https://jira.example.com/att/015,DONE,0,
+MTO-21,att-016,database.sql,text/sql,16384,https://jira.example.com/att/016,PENDING,0,
+MTO-21,att-017,migration.sql,text/sql,8192,https://jira.example.com/att/017,PENDING,0,
+MTO-22,att-018,coverage.html,text/html,32768,https://jira.example.com/att/018,DONE,0,
+MTO-22,att-019,test-report.xml,application/xml,65536,https://jira.example.com/att/019,DONE,0,
+MTO-23,att-020,build.log,text/plain,131072,https://jira.example.com/att/020,PENDING,0,
+MTO-23,att-021,heap-dump.hprof,application/octet-stream,104857600,https://jira.example.com/att/021,FAILED,1,Disk space exhausted
+MTO-24,att-022,swagger.yaml,text/yaml,16384,https://jira.example.com/att/022,DONE,0,
+MTO-24,att-023,postman.json,application/json,8192,https://jira.example.com/att/023,PENDING,0,
+MTO-25,att-024,wireframe.png,image/png,512000,https://jira.example.com/att/024,PROCESSING,0,
+MTO-25,att-025,user-flow.drawio,application/xml,4096,https://jira.example.com/att/025,PENDING,0,
+MTO-26,att-026,performance.jmx,application/xml,32768,https://jira.example.com/att/026,PENDING,0,
+MTO-26,att-027,results.jtl,text/csv,262144,https://jira.example.com/att/027,DONE,0,
+MTO-27,att-028,dockerfile,text/plain,1024,https://jira.example.com/att/028,DONE,0,
+MTO-27,att-029,docker-compose.yml,text/yaml,2048,https://jira.example.com/att/029,DONE,0,
+MTO-28,att-030,release-notes.md,text/markdown,4096,https://jira.example.com/att/030,PENDING,0,

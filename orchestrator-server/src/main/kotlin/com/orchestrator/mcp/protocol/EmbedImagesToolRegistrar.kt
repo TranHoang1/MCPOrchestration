@@ -35,6 +35,10 @@ object EmbedImagesToolRegistrar {
         }
     }
 
+    suspend fun handleCall(arguments: JsonObject?): CallToolResult {
+        return handleEmbedImages(arguments)
+    }
+
     private suspend fun handleEmbedImages(arguments: JsonObject?): CallToolResult {
         return try {
             val filePath = arguments?.get("file_path")

@@ -339,3 +339,27 @@ If the user requests only a specific part:
 - "Implement service" → Steps 4 + 7 (service tests only)
 - "Implement {feature name}" → Find relevant TDD section and implement that scope
 - "Viết User Guide" / "Tạo UG" → Step 9 only (User Guide)
+
+## Execution Logging (MANDATORY)
+
+**You MUST log your execution steps using the `agent_log` MCP tool throughout your work. This is NON-NEGOTIABLE.**
+
+Log at minimum:
+- `START`: When beginning implementation
+- `ARTIFACT`: When source files are created/modified, tests written, migrations created
+- `DONE`: When implementation is complete and all tests pass
+- `SKIP`: When skipping a step (with reason)
+- `ERROR`: If any step fails (compilation error, test failure, etc.)
+- `WARN`: When making assumptions or using workarounds
+- `VERIFY`: When running tests and verifying results
+
+**Example:**
+```
+agent_log(ticket_key="MTO-12", agent_name="DEV", step="Step-1", status="START", message="Beginning implementation from TDD")
+agent_log(ticket_key="MTO-12", agent_name="DEV", step="Step-3", status="ARTIFACT", message="Created migration V003__create_users.sql", artifacts="{\"file\": \"server/src/main/resources/db/migration/V003__create_users.sql\"}")
+agent_log(ticket_key="MTO-12", agent_name="DEV", step="Step-5", status="ARTIFACT", message="Implemented UserController with 5 endpoints", artifacts="{\"file\": \"server/src/main/kotlin/.../UserController.kt\"}")
+agent_log(ticket_key="MTO-12", agent_name="DEV", step="Step-7", status="VERIFY", message="All tests pass: 23 unit + 8 integration + 5 E2E-API")
+agent_log(ticket_key="MTO-12", agent_name="DEV", step="Step-8", status="DONE", message="Implementation complete: 12 files created, 36 tests pass, code intelligence updated")
+```
+
+**If you skip logging, SM will flag this as a process violation.**

@@ -1,0 +1,60 @@
+<mxGraphModel adaptiveColors="auto">
+  <root>
+    <mxCell id="0"/>
+    <mxCell id="1" parent="0"/>
+    <mxCell id="title" value="&lt;b&gt;MTO-16: Jira REST Client — Component Diagram&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=13;fontStyle=1;" vertex="1" parent="1">
+      <mxGeometry x="180" y="10" width="400" height="30" as="geometry"/>
+    </mxCell>
+    <mxCell id="pkg" value="&lt;b&gt;com.orchestrator.mcp.jira&lt;/b&gt;" style="swimlane;startSize=24;fillColor=#f5f5f5;strokeColor=#666666;html=1;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="40" y="50" width="700" height="420" as="geometry"/>
+    </mxCell>
+    <mxCell id="iface" value="&lt;b&gt;«interface»&lt;/b&gt;&#xa;JiraRestClient" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#e1f5fe;strokeColor=#0288d1;fontSize=11;" vertex="1" parent="pkg">
+      <mxGeometry x="260" y="40" width="160" height="50" as="geometry"/>
+    </mxCell>
+    <mxCell id="impl" value="&lt;b&gt;JiraRestClientImpl&lt;/b&gt;&#xa;searchIssues()&#xa;getIssue()&#xa;getAttachments()&#xa;downloadAttachment()" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#e8f5e9;strokeColor=#388e3c;fontSize=10;" vertex="1" parent="pkg">
+      <mxGeometry x="240" y="120" width="200" height="80" as="geometry"/>
+    </mxCell>
+    <mxCell id="rl_iface" value="&lt;b&gt;«interface»&lt;/b&gt;&#xa;RateLimiter" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#e1f5fe;strokeColor=#0288d1;fontSize=11;" vertex="1" parent="pkg">
+      <mxGeometry x="40" y="230" width="140" height="50" as="geometry"/>
+    </mxCell>
+    <mxCell id="rl_impl" value="&lt;b&gt;TokenBucket&lt;/b&gt;&#xa;&lt;b&gt;RateLimiter&lt;/b&gt;&#xa;acquire()&#xa;pauseUntil()&#xa;isPaused()" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff3e0;strokeColor=#f57c00;fontSize=10;" vertex="1" parent="pkg">
+      <mxGeometry x="30" y="310" width="160" height="80" as="geometry"/>
+    </mxCell>
+    <mxCell id="rh_iface" value="&lt;b&gt;«interface»&lt;/b&gt;&#xa;RetryHandler" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#e1f5fe;strokeColor=#0288d1;fontSize=11;" vertex="1" parent="pkg">
+      <mxGeometry x="260" y="230" width="160" height="50" as="geometry"/>
+    </mxCell>
+    <mxCell id="rh_impl" value="&lt;b&gt;ExponentialBackoff&lt;/b&gt;&#xa;&lt;b&gt;RetryHandler&lt;/b&gt;&#xa;withRetry()&#xa;isRetryable()" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff3e0;strokeColor=#f57c00;fontSize=10;" vertex="1" parent="pkg">
+      <mxGeometry x="250" y="310" width="180" height="80" as="geometry"/>
+    </mxCell>
+    <mxCell id="config_cls" value="&lt;b&gt;JiraClientConfig&lt;/b&gt;&#xa;«data class»&#xa;baseUrl, email, apiToken&#xa;rateLimit, timeoutMs, maxRetries" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=10;" vertex="1" parent="pkg">
+      <mxGeometry x="490" y="120" width="190" height="80" as="geometry"/>
+    </mxCell>
+    <mxCell id="exceptions" value="&lt;b&gt;«sealed class»&lt;/b&gt;&#xa;JiraClientException&#xa;├ JiraAuthException&#xa;├ JiraRateLimitException&#xa;├ JiraNotFoundException&#xa;├ JiraTimeoutException&#xa;├ JiraServerException&#xa;├ JiraValidationException&#xa;└ RetryExhaustedException" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fce4ec;strokeColor=#c62828;fontSize=9;align=left;spacingLeft=5;" vertex="1" parent="pkg">
+      <mxGeometry x="490" y="230" width="190" height="160" as="geometry"/>
+    </mxCell>
+    <mxCell id="koin" value="&lt;b&gt;JiraModule&lt;/b&gt;&#xa;(Koin DI)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1f5fe;strokeColor=#0288d1;fontSize=11;" vertex="1" parent="pkg">
+      <mxGeometry x="40" y="40" width="120" height="50" as="geometry"/>
+    </mxCell>
+    <mxCell id="e_impl" value="implements" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=0;endSize=8;dashed=1;fontSize=10;" edge="1" source="impl" target="iface" parent="pkg">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e_rl" value="implements" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=0;endSize=8;dashed=1;fontSize=10;" edge="1" source="rl_impl" target="rl_iface" parent="pkg">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e_rh" value="implements" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=0;endSize=8;dashed=1;fontSize=10;" edge="1" source="rh_impl" target="rh_iface" parent="pkg">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e_uses_rl" value="uses" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;fontSize=10;" edge="1" source="impl" target="rl_iface" parent="pkg">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e_uses_rh" value="uses" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;fontSize=10;" edge="1" source="impl" target="rh_iface" parent="pkg">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e_uses_cfg" value="reads" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;fontSize=10;" edge="1" source="impl" target="config_cls" parent="pkg">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e_throws" value="throws" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;dashed=1;fontSize=10;" edge="1" source="impl" target="exceptions" parent="pkg">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+  </root>
+</mxGraphModel>

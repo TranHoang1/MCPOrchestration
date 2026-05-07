@@ -1,0 +1,93 @@
+<mxGraphModel adaptiveColors="auto">
+  <root>
+    <mxCell id="0"/>
+    <mxCell id="1" parent="0"/>
+    <!-- Title -->
+    <mxCell id="title" value="&lt;b&gt;MTO-15 — Sync State Management Architecture&lt;/b&gt;" style="text;html=1;align=center;fontSize=14;fontStyle=1;" vertex="1" parent="1">
+      <mxGeometry x="200" y="10" width="400" height="30" as="geometry"/>
+    </mxCell>
+    <!-- Consumer Layer -->
+    <mxCell id="layer_consumer" value="Consumer Layer" style="swimlane;startSize=24;fillColor=#f5f5f5;strokeColor=#666666;html=1;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="60" y="50" width="680" height="100" as="geometry"/>
+    </mxCell>
+    <mxCell id="scheduler" value="&lt;b&gt;Sync Job Scheduler&lt;/b&gt;&lt;br&gt;(Future MTO-14 story)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff3e0;strokeColor=#f57c00;fontSize=11;" vertex="1" parent="layer_consumer">
+      <mxGeometry x="20" y="35" width="180" height="55" as="geometry"/>
+    </mxCell>
+    <mxCell id="processor" value="&lt;b&gt;Attachment Processor&lt;/b&gt;&lt;br&gt;(Future story)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff3e0;strokeColor=#f57c00;fontSize=11;" vertex="1" parent="layer_consumer">
+      <mxGeometry x="250" y="35" width="180" height="55" as="geometry"/>
+    </mxCell>
+    <mxCell id="kb_service" value="&lt;b&gt;KB Ingestion Service&lt;/b&gt;&lt;br&gt;(Future story)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff3e0;strokeColor=#f57c00;fontSize=11;" vertex="1" parent="layer_consumer">
+      <mxGeometry x="480" y="35" width="180" height="55" as="geometry"/>
+    </mxCell>
+    <!-- Interface Layer -->
+    <mxCell id="layer_interface" value="Interface Layer (sync/)" style="swimlane;startSize=24;fillColor=#e1f5fe;strokeColor=#0288d1;html=1;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="60" y="170" width="680" height="100" as="geometry"/>
+    </mxCell>
+    <mxCell id="ssm_iface" value="&lt;b&gt;SyncStateManager&lt;/b&gt;&lt;br&gt;(interface)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1f5fe;strokeColor=#0288d1;fontSize=11;" vertex="1" parent="layer_interface">
+      <mxGeometry x="20" y="35" width="160" height="55" as="geometry"/>
+    </mxCell>
+    <mxCell id="tcr_iface" value="&lt;b&gt;TicketCacheRepository&lt;/b&gt;&lt;br&gt;(interface)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1f5fe;strokeColor=#0288d1;fontSize=11;" vertex="1" parent="layer_interface">
+      <mxGeometry x="200" y="35" width="160" height="55" as="geometry"/>
+    </mxCell>
+    <mxCell id="tgr_iface" value="&lt;b&gt;TicketGraphRepository&lt;/b&gt;&lt;br&gt;(interface)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1f5fe;strokeColor=#0288d1;fontSize=11;" vertex="1" parent="layer_interface">
+      <mxGeometry x="380" y="35" width="160" height="55" as="geometry"/>
+    </mxCell>
+    <mxCell id="aqr_iface" value="&lt;b&gt;AttachmentQueueRepo&lt;/b&gt;&lt;br&gt;(interface)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1f5fe;strokeColor=#0288d1;fontSize=11;" vertex="1" parent="layer_interface">
+      <mxGeometry x="560" y="35" width="160" height="55" as="geometry"/>
+    </mxCell>
+    <!-- Implementation Layer -->
+    <mxCell id="layer_impl" value="Implementation Layer" style="swimlane;startSize=24;fillColor=#e8f5e9;strokeColor=#388e3c;html=1;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="60" y="290" width="680" height="100" as="geometry"/>
+    </mxCell>
+    <mxCell id="ssm_impl" value="&lt;b&gt;SyncStateManagerImpl&lt;/b&gt;&lt;br&gt;State machine + optimistic lock" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8f5e9;strokeColor=#388e3c;fontSize=10;" vertex="1" parent="layer_impl">
+      <mxGeometry x="20" y="35" width="160" height="55" as="geometry"/>
+    </mxCell>
+    <mxCell id="tcr_impl" value="&lt;b&gt;TicketCacheRepoImpl&lt;/b&gt;&lt;br&gt;UPSERT + batch" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8f5e9;strokeColor=#388e3c;fontSize=10;" vertex="1" parent="layer_impl">
+      <mxGeometry x="200" y="35" width="160" height="55" as="geometry"/>
+    </mxCell>
+    <mxCell id="tgr_impl" value="&lt;b&gt;TicketGraphRepoImpl&lt;/b&gt;&lt;br&gt;Graph operations" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8f5e9;strokeColor=#388e3c;fontSize=10;" vertex="1" parent="layer_impl">
+      <mxGeometry x="380" y="35" width="160" height="55" as="geometry"/>
+    </mxCell>
+    <mxCell id="aqr_impl" value="&lt;b&gt;AttachmentQueueRepoImpl&lt;/b&gt;&lt;br&gt;Queue operations" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8f5e9;strokeColor=#388e3c;fontSize=10;" vertex="1" parent="layer_impl">
+      <mxGeometry x="560" y="35" width="160" height="55" as="geometry"/>
+    </mxCell>
+    <!-- Infrastructure Layer -->
+    <mxCell id="layer_infra" value="Infrastructure Layer" style="swimlane;startSize=24;fillColor=#f3e5f5;strokeColor=#7b1fa2;html=1;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="60" y="410" width="680" height="100" as="geometry"/>
+    </mxCell>
+    <mxCell id="hikari" value="&lt;b&gt;HikariCP&lt;/b&gt;&lt;br&gt;Connection Pool" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f3e5f5;strokeColor=#7b1fa2;fontSize=11;" vertex="1" parent="layer_infra">
+      <mxGeometry x="140" y="35" width="160" height="55" as="geometry"/>
+    </mxCell>
+    <mxCell id="postgres" value="&lt;b&gt;PostgreSQL 16&lt;/b&gt;&lt;br&gt;4 tables + 8 indexes" style="shape=cylinder3;whiteSpace=wrap;html=1;fillColor=#f3e5f5;strokeColor=#7b1fa2;fontSize=11;size=10;" vertex="1" parent="layer_infra">
+      <mxGeometry x="400" y="30" width="160" height="65" as="geometry"/>
+    </mxCell>
+    <!-- Cross-layer edges -->
+    <mxCell id="e1" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;strokeColor=#666666;" edge="1" source="scheduler" target="ssm_iface" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e2" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;strokeColor=#666666;" edge="1" source="processor" target="aqr_iface" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e3" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;strokeColor=#666666;" edge="1" source="kb_service" target="tcr_iface" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e4" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;dashed=1;strokeColor=#0288d1;" edge="1" source="ssm_iface" target="ssm_impl" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e5" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;dashed=1;strokeColor=#0288d1;" edge="1" source="tcr_iface" target="tcr_impl" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e6" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;dashed=1;strokeColor=#0288d1;" edge="1" source="tgr_iface" target="tgr_impl" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e7" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;dashed=1;strokeColor=#0288d1;" edge="1" source="aqr_iface" target="aqr_impl" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e8" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;strokeColor=#7b1fa2;" edge="1" source="ssm_impl" target="hikari" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e9" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;strokeColor=#7b1fa2;" edge="1" source="hikari" target="postgres" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+  </root>
+</mxGraphModel>

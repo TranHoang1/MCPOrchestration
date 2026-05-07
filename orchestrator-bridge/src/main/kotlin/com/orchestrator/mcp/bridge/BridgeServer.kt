@@ -22,6 +22,7 @@ class BridgeServer(private val config: BridgeConfig) {
     private val reconnectionManager = ReconnectionManager(config, httpClient)
     private val promoter = BridgeToolPromoter(httpClient)
     private val localStreamWrite = LocalStreamWriteTool()
+    private val localEmbedImages = LocalEmbedImagesTool()
     private var server: Server? = null
     private var scope: CoroutineScope? = null
 
@@ -81,6 +82,7 @@ class BridgeServer(private val config: BridgeConfig) {
         promoter.registerMetaTools(mcpServer)
         if (config.enableLocalStreamWrite) {
             localStreamWrite.register(mcpServer)
+            localEmbedImages.register(mcpServer)
         }
     }
 }

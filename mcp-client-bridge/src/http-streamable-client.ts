@@ -1,16 +1,9 @@
 /**
- * HTTP Streamable client connecting to the MCP Orchestrator /mcp endpoint.
- * Manages session lifecycle and request/response handling.
+ * HTTP Streamable client — POST /mcp with JSON-RPC.
+ * Simple stateless request-response. No SSE, no sessions.
  */
 
 import { BridgeConfig } from './bridge-config.js';
-
-interface JsonRpcRequest {
-  jsonrpc: '2.0';
-  id: number;
-  method: string;
-  params?: Record<string, unknown>;
-}
 
 interface JsonRpcResponse {
   jsonrpc: '2.0';
@@ -19,8 +12,12 @@ interface JsonRpcResponse {
   error?: { code: number; message: string };
 }
 
+interface ToolCallResult {
+  content?: Array<{ type: string; text: string }>;
+  isError?: boolean;
+}
+
 export class HttpStreamableClient {
-  private sessionId: string | null = null;
   private requestIdCounter = 0;
   private _connected = false;
 
@@ -31,73 +28,114 @@ export class HttpStreamableClient {
   }
 
   async initialize(): Promise<boolean> {
-    const request = this.buildRequest('initialize', {
-      protocolVersion: '2025-03-26',
-      capabilities: {},
-      clientInfo: { name: 'mcp-bridge-node', version: '1.0.0' },
-    });
-
     try {
-      const response = await this.sendRaw(request, false);
-      this.sessionId = response.headers.get('mcp-session-id');
-      this._connected = this.sessionId !== null;
-      console.error(`[mcp-bridge] Session initialized: ${this.sessionId}`);
-      return this._connected;
+      const response = await this.post('initialize', {
+        protocolVersion: '2025-03-26',
+        capabilities: {},
+        clientInfo: {
+          name: 'mcp-bridge-node',
+          version: '1.0.0',
+        },
+      });
+
+      if (response.result || response.error) {
+        // Even "already initialized" means server is up
+        this._connected = true;
+        console.error(
+          '[mcp-bridge] Connected to orchestrator ' +
+            'via HTTP Streamable',
+        );
+        return true;
+      }
+      return false;
     } catch (err) {
-      console.error(`[mcp-bridge] Initialize failed:`, err);
+      console.error('[mcp-bridge] Initialize failed:', err);
       this._connected = false;
       return false;
     }
   }
 
-  async sendRequest(method: string, params?: Record<string, unknown>): Promise<JsonRpcResponse> {
-    const request = this.buildRequest(method, params);
-    const response = await this.sendRaw(request, true);
-    const body = await response.text();
-    return JSON.parse(body) as JsonRpcResponse;
+  async callTool(
+    name: string,
+    args: Record<string, unknown>,
+  ): Promise<ToolCallResult> {
+    const response = await this.post('tools/call', {
+      name,
+      arguments: args,
+    });
+
+    if (response.error) {
+      return {
+        content: [{
+          type: 'text',
+          text: JSON.stringify(response.error),
+        }],
+        isError: true,
+      };
+    }
+
+    return (response.result as ToolCallResult) ?? {
+      content: [{ type: 'text', text: '{}' }],
+    };
+  }
+
+  async sendRequest(
+    method: string,
+    params?: Record<string, unknown>,
+  ): Promise<JsonRpcResponse> {
+    return this.post(method, params);
   }
 
   resetSession(): void {
-    this.sessionId = null;
     this._connected = false;
   }
 
   close(): void {
     this._connected = false;
-    this.sessionId = null;
   }
 
-  private async sendRaw(body: string, includeSession: boolean): Promise<Response> {
-    const headers: Record<string, string> = {
-      'Content-Type': 'application/json',
-    };
-    if (includeSession && this.sessionId) {
-      headers['Mcp-Session-Id'] = this.sessionId;
-    }
+  private async post(
+    method: string,
+    params?: Record<string, unknown>,
+  ): Promise<JsonRpcResponse> {
+    const id = ++this.requestIdCounter;
+    const body = JSON.stringify({
+      jsonrpc: '2.0',
+      id,
+      method,
+      ...(params && { params }),
+    });
 
     const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), this.config.requestTimeoutMs);
+    const timeout = setTimeout(
+      () => controller.abort(),
+      this.config.requestTimeoutMs,
+    );
 
     try {
-      const response = await fetch(`${this.config.orchestratorUrl}/mcp`, {
-        method: 'POST',
-        headers,
-        body,
-        signal: controller.signal,
-      });
-      return response;
+      const res = await fetch(
+        `${this.config.orchestratorUrl}/mcp`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body,
+          signal: controller.signal,
+        },
+      );
+
+      if (!res.ok) {
+        throw new Error(
+          `HTTP ${res.status}: ${res.statusText}`,
+        );
+      }
+
+      const text = await res.text();
+      if (!text) {
+        throw new Error('Empty response');
+      }
+      return JSON.parse(text) as JsonRpcResponse;
     } finally {
       clearTimeout(timeout);
     }
-  }
-
-  private buildRequest(method: string, params?: Record<string, unknown>): string {
-    const request: JsonRpcRequest = {
-      jsonrpc: '2.0',
-      id: ++this.requestIdCounter,
-      method,
-      ...(params && { params }),
-    };
-    return JSON.stringify(request);
   }
 }

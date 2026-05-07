@@ -62,6 +62,68 @@ class McpServerFactory(
         return server
     }
 
+    /**
+     * Creates a stateless ToolDispatcher for HTTP Streamable
+     * mode. Routes tool calls directly without SDK session.
+     */
+    fun createDispatcher(): ToolDispatcher {
+        return object : ToolDispatcher {
+            override suspend fun callTool(
+                name: String,
+                arguments: JsonObject?
+            ): CallToolResult {
+                logger.info("Dispatcher.callTool: $name")
+                val result = when (name) {
+                    "find_tools" -> handleFindTools(arguments)
+                    "execute_dynamic_tool" ->
+                        handleExecuteDynamicTool(arguments)
+                    "toggle_tool" -> handleToggleTool(arguments)
+                    "reset_tools" -> handleResetTools(arguments)
+                    "manage_auto_approve" ->
+                        handleManageAutoApprove(arguments)
+                    "agent_log" -> AgentLogToolRegistrar
+                        .handleCall(arguments, agentLogService)
+                    "stream_write_file" -> StreamWriteToolRegistrar
+                        .handleCall(arguments)
+                    "embed_images" -> EmbedImagesToolRegistrar
+                        .handleCall(arguments)
+                    "echo" -> CallToolResult(
+                        content = listOf(TextContent(
+                            text = arguments.toString()
+                        ))
+                    )
+                    else -> errorResult(
+                        "TOOL_NOT_FOUND",
+                        "Unknown tool: $name"
+                    )
+                }
+                logger.info("Dispatcher.callTool done: $name")
+                return result
+            }
+
+            override fun listTools(): kotlinx.serialization.json.JsonElement {
+                return kotlinx.serialization.json.buildJsonObject {
+                    put("tools", kotlinx.serialization.json.buildJsonArray {
+                        add(toolEntry("find_tools", findToolsDescription()))
+                        add(toolEntry("execute_dynamic_tool", executeDynamicToolDescription()))
+                        add(toolEntry("toggle_tool", toggleToolDescription()))
+                        add(toolEntry("reset_tools", resetToolsDescription()))
+                        add(toolEntry("manage_auto_approve", manageAutoApproveDescription()))
+                        add(toolEntry("agent_log", "Write an execution log entry"))
+                        add(toolEntry("stream_write_file", "Write content to a file"))
+                        add(toolEntry("embed_images", "Embed images as base64"))
+                    })
+                }
+            }
+
+            private fun toolEntry(name: String, desc: String) =
+                kotlinx.serialization.json.buildJsonObject {
+                    put("name", name)
+                    put("description", desc)
+                }
+        }
+    }
+
     private fun registerFindTools(server: Server) {
         server.addTool(
             name = "find_tools",

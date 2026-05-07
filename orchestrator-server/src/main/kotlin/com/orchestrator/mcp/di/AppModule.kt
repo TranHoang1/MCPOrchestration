@@ -30,6 +30,7 @@ import com.orchestrator.mcp.client.embedding.*
 import com.orchestrator.mcp.client.vectordb.*
 import com.orchestrator.mcp.config.ConfigDbSyncService
 import com.orchestrator.mcp.config.ConfigDbSyncServiceImpl
+import com.orchestrator.mcp.sync.*
 import org.koin.dsl.module
 import org.koin.core.qualifier.named
 import java.util.UUID
@@ -176,4 +177,11 @@ fun appModule(configPath: String? = null) = module {
         )
     }
     single { FileProxyMigration(get()) }
+
+    // Jira Sync Module
+    single { JiraSyncDatabaseInitializer(get()) }
+    single<SyncStateManager> { SyncStateManagerImpl(get()) }
+    single<TicketCacheRepository> { TicketCacheRepositoryImpl(get()) }
+    single<TicketGraphRepository> { TicketGraphRepositoryImpl(get()) }
+    single<AttachmentQueueRepository> { AttachmentQueueRepositoryImpl(get()) }
 }

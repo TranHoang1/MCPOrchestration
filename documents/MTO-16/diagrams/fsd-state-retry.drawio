@@ -1,0 +1,69 @@
+<mxGraphModel adaptiveColors="auto">
+  <root>
+    <mxCell id="0"/>
+    <mxCell id="1" parent="0"/>
+    <mxCell id="title" value="&lt;b&gt;State Diagram — Retry Handler (MTO-16)&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;fontSize=13;fontStyle=1;" vertex="1" parent="1">
+      <mxGeometry x="150" y="10" width="400" height="30" as="geometry"/>
+    </mxCell>
+    <mxCell id="start" value="" style="ellipse;fillColor=#000000;strokeColor=#000000;" vertex="1" parent="1">
+      <mxGeometry x="60" y="85" width="30" height="30" as="geometry"/>
+    </mxCell>
+    <mxCell id="idle" value="&lt;b&gt;IDLE&lt;/b&gt;&lt;br&gt;Waiting for request" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8f5e9;strokeColor=#388e3c;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="160" y="70" width="160" height="60" as="geometry"/>
+    </mxCell>
+    <mxCell id="executing" value="&lt;b&gt;EXECUTING&lt;/b&gt;&lt;br&gt;HTTP request in flight" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1f5fe;strokeColor=#0288d1;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="420" y="70" width="160" height="60" as="geometry"/>
+    </mxCell>
+    <mxCell id="waiting" value="&lt;b&gt;WAITING&lt;/b&gt;&lt;br&gt;Backoff delay active&lt;br&gt;(delay = initial * 2^attempt ± jitter)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff3e0;strokeColor=#f57c00;fontSize=10;" vertex="1" parent="1">
+      <mxGeometry x="420" y="230" width="200" height="70" as="geometry"/>
+    </mxCell>
+    <mxCell id="ratelimited" value="&lt;b&gt;RATE_LIMITED&lt;/b&gt;&lt;br&gt;Paused for Retry-After&lt;br&gt;(all requests blocked)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f3e5f5;strokeColor=#7b1fa2;fontSize=10;" vertex="1" parent="1">
+      <mxGeometry x="420" y="390" width="200" height="70" as="geometry"/>
+    </mxCell>
+    <mxCell id="success" value="&lt;b&gt;SUCCESS&lt;/b&gt;&lt;br&gt;Return result" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8f5e9;strokeColor=#388e3c;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="160" y="230" width="160" height="60" as="geometry"/>
+    </mxCell>
+    <mxCell id="failed" value="&lt;b&gt;FAILED&lt;/b&gt;&lt;br&gt;Throw exception" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fce4ec;strokeColor=#c62828;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="160" y="390" width="160" height="60" as="geometry"/>
+    </mxCell>
+    <mxCell id="end_success" value="" style="ellipse;fillColor=#000000;strokeColor=#000000;strokeWidth=3;" vertex="1" parent="1">
+      <mxGeometry x="60" y="245" width="30" height="30" as="geometry"/>
+    </mxCell>
+    <mxCell id="end_fail" value="" style="ellipse;fillColor=#000000;strokeColor=#000000;strokeWidth=3;" vertex="1" parent="1">
+      <mxGeometry x="60" y="405" width="30" height="30" as="geometry"/>
+    </mxCell>
+    <mxCell id="e_start" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;" edge="1" source="start" target="idle" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e_idle_exec" value="request received" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;fontSize=9;" edge="1" source="idle" target="executing" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e_exec_success" value="200 OK" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;fontSize=9;strokeColor=#388e3c;" edge="1" source="executing" target="success" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e_exec_wait" value="5xx / timeout&lt;br&gt;(attempt &lt; max)" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;fontSize=9;strokeColor=#f57c00;" edge="1" source="executing" target="waiting" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e_exec_ratelimit" value="429 + Retry-After" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;fontSize=9;strokeColor=#7b1fa2;" edge="1" source="executing" target="ratelimited" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e_exec_fail_perm" value="4xx (not 429)&lt;br&gt;permanent error" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;fontSize=9;strokeColor=#c62828;" edge="1" source="executing" target="failed" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e_wait_exec" value="delay elapsed&lt;br&gt;retry request" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;fontSize=9;" edge="1" source="waiting" target="executing" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e_wait_fail" value="max retries&lt;br&gt;exhausted" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;fontSize=9;strokeColor=#c62828;" edge="1" source="waiting" target="failed" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e_rl_exec" value="Retry-After elapsed&lt;br&gt;retry request" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;fontSize=9;" edge="1" source="ratelimited" target="executing" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e_success_end" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;" edge="1" source="success" target="end_success" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e_fail_end" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;" edge="1" source="failed" target="end_fail" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+  </root>
+</mxGraphModel>

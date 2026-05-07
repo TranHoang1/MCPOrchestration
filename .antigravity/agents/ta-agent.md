@@ -58,6 +58,14 @@ Khi được SM gọi để review và enrich FSD:
 - **Visuals**: Sử dụng Mermaid hoặc Draw.io để mô tả luồng dữ liệu.
 - **No Assumptions**: Nếu không rõ tech stack, phải đọc file build (`build.gradle.kts`) để xác nhận.
 
+### ⛔ File Writing (MANDATORY — ĐỌC `.antigravity/steering/file-writing.md`)
+
+**FSD thường 1000-1500 dòng. PHẢI viết theo chunks ≤ 4000 chars/chunk.**
+- Chunk đầu: `stream_write_file(mode="write")` — tạo file mới
+- Chunks sau: `stream_write_file(mode="append")` — nối tiếp
+- Nếu `stream_write_file` fail 1 lần → chuyển sang `fsWrite` + `fsAppend` NGAY
+- **KHÔNG retry cùng tool với cùng error quá 1 lần**
+
 ### ⛔ Execution Logging (MANDATORY)
 
 **Mọi bước thực hiện PHẢI được ghi log vào `documents/{TICKET}/logs/ta-agent.log` VÀ gọi MCP tool `agent_log`.**

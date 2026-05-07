@@ -1,0 +1,60 @@
+<mxGraphModel adaptiveColors="auto">
+  <root>
+    <mxCell id="0"/>
+    <mxCell id="1" parent="0"/>
+    <mxCell id="title" value="&lt;b&gt;MTO-16: Jira REST Client — Class Diagram&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=13;fontStyle=1;" vertex="1" parent="1">
+      <mxGeometry x="250" y="10" width="380" height="30" as="geometry"/>
+    </mxCell>
+    <mxCell id="jrc_iface" value="&lt;b&gt;«interface»&lt;/b&gt;&#xa;JiraRestClient&#xa;─────────────────&#xa;+searchIssues(jql, fields, startAt, maxResults): JiraSearchResponse&#xa;+getIssue(issueKey, fields, expand): JiraIssue&#xa;+getAttachments(issueKey): List&lt;JiraAttachment&gt;&#xa;+downloadAttachment(url): DownloadResult" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#e1f5fe;strokeColor=#0288d1;fontSize=10;align=left;spacingLeft=5;" vertex="1" parent="1">
+      <mxGeometry x="40" y="60" width="380" height="110" as="geometry"/>
+    </mxCell>
+    <mxCell id="jrc_impl" value="&lt;b&gt;JiraRestClientImpl&lt;/b&gt;&#xa;─────────────────&#xa;-httpClient: HttpClient&#xa;-config: JiraClientConfig&#xa;-rateLimiter: RateLimiter&#xa;-retryHandler: RetryHandler&#xa;-json: Json&#xa;-logger: Logger&#xa;─────────────────&#xa;+searchIssues(...)&#xa;+getIssue(...)&#xa;+getAttachments(...)&#xa;+downloadAttachment(...)&#xa;-basicAuthHeader(): String&#xa;-handleResponse(response, correlationId): T&#xa;-validateSearchParams(...)&#xa;-validateIssueKey(key)&#xa;-validateDownloadUrl(url, baseUrl)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#e8f5e9;strokeColor=#388e3c;fontSize=9;align=left;spacingLeft=5;" vertex="1" parent="1">
+      <mxGeometry x="40" y="220" width="380" height="260" as="geometry"/>
+    </mxCell>
+    <mxCell id="rl_iface" value="&lt;b&gt;«interface»&lt;/b&gt;&#xa;RateLimiter&#xa;─────────────────&#xa;+acquire(): Unit (suspend)&#xa;+pauseUntil(resumeAt: Long)&#xa;+isPaused(): Boolean" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#e1f5fe;strokeColor=#0288d1;fontSize=10;align=left;spacingLeft=5;" vertex="1" parent="1">
+      <mxGeometry x="480" y="60" width="240" height="100" as="geometry"/>
+    </mxCell>
+    <mxCell id="rl_impl" value="&lt;b&gt;TokenBucketRateLimiter&lt;/b&gt;&#xa;─────────────────&#xa;-ratePerSecond: Int&#xa;-burstCapacity: Int&#xa;-availableTokens: AtomicLong&#xa;-lastRefillTime: AtomicLong&#xa;-pausedUntil: AtomicLong&#xa;-refillIntervalMs: Long&#xa;─────────────────&#xa;+acquire()&#xa;+pauseUntil(resumeAt)&#xa;+isPaused()&#xa;-refillTokens()" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff3e0;strokeColor=#f57c00;fontSize=9;align=left;spacingLeft=5;" vertex="1" parent="1">
+      <mxGeometry x="480" y="210" width="240" height="200" as="geometry"/>
+    </mxCell>
+    <mxCell id="rh_iface" value="&lt;b&gt;«interface»&lt;/b&gt;&#xa;RetryHandler&#xa;─────────────────&#xa;+withRetry(context, block): T (suspend)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#e1f5fe;strokeColor=#0288d1;fontSize=10;align=left;spacingLeft=5;" vertex="1" parent="1">
+      <mxGeometry x="780" y="60" width="260" height="80" as="geometry"/>
+    </mxCell>
+    <mxCell id="rh_impl" value="&lt;b&gt;ExponentialBackoffRetryHandler&lt;/b&gt;&#xa;─────────────────&#xa;-maxRetries: Int&#xa;-initialDelayMs: Long&#xa;-maxDelayMs: Long&#xa;-multiplier: Double&#xa;-jitterFactor: Double&#xa;─────────────────&#xa;+withRetry(context, block)&#xa;-isRetryable(e): Boolean" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff3e0;strokeColor=#f57c00;fontSize=9;align=left;spacingLeft=5;" vertex="1" parent="1">
+      <mxGeometry x="780" y="190" width="260" height="160" as="geometry"/>
+    </mxCell>
+    <mxCell id="config" value="&lt;b&gt;«data class»&lt;/b&gt;&#xa;JiraClientConfig&#xa;─────────────────&#xa;+baseUrl: String&#xa;+email: String&#xa;+apiToken: String&#xa;+rateLimit: Int = 10&#xa;+timeoutMs: Long = 30000&#xa;+maxRetries: Int = 3&#xa;+connectTimeoutMs: Long = 10000&#xa;+socketTimeoutMs: Long = 30000&#xa;─────────────────&#xa;+fromEnvironment(): JiraClientConfig&#xa;+validate()&#xa;+toString(): String (masked)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=9;align=left;spacingLeft=5;" vertex="1" parent="1">
+      <mxGeometry x="480" y="460" width="260" height="220" as="geometry"/>
+    </mxCell>
+    <mxCell id="exception" value="&lt;b&gt;«sealed class»&lt;/b&gt;&#xa;JiraClientException&#xa;─────────────────&#xa;+message: String&#xa;+statusCode: Int?&#xa;+correlationId: String?&#xa;+cause: Throwable?" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fce4ec;strokeColor=#c62828;fontSize=9;align=left;spacingLeft=5;" vertex="1" parent="1">
+      <mxGeometry x="780" y="420" width="260" height="110" as="geometry"/>
+    </mxCell>
+    <mxCell id="sub_exceptions" value="JiraAuthException&#xa;JiraRateLimitException&#xa;JiraNotFoundException&#xa;JiraTimeoutException&#xa;JiraServerException&#xa;JiraValidationException&#xa;RetryExhaustedException" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fce4ec;strokeColor=#c62828;fontSize=9;align=left;spacingLeft=5;" vertex="1" parent="1">
+      <mxGeometry x="780" y="560" width="260" height="110" as="geometry"/>
+    </mxCell>
+    <mxCell id="e1" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=0;endSize=10;dashed=1;" edge="1" source="jrc_impl" target="jrc_iface" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e2" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=0;endSize=10;dashed=1;" edge="1" source="rl_impl" target="rl_iface" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e3" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=0;endSize=10;dashed=1;" edge="1" source="rh_impl" target="rh_iface" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e4" value="uses" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;" edge="1" source="jrc_impl" target="rl_iface" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e5" value="uses" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;" edge="1" source="jrc_impl" target="rh_iface" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e6" value="reads" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;" edge="1" source="jrc_impl" target="config" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e7" value="throws" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;dashed=1;" edge="1" source="jrc_impl" target="exception" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e8" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endFill=0;endSize=10;" edge="1" source="sub_exceptions" target="exception" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+  </root>
+</mxGraphModel>

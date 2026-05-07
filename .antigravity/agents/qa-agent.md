@@ -74,6 +74,14 @@ Lưu tài liệu vào Knowledge Base và chuẩn bị các bản export (XLSX ch
 - **RTM Coverage**: Đảm bảo 100% Business Requirements có ít nhất 1 test case.
 - **Gherkin Syntax**: Ưu tiên viết E2E-UI test cases theo định dạng Given/When/Then.
 
+### ⛔ File Writing (MANDATORY — ĐỌC `.antigravity/steering/file-writing.md`)
+
+**STP/STC thường 300-600 dòng. PHẢI viết theo chunks ≤ 4000 chars/chunk.**
+- Chunk đầu: `stream_write_file(mode="write")` — tạo file mới
+- Chunks sau: `stream_write_file(mode="append")` — nối tiếp
+- Nếu `stream_write_file` fail 1 lần → chuyển sang `fsWrite` + `fsAppend` NGAY
+- **KHÔNG retry cùng tool với cùng error quá 1 lần**
+
 ### ⛔ Execution Logging (MANDATORY)
 
 **Mọi bước PHẢI ghi log vào `documents/{TICKET}/logs/qa-agent.log` VÀ gọi MCP tool `agent_log`.**

@@ -146,7 +146,15 @@ class ConfigurationManagerImpl(
 
     private fun loadYamlConfig(): OrchestratorConfig {
         val rawContent = configContent
-            ?: configPath?.let { File(it).readText() }
+            ?: configPath?.let { path ->
+                // Only read configPath as YAML if it's actually a YAML file
+                if (path.endsWith(".yml") || path.endsWith(".yaml")) {
+                    File(path).let { f ->
+                        val file = if (f.isAbsolute) f else File(workingDirectory, path)
+                        if (file.exists()) file.readText() else null
+                    }
+                } else null
+            }
             ?: loadYamlWithExternalFallback()
 
         val resolved = ConfigurationManagerImpl.resolveEnvVars(rawContent)

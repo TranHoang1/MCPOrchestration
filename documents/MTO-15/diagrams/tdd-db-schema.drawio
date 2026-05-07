@@ -1,0 +1,40 @@
+<mxGraphModel adaptiveColors="auto">
+  <root>
+    <mxCell id="0"/>
+    <mxCell id="1" parent="0"/>
+    <!-- Title -->
+    <mxCell id="title" value="&lt;b&gt;MTO-15 — Database Schema (4 Tables + 8 Indexes)&lt;/b&gt;" style="text;html=1;align=center;fontSize=14;fontStyle=1;" vertex="1" parent="1">
+      <mxGeometry x="150" y="10" width="500" height="30" as="geometry"/>
+    </mxCell>
+    <!-- jira_sync_state -->
+    <mxCell id="t1" value="&lt;p style=&quot;margin:0px;text-align:center;border-bottom:1px solid #7b1fa2;padding:4px;&quot;&gt;&lt;b&gt;jira_sync_state&lt;/b&gt;&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;font-size:10px;line-height:1.4;&quot;&gt;&lt;u&gt;project_key&lt;/u&gt; VARCHAR(50) PK&lt;br&gt;last_sync_at TIMESTAMPTZ&lt;br&gt;last_offset INTEGER NOT NULL DEFAULT 0&lt;br&gt;total_issues INTEGER NOT NULL DEFAULT 0&lt;br&gt;synced_issues INTEGER NOT NULL DEFAULT 0&lt;br&gt;status VARCHAR(20) NOT NULL DEFAULT 'IDLE'&lt;br&gt;error_message TEXT&lt;br&gt;updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()&lt;/p&gt;" style="verticalAlign=top;align=left;overflow=fill;html=1;whiteSpace=wrap;fillColor=#f3e5f5;strokeColor=#7b1fa2;fontSize=11;shape=mxgraph.er.entity;" vertex="1" parent="1">
+      <mxGeometry x="40" y="60" width="300" height="180" as="geometry"/>
+    </mxCell>
+    <!-- jira_ticket_cache -->
+    <mxCell id="t2" value="&lt;p style=&quot;margin:0px;text-align:center;border-bottom:1px solid #7b1fa2;padding:4px;&quot;&gt;&lt;b&gt;jira_ticket_cache&lt;/b&gt;&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;font-size:10px;line-height:1.4;&quot;&gt;&lt;u&gt;ticket_key&lt;/u&gt; VARCHAR(50) PK&lt;br&gt;project_key VARCHAR(50) NOT NULL&lt;br&gt;summary TEXT NOT NULL&lt;br&gt;issue_type VARCHAR(50) NOT NULL&lt;br&gt;status VARCHAR(50) NOT NULL&lt;br&gt;priority VARCHAR(20)&lt;br&gt;parent_key VARCHAR(50)&lt;br&gt;epic_key VARCHAR(50)&lt;br&gt;labels JSONB&lt;br&gt;updated_at_jira TIMESTAMPTZ NOT NULL&lt;br&gt;synced_at TIMESTAMPTZ NOT NULL DEFAULT NOW()&lt;br&gt;content_hash VARCHAR(64) NOT NULL&lt;br&gt;kb_ingested BOOLEAN NOT NULL DEFAULT FALSE&lt;/p&gt;" style="verticalAlign=top;align=left;overflow=fill;html=1;whiteSpace=wrap;fillColor=#f3e5f5;strokeColor=#7b1fa2;fontSize=11;shape=mxgraph.er.entity;" vertex="1" parent="1">
+      <mxGeometry x="420" y="60" width="310" height="260" as="geometry"/>
+    </mxCell>
+    <!-- jira_ticket_graph -->
+    <mxCell id="t3" value="&lt;p style=&quot;margin:0px;text-align:center;border-bottom:1px solid #7b1fa2;padding:4px;&quot;&gt;&lt;b&gt;jira_ticket_graph&lt;/b&gt;&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;font-size:10px;line-height:1.4;&quot;&gt;&lt;u&gt;source_key&lt;/u&gt; VARCHAR(50) PK&lt;br&gt;&lt;u&gt;target_key&lt;/u&gt; VARCHAR(50) PK&lt;br&gt;&lt;u&gt;link_type&lt;/u&gt; VARCHAR(100) PK&lt;br&gt;category VARCHAR(20) NOT NULL&lt;/p&gt;" style="verticalAlign=top;align=left;overflow=fill;html=1;whiteSpace=wrap;fillColor=#f3e5f5;strokeColor=#7b1fa2;fontSize=11;shape=mxgraph.er.entity;" vertex="1" parent="1">
+      <mxGeometry x="40" y="300" width="300" height="120" as="geometry"/>
+    </mxCell>
+    <!-- jira_attachment_queue -->
+    <mxCell id="t4" value="&lt;p style=&quot;margin:0px;text-align:center;border-bottom:1px solid #7b1fa2;padding:4px;&quot;&gt;&lt;b&gt;jira_attachment_queue&lt;/b&gt;&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;font-size:10px;line-height:1.4;&quot;&gt;&lt;u&gt;id&lt;/u&gt; SERIAL PK&lt;br&gt;ticket_key VARCHAR(50) NOT NULL&lt;br&gt;attachment_id VARCHAR(50) NOT NULL&lt;br&gt;filename VARCHAR(500) NOT NULL&lt;br&gt;mime_type VARCHAR(100)&lt;br&gt;size_bytes BIGINT&lt;br&gt;download_url TEXT NOT NULL&lt;br&gt;status VARCHAR(20) NOT NULL DEFAULT 'PENDING'&lt;br&gt;retry_count INTEGER NOT NULL DEFAULT 0&lt;br&gt;error_message TEXT&lt;br&gt;created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()&lt;br&gt;processed_at TIMESTAMPTZ&lt;br&gt;&lt;br&gt;UNIQUE(ticket_key, attachment_id)&lt;/p&gt;" style="verticalAlign=top;align=left;overflow=fill;html=1;whiteSpace=wrap;fillColor=#f3e5f5;strokeColor=#7b1fa2;fontSize=11;shape=mxgraph.er.entity;" vertex="1" parent="1">
+      <mxGeometry x="420" y="360" width="310" height="270" as="geometry"/>
+    </mxCell>
+    <!-- Relationships (logical, no FK) -->
+    <mxCell id="e1" value="1:N (project_key)" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=ERmany;startArrow=ERone;startFill=0;endFill=0;strokeColor=#7b1fa2;fontSize=9;" edge="1" source="t1" target="t2" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e2" value="1:N (ticket_key)" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=ERmany;startArrow=ERone;startFill=0;endFill=0;strokeColor=#7b1fa2;fontSize=9;" edge="1" source="t2" target="t4" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e3" value="N:N (source/target)" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=ERmany;startArrow=ERmany;startFill=0;endFill=0;strokeColor=#7b1fa2;fontSize=9;" edge="1" source="t2" target="t3" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <!-- Note: No FK constraints -->
+    <mxCell id="note" value="⚠️ No FK constraints enforced&lt;br&gt;(allows partial sync + concurrent processing)" style="shape=note;whiteSpace=wrap;html=1;fillColor=#fff9c4;strokeColor=#f9a825;fontSize=10;size=14;" vertex="1" parent="1">
+      <mxGeometry x="40" y="460" width="250" height="50" as="geometry"/>
+    </mxCell>
+  </root>
+</mxGraphModel>

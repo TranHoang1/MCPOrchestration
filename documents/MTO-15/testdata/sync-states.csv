@@ -1,0 +1,11 @@
+project_key,status,last_offset,total_issues,synced_issues,error_message
+MTO,IDLE,0,0,0,
+PROJ,RUNNING,50,200,50,
+TEST,PAUSED,100,500,100,
+DEMO,COMPLETED,300,300,300,
+FAIL,FAILED,75,200,75,Connection timeout
+MTO-2,IDLE,0,0,0,
+PROJ-2,RUNNING,150,400,150,
+TEST-2,RUNNING,0,100,0,
+DEMO-2,COMPLETED,1000,1000,1000,
+FAIL-2,FAILED,0,0,0,Database unavailable

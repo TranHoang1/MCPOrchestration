@@ -1,0 +1,21 @@
+source_key,target_key,link_type,category,expected_result
+MTO-15,MTO-14,blocks,OUTWARD,success
+MTO-15,MTO-16,is blocked by,INWARD,success
+MTO-14,MTO-13,is child of,SUBTASK,success
+MTO-10,MTO-14,epic link,EPIC,success
+MTO-15,MTO-14,blocks,OUTWARD,duplicate_ignored
+MTO-15,MTO-15,blocks,OUTWARD,self_reference_rejected
+MTO-16,MTO-16,relates to,INWARD,self_reference_rejected
+MTO-15,MTO-14,relates to,OUTWARD,success
+MTO-17,MTO-15,depends on,INWARD,success
+MTO-18,MTO-19,subtask of,SUBTASK,success
+MTO-20,MTO-21,epic link,EPIC,success
+MTO-22,MTO-23,blocks,OUTWARD,success
+MTO-24,MTO-25,is blocked by,INWARD,success
+MTO-26,MTO-27,relates to,OUTWARD,success
+MTO-15,MTO-14,blocks,INVALID,invalid_category
+MTO-15,MTO-14,blocks,,invalid_category
+MTO-28,MTO-29,clones,OUTWARD,success
+MTO-30,MTO-31,duplicates,INWARD,success
+MTO-32,MTO-33,causes,OUTWARD,success
+MTO-34,MTO-35,is caused by,INWARD,success

@@ -1,0 +1,52 @@
+<mxGraphModel adaptiveColors="auto">
+  <root>
+    <mxCell id="0"/>
+    <mxCell id="1" parent="0"/>
+    <!-- Title -->
+    <mxCell id="title" value="&lt;b&gt;MTO-15 — Class Diagram&lt;/b&gt;" style="text;html=1;align=center;fontSize=14;fontStyle=1;" vertex="1" parent="1">
+      <mxGeometry x="250" y="10" width="300" height="30" as="geometry"/>
+    </mxCell>
+    <!-- SyncStateManager Interface -->
+    <mxCell id="ssm_if" value="&lt;p style=&quot;margin:0px;text-align:center;&quot;&gt;&lt;i&gt;«interface»&lt;/i&gt;&lt;br&gt;&lt;b&gt;SyncStateManager&lt;/b&gt;&lt;/p&gt;&lt;hr size=&quot;1&quot;&gt;&lt;p style=&quot;margin:0px;margin-left:4px;font-size:10px;&quot;&gt;+ getOrCreate(projectKey): SyncState&lt;br&gt;+ markRunning(projectKey)&lt;br&gt;+ markPaused(projectKey)&lt;br&gt;+ markCompleted(projectKey)&lt;br&gt;+ markFailed(projectKey, error)&lt;br&gt;+ updateProgress(projectKey, offset, synced)&lt;br&gt;+ getStatus(projectKey): SyncStatus?&lt;/p&gt;" style="verticalAlign=top;align=left;overflow=fill;html=1;whiteSpace=wrap;fillColor=#e1f5fe;strokeColor=#0288d1;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="40" y="60" width="280" height="170" as="geometry"/>
+    </mxCell>
+    <!-- SyncStateManagerImpl -->
+    <mxCell id="ssm_impl" value="&lt;p style=&quot;margin:0px;text-align:center;&quot;&gt;&lt;b&gt;SyncStateManagerImpl&lt;/b&gt;&lt;/p&gt;&lt;hr size=&quot;1&quot;&gt;&lt;p style=&quot;margin:0px;margin-left:4px;font-size:10px;&quot;&gt;- dataSource: HikariDataSource&lt;br&gt;- log: Logger&lt;/p&gt;&lt;hr size=&quot;1&quot;&gt;&lt;p style=&quot;margin:0px;margin-left:4px;font-size:10px;&quot;&gt;- validateProjectKey(key)&lt;br&gt;- transitionStatus(key, to, from): Int&lt;br&gt;- findByKey(conn, key): SyncState?&lt;br&gt;- insertNew(conn, key): SyncState&lt;/p&gt;" style="verticalAlign=top;align=left;overflow=fill;html=1;whiteSpace=wrap;fillColor=#e8f5e9;strokeColor=#388e3c;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="40" y="290" width="280" height="150" as="geometry"/>
+    </mxCell>
+    <!-- TicketCacheRepository Interface -->
+    <mxCell id="tcr_if" value="&lt;p style=&quot;margin:0px;text-align:center;&quot;&gt;&lt;i&gt;«interface»&lt;/i&gt;&lt;br&gt;&lt;b&gt;TicketCacheRepository&lt;/b&gt;&lt;/p&gt;&lt;hr size=&quot;1&quot;&gt;&lt;p style=&quot;margin:0px;margin-left:4px;font-size:10px;&quot;&gt;+ upsert(ticket: TicketCache)&lt;br&gt;+ upsertBatch(tickets): Int&lt;br&gt;+ findByProject(projectKey): List&lt;br&gt;+ findNotIngested(projectKey): List&lt;br&gt;+ markIngested(ticketKey)&lt;br&gt;+ findByHash(projectKey, hash): TicketCache?&lt;/p&gt;" style="verticalAlign=top;align=left;overflow=fill;html=1;whiteSpace=wrap;fillColor=#e1f5fe;strokeColor=#0288d1;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="380" y="60" width="280" height="160" as="geometry"/>
+    </mxCell>
+    <!-- TicketGraphRepository Interface -->
+    <mxCell id="tgr_if" value="&lt;p style=&quot;margin:0px;text-align:center;&quot;&gt;&lt;i&gt;«interface»&lt;/i&gt;&lt;br&gt;&lt;b&gt;TicketGraphRepository&lt;/b&gt;&lt;/p&gt;&lt;hr size=&quot;1&quot;&gt;&lt;p style=&quot;margin:0px;margin-left:4px;font-size:10px;&quot;&gt;+ insertRelation(relation)&lt;br&gt;+ insertBatch(relations): Int&lt;br&gt;+ findOutgoing(sourceKey): List&lt;br&gt;+ findIncoming(targetKey): List&lt;br&gt;+ deleteBySource(sourceKey): Int&lt;/p&gt;" style="verticalAlign=top;align=left;overflow=fill;html=1;whiteSpace=wrap;fillColor=#e1f5fe;strokeColor=#0288d1;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="380" y="260" width="280" height="140" as="geometry"/>
+    </mxCell>
+    <!-- AttachmentQueueRepository Interface -->
+    <mxCell id="aqr_if" value="&lt;p style=&quot;margin:0px;text-align:center;&quot;&gt;&lt;i&gt;«interface»&lt;/i&gt;&lt;br&gt;&lt;b&gt;AttachmentQueueRepository&lt;/b&gt;&lt;/p&gt;&lt;hr size=&quot;1&quot;&gt;&lt;p style=&quot;margin:0px;margin-left:4px;font-size:10px;&quot;&gt;+ enqueue(item)&lt;br&gt;+ enqueueBatch(items): Int&lt;br&gt;+ pollPending(limit): List&lt;br&gt;+ updateStatus(id, status, error)&lt;br&gt;+ markDone(id)&lt;br&gt;+ incrementRetry(id, error)&lt;br&gt;+ findByTicket(ticketKey): List&lt;br&gt;+ countByStatus(status): Int&lt;/p&gt;" style="verticalAlign=top;align=left;overflow=fill;html=1;whiteSpace=wrap;fillColor=#e1f5fe;strokeColor=#0288d1;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="380" y="440" width="280" height="180" as="geometry"/>
+    </mxCell>
+    <!-- Data Classes -->
+    <mxCell id="sync_state_dc" value="&lt;p style=&quot;margin:0px;text-align:center;&quot;&gt;&lt;i&gt;«data class»&lt;/i&gt;&lt;br&gt;&lt;b&gt;SyncState&lt;/b&gt;&lt;/p&gt;&lt;hr size=&quot;1&quot;&gt;&lt;p style=&quot;margin:0px;margin-left:4px;font-size:9px;&quot;&gt;+ projectKey: String&lt;br&gt;+ lastSyncAt: Instant?&lt;br&gt;+ lastOffset: Int&lt;br&gt;+ totalIssues: Int&lt;br&gt;+ syncedIssues: Int&lt;br&gt;+ status: SyncStatus&lt;br&gt;+ errorMessage: String?&lt;br&gt;+ updatedAt: Instant&lt;/p&gt;" style="verticalAlign=top;align=left;overflow=fill;html=1;whiteSpace=wrap;fillColor=#fff3e0;strokeColor=#f57c00;fontSize=10;" vertex="1" parent="1">
+      <mxGeometry x="40" y="490" width="180" height="170" as="geometry"/>
+    </mxCell>
+    <!-- SyncStatus Enum -->
+    <mxCell id="sync_status_e" value="&lt;p style=&quot;margin:0px;text-align:center;&quot;&gt;&lt;i&gt;«enum»&lt;/i&gt;&lt;br&gt;&lt;b&gt;SyncStatus&lt;/b&gt;&lt;/p&gt;&lt;hr size=&quot;1&quot;&gt;&lt;p style=&quot;margin:0px;margin-left:4px;font-size:9px;&quot;&gt;IDLE&lt;br&gt;RUNNING&lt;br&gt;PAUSED&lt;br&gt;COMPLETED&lt;br&gt;FAILED&lt;/p&gt;" style="verticalAlign=top;align=left;overflow=fill;html=1;whiteSpace=wrap;fillColor=#fff3e0;strokeColor=#f57c00;fontSize=10;" vertex="1" parent="1">
+      <mxGeometry x="240" y="490" width="100" height="120" as="geometry"/>
+    </mxCell>
+    <!-- JiraSyncDatabaseInitializer -->
+    <mxCell id="db_init" value="&lt;p style=&quot;margin:0px;text-align:center;&quot;&gt;&lt;b&gt;JiraSyncDatabaseInitializer&lt;/b&gt;&lt;/p&gt;&lt;hr size=&quot;1&quot;&gt;&lt;p style=&quot;margin:0px;margin-left:4px;font-size:10px;&quot;&gt;- dataSource: HikariDataSource&lt;br&gt;- log: Logger&lt;/p&gt;&lt;hr size=&quot;1&quot;&gt;&lt;p style=&quot;margin:0px;margin-left:4px;font-size:10px;&quot;&gt;+ suspend initialize()&lt;/p&gt;" style="verticalAlign=top;align=left;overflow=fill;html=1;whiteSpace=wrap;fillColor=#fff3e0;strokeColor=#f57c00;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="700" y="60" width="220" height="100" as="geometry"/>
+    </mxCell>
+    <!-- Edges -->
+    <mxCell id="e1" value="implements" style="html=1;endArrow=block;endFill=0;endSize=10;dashed=1;strokeColor=#0288d1;" edge="1" source="ssm_impl" target="ssm_if" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e2" value="returns" style="html=1;endArrow=open;endSize=6;dashed=1;strokeColor=#666666;fontSize=9;" edge="1" source="ssm_if" target="sync_state_dc" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e3" value="uses" style="html=1;endArrow=open;endSize=6;dashed=1;strokeColor=#666666;fontSize=9;" edge="1" source="sync_state_dc" target="sync_status_e" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+  </root>
+</mxGraphModel>

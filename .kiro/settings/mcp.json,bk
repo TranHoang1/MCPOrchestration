@@ -1,0 +1,27 @@
+{
+  "mcpServers": {
+    "orchestrator": {
+      "command": "java ",
+      "args": [
+        "-jar",
+        "C:/projects/kotlin/MCPOrchestration/TempRelease/mcp-orchestrator-all.jar",
+        "--config",
+        "C:/projects/kotlin/MCPOrchestration/TempRelease/mcp-servers.json"
+      ],
+      "env": {
+        "EMBEDDING_PROVIDER": "ollama",
+        "EMBEDDING_MODEL": "nomic-embed-text:latest",
+        "EMBEDDING_BASE_URL": "http://localhost:11434",
+        "VECTOR_DB_PROVIDER": "postgresql",
+        "VECTOR_DB_CONNECTION_STRING": "jdbc:postgresql://postgres:postgres@localhost:5432/mcp_db"
+      },
+      "autoApprove": [
+        "find_tools",
+        "execute_dynamic_tool",
+        "agent_log",
+        "stream_write_file",
+        "stream_write_file"
+      ]
+    }
+  }
+}

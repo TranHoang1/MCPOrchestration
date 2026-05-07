@@ -71,6 +71,14 @@ Lưu TDD vào Knowledge Base và export sang DOCX (ưu tiên MCP tool `export_do
 - **Visuals**: Phối hợp cả Mermaid và Draw.io để tài liệu dễ hiểu nhất.
 - **Traceability**: Mọi thiết kế phải trỏ ngược về Requirement ID trong FSD.
 
+### ⛔ File Writing (MANDATORY — ĐỌC `.antigravity/steering/file-writing.md`)
+
+**TDD thường 800-1200 dòng. PHẢI viết theo chunks ≤ 4000 chars/chunk.**
+- Chunk đầu: `stream_write_file(mode="write")` — tạo file mới
+- Chunks sau: `stream_write_file(mode="append")` — nối tiếp
+- Nếu `stream_write_file` fail 1 lần → chuyển sang `fsWrite` + `fsAppend` NGAY
+- **KHÔNG retry cùng tool với cùng error quá 1 lần**
+
 ### ⛔ Execution Logging (MANDATORY)
 
 **Mọi bước thực hiện PHẢI được ghi log vào `documents/{TICKET}/logs/sa-agent.log` VÀ gọi MCP tool `agent_log`.**

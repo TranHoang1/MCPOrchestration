@@ -4,6 +4,7 @@ import com.orchestrator.mcp.client.vectordb.model.SearchResult
 import com.orchestrator.mcp.client.vectordb.model.VectorPoint
 import com.zaxxer.hikari.HikariDataSource
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonObject
@@ -16,8 +17,10 @@ class PgVectorDbClient(
     private val hnswEfConstruction: Int = 64
 ) : VectorDbClient {
     private val log = LoggerFactory.getLogger(javaClass)
+    private val dbDispatcher = java.util.concurrent.Executors
+        .newFixedThreadPool(4).asCoroutineDispatcher()
 
-    override suspend fun createCollection(name: String, dimensions: Int) = withContext(Dispatchers.IO) {
+    override suspend fun createCollection(name: String, dimensions: Int) = withContext(dbDispatcher) {
         log.info("Ensuring PostgreSQL vector extension and table for collection: {}", name)
         dataSource.connection.use { conn ->
             conn.autoCommit = false
@@ -64,7 +67,7 @@ class PgVectorDbClient(
         }
     }
 
-    override suspend fun upsert(collectionName: String, points: List<VectorPoint>) = withContext(Dispatchers.IO) {
+    override suspend fun upsert(collectionName: String, points: List<VectorPoint>) = withContext(dbDispatcher) {
         if (points.isEmpty()) return@withContext
 
         // Deduplicate by (server_name, tool_name) — last entry wins.
@@ -133,7 +136,7 @@ class PgVectorDbClient(
         scoreThreshold: Float,
         vectorWeight: Float = 0.7f,
         keywordWeight: Float = 0.3f
-    ): List<SearchResult> = withContext(Dispatchers.IO) {
+    ): List<SearchResult> = withContext(dbDispatcher) {
         val results = mutableListOf<SearchResult>()
         dataSource.connection.use { conn ->
             val vectorStr = vector.joinToString(",", "[", "]")
@@ -197,7 +200,7 @@ class PgVectorDbClient(
     }
 
     override suspend fun delete(collectionName: String, filter: Map<String, String>) {
-        withContext(Dispatchers.IO) {
+        withContext(dbDispatcher) {
             if (filter.isEmpty()) return@withContext
             
             dataSource.connection.use { conn ->
@@ -215,7 +218,7 @@ class PgVectorDbClient(
         }
     }
 
-    override suspend fun isHealthy(): Boolean = withContext(Dispatchers.IO) {
+    override suspend fun isHealthy(): Boolean = withContext(dbDispatcher) {
         try {
             dataSource.connection.use { conn ->
                 conn.createStatement().use { stmt ->

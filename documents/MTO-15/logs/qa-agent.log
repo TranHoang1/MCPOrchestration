@@ -1,0 +1,31 @@
+[2025-07-14T16:01:00Z] [QA] [Step-1] [START] — Reading BRD, FSD, TDD for MTO-15
+[2025-07-14T16:01:00Z] [QA] [Step-1] [DONE] — Source documents analyzed: 7 stories, 7 UCs, 35 BRs, 20 test scenarios
+[2025-07-14T16:01:00Z] [QA] [Step-2] [START] — Creating STP.md (Software Test Plan)
+[2025-07-14T16:05:00Z] [QA] [Step-2] [DONE] — STP.md written successfully (5 chunks, ~15KB)
+[2025-07-14T16:05:00Z] [QA] [Step-3] [START] — Creating STC.md (Software Test Cases)
+[2025-07-14T16:15:00Z] [QA] [Step-3] [DONE] — STC.md written successfully (6 chunks, ~43KB, 41 test cases)
+[2025-07-14T16:15:00Z] [QA] [Step-4] [START] — Exporting DOCX files via pandoc
+[2025-07-14T16:20:00Z] [QA] [Step-4] [DONE] — DOCX exported: STP-v1-MTO-15.docx, STC-v1-MTO-15.docx
+[2025-07-14T16:20:00Z] [QA] [Step-5] [START] — Self-check: verifying RTM coverage
+[2025-07-14T16:20:00Z] [QA] [Step-5] [DONE] — RTM verified: 35/35 BRs covered, 7/7 UCs covered, 3/3 NFRs covered
+[2025-07-14T16:20:00Z] [QA] [Self-Check] [DONE] — All checks passed. STP (264 lines) + STC (898 lines) complete.
+
+[2026-05-07 10:00:00] [QA] [Step-1] [START] — Analyzing input documents: BRD, FSD (7 UCs, 35 BRs), TDD (1110 lines)
+[2026-05-07 10:00:05] [QA] [Step-1] [DONE] — Input analysis complete. Scope: 7 features, 35 business rules, 20 test scenarios from FSD
+[2026-05-07 10:00:10] [QA] [Step-2] [START] — Creating STP.md (Software Test Plan)
+[2026-05-07 10:05:00] [QA] [Step-2] [ARTIFACT] — documents/MTO-15/STP.md written (4 chunks, ~18KB)
+[2026-05-07 10:05:05] [QA] [Step-3] [START] — Creating STC.md (Software Test Cases) — 61 test cases across 6 levels
+[2026-05-07 10:15:00] [QA] [Step-3] [ARTIFACT] — documents/MTO-15/STC.md written (7 chunks, ~61KB, 1312 lines)
+[2026-05-07 10:15:05] [QA] [Step-4] [ARTIFACT] — documents/MTO-15/testdata/sync-states.csv (10 records)
+[2026-05-07 10:15:06] [QA] [Step-4] [ARTIFACT] — documents/MTO-15/testdata/ticket-cache-invalid.csv (15 records)
+[2026-05-07 10:15:07] [QA] [Step-4] [ARTIFACT] — documents/MTO-15/testdata/graph-edges.csv (20 records)
+[2026-05-07 10:15:08] [QA] [Step-4] [ARTIFACT] — documents/MTO-15/testdata/attachment-queue.csv (30 records)
+[2026-05-07 10:15:10] [QA] [Step-5] [START] — Self-check: verifying RTM coverage and document completeness
+[2026-05-07 10:15:15] [QA] [Step-5] [VERIFY] — STP: 6 test levels present (PBT, UT, IT, E2E-API, E2E-UI=N/A, SIT) ✅
+[2026-05-07 10:15:16] [QA] [Step-5] [VERIFY] — STC: 61 test cases (5 PBT + 20 UT + 22 IT + 6 E2E-API + 8 SIT) ✅
+[2026-05-07 10:15:17] [QA] [Step-5] [VERIFY] — RTM: 35/35 Business Rules covered (100%) ✅
+[2026-05-07 10:15:18] [QA] [Step-5] [VERIFY] — RTM: 7/7 Use Cases covered (100%) ✅
+[2026-05-07 10:15:19] [QA] [Step-5] [VERIFY] — RTM: 20/20 FSD Test Scenarios mapped (100%) ✅
+[2026-05-07 10:15:20] [QA] [Step-5] [VERIFY] — CSV test data: 4 files created ✅
+[2026-05-07 10:15:25] [QA] [Step-5] [DONE] — Self-check PASSED. All quality criteria met.
+[2026-05-07 10:15:30] [QA] [COMPLETE] [DONE] — STP v2.0 + STC v2.0 created successfully for MTO-15

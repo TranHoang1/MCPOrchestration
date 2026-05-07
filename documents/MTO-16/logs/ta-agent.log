@@ -1,0 +1,38 @@
+[2025-07-14 15:01:00] [TA] [Step-1] [START] — Analyzing input: BRD MTO-16, FSD-TEMPLATE.md, project-structure.md, HttpMcpConnection.kt
+[2025-07-14 15:01:01] [TA] [Step-1] [DONE] — Input analysis complete: 7 user stories, Ktor CIO HTTP client pattern, kotlinx.serialization
+[2025-07-14 15:01:10] [TA] [Write-1] [START] — Writing Section 1 Introduction + Section 2 System Overview
+[2025-07-14 15:01:30] [TA] [Write-1] [DONE] — Section 1 + Section 2 written (Introduction, System Overview)
+[2025-07-14 15:01:31] [TA] [Write-3.1] [START] — Section 3.1 Feature: Search Jira Issues (UC-01)
+[2025-07-14 15:02:00] [TA] [Write-3.1] [DONE] — Section 3.1 Search Issues complete (UC-01, BR-01..08, API contract)
+[2025-07-14 15:02:01] [TA] [Write-3.2] [START] — Section 3.2 Feature: Fetch Single Issue (UC-02)
+[2025-07-14 15:02:30] [TA] [Write-3.2] [DONE] — Section 3.2 Fetch Single Issue complete (UC-02, BR-09..11)
+[2025-07-14 15:02:31] [TA] [Write-3.3] [START] — Section 3.3 Feature: Get Attachments (UC-03)
+[2025-07-14 15:03:00] [TA] [Write-3.3] [DONE] — Section 3.3 + 3.4 complete (Attachments + Download)
+[2025-07-14 15:03:01] [TA] [Write-3.5] [START] — Section 3.5 Feature: Rate Limiting (UC-05)
+[2025-07-14 15:03:30] [TA] [Write-3.5] [DONE] — Section 3.5 Rate Limiting complete (UC-05, BR-19..24, pseudocode)
+[2025-07-14 15:03:31] [TA] [Write-3.6] [DONE] — Section 3.6 Retry Logic complete (UC-06, BR-25..33, pseudocode)
+[2025-07-14 15:03:32] [TA] [Write-3.7] [DONE] — Section 3.7 Configuration complete (UC-07, BR-34..43, YAML spec)
+[2025-07-14 15:03:33] [TA] [Write-4] [START] — Section 4 Data Model
+[2025-07-14 15:04:00] [TA] [Write-4] [DONE] — Section 4 Data Model complete (5 entities, relationships)
+[2025-07-14 15:04:01] [TA] [Write-5] [DONE] — Section 5 Integration Specifications complete (3 systems)
+[2025-07-14 15:04:02] [TA] [Write-6] [DONE] — Section 6 Processing Logic complete (3 processes, error classification table)
+[2025-07-14 15:04:03] [TA] [Write-7] [DONE] — Section 7 Security Requirements complete (controls, audit trail)
+[2025-07-14 15:04:04] [TA] [Write-8] [DONE] — Section 8 Non-Functional Requirements complete (13 NFRs)
+[2025-07-14 15:04:05] [TA] [Write-9] [DONE] — Section 9 Error Handling complete (exception hierarchy with code)
+[2025-07-14 15:04:06] [TA] [Write-10] [DONE] — Section 10 Testing Considerations complete (20 test scenarios)
+[2025-07-14 15:04:07] [TA] [Write-11] [DONE] — Section 11 Appendix complete (diagram index, BRD change log)
+[2025-07-14 15:04:10] [TA] [Step-4] [START] — Creating draw.io diagrams
+[2025-07-14 15:05:00] [TA] [Step-4] [ARTIFACT] — documents/MTO-16/diagrams/fsd-system-context.drawio
+[2025-07-14 15:05:01] [TA] [Step-4] [ARTIFACT] — documents/MTO-16/diagrams/fsd-system-context.png (exported)
+[2025-07-14 15:05:02] [TA] [Step-4] [ARTIFACT] — documents/MTO-16/diagrams/fsd-sequence-api.drawio
+[2025-07-14 15:05:03] [TA] [Step-4] [ARTIFACT] — documents/MTO-16/diagrams/fsd-sequence-api.png (exported)
+[2025-07-14 15:05:04] [TA] [Step-4] [ARTIFACT] — documents/MTO-16/diagrams/fsd-state-retry.drawio
+[2025-07-14 15:05:05] [TA] [Step-4] [ARTIFACT] — documents/MTO-16/diagrams/fsd-state-retry.png (exported)
+[2025-07-14 15:05:06] [TA] [Step-4] [DONE] — All 3 diagrams created and exported to PNG
+[2025-07-14 15:05:10] [TA] [Self-Check] [START] — Verifying all diagram references in FSD.md
+[2025-07-14 15:05:20] [TA] [Self-Check] [VERIFY] — FSD.md: 1326 lines (PASS — exceeds 300 minimum)
+[2025-07-14 15:05:21] [TA] [Self-Check] [VERIFY] — Diagram references check:
+  - diagrams/fsd-system-context.png: EXISTS ✓
+  - diagrams/fsd-sequence-api.png: EXISTS ✓
+  - diagrams/fsd-state-retry.png: EXISTS ✓
+[2025-07-14 15:05:22] [TA] [Self-Check] [DONE] — All self-checks passed. FSD complete.

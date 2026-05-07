@@ -88,14 +88,15 @@ object JsonConfigLoader {
     /**
      * Parse JSON content and extract full Orchestrator configuration sections
      * if present (embedding, vector_db, etc).
+     * Returns null if JSON does not contain an explicit "orchestrator" block.
      */
     fun parseOrchestratorSettings(content: String): OrchestratorSettings? {
         return try {
             val resolved = ConfigurationManagerImpl.resolveEnvVars(content)
             val root = json.parseToJsonElement(resolved).jsonObject
             
-            // Look for "orchestrator" block or try to parse root as settings
-            val settingsObj = root["orchestrator"]?.jsonObject ?: root
+            // Only parse if there's an explicit "orchestrator" block
+            val settingsObj = root["orchestrator"]?.jsonObject ?: return null
             
             json.decodeFromJsonElement(OrchestratorSettings.serializer(), settingsObj)
         } catch (e: Exception) {

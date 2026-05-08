@@ -153,7 +153,25 @@ fun realMain(args: Array<String>) = runBlocking {
             healthMonitor.start(this)
 
             // Start MCP session and block until closed
-            mcpServer.createSession(transport)
+            val session = mcpServer.createSession(transport)
+
+            // After client initialized, resolve workspace root via MCP roots/list
+            session.onInitialized {
+                this@runBlocking.launch {
+                    try {
+                        val rootsResult = mcpServer.listRoots(session.sessionId)
+                        if (rootsResult.roots.isNotEmpty()) {
+                            val rootUri = rootsResult.roots.first().uri
+                            val rootPath = java.io.File(java.net.URI(rootUri)).absolutePath
+                            System.setProperty("user.dir", rootPath)
+                            logger.info("Workspace root from client: $rootPath")
+                        }
+                    } catch (e: Exception) {
+                        logger.debug("listRoots not supported by client: ${e.message}")
+                    }
+                }
+            }
+
             val done = Job()
             mcpServer.onClose { done.complete() }
             done.join()

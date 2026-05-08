@@ -1,5 +1,6 @@
 package com.orchestrator.mcp.protocol
 
+import com.orchestrator.mcp.fileproxy.FilePathValidator
 import io.modelcontextprotocol.kotlin.sdk.types.CallToolResult
 import io.modelcontextprotocol.kotlin.sdk.types.TextContent
 import kotlinx.serialization.json.buildJsonObject
@@ -10,6 +11,7 @@ import java.io.File
 /**
  * Executes draw.io CLI export commands.
  * Supports PNG, SVG, and PDF output formats.
+ * Accepts both absolute and relative paths (resolved from workspace root).
  */
 object DrawioExportExecutor {
 
@@ -23,16 +25,17 @@ object DrawioExportExecutor {
     )
 
     fun execute(filePath: String, format: String): CallToolResult {
-        val inputFile = File(filePath)
+        val resolvedPath = FilePathValidator.resolvePath(filePath)
+        val inputFile = File(resolvedPath)
         if (!inputFile.exists()) {
-            return errorResult("FILE_NOT_FOUND", "File not found: $filePath")
+            return errorResult("FILE_NOT_FOUND", "File not found: $resolvedPath")
         }
 
         val drawioExe = findDrawioExecutable()
             ?: return errorResult("CLI_NOT_FOUND", "draw.io CLI not found")
 
-        val outputPath = filePath.replace(".drawio", ".$format")
-        return runExport(drawioExe, filePath, outputPath, format)
+        val outputPath = resolvedPath.replace(".drawio", ".$format")
+        return runExport(drawioExe, resolvedPath, outputPath, format)
     }
 
     private fun runExport(exe: String, input: String, output: String, format: String): CallToolResult {

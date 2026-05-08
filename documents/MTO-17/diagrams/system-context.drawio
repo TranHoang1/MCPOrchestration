@@ -1,0 +1,51 @@
+<mxGraphModel adaptiveColors="auto">
+  <root>
+    <mxCell id="0"/>
+    <mxCell id="1" parent="0"/>
+    <mxCell id="title" value="&lt;b&gt;System Context — ProjectScanner&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;fontSize=13;fontStyle=1;" vertex="1" parent="1">
+      <mxGeometry x="250" y="10" width="300" height="30" as="geometry"/>
+    </mxCell>
+    <mxCell id="scanner" value="&lt;b&gt;ProjectScanner&lt;/b&gt;&#xa;(Kotlin Coroutines)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1f5fe;strokeColor=#0288d1;fontSize=11;fontStyle=0;" vertex="1" parent="1">
+      <mxGeometry x="300" y="200" width="200" height="80" as="geometry"/>
+    </mxCell>
+    <mxCell id="operator" value="System Operator" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="60" y="100" width="40" height="60" as="geometry"/>
+    </mxCell>
+    <mxCell id="scheduler" value="Scheduler" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="20" y="270" width="120" height="50" as="geometry"/>
+    </mxCell>
+    <mxCell id="jira" value="&lt;b&gt;Jira REST API v3&lt;/b&gt;&#xa;(External)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff3e0;strokeColor=#f57c00;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="600" y="100" width="160" height="70" as="geometry"/>
+    </mxCell>
+    <mxCell id="postgres" value="&lt;b&gt;PostgreSQL&lt;/b&gt;&#xa;jira_sync_state&#xa;jira_ticket_cache" style="shape=cylinder3;whiteSpace=wrap;html=1;fillColor=#f3e5f5;strokeColor=#7b1fa2;fontSize=11;size=10;" vertex="1" parent="1">
+      <mxGeometry x="600" y="270" width="160" height="90" as="geometry"/>
+    </mxCell>
+    <mxCell id="jiraclient" value="&lt;b&gt;JiraRestClient&lt;/b&gt;&#xa;(MTO-16)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8f5e9;strokeColor=#388e3c;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="300" y="80" width="160" height="60" as="geometry"/>
+    </mxCell>
+    <mxCell id="statemgr" value="&lt;b&gt;SyncStateManager&lt;/b&gt;&#xa;(MTO-15)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8f5e9;strokeColor=#388e3c;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="300" y="340" width="160" height="60" as="geometry"/>
+    </mxCell>
+    <mxCell id="e1" value="trigger scan" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;fontSize=10;" edge="1" source="operator" target="scanner" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e2" value="scheduled trigger" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;fontSize=10;" edge="1" source="scheduler" target="scanner" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e3" value="searchIssues()" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;fontSize=10;" edge="1" source="scanner" target="jiraclient" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e4" value="HTTP POST /search" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;fontSize=10;" edge="1" source="jiraclient" target="jira" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e5" value="read/write state" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;fontSize=10;" edge="1" source="scanner" target="statemgr" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e6" value="SQL queries" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;fontSize=10;" edge="1" source="statemgr" target="postgres" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e7" value="upsert tickets" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;fontSize=10;dashed=1;" edge="1" source="scanner" target="postgres" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+  </root>
+</mxGraphModel>

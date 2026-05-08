@@ -119,8 +119,15 @@ class TicketCacheRepositoryImpl(
         stmt.setString(8, ticket.epicKey)
         val labelsJson = ticket.labels?.let { json.encodeToString(it) }
         stmt.setObject(9, labelsJson, java.sql.Types.OTHER)
-        stmt.setTimestamp(10, Timestamp(ticket.updatedAtJira.toEpochMilliseconds()))
-        stmt.setString(11, ticket.contentHash)
+        if (ticket.createdAt != null) {
+            stmt.setTimestamp(10, Timestamp(ticket.createdAt.toEpochMilliseconds()))
+        } else {
+            stmt.setNull(10, java.sql.Types.TIMESTAMP)
+        }
+        stmt.setTimestamp(11, Timestamp(ticket.updatedAtJira.toEpochMilliseconds()))
+        stmt.setString(12, ticket.contentHash)
+        stmt.setString(13, ticket.description)
+        stmt.setObject(14, ticket.commentsJson, java.sql.Types.OTHER)
     }
 
     private fun mapResults(rs: ResultSet): List<TicketCache> {
@@ -142,6 +149,9 @@ class TicketCacheRepositoryImpl(
             parentKey = rs.getString("parent_key"),
             epicKey = rs.getString("epic_key"),
             labels = labels,
+            createdAt = rs.getTimestamp("created_at")?.let {
+                Instant.fromEpochMilliseconds(it.time)
+            },
             updatedAtJira = Instant.fromEpochMilliseconds(
                 rs.getTimestamp("updated_at_jira").time
             ),
@@ -149,6 +159,8 @@ class TicketCacheRepositoryImpl(
                 Instant.fromEpochMilliseconds(it.time)
             },
             contentHash = rs.getString("content_hash"),
+            description = rs.getString("description"),
+            commentsJson = rs.getString("comments_json"),
             kbIngested = rs.getBoolean("kb_ingested")
         )
     }
@@ -157,8 +169,9 @@ class TicketCacheRepositoryImpl(
         private val UPSERT_SQL = """
             INSERT INTO jira_ticket_cache 
                 (ticket_key, project_key, summary, issue_type, status, priority,
-                 parent_key, epic_key, labels, updated_at_jira, content_hash)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?::jsonb, ?, ?)
+                 parent_key, epic_key, labels, created_at, updated_at_jira,
+                 content_hash, description, comments_json)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?::jsonb, ?, ?, ?, ?, ?::jsonb)
             ON CONFLICT (ticket_key) DO UPDATE SET
                 project_key = EXCLUDED.project_key,
                 summary = EXCLUDED.summary,
@@ -168,9 +181,12 @@ class TicketCacheRepositoryImpl(
                 parent_key = EXCLUDED.parent_key,
                 epic_key = EXCLUDED.epic_key,
                 labels = EXCLUDED.labels,
+                created_at = COALESCE(EXCLUDED.created_at, jira_ticket_cache.created_at),
                 updated_at_jira = EXCLUDED.updated_at_jira,
                 synced_at = NOW(),
-                content_hash = EXCLUDED.content_hash
+                content_hash = EXCLUDED.content_hash,
+                description = EXCLUDED.description,
+                comments_json = EXCLUDED.comments_json
         """.trimIndent()
     }
 }

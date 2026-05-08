@@ -64,9 +64,12 @@ class JiraSyncDatabaseInitializer(private val dataSource: HikariDataSource) {
                 parent_key VARCHAR(50),
                 epic_key VARCHAR(50),
                 labels JSONB,
+                created_at TIMESTAMPTZ,
                 updated_at_jira TIMESTAMPTZ NOT NULL,
                 synced_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
                 content_hash VARCHAR(64) NOT NULL,
+                description TEXT,
+                comments_json JSONB,
                 kb_ingested BOOLEAN NOT NULL DEFAULT FALSE
             );
         """.trimIndent()
@@ -106,6 +109,7 @@ class JiraSyncDatabaseInitializer(private val dataSource: HikariDataSource) {
             CREATE INDEX IF NOT EXISTS idx_ticket_cache_project ON jira_ticket_cache (project_key);
             CREATE INDEX IF NOT EXISTS idx_ticket_cache_updated ON jira_ticket_cache (updated_at_jira);
             CREATE INDEX IF NOT EXISTS idx_ticket_cache_not_ingested ON jira_ticket_cache (kb_ingested) WHERE kb_ingested = FALSE;
+            CREATE INDEX IF NOT EXISTS idx_ticket_cache_labels ON jira_ticket_cache USING GIN (labels);
             CREATE INDEX IF NOT EXISTS idx_ticket_graph_source ON jira_ticket_graph (source_key);
             CREATE INDEX IF NOT EXISTS idx_ticket_graph_target ON jira_ticket_graph (target_key);
             CREATE INDEX IF NOT EXISTS idx_attachment_queue_status ON jira_attachment_queue (status);

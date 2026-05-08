@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MCP Orchestrator — Sync Dashboard</title>
+    <style>
+        :root {
+            --bg: #1a1a2e;
+            --surface: #16213e;
+            --card: #0f3460;
+            --accent: #e94560;
+            --success: #4caf50;
+            --warning: #ff9800;
+            --text: #eaeaea;
+            --muted: #8892b0;
+            --radius: 8px;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+        }
+        .dashboard {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 24px;
+        }
+        .header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+        }
+        .header h1 {
+            font-size: 1.5rem;
+            flex: 1;
+        }
+        .header select, .header input, .header button {
+            padding: 8px 16px;
+            border-radius: var(--radius);
+            border: 1px solid var(--muted);
+            background: var(--surface);
+            color: var(--text);
+            font-size: 0.9rem;
+        }
+        .header button {
+            cursor: pointer;
+            border: none;
+            font-weight: 600;
+        }
+        #btn-start { background: var(--success); }
+        #btn-stop { background: var(--accent); }
+        .progress-section {
+            background: var(--surface);
+            border-radius: var(--radius);
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .progress-bar {
+            height: 24px;
+            background: var(--card);
+            border-radius: 12px;
+            overflow: hidden;
+            margin-bottom: 8px;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--success), #81c784);
+            border-radius: 12px;
+            transition: width 0.5s ease;
+            width: 0%;
+        }
+        .progress-text {
+            font-size: 0.9rem;
+            color: var(--muted);
+        }
+        .status-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+        .card {
+            background: var(--surface);
+            border-radius: var(--radius);
+            padding: 20px;
+            border-left: 4px solid var(--muted);
+        }
+        .card.active { border-left-color: var(--success); }
+        .card.error { border-left-color: var(--accent); }
+        .card h3 { font-size: 0.85rem; color: var(--muted); margin-bottom: 8px; }
+        .card .value { font-size: 1.5rem; font-weight: 700; }
+        .card .sub { font-size: 0.8rem; color: var(--muted); margin-top: 4px; }
+        .queue-status {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+        .badge {
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        .badge.pending { background: #1565c0; }
+        .badge.processing { background: #f57c00; }
+        .badge.completed { background: #2e7d32; }
+        .badge.failed { background: #c62828; }
+        .error-log {
+            background: var(--surface);
+            border-radius: var(--radius);
+            padding: 20px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .error-log h3 { margin-bottom: 12px; font-size: 1rem; }
+        .error-log ul { list-style: none; }
+        .error-log li {
+            padding: 8px 12px;
+            border-bottom: 1px solid var(--card);
+            font-size: 0.85rem;
+            color: var(--muted);
+        }
+        .error-log li .time { color: var(--accent); margin-right: 8px; }
+        .ws-status {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+        .ws-status.connected { background: var(--success); }
+        .ws-status.disconnected { background: var(--accent); }
+    </style>
+</head>
+<body>
+<div class="dashboard">
+    <header class="header">
+        <h1>🔄 Sync Dashboard</h1>
+        <span class="ws-status disconnected" id="ws-indicator"></span>
+        <input id="project-input" placeholder="Project key (e.g. MTO)" value="MTO">
+        <button id="btn-start">▶ Start Sync</button>
+        <button id="btn-stop">⏹ Stop</button>
+    </header>
+
+    <section class="progress-section">
+        <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+        <span class="progress-text" id="progress-text">No active sync</span>
+    </section>
+
+    <section class="status-cards">
+        <div class="card" id="card-status">
+            <h3>Status</h3>
+            <div class="value" id="val-status">IDLE</div>
+            <div class="sub" id="val-project">—</div>
+        </div>
+        <div class="card" id="card-synced">
+            <h3>Synced Issues</h3>
+            <div class="value" id="val-synced">0</div>
+            <div class="sub" id="val-total">of 0 total</div>
+        </div>
+        <div class="card" id="card-last-sync">
+            <h3>Last Sync</h3>
+            <div class="value" id="val-last-sync">Never</div>
+            <div class="sub">Last completed sync</div>
+        </div>
+    </section>
+
+    <section class="queue-status">
+        <span class="badge pending" id="badge-pending">Pending: 0</span>
+        <span class="badge processing" id="badge-processing">Processing: 0</span>
+        <span class="badge completed" id="badge-completed">Completed: 0</span>
+        <span class="badge failed" id="badge-failed">Failed: 0</span>
+    </section>
+
+    <section class="error-log">
+        <h3>Recent Events</h3>
+        <ul id="error-list"></ul>
+    </section>
+</div>
+
+<script>
+(function() {
+    'use strict';
+
+    const state = { ws: null, pollInterval: null };
+
+    function init() {
+        connectWebSocket();
+        bindButtons();
+        pollStatus();
+        state.pollInterval = setInterval(pollStatus, 10000);
+    }
+
+    function connectWebSocket() {
+        state.ws = new EventSource('/sync/live');
+        state.ws.onopen = () => setWsStatus(true);
+        state.ws.onerror = () => { setWsStatus(false); state.ws.close(); setTimeout(connectWebSocket, 3000); };
+        state.ws.onmessage = (e) => handleEvent(JSON.parse(e.data));
+    }
+
+    function setWsStatus(connected) {
+        const el = document.getElementById('ws-indicator');
+        el.className = 'ws-status ' + (connected ? 'connected' : 'disconnected');
+    }
+
+    function handleEvent(event) {
+        addLogEntry(event.type, event.projectKey, event.message || '');
+        switch (event.type) {
+            case 'progress': updateProgress(event); break;
+            case 'completed': showCompleted(event); break;
+            case 'error': showError(event); break;
+            case 'attachment_processed': updateAttachment(event); break;
+        }
+    }
+
+    function updateProgress(event) {
+        document.getElementById('progress-fill').style.width = event.percentage + '%';
+        document.getElementById('progress-text').textContent =
+            `${event.syncedIssues}/${event.totalIssues} issues (${event.percentage}%)`;
+        document.getElementById('val-synced').textContent = event.syncedIssues;
+        document.getElementById('val-total').textContent = `of ${event.totalIssues} total`;
+        document.getElementById('val-status').textContent = 'RUNNING';
+        setCardActive('card-status', true);
+    }
+
+    function showCompleted(event) {
+        document.getElementById('progress-fill').style.width = '100%';
+        document.getElementById('val-status').textContent = 'COMPLETED';
+        document.getElementById('val-last-sync').textContent = new Date().toLocaleTimeString();
+        setCardActive('card-status', false);
+    }
+
+    function showError(event) {
+        document.getElementById('val-status').textContent = 'FAILED';
+        document.getElementById('card-status').className = 'card error';
+    }
+
+    function updateAttachment(event) {
+        // Update badge counters from event data
+    }
+
+    function setCardActive(id, active) {
+        document.getElementById(id).className = 'card' + (active ? ' active' : '');
+    }
+
+    function addLogEntry(type, project, message) {
+        const ul = document.getElementById('error-list');
+        const li = document.createElement('li');
+        const time = new Date().toLocaleTimeString();
+        li.innerHTML = `<span class="time">${time}</span> [${type}] ${project} ${message}`;
+        ul.prepend(li);
+        if (ul.children.length > 50) ul.removeChild(ul.lastChild);
+    }
+
+    function bindButtons() {
+        document.getElementById('btn-start').onclick = () => {
+            const key = document.getElementById('project-input').value.trim();
+            if (!key) return;
+            fetch('/sync/start', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ projectKey: key, fullSync: false })
+            }).then(r => r.json()).then(d => addLogEntry('action', key, d.message));
+        };
+        document.getElementById('btn-stop').onclick = () => {
+            const key = document.getElementById('project-input').value.trim();
+            if (!key) return;
+            fetch('/sync/stop', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ projectKey: key })
+            }).then(r => r.json()).then(d => addLogEntry('action', key, d.message));
+        };
+    }
+
+    function pollStatus() {
+        const key = document.getElementById('project-input').value.trim();
+        if (!key) return;
+        fetch(`/sync/status/${key}`)
+            .then(r => { if (r.ok) return r.json(); throw new Error('Not found'); })
+            .then(data => {
+                document.getElementById('val-status').textContent = data.status;
+                document.getElementById('val-project').textContent = data.projectKey;
+                document.getElementById('val-synced').textContent = data.syncedIssues;
+                document.getElementById('val-total').textContent = `of ${data.totalIssues} total`;
+                document.getElementById('progress-fill').style.width = data.percentage + '%';
+                document.getElementById('progress-text').textContent =
+                    `${data.syncedIssues}/${data.totalIssues} issues (${data.percentage}%)`;
+                if (data.lastSyncAt) {
+                    document.getElementById('val-last-sync').textContent =
+                        new Date(data.lastSyncAt).toLocaleString();
+                }
+                setCardActive('card-status', data.status === 'RUNNING');
+                if (data.status === 'FAILED') {
+                    document.getElementById('card-status').className = 'card error';
+                }
+            })
+            .catch(() => {});
+    }
+
+    document.addEventListener('DOMContentLoaded', init);
+})();
+</script>
+</body>
+</html>

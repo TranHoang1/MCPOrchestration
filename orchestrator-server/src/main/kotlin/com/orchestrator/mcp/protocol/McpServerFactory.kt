@@ -83,10 +83,6 @@ class McpServerFactory(
                         handleManageAutoApprove(arguments)
                     "agent_log" -> AgentLogToolRegistrar
                         .handleCall(arguments, agentLogService)
-                    "stream_write_file" -> StreamWriteToolRegistrar
-                        .handleCall(arguments)
-                    "embed_images" -> EmbedImagesToolRegistrar
-                        .handleCall(arguments)
                     "echo" -> CallToolResult(
                         content = listOf(TextContent(
                             text = arguments.toString()
@@ -110,8 +106,6 @@ class McpServerFactory(
                         add(toolEntry("reset_tools", resetToolsDescription()))
                         add(toolEntry("manage_auto_approve", manageAutoApproveDescription()))
                         add(toolEntry("agent_log", "Write an execution log entry"))
-                        add(toolEntry("stream_write_file", "Write content to a file"))
-                        add(toolEntry("embed_images", "Embed images as base64"))
                     })
                 }
             }

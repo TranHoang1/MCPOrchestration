@@ -322,6 +322,7 @@ private fun createTestTicket(key: String, summary: String = "Test ticket $key"):
         parentKey = null,
         epicKey = null,
         labels = listOf("test"),
+        createdAt = Clock.System.now(),
         updatedAtJira = Clock.System.now(),
         contentHash = "a".repeat(64)
     )

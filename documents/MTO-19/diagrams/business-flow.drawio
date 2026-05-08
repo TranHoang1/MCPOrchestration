@@ -1,0 +1,120 @@
+<mxGraphModel adaptiveColors="auto">
+  <root>
+    <mxCell id="0"/>
+    <mxCell id="1" parent="0"/>
+    <mxCell id="lane1" value="Attachment Processor" style="swimlane;horizontal=0;startSize=110;fillColor=#e8f4f8;strokeColor=#0288d1;html=1;" vertex="1" parent="1">
+      <mxGeometry x="0" y="0" width="1800" height="150" as="geometry"/>
+    </mxCell>
+    <mxCell id="n1" value="Start Worker" style="ellipse;whiteSpace=wrap;html=1;fillColor=#e1f5fe;strokeColor=#0288d1;" vertex="1" parent="lane1">
+      <mxGeometry x="120" y="45" width="80" height="60" as="geometry"/>
+    </mxCell>
+    <mxCell id="n2" value="Poll Queue&#xa;(pending items)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1f5fe;strokeColor=#0288d1;" vertex="1" parent="lane1">
+      <mxGeometry x="260" y="45" width="140" height="60" as="geometry"/>
+    </mxCell>
+    <mxCell id="n3" value="Items found?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff3e0;strokeColor=#f57c00;" vertex="1" parent="lane1">
+      <mxGeometry x="460" y="35" width="140" height="80" as="geometry"/>
+    </mxCell>
+    <mxCell id="n4" value="Mark as&#xa;'processing'" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1f5fe;strokeColor=#0288d1;" vertex="1" parent="lane1">
+      <mxGeometry x="660" y="45" width="140" height="60" as="geometry"/>
+    </mxCell>
+    <mxCell id="lane2" value="Jira API" style="swimlane;horizontal=0;startSize=110;fillColor=#fff3e0;strokeColor=#f57c00;html=1;" vertex="1" parent="1">
+      <mxGeometry x="0" y="150" width="1800" height="150" as="geometry"/>
+    </mxCell>
+    <mxCell id="n5" value="Download&#xa;Attachment&#xa;(max 3 concurrent)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff3e0;strokeColor=#f57c00;" vertex="1" parent="lane2">
+      <mxGeometry x="660" y="35" width="140" height="80" as="geometry"/>
+    </mxCell>
+    <mxCell id="lane3" value="Text Extraction" style="swimlane;horizontal=0;startSize=110;fillColor=#e8f5e9;strokeColor=#388e3c;html=1;" vertex="1" parent="1">
+      <mxGeometry x="0" y="300" width="1800" height="150" as="geometry"/>
+    </mxCell>
+    <mxCell id="n6" value="Check&#xa;MIME Type" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff3e0;strokeColor=#f57c00;" vertex="1" parent="lane3">
+      <mxGeometry x="860" y="35" width="140" height="80" as="geometry"/>
+    </mxCell>
+    <mxCell id="n7" value="PDFBox&#xa;Extract" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8f5e9;strokeColor=#388e3c;" vertex="1" parent="lane3">
+      <mxGeometry x="1060" y="10" width="120" height="50" as="geometry"/>
+    </mxCell>
+    <mxCell id="n8" value="POI&#xa;Extract" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8f5e9;strokeColor=#388e3c;" vertex="1" parent="lane3">
+      <mxGeometry x="1060" y="70" width="120" height="50" as="geometry"/>
+    </mxCell>
+    <mxCell id="n9" value="Read&#xa;Direct" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8f5e9;strokeColor=#388e3c;" vertex="1" parent="lane3">
+      <mxGeometry x="1200" y="10" width="120" height="50" as="geometry"/>
+    </mxCell>
+    <mxCell id="n10" value="Skip&#xa;(unsupported)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fce4ec;strokeColor=#c62828;" vertex="1" parent="lane3">
+      <mxGeometry x="1200" y="70" width="120" height="50" as="geometry"/>
+    </mxCell>
+    <mxCell id="lane4" value="Knowledge Base" style="swimlane;horizontal=0;startSize=110;fillColor=#f3e5f5;strokeColor=#7b1fa2;html=1;" vertex="1" parent="1">
+      <mxGeometry x="0" y="450" width="1800" height="150" as="geometry"/>
+    </mxCell>
+    <mxCell id="n11" value="Generate&#xa;Embedding" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f3e5f5;strokeColor=#7b1fa2;" vertex="1" parent="lane4">
+      <mxGeometry x="1380" y="45" width="140" height="60" as="geometry"/>
+    </mxCell>
+    <mxCell id="n12" value="Ingest to&#xa;Qdrant" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f3e5f5;strokeColor=#7b1fa2;" vertex="1" parent="lane4">
+      <mxGeometry x="1580" y="45" width="140" height="60" as="geometry"/>
+    </mxCell>
+    <mxCell id="lane5" value="Queue Management" style="swimlane;horizontal=0;startSize=110;fillColor=#f5f5f5;strokeColor=#666666;html=1;" vertex="1" parent="1">
+      <mxGeometry x="0" y="600" width="1800" height="150" as="geometry"/>
+    </mxCell>
+    <mxCell id="n13" value="Mark&#xa;'completed'" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8f5e9;strokeColor=#388e3c;" vertex="1" parent="lane5">
+      <mxGeometry x="1580" y="45" width="140" height="60" as="geometry"/>
+    </mxCell>
+    <mxCell id="n14" value="Mark&#xa;'failed'" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fce4ec;strokeColor=#c62828;" vertex="1" parent="lane5">
+      <mxGeometry x="1380" y="45" width="140" height="60" as="geometry"/>
+    </mxCell>
+    <mxCell id="n15" value="Backoff&#xa;(exponential)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;" vertex="1" parent="lane5">
+      <mxGeometry x="460" y="45" width="140" height="60" as="geometry"/>
+    </mxCell>
+    <mxCell id="e1" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;" edge="1" source="n1" target="n2" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e2" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;" edge="1" source="n2" target="n3" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e3" value="Yes" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;" edge="1" source="n3" target="n4" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e4" value="No" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;" edge="1" source="n3" target="n15" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e5" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;" edge="1" source="n4" target="n5" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e6" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;" edge="1" source="n5" target="n6" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e7" value="PDF" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;" edge="1" source="n6" target="n7" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e8" value="DOCX" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;" edge="1" source="n6" target="n8" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e9" value="text/*" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;" edge="1" source="n6" target="n9" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e10" value="other" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;" edge="1" source="n6" target="n10" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e11" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;" edge="1" source="n7" target="n11" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e12" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;" edge="1" source="n8" target="n11" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e13" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;" edge="1" source="n9" target="n11" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e14" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;" edge="1" source="n11" target="n12" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e15" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;" edge="1" source="n12" target="n13" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e16" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;dashed=1;strokeColor=#c62828;" edge="1" source="n5" target="n14" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e17" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;" edge="1" source="n15" target="n2" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e18" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;" edge="1" source="n13" target="n2" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+  </root>
+</mxGraphModel>

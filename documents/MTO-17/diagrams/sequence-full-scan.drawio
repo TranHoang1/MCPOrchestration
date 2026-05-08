@@ -1,0 +1,105 @@
+<mxGraphModel adaptiveColors="auto">
+  <root>
+    <mxCell id="0"/>
+    <mxCell id="1" parent="0"/>
+    <mxCell id="title" value="&lt;b&gt;Sequence — Full Project Scan&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;fontSize=13;fontStyle=1;" vertex="1" parent="1">
+      <mxGeometry x="200" y="10" width="300" height="30" as="geometry"/>
+    </mxCell>
+    <mxCell id="op" value="Operator" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;size=40;fillColor=#f5f5f5;strokeColor=#666666;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="60" y="50" width="100" height="550" as="geometry"/>
+    </mxCell>
+    <mxCell id="ps" value="ProjectScanner" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;size=40;fillColor=#e1f5fe;strokeColor=#0288d1;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="230" y="50" width="120" height="550" as="geometry"/>
+    </mxCell>
+    <mxCell id="sm" value="SyncState&#xa;Manager" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;size=40;fillColor=#e8f5e9;strokeColor=#388e3c;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="420" y="50" width="100" height="550" as="geometry"/>
+    </mxCell>
+    <mxCell id="jc" value="JiraRest&#xa;Client" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;size=40;fillColor=#fff3e0;strokeColor=#f57c00;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="590" y="50" width="100" height="550" as="geometry"/>
+    </mxCell>
+    <mxCell id="db" value="PostgreSQL" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;size=40;fillColor=#f3e5f5;strokeColor=#7b1fa2;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="760" y="50" width="100" height="550" as="geometry"/>
+    </mxCell>
+    <mxCell id="m1" value="scan(projectKey)" style="html=1;endSize=6;startSize=6;fontSize=10;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="110" y="120" as="sourcePoint"/>
+        <mxPoint x="290" y="120" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="m2" value="getState(projectKey)" style="html=1;endSize=6;startSize=6;fontSize=10;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="290" y="150" as="sourcePoint"/>
+        <mxPoint x="470" y="150" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="m3" value="null (no previous state)" style="html=1;endSize=6;startSize=6;fontSize=10;dashed=1;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="470" y="175" as="sourcePoint"/>
+        <mxPoint x="290" y="175" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="m4" value="searchIssues(jql, startAt=0)" style="html=1;endSize=6;startSize=6;fontSize=10;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="290" y="210" as="sourcePoint"/>
+        <mxPoint x="640" y="210" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="m5" value="SearchResult(total=200, issues[0..49])" style="html=1;endSize=6;startSize=6;fontSize=10;dashed=1;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="640" y="240" as="sourcePoint"/>
+        <mxPoint x="290" y="240" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="m6" value="markRunning(projectKey, 200)" style="html=1;endSize=6;startSize=6;fontSize=10;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="290" y="270" as="sourcePoint"/>
+        <mxPoint x="470" y="270" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="m7" value="UPSERT batch (50 tickets)" style="html=1;endSize=6;startSize=6;fontSize=10;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="290" y="310" as="sourcePoint"/>
+        <mxPoint x="810" y="310" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="m8" value="updateProgress(offset=50, synced=50)" style="html=1;endSize=6;startSize=6;fontSize=10;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="290" y="345" as="sourcePoint"/>
+        <mxPoint x="470" y="345" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="loop" value="loop [while offset &lt; total]" style="shape=umlFrame;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#666666;fontSize=10;width=180;height=20;" vertex="1" parent="1">
+      <mxGeometry x="220" y="375" width="620" height="120" as="geometry"/>
+    </mxCell>
+    <mxCell id="m9" value="searchIssues(jql, startAt=offset)" style="html=1;endSize=6;startSize=6;fontSize=10;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="290" y="410" as="sourcePoint"/>
+        <mxPoint x="640" y="410" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="m10" value="issues[offset..offset+49]" style="html=1;endSize=6;startSize=6;fontSize=10;dashed=1;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="640" y="435" as="sourcePoint"/>
+        <mxPoint x="290" y="435" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="m11" value="UPSERT batch + updateProgress" style="html=1;endSize=6;startSize=6;fontSize=10;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="290" y="465" as="sourcePoint"/>
+        <mxPoint x="810" y="465" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="m12" value="markCompleted(projectKey)" style="html=1;endSize=6;startSize=6;fontSize=10;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="290" y="520" as="sourcePoint"/>
+        <mxPoint x="470" y="520" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="m13" value="ScanResult(200, 200, COMPLETED)" style="html=1;endSize=6;startSize=6;fontSize=10;dashed=1;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="290" y="555" as="sourcePoint"/>
+        <mxPoint x="110" y="555" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+  </root>
+</mxGraphModel>

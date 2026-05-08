@@ -4,8 +4,10 @@ import com.orchestrator.mcp.core.model.FileNotFoundException
 import com.orchestrator.mcp.core.model.InvalidFilePathException
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.DescribeSpec
+import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldContain
 import java.nio.file.Files
+import java.nio.file.Path
 
 /**
  * Unit tests for FilePathValidator — path security validation.
@@ -14,10 +16,28 @@ import java.nio.file.Files
  */
 class FilePathValidatorTest : DescribeSpec({
 
+    describe("resolvePath") {
+        it("returns absolute path unchanged") {
+            val tempFile = Files.createTempFile("resolve-test", ".txt")
+            try {
+                val absPath = tempFile.toAbsolutePath().toString()
+                FilePathValidator.resolvePath(absPath) shouldBe absPath
+            } finally {
+                Files.deleteIfExists(tempFile)
+            }
+        }
+
+        it("resolves relative path against working directory") {
+            val resolved = FilePathValidator.resolvePath("documents/test.md")
+            val expected = Path.of(System.getProperty("user.dir"))
+                .resolve("documents/test.md").normalize().toString()
+            resolved shouldBe expected
+        }
+    }
+
     describe("validateInputPath") {
         // STC: UT-08 — Path traversal detected
         it("rejects path with traversal sequences") {
-            // Use an absolute path with traversal for current OS
             val tempDir = Files.createTempDirectory("traversal-test")
             val traversalPath = "${tempDir}/../../../etc/passwd"
             val ex = shouldThrow<InvalidFilePathException> {
@@ -27,11 +47,10 @@ class FilePathValidatorTest : DescribeSpec({
             Files.deleteIfExists(tempDir)
         }
 
-        it("rejects relative paths") {
-            val ex = shouldThrow<InvalidFilePathException> {
-                FilePathValidator.validateInputPath("./relative/file.pdf")
+        it("resolves relative path and validates existence") {
+            shouldThrow<FileNotFoundException> {
+                FilePathValidator.validateInputPath("nonexistent_xyz_12345.pdf")
             }
-            ex.message shouldContain "path must be absolute"
         }
 
         // STC: UT-05 — File not found
@@ -65,20 +84,14 @@ class FilePathValidatorTest : DescribeSpec({
             Files.deleteIfExists(tempDir)
         }
 
-        it("rejects relative output paths") {
-            val ex = shouldThrow<InvalidFilePathException> {
-                FilePathValidator.validateOutputPath("relative/output.pdf")
-            }
-            ex.message shouldContain "path must be absolute"
-        }
-
-        it("rejects output path with non-existent parent directory") {
-            val tempDir = Files.createTempDirectory("out-nodir")
-            val badPath = "${tempDir}/nonexistent_subdir/output.pdf"
-            val ex = shouldThrow<InvalidFilePathException> {
-                FilePathValidator.validateOutputPath(badPath)
-            }
-            ex.message shouldContain "does not exist"
+        it("resolves relative path and creates parent directories") {
+            val tempDir = Files.createTempDirectory("out-relative")
+            val relativePath = "${tempDir}/new_subdir/output.pdf"
+            FilePathValidator.validateOutputPath(relativePath)
+            val parent = Path.of(relativePath).parent
+            Files.exists(parent) shouldBe true
+            // Cleanup
+            Files.deleteIfExists(parent)
             Files.deleteIfExists(tempDir)
         }
 

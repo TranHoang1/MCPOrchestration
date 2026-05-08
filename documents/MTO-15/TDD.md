@@ -353,15 +353,21 @@ CREATE TABLE IF NOT EXISTS jira_ticket_cache (
     parent_key VARCHAR(50),
     epic_key VARCHAR(50),
     labels JSONB,
+    created_at TIMESTAMPTZ,
     updated_at_jira TIMESTAMPTZ NOT NULL,
     synced_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     content_hash VARCHAR(64) NOT NULL,
+    description TEXT,
+    comments_json JSONB,
     kb_ingested BOOLEAN NOT NULL DEFAULT FALSE
 );
 
 COMMENT ON TABLE jira_ticket_cache IS 'Local cache of Jira ticket metadata for change detection';
 COMMENT ON COLUMN jira_ticket_cache.content_hash IS 'SHA-256 hash of key fields for change detection';
 COMMENT ON COLUMN jira_ticket_cache.kb_ingested IS 'Whether ticket has been ingested into Knowledge Base';
+COMMENT ON COLUMN jira_ticket_cache.created_at IS 'Jira ticket creation timestamp (MTO-18 required field)';
+COMMENT ON COLUMN jira_ticket_cache.description IS 'Full ticket description for deep content crawl (MTO-18)';
+COMMENT ON COLUMN jira_ticket_cache.comments_json IS 'JSONB array of comments for deep content crawl (MTO-18)';
 ```
 
 #### Table: jira_ticket_graph
@@ -412,6 +418,7 @@ COMMENT ON COLUMN jira_attachment_queue.status IS 'Lifecycle: PENDING, DOWNLOADI
 CREATE INDEX IF NOT EXISTS idx_ticket_cache_project ON jira_ticket_cache (project_key);
 CREATE INDEX IF NOT EXISTS idx_ticket_cache_updated ON jira_ticket_cache (updated_at_jira);
 CREATE INDEX IF NOT EXISTS idx_ticket_cache_not_ingested ON jira_ticket_cache (kb_ingested) WHERE kb_ingested = FALSE;
+CREATE INDEX IF NOT EXISTS idx_ticket_cache_labels ON jira_ticket_cache USING GIN (labels);
 
 -- jira_ticket_graph indexes
 CREATE INDEX IF NOT EXISTS idx_ticket_graph_source ON jira_ticket_graph (source_key);

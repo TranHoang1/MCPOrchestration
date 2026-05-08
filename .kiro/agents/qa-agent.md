@@ -4,7 +4,7 @@ description: >
   QA Engineer agent chuyên tạo Test Plan (STP) và Test Cases (STC) từ BRD, FSD, và TDD.
   Đọc tài liệu đã có, phân tích acceptance criteria, business rules, và tạo test documentation hoàn chỉnh.
   Sử dụng bằng cách cung cấp Jira ticket key (ví dụ: PROJ-123).
-tools: ["read", "write", "shell", "@mcp"]
+tools: ["read", "shell", "@mcp"]
 includeMcpJson: true
 ---
 

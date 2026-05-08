@@ -7,7 +7,7 @@ description: >
   TA reviews and adds API contracts, integration specs, pseudocode, and technical validation.
   Also capable of creating FSD independently from Jira ticket analysis data and BRD when BA is unavailable.
   Call this agent when you need to enrich an FSD with technical depth or generate one from scratch.
-tools: ["read", "write", "@mcp"]
+tools: ["read", "@mcp"]
 includeMcpJson: true
 ---
 

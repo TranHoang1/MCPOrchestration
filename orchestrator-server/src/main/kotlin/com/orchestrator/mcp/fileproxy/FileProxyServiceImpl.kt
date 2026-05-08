@@ -148,8 +148,10 @@ class FileProxyServiceImpl(
         arguments: JsonObject,
         detection: DetectionResult
     ): ExecuteToolResponse {
-        val filePath = arguments["file_path"]?.jsonPrimitive?.content
+        val rawPath = arguments["file_path"]?.jsonPrimitive?.content
             ?: throw com.orchestrator.mcp.core.model.InvalidParamsException("file_path is required")
+
+        val filePath = FilePathValidator.resolvePath(rawPath)
 
         val otherArgs = arguments.filterKeys { it != "file_path" && it != "output_path" }
             .mapValues { it.value.jsonPrimitive.content }

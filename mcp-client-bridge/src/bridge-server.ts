@@ -12,7 +12,7 @@ import {
 import { BridgeConfig } from './bridge-config.js';
 import { HttpStreamableClient } from './http-streamable-client.js';
 import { ReconnectionManager } from './reconnection-manager.js';
-import { handleStreamWrite, StreamWriteArgs } from './local-stream-write.js';
+import { handleStreamWrite, StreamWriteArgs, setWorkspaceRoot } from './local-stream-write.js';
 import { handleEmbedImages, EmbedImagesArgs } from './local-embed-images.js';
 
 export class BridgeServer {
@@ -52,9 +52,35 @@ export class BridgeServer {
 
     this.registerHandlers();
 
+    // After initialization, query client for workspace roots
+    this.server.oninitialized = async () => {
+      await this.resolveWorkspaceRoot();
+    };
+
     const transport = new StdioServerTransport();
     await this.server.connect(transport);
     console.error('[mcp-bridge] Bridge MCP server ready (stdio transport)');
+  }
+
+  private async resolveWorkspaceRoot(): Promise<void> {
+    if (!this.server) return;
+    try {
+      const result = await this.server.listRoots();
+      if (result.roots && result.roots.length > 0) {
+        const rootUri = result.roots[0].uri;
+        // Convert file:// URI to local path
+        const rootPath = rootUri.startsWith('file:///')
+          ? decodeURIComponent(rootUri.slice(8)).replace(/\//g, '\\')  // Windows
+          : decodeURIComponent(rootUri.replace('file://', ''));
+        setWorkspaceRoot(rootPath);
+        console.error(`[mcp-bridge] Workspace root from client: ${rootPath}`);
+      } else {
+        console.error('[mcp-bridge] No roots from client, using cwd:', process.cwd());
+      }
+    } catch (err) {
+      // Client may not support roots — fallback to cwd
+      console.error('[mcp-bridge] listRoots not supported by client, using cwd');
+    }
   }
 
   private registerHandlers(): void {
@@ -80,7 +106,9 @@ export class BridgeServer {
     const tools: ToolDef[] = [
       {
         name: 'find_tools',
-        description: 'Search for available tools by describing what you want to accomplish',
+        description: 'Search for available tools by describing what you want to accomplish. ' +
+          'Returns tool definitions with input schemas. ' +
+          'Also discovers hidden tools not listed in tools/list (e.g. jira_project_sync, jira_sync_status, export_drawio).',
         inputSchema: {
           type: 'object',
           properties: {
@@ -162,26 +190,31 @@ export class BridgeServer {
     if (this.config.enableLocalStreamWrite) {
       tools.push({
         name: 'stream_write_file',
-        description: 'Write content directly to a file on disk without buffering',
+        description: 'Write content directly to a file on disk without buffering. ' +
+          'Supports absolute and relative paths (relative resolved from workspace root). ' +
+          "Modes: 'write' (overwrite/create), 'append' (add to end), 'create' (fail if file exists). " +
+          'Use append mode to build large files incrementally. Content is optional for create mode.',
         inputSchema: {
           type: 'object',
           properties: {
-            file_path: { type: 'string', description: 'Absolute path to the output file' },
-            content: { type: 'string', description: 'Text content to write' },
-            mode: { type: 'string', description: 'write or append' },
+            file_path: { type: 'string', description: 'Path to the output file. Supports absolute or relative path (resolved from workspace root)' },
+            content: { type: 'string', description: "Text content to write. Optional when mode='create' (defaults to empty string)" },
+            mode: { type: 'string', description: "write, append, or create. 'create' fails if file already exists. Default: 'write'" },
             encoding: { type: 'string', description: 'Character encoding (default: utf-8)' },
           },
-          required: ['file_path', 'content'],
+          required: ['file_path'],
         },
       });
 
       tools.push({
         name: 'embed_images',
-        description: 'Read a markdown file and embed all local image references as base64 data URIs. Use before export_docx to include images in the document.',
+        description: 'Read a markdown file and replace all local image references with inline base64 data URIs. ' +
+          'Supports absolute and relative paths (relative resolved from workspace root). ' +
+          'Use before export_docx to include images in the document.',
         inputSchema: {
           type: 'object',
           properties: {
-            file_path: { type: 'string', description: 'Absolute path to the markdown file' },
+            file_path: { type: 'string', description: 'Path to the markdown file. Supports absolute or relative path (resolved from workspace root)' },
           },
           required: ['file_path'],
         },

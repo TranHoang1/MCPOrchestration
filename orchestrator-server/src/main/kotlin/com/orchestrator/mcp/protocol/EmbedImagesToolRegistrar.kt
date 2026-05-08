@@ -41,17 +41,19 @@ object EmbedImagesToolRegistrar {
 
     private suspend fun handleEmbedImages(arguments: JsonObject?): CallToolResult {
         return try {
-            val filePath = arguments?.get("file_path")
+            val rawPath = arguments?.get("file_path")
                 ?.jsonPrimitive?.content
                 ?: return errorResult("INVALID_PARAMS", "file_path is required")
 
-            val outputPath = arguments["output_path"]?.jsonPrimitive?.content
+            val rawOutputPath = arguments["output_path"]?.jsonPrimitive?.content
 
+            val filePath = FilePathValidator.resolvePath(rawPath)
             FilePathValidator.validateInputPath(filePath)
 
             val result = processMarkdown(filePath)
 
-            if (outputPath != null) {
+            if (rawOutputPath != null) {
+                val outputPath = FilePathValidator.resolvePath(rawOutputPath)
                 FilePathValidator.validateOutputPath(outputPath)
                 withContext(Dispatchers.IO) {
                     Files.writeString(Path.of(outputPath), result.content)
@@ -165,17 +167,18 @@ object EmbedImagesToolRegistrar {
 internal fun embedImagesDescription(): String =
     "Read a markdown file and replace image references ![alt](path) with inline base64 data URIs. " +
         "Creates a self-contained markdown with all images embedded. " +
+        "Supports both absolute and relative paths (relative paths resolved from workspace root). " +
         "Useful for HTTP mode where server cannot access client filesystem, or for DOCX export."
 
 internal fun embedImagesSchema(): ToolSchema = ToolSchema(
     properties = buildJsonObject {
         putJsonObject("file_path") {
             put("type", "string")
-            put("description", "Absolute path to the markdown file to process")
+            put("description", "Path to the markdown file to process. Supports absolute or relative path (resolved from workspace root)")
         }
         putJsonObject("output_path") {
             put("type", "string")
-            put("description", "Optional. Absolute path to save the result. If omitted, returns content in response.")
+            put("description", "Optional. Path to save the result. Supports absolute or relative path. If omitted, returns content in response.")
         }
     },
     required = listOf("file_path")

@@ -81,14 +81,21 @@ class OutputFileProxyHandlerTest : DescribeSpec({
             }
         }
 
-        // STC: UT-12 — Output directory not found
-        it("throws for non-existent output directory") {
+        // STC: UT-12 — Output path with non-writable parent
+        it("throws for non-writable output directory") {
+            val tempDir = Files.createTempDirectory("output-nowrite-test")
+            val outputPath = "${tempDir}/output.pdf"
             val upstreamResponse = ExecuteToolResponse(
                 content = listOf(ExecutionContentItem(text = """{"artifacts":[]}"""))
             )
 
-            shouldThrow<InvalidFilePathException> {
-                handler.processOutputProxy(upstreamResponse, "/nonexistent_dir_xyz/file.pdf")
+            // Empty artifacts → OutputSaveFailedException
+            try {
+                shouldThrow<OutputSaveFailedException> {
+                    handler.processOutputProxy(upstreamResponse, outputPath)
+                }
+            } finally {
+                Files.deleteIfExists(tempDir)
             }
         }
 

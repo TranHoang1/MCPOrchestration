@@ -845,6 +845,7 @@ Performance indexes are created alongside the tables to optimize the primary que
 | jira_ticket_cache | idx_ticket_cache_project | project_key | B-tree | — | Find all tickets for a project |
 | jira_ticket_cache | idx_ticket_cache_updated | updated_at_jira | B-tree | — | Incremental sync (tickets updated after X) |
 | jira_ticket_cache | idx_ticket_cache_not_ingested | kb_ingested | Partial | WHERE kb_ingested = FALSE | Find tickets needing KB ingestion |
+| jira_ticket_cache | idx_ticket_cache_labels | labels | GIN | — | JSONB array queries on labels (MTO-18) |
 | jira_ticket_graph | idx_ticket_graph_source | source_key | B-tree | — | Forward graph traversal |
 | jira_ticket_graph | idx_ticket_graph_target | target_key | B-tree | — | Reverse graph traversal |
 | jira_attachment_queue | idx_attachment_queue_status | status | B-tree | — | Count by status (monitoring) |
@@ -1263,15 +1264,21 @@ CREATE TABLE IF NOT EXISTS jira_ticket_cache (
     parent_key VARCHAR(50),
     epic_key VARCHAR(50),
     labels JSONB,
+    created_at TIMESTAMPTZ,
     updated_at_jira TIMESTAMPTZ NOT NULL,
     synced_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     content_hash VARCHAR(64) NOT NULL,
+    description TEXT,
+    comments_json JSONB,
     kb_ingested BOOLEAN NOT NULL DEFAULT FALSE
 );
 
 COMMENT ON TABLE jira_ticket_cache IS 'Local cache of Jira ticket metadata for change detection';
 COMMENT ON COLUMN jira_ticket_cache.content_hash IS 'SHA-256 hash of key fields for change detection';
 COMMENT ON COLUMN jira_ticket_cache.kb_ingested IS 'Whether ticket has been ingested into Knowledge Base';
+COMMENT ON COLUMN jira_ticket_cache.created_at IS 'Jira ticket creation timestamp (MTO-18 required field)';
+COMMENT ON COLUMN jira_ticket_cache.description IS 'Full ticket description for deep content crawl (MTO-18)';
+COMMENT ON COLUMN jira_ticket_cache.comments_json IS 'JSONB array of comments for deep content crawl (MTO-18)';
 
 -- Table 3: jira_ticket_graph
 CREATE TABLE IF NOT EXISTS jira_ticket_graph (
@@ -1312,6 +1319,7 @@ COMMENT ON COLUMN jira_attachment_queue.status IS 'Lifecycle: PENDING, DOWNLOADI
 CREATE INDEX IF NOT EXISTS idx_ticket_cache_project ON jira_ticket_cache (project_key);
 CREATE INDEX IF NOT EXISTS idx_ticket_cache_updated ON jira_ticket_cache (updated_at_jira);
 CREATE INDEX IF NOT EXISTS idx_ticket_cache_not_ingested ON jira_ticket_cache (kb_ingested) WHERE kb_ingested = FALSE;
+CREATE INDEX IF NOT EXISTS idx_ticket_cache_labels ON jira_ticket_cache USING GIN (labels);
 CREATE INDEX IF NOT EXISTS idx_ticket_graph_source ON jira_ticket_graph (source_key);
 CREATE INDEX IF NOT EXISTS idx_ticket_graph_target ON jira_ticket_graph (target_key);
 CREATE INDEX IF NOT EXISTS idx_attachment_queue_status ON jira_attachment_queue (status);

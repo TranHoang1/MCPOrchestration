@@ -1,6 +1,6 @@
 ---
 name: Kotlin Code Standards
-description: Bộ quy tắc và tiêu chuẩn lập trình Kotlin áp dụng cho toàn bộ dự án AntiGravity.
+description: Bộ quy tắc và tiêu chuẩn lập trình Kotlin áp dụng cho toàn bộ dự án .
 ---
 
 # Kotlin Code Standards

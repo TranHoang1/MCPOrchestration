@@ -1,0 +1,78 @@
+<mxGraphModel adaptiveColors="auto">
+  <root>
+    <mxCell id="0"/>
+    <mxCell id="1" parent="0"/>
+    <mxCell id="title" value="&lt;b&gt;Project Scanner — Use Cases&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;fontSize=13;fontStyle=1;" vertex="1" parent="1">
+      <mxGeometry x="280" y="10" width="260" height="30" as="geometry"/>
+    </mxCell>
+    <mxCell id="boundary" value="ProjectScanner System" style="swimlane;startSize=30;fillColor=#f5f5f5;strokeColor=#666666;html=1;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="180" y="50" width="460" height="520" as="geometry"/>
+    </mxCell>
+    <mxCell id="uc1" value="Full Project Scan" style="ellipse;whiteSpace=wrap;html=1;fillColor=#e1f5fe;strokeColor=#0288d1;fontSize=11;" vertex="1" parent="boundary">
+      <mxGeometry x="150" y="40" width="160" height="70" as="geometry"/>
+    </mxCell>
+    <mxCell id="uc2" value="Incremental Scan" style="ellipse;whiteSpace=wrap;html=1;fillColor=#e1f5fe;strokeColor=#0288d1;fontSize=11;" vertex="1" parent="boundary">
+      <mxGeometry x="150" y="130" width="160" height="70" as="geometry"/>
+    </mxCell>
+    <mxCell id="uc3" value="Resume Scan" style="ellipse;whiteSpace=wrap;html=1;fillColor=#e1f5fe;strokeColor=#0288d1;fontSize=11;" vertex="1" parent="boundary">
+      <mxGeometry x="150" y="220" width="160" height="70" as="geometry"/>
+    </mxCell>
+    <mxCell id="uc4" value="Track Progress" style="ellipse;whiteSpace=wrap;html=1;fillColor=#e1f5fe;strokeColor=#0288d1;fontSize=11;" vertex="1" parent="boundary">
+      <mxGeometry x="150" y="310" width="160" height="70" as="geometry"/>
+    </mxCell>
+    <mxCell id="uc5" value="Handle Errors&#xa;Gracefully" style="ellipse;whiteSpace=wrap;html=1;fillColor=#fce4ec;strokeColor=#c62828;fontSize=11;" vertex="1" parent="boundary">
+      <mxGeometry x="150" y="400" width="160" height="70" as="geometry"/>
+    </mxCell>
+    <mxCell id="actor1" value="System Operator" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="60" y="220" width="40" height="60" as="geometry"/>
+    </mxCell>
+    <mxCell id="actor2" value="Scheduler" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="60" y="370" width="40" height="60" as="geometry"/>
+    </mxCell>
+    <mxCell id="actor3" value="Jira REST API" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="740" y="150" width="40" height="60" as="geometry"/>
+    </mxCell>
+    <mxCell id="actor4" value="PostgreSQL" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="740" y="350" width="40" height="60" as="geometry"/>
+    </mxCell>
+    <mxCell id="ea1" style="html=1;endArrow=none;endSize=6;" edge="1" source="actor1" target="uc1" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="ea2" style="html=1;endArrow=none;endSize=6;" edge="1" source="actor1" target="uc2" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="ea3" style="html=1;endArrow=none;endSize=6;" edge="1" source="actor1" target="uc3" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="ea4" style="html=1;endArrow=none;endSize=6;" edge="1" source="actor1" target="uc4" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="ea5" style="html=1;endArrow=none;endSize=6;" edge="1" source="actor2" target="uc1" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="ea6" style="html=1;endArrow=none;endSize=6;" edge="1" source="actor2" target="uc2" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="ea7" style="html=1;endArrow=none;endSize=6;" edge="1" source="uc1" target="actor3" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="ea8" style="html=1;endArrow=none;endSize=6;" edge="1" source="uc2" target="actor3" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="ea9" style="html=1;endArrow=none;endSize=6;" edge="1" source="uc3" target="actor4" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="ea10" style="html=1;endArrow=none;endSize=6;" edge="1" source="uc4" target="actor4" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="ea11" style="html=1;endArrow=none;endSize=6;" edge="1" source="uc5" target="actor4" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="ext1" value="&lt;i&gt;&amp;lt;&amp;lt;extends&amp;gt;&amp;gt;&lt;/i&gt;" style="html=1;dashed=1;endArrow=open;endSize=6;" edge="1" source="uc2" target="uc1" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="ext2" value="&lt;i&gt;&amp;lt;&amp;lt;includes&amp;gt;&amp;gt;&lt;/i&gt;" style="html=1;dashed=1;endArrow=open;endSize=6;" edge="1" source="uc1" target="uc5" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+  </root>
+</mxGraphModel>

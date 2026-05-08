@@ -9,34 +9,50 @@ import java.nio.file.Path
 /**
  * Security utility for validating file paths.
  * Prevents path traversal, symlink attacks, and unauthorized access.
+ * Supports both absolute and relative paths (resolved from working directory).
  */
 object FilePathValidator {
 
-    fun validateInputPath(filePath: String) {
-        requireAbsolute(filePath)
-        requireNoTraversal(filePath)
-
+    /**
+     * Resolves a file path to absolute.
+     * If already absolute, returns as-is.
+     * If relative, resolves against the JVM working directory (user.dir).
+     */
+    fun resolvePath(filePath: String): String {
         val path = Path.of(filePath)
-        val canonical = resolveCanonical(path, filePath)
+        return if (path.isAbsolute) {
+            filePath
+        } else {
+            val workingDir = Path.of(System.getProperty("user.dir"))
+            workingDir.resolve(path).normalize().toString()
+        }
+    }
+
+    fun validateInputPath(filePath: String) {
+        val resolved = resolvePath(filePath)
+        requireNoTraversal(resolved)
+
+        val path = Path.of(resolved)
+        val canonical = resolveCanonical(path)
 
         if (!Files.exists(canonical)) {
-            throw FileNotFoundException(filePath)
+            throw FileNotFoundException(resolved)
         }
         if (!Files.isReadable(canonical)) {
-            throw FileNotReadableException(filePath)
+            throw FileNotReadableException(resolved)
         }
     }
 
     fun validateOutputPath(outputPath: String) {
-        requireAbsolute(outputPath)
-        requireNoTraversal(outputPath)
+        val resolved = resolvePath(outputPath)
+        requireNoTraversal(resolved)
 
-        val path = Path.of(outputPath)
+        val path = Path.of(resolved)
         val parent = path.parent
             ?: throw InvalidFilePathException("output directory does not exist")
 
         if (!Files.exists(parent)) {
-            throw InvalidFilePathException("Output directory does not exist: $parent")
+            Files.createDirectories(parent)
         }
         if (!Files.isWritable(parent)) {
             throw InvalidFilePathException("Cannot write to output directory: $parent")
@@ -51,23 +67,16 @@ object FilePathValidator {
         }
     }
 
-    private fun requireAbsolute(filePath: String) {
-        if (!Path.of(filePath).isAbsolute) {
-            throw InvalidFilePathException("path must be absolute")
-        }
-    }
-
     private fun requireNoTraversal(filePath: String) {
         if (filePath.contains("..")) {
             throw InvalidFilePathException("path traversal not allowed")
         }
     }
 
-    private fun resolveCanonical(path: Path, filePath: String): Path {
+    private fun resolveCanonical(path: Path): Path {
         return try {
             path.toRealPath()
         } catch (_: Exception) {
-            // toRealPath fails if file doesn't exist — use normalize
             path.normalize()
         }
     }

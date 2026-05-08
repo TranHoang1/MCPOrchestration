@@ -66,8 +66,8 @@ class InputFileProxyHandlerTest : DescribeSpec({
             Files.deleteIfExists(tempDir)
         }
 
-        it("throws InvalidFilePathException for relative path") {
-            shouldThrow<InvalidFilePathException> {
+        it("resolves relative path and throws FileNotFoundException") {
+            shouldThrow<FileNotFoundException> {
                 handler.processInputProxy(
                     "convert_pdf", "server1",
                     "relative/file.pdf", "content", emptyMap()

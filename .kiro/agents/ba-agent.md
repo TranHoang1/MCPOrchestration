@@ -4,7 +4,7 @@ description: >
   Business Analyst agent chuyên truy cập Jira, đọc ticket và tất cả linked tickets và các attachment (đệ qui cho đến không còn ticket nào liên kết nữa), 
   lưu thông tin vào knowledge base, và xây dựng Business Requirements Document (BRD) hoặc Functional Specification Document (FSD).
   Sử dụng bằng cách cung cấp Jira ticket key (ví dụ: PROJ-123).
-tools: ["read", "write", "shell", "@mcp"]
+tools: ["read", "shell", "@mcp"]
 includeMcpJson: true
 ---
 

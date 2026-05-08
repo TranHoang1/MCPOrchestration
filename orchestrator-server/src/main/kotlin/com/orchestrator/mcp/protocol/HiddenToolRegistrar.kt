@@ -1,6 +1,7 @@
 package com.orchestrator.mcp.protocol
 
 import com.orchestrator.mcp.core.model.ToolEntry
+import com.orchestrator.mcp.fileproxy.FilePathValidator
 import com.orchestrator.mcp.registry.ToolRegistry
 import io.modelcontextprotocol.kotlin.sdk.types.CallToolResult
 import io.modelcontextprotocol.kotlin.sdk.types.TextContent
@@ -65,9 +66,10 @@ object HiddenToolRegistrar {
     }
 
     private suspend fun executeExportDrawio(args: JsonObject?): CallToolResult {
-        val filePath = args?.get("file_path")?.jsonPrimitive?.content
+        val rawPath = args?.get("file_path")?.jsonPrimitive?.content
             ?: return CallToolResult(content = listOf(TextContent(text = "file_path is required")), isError = true)
         val format = args["format"]?.jsonPrimitive?.content ?: "png"
+        val filePath = FilePathValidator.resolvePath(rawPath)
         return doExportDrawio(filePath, format)
     }
 
@@ -85,7 +87,7 @@ object HiddenToolRegistrar {
             put("properties", kotlinx.serialization.json.buildJsonObject {
                 put("file_path", kotlinx.serialization.json.buildJsonObject {
                     put("type", kotlinx.serialization.json.JsonPrimitive("string"))
-                    put("description", kotlinx.serialization.json.JsonPrimitive("Path to the .drawio file"))
+                    put("description", kotlinx.serialization.json.JsonPrimitive("Path to the .drawio file. Supports absolute or relative path (resolved from workspace root)"))
                 })
                 put("format", kotlinx.serialization.json.buildJsonObject {
                     put("type", kotlinx.serialization.json.JsonPrimitive("string"))

@@ -4,7 +4,7 @@ description: >
   Solution Architect agent chuyên tạo Technical Design Document (TDD) từ BRD và FSD.
   Đọc documents/FSD đã có, phân tích kiến trúc hệ thống, thiết kế API, database schema, class design,
   và tạo TDD hoàn chỉnh với diagrams. Sử dụng bằng cách cung cấp Jira ticket key (ví dụ: PROJ-123).
-tools: ["read", "write", "shell", "@mcp"]
+tools: ["read", "shell", "@mcp"]
 includeMcpJson: true
 ---
 

@@ -30,6 +30,11 @@ import com.orchestrator.mcp.client.embedding.*
 import com.orchestrator.mcp.client.vectordb.*
 import com.orchestrator.mcp.config.ConfigDbSyncService
 import com.orchestrator.mcp.config.ConfigDbSyncServiceImpl
+import com.orchestrator.mcp.attachment.di.attachmentModule
+import com.orchestrator.mcp.crawler.di.crawlerModule
+import com.orchestrator.mcp.dashboard.di.dashboardModule
+import com.orchestrator.mcp.graph.di.graphModule
+import com.orchestrator.mcp.scanner.di.scannerModule
 import com.orchestrator.mcp.sync.*
 import org.koin.dsl.module
 import org.koin.core.qualifier.named
@@ -184,4 +189,19 @@ fun appModule(configPath: String? = null) = module {
     single<TicketCacheRepository> { TicketCacheRepositoryImpl(get()) }
     single<TicketGraphRepository> { TicketGraphRepositoryImpl(get()) }
     single<AttachmentQueueRepository> { AttachmentQueueRepositoryImpl(get()) }
+
+    // Scanner Module (MTO-17)
+    includes(scannerModule)
+
+    // Crawler Module (MTO-18)
+    includes(crawlerModule)
+
+    // Attachment Module (MTO-19)
+    includes(attachmentModule)
+
+    // Dashboard Module (MTO-21)
+    includes(dashboardModule)
+
+    // Graph Module (MTO-22)
+    includes(graphModule)
 }

@@ -1,11 +1,14 @@
 package com.orchestrator.mcp
 
 import com.orchestrator.mcp.core.config.OrchestratorConfig
+import com.orchestrator.mcp.core.model.ToolEntry
 import com.orchestrator.mcp.fileproxy.FileProxyCleanupService
 import com.orchestrator.mcp.fileproxy.FileProxyService
+import com.orchestrator.mcp.protocol.HiddenToolRegistrar
 import com.orchestrator.mcp.protocol.McpServerFactory
 import com.orchestrator.mcp.protocol.HttpToolRouter
 import com.orchestrator.mcp.registry.ToolIndexer
+import com.orchestrator.mcp.registry.ToolRegistry
 import com.orchestrator.mcp.client.upstream.HealthMonitor
 import com.orchestrator.mcp.client.upstream.UpstreamServerManager
 import com.sun.net.httpserver.HttpServer
@@ -65,6 +68,11 @@ suspend fun CoroutineScope.startHttpStreamableServer(
                 "Tool indexing completed: " +
                     "${result.totalIndexed} tools indexed"
             )
+            // Register hidden + sync tools (discoverable via find_tools)
+            val toolRegistry = org.koin.java.KoinJavaComponent.getKoin()
+                .get<com.orchestrator.mcp.registry.ToolRegistry>()
+            HiddenToolRegistrar.registerHiddenTools(toolRegistry)
+            registerSyncTools(toolRegistry)
             // File Proxy wrapping disabled in server mode — bridges handle file transfer
             httpLogger.info("File Proxy wrapping skipped (server mode)")
         } catch (e: Exception) {
@@ -91,6 +99,30 @@ suspend fun CoroutineScope.startHttpStreamableServer(
         val response = "OK"
         exchange.sendResponseHeaders(200, response.length.toLong())
         exchange.responseBody.use { it.write(response.toByteArray()) }
+    }
+
+    // Graph API endpoints (MTO-22)
+    val graphService = org.koin.java.KoinJavaComponent.getKoin()
+        .getOrNull<com.orchestrator.mcp.graph.GraphService>()
+
+    if (graphService != null) {
+        server.createContext("/sync/graph") { exchange ->
+            handleGraphRequest(exchange, graphService)
+        }
+        httpLogger.info("Graph API registered: /sync/graph/*")
+    }
+
+    // Static file serving (graph-viewer.html, sync-dashboard.html)
+    server.createContext("/static") { exchange ->
+        handleStaticFile(exchange)
+    }
+    // Convenience alias: /sync/graph-viewer → static/graph-viewer.html
+    server.createContext("/sync/graph-viewer") { exchange ->
+        serveResource(exchange, "static/graph-viewer.html")
+    }
+    // Convenience alias: /sync → static/sync-dashboard.html
+    server.createContext("/sync/dashboard") { exchange ->
+        serveResource(exchange, "static/sync-dashboard.html")
     }
 
     server.start()
@@ -134,4 +166,159 @@ private fun handleMcpRequest(
     )
     exchange.sendResponseHeaders(200, bytes.size.toLong())
     exchange.responseBody.use { it.write(bytes) }
+}
+
+private fun handleGraphRequest(
+    exchange: HttpExchange,
+    graphService: com.orchestrator.mcp.graph.GraphService
+) {
+    if (exchange.requestMethod != "GET") {
+        exchange.sendResponseHeaders(405, -1)
+        exchange.close()
+        return
+    }
+
+    val path = exchange.requestURI.path.removePrefix("/sync/graph")
+    val parts = path.split("/").filter { it.isNotBlank() }
+    val query = exchange.requestURI.query?.split("&")
+        ?.associate {
+            val (k, v) = it.split("=", limit = 2)
+            k to v
+        } ?: emptyMap()
+
+    val view = com.orchestrator.mcp.graph.model.ViewMode
+        .fromString(query["view"])
+    val depth = query["depth"]?.toIntOrNull()?.coerceIn(1, 5) ?: 2
+
+    val json = kotlinx.serialization.json.Json {
+        encodeDefaults = true
+        ignoreUnknownKeys = true
+    }
+
+    val response = runBlocking {
+        when (parts.size) {
+            1 -> graphService.getProjectGraph(parts[0], view)
+            2 -> graphService.getSubgraph(parts[0], parts[1], depth, view)
+            else -> null
+        }
+    }
+
+    if (response == null) {
+        val err = """{"error":"Usage: /sync/graph/{projectKey} or /sync/graph/{projectKey}/{issueKey}"}"""
+        exchange.responseHeaders.add("Content-Type", "application/json")
+        exchange.sendResponseHeaders(400, err.length.toLong())
+        exchange.responseBody.use { it.write(err.toByteArray()) }
+        return
+    }
+
+    val body = json.encodeToString(
+        com.orchestrator.mcp.graph.model.GraphResponse.serializer(),
+        response
+    )
+    val bytes = body.toByteArray(Charsets.UTF_8)
+    exchange.responseHeaders.add("Content-Type", "application/json")
+    exchange.responseHeaders.add("Access-Control-Allow-Origin", "*")
+    exchange.sendResponseHeaders(200, bytes.size.toLong())
+    exchange.responseBody.use { it.write(bytes) }
+}
+
+private fun handleStaticFile(exchange: HttpExchange) {
+    val path = exchange.requestURI.path.removePrefix("/static/")
+    serveResource(exchange, "static/$path")
+}
+
+private fun serveResource(exchange: HttpExchange, resourcePath: String) {
+    val stream = Thread.currentThread().contextClassLoader
+        .getResourceAsStream(resourcePath)
+
+    if (stream == null) {
+        val msg = "Not found: $resourcePath"
+        exchange.sendResponseHeaders(404, msg.length.toLong())
+        exchange.responseBody.use { it.write(msg.toByteArray()) }
+        return
+    }
+
+    val bytes = stream.use { it.readBytes() }
+    val contentType = when {
+        resourcePath.endsWith(".html") -> "text/html; charset=utf-8"
+        resourcePath.endsWith(".js") -> "application/javascript"
+        resourcePath.endsWith(".css") -> "text/css"
+        resourcePath.endsWith(".png") -> "image/png"
+        resourcePath.endsWith(".svg") -> "image/svg+xml"
+        else -> "application/octet-stream"
+    }
+
+    exchange.responseHeaders.add("Content-Type", contentType)
+    exchange.responseHeaders.add("Access-Control-Allow-Origin", "*")
+    exchange.sendResponseHeaders(200, bytes.size.toLong())
+    exchange.responseBody.use { it.write(bytes) }
+}
+
+
+/**
+ * Register sync tools as hidden (discoverable via find_tools, not in tools/list).
+ * jira_project_sync: hidden (write operation, needs discovery)
+ * jira_sync_status: visible (read-only, agents check frequently)
+ */
+private fun registerSyncTools(toolRegistry: ToolRegistry) {
+    val syncEntry = ToolEntry(
+        name = "jira_project_sync",
+        description = "Trigger Jira project sync. Scans all tickets, " +
+            "crawls content, builds graph, ingests into KB. " +
+            "Returns immediately — runs in background. " +
+            "Use jira_sync_status to check progress.",
+        inputSchema = kotlinx.serialization.json.buildJsonObject {
+            put("type", kotlinx.serialization.json.JsonPrimitive("object"))
+            put("properties", kotlinx.serialization.json.buildJsonObject {
+                put("projectKey", kotlinx.serialization.json.buildJsonObject {
+                    put("type", kotlinx.serialization.json.JsonPrimitive("string"))
+                    put("description", kotlinx.serialization.json.JsonPrimitive(
+                        "Jira project key (e.g. MTO)"
+                    ))
+                })
+                put("fullSync", kotlinx.serialization.json.buildJsonObject {
+                    put("type", kotlinx.serialization.json.JsonPrimitive("boolean"))
+                    put("description", kotlinx.serialization.json.JsonPrimitive(
+                        "true=full re-scan, false=incremental (default)"
+                    ))
+                })
+            })
+            put("required", kotlinx.serialization.json.buildJsonArray {
+                add(kotlinx.serialization.json.JsonPrimitive("projectKey"))
+            })
+        },
+        serverName = "__builtin__"
+    )
+    toolRegistry.registerTool(syncEntry)
+    toolRegistry.setHidden("jira_project_sync", true)
+
+    val statusEntry = ToolEntry(
+        name = "jira_sync_status",
+        description = "Check Jira project sync progress. Returns: " +
+            "status (idle/syncing/completed/error), progress %, " +
+            "synced/total counts, phase details, recent errors.",
+        inputSchema = kotlinx.serialization.json.buildJsonObject {
+            put("type", kotlinx.serialization.json.JsonPrimitive("object"))
+            put("properties", kotlinx.serialization.json.buildJsonObject {
+                put("projectKey", kotlinx.serialization.json.buildJsonObject {
+                    put("type", kotlinx.serialization.json.JsonPrimitive("string"))
+                    put("description", kotlinx.serialization.json.JsonPrimitive(
+                        "Jira project key to check status"
+                    ))
+                })
+            })
+            put("required", kotlinx.serialization.json.buildJsonArray {
+                add(kotlinx.serialization.json.JsonPrimitive("projectKey"))
+            })
+        },
+        serverName = "__builtin__"
+    )
+    toolRegistry.registerTool(statusEntry)
+    // jira_sync_status is also hidden — discoverable via find_tools only
+    toolRegistry.setHidden("jira_sync_status", true)
+
+    httpLogger.info(
+        "Registered sync tools: jira_project_sync (hidden), " +
+            "jira_sync_status (hidden)"
+    )
 }

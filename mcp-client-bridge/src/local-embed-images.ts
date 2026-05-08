@@ -10,6 +10,7 @@
 
 import * as fs from 'node:fs';
 import * as path from 'node:path';
+import { getWorkspaceRoot } from './local-stream-write.js';
 
 export interface EmbedImagesArgs {
   file_path: string;
@@ -33,11 +34,14 @@ const MIME_TYPES: Record<string, string> = {
 };
 
 export function handleEmbedImages(args: EmbedImagesArgs): EmbedImagesResult {
-  const filePath = args.file_path;
+  const rawPath = args.file_path;
 
-  if (!filePath) {
+  if (!rawPath) {
     throw new Error("Missing 'file_path' parameter");
   }
+
+  // Resolve relative paths against workspace root
+  const filePath = path.isAbsolute(rawPath) ? rawPath : path.resolve(getWorkspaceRoot(), rawPath);
 
   if (!fs.existsSync(filePath)) {
     throw new Error(`File not found: ${filePath}`);

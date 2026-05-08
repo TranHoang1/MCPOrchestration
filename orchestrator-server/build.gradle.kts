@@ -52,6 +52,10 @@ dependencies {
     implementation(libs.postgresql)
     implementation(libs.hikaricp)
 
+    // Document Processing (MTO-19: Attachment text extraction)
+    implementation("org.apache.pdfbox:pdfbox:3.0.4")
+    implementation("org.apache.poi:poi-ooxml:5.3.0")
+
     // Testing
     testImplementation(libs.junit.jupiter)
     testImplementation(libs.junit.jupiter.api)

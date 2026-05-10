@@ -54,6 +54,31 @@ jobs:
             mcp-bridge-powershell/mcp-bridge.ps1
             mcp-bridge-cmd/mcp-bridge.cmd
 
+  publish-nodejs-bridge:
+    runs-on: ubuntu-latest
+    needs: build-and-release
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Install & Build
+        run: |
+          cd mcp-client-bridge
+          npm ci
+          npm run build
+
+      - name: Publish to npm
+        run: |
+          cd mcp-client-bridge
+          npm publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
   publish-python-bridge:
     runs-on: ubuntu-latest
     needs: build-and-release

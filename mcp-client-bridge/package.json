@@ -1,9 +1,10 @@
 {
-  "name": "@orchestrator/mcp-bridge",
+  "name": "mcp-orchestrator-bridge",
   "version": "1.0.0",
-  "description": "MCP Client Bridge — connects to MCP Orchestrator via HTTP Streamable transport",
+  "description": "MCP Orchestrator Bridge — connects AI agents to MCP Orchestrator Server via HTTP Streamable transport. Semantic tool discovery, dynamic execution, health check, auto-reconnect.",
   "main": "dist/index.js",
   "bin": {
+    "mcp-orchestrator-bridge": "dist/index.js",
     "mcp-bridge": "dist/index.js"
   },
   "scripts": {
@@ -11,13 +12,42 @@
     "start": "node dist/index.js",
     "dev": "ts-node src/index.ts",
     "lint": "eslint src/",
-    "test": "jest"
+    "test": "jest",
+    "prepublishOnly": "npm run build && npm test"
   },
-  "keywords": ["mcp", "bridge", "orchestrator", "ai", "tools"],
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "bridge",
+    "orchestrator",
+    "ai",
+    "tools",
+    "semantic-search",
+    "tool-discovery",
+    "multi-server",
+    "claude",
+    "kiro",
+    "cursor"
+  ],
+  "author": "Duc Nguyen <dnguyenminh@hotmail.com>",
+  "homepage": "https://github.com/dnguyenminh/MCPOrchestration",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/dnguyenminh/MCPOrchestration.git",
+    "directory": "mcp-client-bridge"
+  },
+  "bugs": {
+    "url": "https://github.com/dnguyenminh/MCPOrchestration/issues"
+  },
   "license": "MIT",
   "engines": {
     "node": ">=20.0.0"
   },
+  "files": [
+    "dist/**/*.js",
+    "dist/**/*.d.ts",
+    "README.md"
+  ],
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.12.0"
   },

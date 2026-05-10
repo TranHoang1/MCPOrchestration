@@ -275,7 +275,39 @@ The server starts on port **9180** and connects to all configured upstream serve
 
 ![Bridge Clients](docs/diagrams/bridge-clients.png)
 
-Add the orchestrator to your IDE's MCP configuration. Pick the bridge client that matches your environment.
+Add the orchestrator to your IDE's MCP configuration. **No clone or build needed** — use `npx` or `uvx` to auto-download the bridge:
+
+### Quickest Setup (any MCP-compatible IDE)
+
+**Node.js bridge (via npx — auto-downloads):**
+```json
+{
+  "mcpServers": {
+    "orchestrator": {
+      "command": "npx",
+      "args": ["mcp-orchestrator-bridge", "--url", "http://localhost:9180"]
+    }
+  }
+}
+```
+
+**Python bridge (via uvx — auto-downloads):**
+```json
+{
+  "mcpServers": {
+    "orchestrator": {
+      "command": "uvx",
+      "args": ["mcp-orchestrator-bridge", "--url", "http://localhost:9180"]
+    }
+  }
+}
+```
+
+> 💡 That's it. No `git clone`, no `npm install`, no `pip install`. Just add the config and connect.
+
+---
+
+### IDE-Specific Examples
 
 ### Kiro IDE
 
@@ -285,11 +317,8 @@ Add the orchestrator to your IDE's MCP configuration. Pick the bridge client tha
 {
   "mcpServers": {
     "orchestrator": {
-      "command": "node",
-      "args": [
-        "/path/to/MCPOrchestration/mcp-client-bridge/dist/index.js",
-        "--url", "http://localhost:9180"
-      ]
+      "command": "npx",
+      "args": ["mcp-orchestrator-bridge", "--url", "http://localhost:9180"]
     }
   }
 }
@@ -303,11 +332,8 @@ Add the orchestrator to your IDE's MCP configuration. Pick the bridge client tha
 {
   "mcpServers": {
     "orchestrator": {
-      "command": "node",
-      "args": [
-        "/path/to/MCPOrchestration/mcp-client-bridge/dist/index.js",
-        "--url", "http://localhost:9180"
-      ]
+      "command": "npx",
+      "args": ["mcp-orchestrator-bridge", "--url", "http://localhost:9180"]
     }
   }
 }

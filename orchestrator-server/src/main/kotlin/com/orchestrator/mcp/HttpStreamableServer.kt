@@ -112,7 +112,15 @@ suspend fun CoroutineScope.startHttpStreamableServer(
 
     if (graphService != null) {
         server.createContext("/sync/graph") { exchange ->
-            handleGraphRequest(exchange, graphService)
+            try {
+                handleGraphRequest(exchange, graphService)
+            } catch (e: Exception) {
+                httpLogger.error("Graph request failed: ${e.message}", e)
+                val err = """{"error":"${e.message?.replace("\"", "'")}"}"""
+                exchange.responseHeaders.add("Content-Type", "application/json")
+                exchange.sendResponseHeaders(500, err.length.toLong())
+                exchange.responseBody.use { it.write(err.toByteArray()) }
+            }
         }
         httpLogger.info("Graph API registered: /sync/graph/*")
     }

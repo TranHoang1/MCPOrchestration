@@ -23,9 +23,21 @@ object HiddenToolRegistrar {
     /** Tool names that should be hidden from tools/list */
     val hiddenToolNames = setOf("get_drawio_reference", "export_drawio")
 
-    /** Check if a tool is a hidden/builtin tool (no upstream server) */
+    /** All builtin tool names (hidden + sync + user management) */
+    private val builtinToolNames = mutableSetOf(
+        "get_drawio_reference", "export_drawio",
+        "jira_project_sync", "jira_sync_status",
+        "approve_document", "get_approval_status", "list_pending_approvals"
+    )
+
+    /** Register additional builtin tool names (called by HttpStreamableServer after registering sync/user tools) */
+    fun registerBuiltinToolName(name: String) {
+        builtinToolNames.add(name)
+    }
+
+    /** Check if a tool is a builtin tool (no upstream server) */
     fun isHiddenTool(toolName: String): Boolean {
-        return hiddenToolNames.contains(toolName)
+        return builtinToolNames.contains(toolName)
     }
 
     fun registerHiddenTools(toolRegistry: ToolRegistry) {
@@ -60,7 +72,35 @@ object HiddenToolRegistrar {
         return when (name) {
             "get_drawio_reference" -> executeGetDrawioReference()
             "export_drawio" -> executeExportDrawio(args)
+            "jira_project_sync" -> executeSyncTool(name, args)
+            "jira_sync_status" -> executeSyncTool(name, args)
+            "approve_document", "get_approval_status", "list_pending_approvals" -> executeSyncTool(name, args)
             else -> CallToolResult(content = listOf(TextContent(text = "Unknown hidden tool: $name")), isError = true)
+        }
+    }
+
+    /** Route sync/user-management tools through Koin-managed handlers */
+    private suspend fun executeSyncTool(name: String, args: JsonObject?): CallToolResult {
+        return try {
+            val koin = org.koin.java.KoinJavaComponent.getKoin()
+            when (name) {
+                "jira_project_sync" -> {
+                    val handler = koin.get<com.orchestrator.mcp.synctools.SyncToolHandler>()
+                    handler.handle(args)
+                }
+                "jira_sync_status" -> {
+                    val handler = koin.get<com.orchestrator.mcp.synctools.StatusToolHandler>()
+                    handler.handle(args)
+                }
+                "approve_document", "get_approval_status", "list_pending_approvals" -> {
+                    // User management tools — not yet routed in HTTP mode
+                    CallToolResult(content = listOf(TextContent(text = "User management tools not available in HTTP mode yet")), isError = true)
+                }
+                else -> CallToolResult(content = listOf(TextContent(text = "Unknown builtin tool: $name")), isError = true)
+            }
+        } catch (e: Exception) {
+            logger.error("Builtin tool execution failed: $name — ${e.message}")
+            CallToolResult(content = listOf(TextContent(text = "Builtin tool error: ${e.message}")), isError = true)
         }
     }
 

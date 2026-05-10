@@ -15,17 +15,36 @@
 
 ---
 
-**MCP Orchestrator** aggregates multiple upstream MCP servers into a single endpoint. AI agents discover tools by natural language, and the orchestrator routes execution to the correct server automatically.
+> **What if your AI agent could use any tool from any MCP server — without knowing it exists?**
 
-No more hardcoding tool names. No more managing 10 separate MCP server configs. One orchestrator, all your tools.
+MCP Orchestrator is a **smart gateway** that sits between your AI agent and the MCP ecosystem. You plug in servers. The orchestrator learns what they can do. Your agent asks questions in plain English — and gets answers from the right tool, on the right server, every time.
 
-### The Problem
+**One config. Unlimited tools. Zero memorization.**
 
-You have 5 MCP servers (Jira, GitHub, PostgreSQL, Docs, Custom). Your AI agent needs to know every tool name, which server it belongs to, and how to call it. Add a new server? Update every agent's config.
+---
 
-### The Solution
+## 💡 Why This Exists
 
-Connect all servers to the orchestrator. Your agent only needs 2 tools: `find_tools` (describe what you need) and `execute_dynamic_tool` (run it). The orchestrator handles discovery, routing, health monitoring, and reconnection — across any number of servers.
+Today's MCP workflow is manual and fragile:
+
+```
+❌ Agent needs tool → Developer looks up tool name → Adds server config → 
+   Agent hardcodes tool name → Server changes → Everything breaks
+```
+
+With MCP Orchestrator:
+
+```
+✅ Agent needs tool → Asks "what can search Jira?" → Gets answer → Uses it → Done
+```
+
+**Real scenario:** You connect 6 MCP servers (Jira, GitHub, PostgreSQL, Confluence, Slack, Custom). That's 80+ tools. Your agent doesn't memorize any of them. It just asks:
+
+```json
+{"tool": "find_tools", "arguments": {"query": "create a pull request on GitHub"}}
+```
+
+And gets back the exact tool, with its schema, ready to call. Add a 7th server tomorrow — your agent discovers its tools automatically. No config changes. No redeployment.
 
 ---
 

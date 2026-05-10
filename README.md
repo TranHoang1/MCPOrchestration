@@ -166,20 +166,22 @@ cp orchestrator-server/src/main/resources/application.yml ./application.yml
 
 Edit `application.yml`:
 
+**Option A: OpenAI + Qdrant (cloud-friendly)**
+
 ```yaml
 orchestrator:
   server:
     port: 9180
-    transport: http
+    transport: http-streamable
 
   embedding:
-    provider: openai          # or "ollama"
+    provider: openai
     model: text-embedding-3-small
-    api_key: ${EMBEDDING_API_KEY}
+    api_key: ${OPENAI_API_KEY}
     dimensions: 768
 
   vector_db:
-    provider: qdrant          # or "postgres"
+    provider: qdrant
     host: localhost
     port: 6333
     collection_name: mcp_tools
@@ -189,6 +191,39 @@ orchestrator:
     auto_reconnect: true
     max_reconnect_attempts: 5
 ```
+
+**Option B: Ollama + PostgreSQL (fully local, no API keys needed)**
+
+```yaml
+orchestrator:
+  server:
+    port: 9180
+    transport: http-streamable
+
+  embedding:
+    provider: ollama
+    model: nomic-embed-text:latest    # or mxbai-embed-large, all-minilm
+    base_url: http://localhost:11434   # Ollama default
+    api_key: unused                    # Ollama doesn't need a key
+    dimensions: 768
+
+  vector_db:
+    provider: postgres
+    host: localhost
+    port: 5432
+    collection_name: mcp_tools
+    user: postgres
+    password: postgres                 # uses pgvector extension
+
+  health:
+    check_interval_seconds: 30
+    auto_reconnect: true
+    max_reconnect_attempts: 5
+```
+
+> 💡 **Ollama setup:** `ollama pull nomic-embed-text` — runs locally, no internet needed after download.
+> 
+> 💡 **pgvector setup:** `CREATE EXTENSION vector;` in your PostgreSQL database.
 
 ### 3. Define Upstream Servers
 

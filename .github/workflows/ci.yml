@@ -1,0 +1,128 @@
+name: CI
+
+on:
+  push:
+    branches: [master, main]
+  pull_request:
+    branches: [master, main]
+
+jobs:
+  build-server:
+    name: Build & Test — Orchestrator Server (Kotlin)
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: pgvector/pgvector:pg16
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: mcp_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'corretto'
+
+      - name: Cache Gradle packages
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle.kts', '**/gradle-wrapper.properties') }}
+          restore-keys: ${{ runner.os }}-gradle-
+
+      - name: Build all modules
+        run: ./gradlew build -x test
+
+      - name: Run tests
+        run: ./gradlew test
+        env:
+          DB_HOST: localhost
+          DB_PORT: 5432
+          DB_USER: postgres
+          DB_PASSWORD: postgres
+          DB_NAME: mcp_test
+
+      - name: Build Shadow JAR
+        run: ./gradlew :orchestrator-server:shadowJar
+
+      - name: Upload JAR artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: mcp-orchestrator-jar
+          path: orchestrator-server/build/libs/mcp-orchestrator-all.jar
+          retention-days: 7
+
+  build-bridge-nodejs:
+    name: Build & Test — Node.js Bridge
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: mcp-client-bridge/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+        working-directory: mcp-client-bridge
+
+      - name: Build
+        run: npm run build
+        working-directory: mcp-client-bridge
+
+      - name: Test
+        run: npm test
+        working-directory: mcp-client-bridge
+
+  build-bridge-python:
+    name: Build & Test — Python Bridge
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install package
+        run: pip install -e .
+        working-directory: mcp-bridge-python
+
+      - name: Check syntax
+        run: python -m py_compile src/mcp_bridge/__main__.py
+        working-directory: mcp-bridge-python
+
+  lint-scripts:
+    name: Lint — Bash & PowerShell Bridges
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Bash syntax check
+        run: bash -n mcp-bridge-bash/mcp-bridge.sh
+
+      - name: ShellCheck (advisory)
+        uses: ludeeus/action-shellcheck@master
+        with:
+          scandir: mcp-bridge-bash
+        continue-on-error: true
+
+      - name: PowerShell syntax check
+        run: pwsh -NoProfile -Command "Get-Content mcp-bridge-powershell/mcp-bridge.ps1 | Out-Null; Write-Host 'PowerShell syntax OK'"

@@ -1,0 +1,84 @@
+<mxGraphModel adaptiveColors="auto">
+  <root>
+    <mxCell id="0"/>
+    <mxCell id="1" parent="0"/>
+    <mxCell id="title" value="&lt;b&gt;Architecture — Dual-Priority Queue&lt;/b&gt;" style="text;html=1;align=center;fontSize=14;fontStyle=1;" vertex="1" parent="1">
+      <mxGeometry x="250" y="10" width="400" height="30" as="geometry"/>
+    </mxCell>
+    <mxCell id="app" value="&lt;b&gt;MCPOrchestration Application&lt;/b&gt;" style="swimlane;startSize=30;fillColor=#e1f5fe;strokeColor=#0288d1;html=1;" vertex="1" parent="1">
+      <mxGeometry x="40" y="60" width="820" height="420" as="geometry"/>
+    </mxCell>
+    <mxCell id="api_layer" value="&lt;b&gt;API Layer&lt;/b&gt;" style="swimlane;startSize=24;fillColor=#e8f5e9;strokeColor=#388e3c;html=1;" vertex="1" parent="app">
+      <mxGeometry x="20" y="40" width="180" height="160" as="geometry"/>
+    </mxCell>
+    <mxCell id="qs" value="QueueService" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8f5e9;strokeColor=#388e3c;" vertex="1" parent="api_layer">
+      <mxGeometry x="20" y="34" width="140" height="40" as="geometry"/>
+    </mxCell>
+    <mxCell id="qsi" value="QueueServiceImpl" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8f5e9;strokeColor=#388e3c;fontSize=10;" vertex="1" parent="api_layer">
+      <mxGeometry x="20" y="84" width="140" height="40" as="geometry"/>
+    </mxCell>
+    <mxCell id="queue_layer" value="&lt;b&gt;Queue Layer&lt;/b&gt;" style="swimlane;startSize=24;fillColor=#fff3e0;strokeColor=#f57c00;html=1;" vertex="1" parent="app">
+      <mxGeometry x="220" y="40" width="180" height="160" as="geometry"/>
+    </mxCell>
+    <mxCell id="dpq" value="DualPriorityQueue" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff3e0;strokeColor=#f57c00;fontSize=10;" vertex="1" parent="queue_layer">
+      <mxGeometry x="10" y="34" width="160" height="40" as="geometry"/>
+    </mxCell>
+    <mxCell id="hpq" value="HPQ Channel(100)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1f5fe;strokeColor=#0288d1;fontSize=9;" vertex="1" parent="queue_layer">
+      <mxGeometry x="10" y="84" width="70" height="40" as="geometry"/>
+    </mxCell>
+    <mxCell id="npq" value="NPQ Channel(1000)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff3e0;strokeColor=#f57c00;fontSize=9;" vertex="1" parent="queue_layer">
+      <mxGeometry x="90" y="84" width="80" height="40" as="geometry"/>
+    </mxCell>
+    <mxCell id="worker_layer" value="&lt;b&gt;Worker Layer&lt;/b&gt;" style="swimlane;startSize=24;fillColor=#e8f5e9;strokeColor=#388e3c;html=1;" vertex="1" parent="app">
+      <mxGeometry x="420" y="40" width="180" height="160" as="geometry"/>
+    </mxCell>
+    <mxCell id="qw" value="QueueWorker&#xa;(SupervisorJob)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8f5e9;strokeColor=#388e3c;fontSize=10;" vertex="1" parent="worker_layer">
+      <mxGeometry x="10" y="34" width="160" height="40" as="geometry"/>
+    </mxCell>
+    <mxCell id="th" value="TaskHandler&#xa;(Strategy)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8f5e9;strokeColor=#388e3c;fontSize=10;" vertex="1" parent="worker_layer">
+      <mxGeometry x="10" y="84" width="160" height="40" as="geometry"/>
+    </mxCell>
+    <mxCell id="monitor_layer" value="&lt;b&gt;Monitor Layer&lt;/b&gt;" style="swimlane;startSize=24;fillColor=#fce4ec;strokeColor=#c62828;html=1;" vertex="1" parent="app">
+      <mxGeometry x="620" y="40" width="180" height="160" as="geometry"/>
+    </mxCell>
+    <mxCell id="wd" value="QueueWatchdog" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fce4ec;strokeColor=#c62828;fontSize=10;" vertex="1" parent="monitor_layer">
+      <mxGeometry x="10" y="34" width="160" height="40" as="geometry"/>
+    </mxCell>
+    <mxCell id="cr" value="CrashRecovery&#xa;Service" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fce4ec;strokeColor=#c62828;fontSize=10;" vertex="1" parent="monitor_layer">
+      <mxGeometry x="10" y="84" width="160" height="40" as="geometry"/>
+    </mxCell>
+    <mxCell id="repo_layer" value="&lt;b&gt;Data Layer&lt;/b&gt;" style="swimlane;startSize=24;fillColor=#f3e5f5;strokeColor=#7b1fa2;html=1;" vertex="1" parent="app">
+      <mxGeometry x="220" y="240" width="380" height="140" as="geometry"/>
+    </mxCell>
+    <mxCell id="tsr" value="TaskStateRepository" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f3e5f5;strokeColor=#7b1fa2;fontSize=10;" vertex="1" parent="repo_layer">
+      <mxGeometry x="20" y="34" width="160" height="40" as="geometry"/>
+    </mxCell>
+    <mxCell id="hikari" value="HikariCP&#xa;Connection Pool" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f3e5f5;strokeColor=#7b1fa2;fontSize=10;" vertex="1" parent="repo_layer">
+      <mxGeometry x="200" y="34" width="160" height="40" as="geometry"/>
+    </mxCell>
+    <mxCell id="flyway" value="Flyway Migrations" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f3e5f5;strokeColor=#7b1fa2;fontSize=10;" vertex="1" parent="repo_layer">
+      <mxGeometry x="110" y="84" width="160" height="40" as="geometry"/>
+    </mxCell>
+    <mxCell id="pg" value="&lt;b&gt;PostgreSQL&lt;/b&gt;&#xa;queue_tasks" style="shape=cylinder3;whiteSpace=wrap;html=1;fillColor=#f3e5f5;strokeColor=#7b1fa2;size=10;" vertex="1" parent="1">
+      <mxGeometry x="380" y="530" width="140" height="70" as="geometry"/>
+    </mxCell>
+    <mxCell id="e1" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;" edge="1" source="qsi" target="dpq" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e2" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;" edge="1" source="dpq" target="qw" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e3" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;" edge="1" source="qw" target="th" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e4" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;" edge="1" source="tsr" target="pg" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e5" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;dashed=1;" edge="1" source="wd" target="tsr" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e6" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;dashed=1;" edge="1" source="cr" target="tsr" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+  </root>
+</mxGraphModel>

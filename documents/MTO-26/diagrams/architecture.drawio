@@ -1,0 +1,60 @@
+<mxGraphModel adaptiveColors="auto">
+  <root>
+    <mxCell id="0"/>
+    <mxCell id="1" parent="0"/>
+    <mxCell id="title" value="Architecture — KB Store Module" style="text;html=1;fontSize=14;fontStyle=1;align=center;" vertex="1" parent="1">
+      <mxGeometry x="250" y="10" width="300" height="30" as="geometry"/>
+    </mxCell>
+    <mxCell id="caller" value="&lt;b&gt;Callers&lt;/b&gt;&#xa;(Sync Service, Query Service)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;dashed=1;" vertex="1" parent="1">
+      <mxGeometry x="280" y="60" width="240" height="60" as="geometry"/>
+    </mxCell>
+    <mxCell id="repoLayer" value="Repository Layer" style="swimlane;startSize=30;fillColor=#e8f5e9;strokeColor=#388e3c;html=1;" vertex="1" parent="1">
+      <mxGeometry x="60" y="180" width="680" height="100" as="geometry"/>
+    </mxCell>
+    <mxCell id="kbRepo" value="KbEntryRepository&#xa;(Interface)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8f5e9;strokeColor=#388e3c;" vertex="1" parent="repoLayer">
+      <mxGeometry x="30" y="40" width="160" height="50" as="geometry"/>
+    </mxCell>
+    <mxCell id="kbRepoImpl" value="KbEntryRepositoryImpl&#xa;(JDBC)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#c8e6c9;strokeColor=#388e3c;" vertex="1" parent="repoLayer">
+      <mxGeometry x="210" y="40" width="160" height="50" as="geometry"/>
+    </mxCell>
+    <mxCell id="piiRepo" value="PiiMappingRepository&#xa;(Interface)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8f5e9;strokeColor=#388e3c;" vertex="1" parent="repoLayer">
+      <mxGeometry x="390" y="40" width="160" height="50" as="geometry"/>
+    </mxCell>
+    <mxCell id="piiRepoImpl" value="PiiMappingRepoImpl&#xa;(JDBC)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#c8e6c9;strokeColor=#388e3c;" vertex="1" parent="repoLayer">
+      <mxGeometry x="500" y="40" width="160" height="50" as="geometry"/>
+    </mxCell>
+    <mxCell id="encLayer" value="Encryption Layer" style="swimlane;startSize=30;fillColor=#fff3e0;strokeColor=#f57c00;html=1;" vertex="1" parent="1">
+      <mxGeometry x="200" y="340" width="400" height="90" as="geometry"/>
+    </mxCell>
+    <mxCell id="encSvc" value="EncryptionService (Interface)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff3e0;strokeColor=#f57c00;" vertex="1" parent="encLayer">
+      <mxGeometry x="20" y="40" width="170" height="40" as="geometry"/>
+    </mxCell>
+    <mxCell id="encImpl" value="EncryptionServiceImpl&#xa;(AES-256-GCM)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe0b2;strokeColor=#f57c00;" vertex="1" parent="encLayer">
+      <mxGeometry x="210" y="40" width="170" height="40" as="geometry"/>
+    </mxCell>
+    <mxCell id="dbLayer" value="Database Layer" style="swimlane;startSize=30;fillColor=#f3e5f5;strokeColor=#7b1fa2;html=1;" vertex="1" parent="1">
+      <mxGeometry x="150" y="490" width="500" height="100" as="geometry"/>
+    </mxCell>
+    <mxCell id="kbTable" value="kb_entries" style="shape=cylinder3;whiteSpace=wrap;html=1;fillColor=#f3e5f5;strokeColor=#7b1fa2;size=10;" vertex="1" parent="dbLayer">
+      <mxGeometry x="60" y="35" width="120" height="55" as="geometry"/>
+    </mxCell>
+    <mxCell id="piiTable" value="pii_mapping" style="shape=cylinder3;whiteSpace=wrap;html=1;fillColor=#f3e5f5;strokeColor=#7b1fa2;size=10;" vertex="1" parent="dbLayer">
+      <mxGeometry x="320" y="35" width="120" height="55" as="geometry"/>
+    </mxCell>
+    <mxCell id="configBox" value="&lt;b&gt;KbStoreConfig&lt;/b&gt;&#xa;(encryption_key, batch_size)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fce4ec;strokeColor=#c62828;" vertex="1" parent="1">
+      <mxGeometry x="60" y="370" width="120" height="60" as="geometry"/>
+    </mxCell>
+    <mxCell id="e1" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;" edge="1" source="caller" target="repoLayer" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e2" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;" edge="1" source="repoLayer" target="encLayer" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e3" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;" edge="1" source="repoLayer" target="dbLayer" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e4" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;dashed=1;" edge="1" source="configBox" target="encLayer" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+  </root>
+</mxGraphModel>

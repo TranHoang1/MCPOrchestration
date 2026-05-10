@@ -1,0 +1,6 @@
+id,input,expectedPublic,expectedTechnical,expectedBr,expectedLevel
+1,"Ticket MTO-100 assigned to [PII_1]. Error: NPE at PaymentService:42. Rate = 12.5%","Ticket MTO-100 assigned to [PII_1]","Error: NPE at PaymentService:42","Rate = 12.5%",LEVEL_1
+2,"JIRA-200 Status: Open. SELECT * FROM loans WHERE rate > 5","JIRA-200 Status: Open","SELECT * FROM loans WHERE rate > 5","",
+3,"Bug report: SLA xử lý 3 ngày. Stack: OOM at line 100","Bug report","Stack: OOM at line 100","SLA xử lý 3 ngày",LEVEL_3
+4,"[PII_2] reported: config error in application.yml. Điều kiện duyệt: income >= 10M","[PII_2] reported","config error in application.yml","Điều kiện duyệt: income >= 10M",LEVEL_2
+5,"Priority: Critical. Labels: [finance, loan]. No technical or BR content","Priority: Critical. Labels: [finance, loan]","","",

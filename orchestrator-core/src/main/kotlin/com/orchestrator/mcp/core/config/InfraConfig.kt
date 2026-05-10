@@ -37,6 +37,7 @@ data class UpstreamServerConfig(
     val command: String? = null,
     val args: List<String> = emptyList(),
     val env: Map<String, String> = emptyMap(),
+    val cwd: String? = null,
     val url: String? = null,
     val disabled: Boolean = false,
     @SerialName("tool_filter")

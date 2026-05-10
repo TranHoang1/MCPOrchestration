@@ -1,0 +1,75 @@
+<mxGraphModel adaptiveColors="auto">
+  <root>
+    <mxCell id="0"/>
+    <mxCell id="1" parent="0"/>
+    <mxCell id="lane1" value="Sync Service" style="swimlane;horizontal=0;startSize=110;fillColor=#e8f4f8;strokeColor=#0288d1;html=1;" vertex="1" parent="1">
+      <mxGeometry x="0" y="0" width="1400" height="150" as="geometry"/>
+    </mxCell>
+    <mxCell id="n1" value="Receive Jira&#xa;Ticket Data" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1f5fe;strokeColor=#0288d1;" vertex="1" parent="lane1">
+      <mxGeometry x="120" y="45" width="140" height="60" as="geometry"/>
+    </mxCell>
+    <mxCell id="n2" value="Classify Content&#xa;(4 Layers)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1f5fe;strokeColor=#0288d1;" vertex="1" parent="lane1">
+      <mxGeometry x="300" y="45" width="140" height="60" as="geometry"/>
+    </mxCell>
+    <mxCell id="n3" value="Compute&#xa;Content Hash" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1f5fe;strokeColor=#0288d1;" vertex="1" parent="lane1">
+      <mxGeometry x="480" y="45" width="140" height="60" as="geometry"/>
+    </mxCell>
+    <mxCell id="lane2" value="Encryption Service" style="swimlane;horizontal=0;startSize=110;fillColor=#fff3e0;strokeColor=#f57c00;html=1;" vertex="1" parent="1">
+      <mxGeometry x="0" y="150" width="1400" height="150" as="geometry"/>
+    </mxCell>
+    <mxCell id="n4" value="Encrypt&#xa;Business Rules&#xa;(AES-256-GCM)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff3e0;strokeColor=#f57c00;" vertex="1" parent="lane2">
+      <mxGeometry x="660" y="45" width="140" height="60" as="geometry"/>
+    </mxCell>
+    <mxCell id="n5" value="Detect &amp; Mask&#xa;PII Data" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff3e0;strokeColor=#f57c00;" vertex="1" parent="lane2">
+      <mxGeometry x="840" y="45" width="140" height="60" as="geometry"/>
+    </mxCell>
+    <mxCell id="n6" value="Encrypt PII&#xa;Original Values&#xa;(AES-256-GCM)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff3e0;strokeColor=#f57c00;" vertex="1" parent="lane2">
+      <mxGeometry x="1020" y="45" width="140" height="60" as="geometry"/>
+    </mxCell>
+    <mxCell id="lane3" value="Repository Layer" style="swimlane;horizontal=0;startSize=110;fillColor=#e8f5e9;strokeColor=#388e3c;html=1;" vertex="1" parent="1">
+      <mxGeometry x="0" y="300" width="1400" height="150" as="geometry"/>
+    </mxCell>
+    <mxCell id="n7" value="Upsert&#xa;KB Entry" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8f5e9;strokeColor=#388e3c;" vertex="1" parent="lane3">
+      <mxGeometry x="840" y="45" width="140" height="60" as="geometry"/>
+    </mxCell>
+    <mxCell id="n8" value="Insert PII&#xa;Mappings" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8f5e9;strokeColor=#388e3c;" vertex="1" parent="lane3">
+      <mxGeometry x="1020" y="45" width="140" height="60" as="geometry"/>
+    </mxCell>
+    <mxCell id="lane4" value="PostgreSQL" style="swimlane;horizontal=0;startSize=110;fillColor=#f3e5f5;strokeColor=#7b1fa2;html=1;" vertex="1" parent="1">
+      <mxGeometry x="0" y="450" width="1400" height="150" as="geometry"/>
+    </mxCell>
+    <mxCell id="n9" value="kb_entries&#xa;Table" style="shape=cylinder3;whiteSpace=wrap;html=1;fillColor=#f3e5f5;strokeColor=#7b1fa2;size=10;" vertex="1" parent="lane4">
+      <mxGeometry x="840" y="40" width="140" height="70" as="geometry"/>
+    </mxCell>
+    <mxCell id="n10" value="pii_mapping&#xa;Table" style="shape=cylinder3;whiteSpace=wrap;html=1;fillColor=#f3e5f5;strokeColor=#7b1fa2;size=10;" vertex="1" parent="lane4">
+      <mxGeometry x="1020" y="40" width="140" height="70" as="geometry"/>
+    </mxCell>
+    <mxCell id="e1" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;" edge="1" source="n1" target="n2" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e2" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;" edge="1" source="n2" target="n3" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e3" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;" edge="1" source="n3" target="n4" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e4" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;" edge="1" source="n4" target="n5" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e5" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;" edge="1" source="n5" target="n6" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e6" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;" edge="1" source="n6" target="n7" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e7" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;" edge="1" source="n6" target="n8" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e8" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;" edge="1" source="n7" target="n9" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e9" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;" edge="1" source="n8" target="n10" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+  </root>
+</mxGraphModel>

@@ -6,5 +6,20 @@
   "allowedTools": ["*"],
   "useLegacyMcpJson": true,
   "keyboardShortcut": "ctrl+shift+s",
-  "welcomeMessage": "🏃 Scrum Master sẵn sàng! Cung cấp Jira ticket key để bắt đầu pipeline."
+  "welcomeMessage": "🏃 Scrum Master sẵn sàng! Cung cấp Jira ticket key để bắt đầu pipeline.",
+  "hooks": {
+    "agentSpawn": [
+      {
+        "command": ".kiro/hooks/file-watcher.sh .",
+        "description": "Start file watcher for code indexing"
+      }
+    ],
+    "postToolUse": [
+      {
+        "matcher": "fs_write",
+        "command": ".kiro/hooks/validate-drawio.sh",
+        "description": "Validate drawio XML after write"
+      }
+    ]
+  }
 }

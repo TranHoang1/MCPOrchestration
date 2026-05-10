@@ -1,0 +1,78 @@
+<mxfile host="app.diagrams.net" modified="2026-05-09" agent="UI Agent" version="24.0">
+  <diagram id="approval-flow" name="Document Approval User Flow">
+    <mxGraphModel dx="1200" dy="600" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1200" pageHeight="600" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+        <!-- Start -->
+        <mxCell id="start" value="User connects&#xa;(bridge/stdio)" style="ellipse;whiteSpace=wrap;html=1;fillColor=#238636;strokeColor=#2ea043;fontColor=#ffffff;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="20" y="250" width="120" height="60" as="geometry"/>
+        </mxCell>
+        <!-- Auth -->
+        <mxCell id="auth" value="Authenticate&#xa;(email + token)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#161b22;strokeColor=#30363d;fontColor=#c9d1d9;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="180" y="250" width="130" height="60" as="geometry"/>
+        </mxCell>
+        <!-- Decision: Valid? -->
+        <mxCell id="valid" value="Valid?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#161b22;strokeColor=#d29922;fontColor=#d29922;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="350" y="245" width="80" height="70" as="geometry"/>
+        </mxCell>
+        <!-- Fallback -->
+        <mxCell id="fallback" value="Shared account&#xa;(view-only)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#21262d;strokeColor=#f85149;fontColor=#f85149;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="340" y="140" width="110" height="50" as="geometry"/>
+        </mxCell>
+        <!-- Load permissions -->
+        <mxCell id="load-perms" value="Load role +&#xa;projects" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#161b22;strokeColor=#30363d;fontColor=#c9d1d9;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="480" y="250" width="110" height="60" as="geometry"/>
+        </mxCell>
+        <!-- Call approve_document -->
+        <mxCell id="call-approve" value="approve_document&#xa;(ticket, type, decision)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#161b22;strokeColor=#58a6ff;fontColor=#58a6ff;fontSize=11;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="640" y="250" width="160" height="60" as="geometry"/>
+        </mxCell>
+        <!-- Decision: Authorized? -->
+        <mxCell id="authorized" value="Authorized?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#161b22;strokeColor=#d29922;fontColor=#d29922;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="850" y="245" width="90" height="70" as="geometry"/>
+        </mxCell>
+        <!-- Permission Denied -->
+        <mxCell id="denied" value="Permission&#xa;Denied" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#21262d;strokeColor=#f85149;fontColor=#f85149;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="850" y="140" width="100" height="50" as="geometry"/>
+        </mxCell>
+        <!-- Update + Re-attach -->
+        <mxCell id="update" value="Update doc&#xa;Re-attach Jira&#xa;Delete old" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#161b22;strokeColor=#3fb950;fontColor=#3fb950;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="1000" y="250" width="120" height="60" as="geometry"/>
+        </mxCell>
+        <!-- End -->
+        <mxCell id="end" value="✅ Approved&#xa;(audit logged)" style="ellipse;whiteSpace=wrap;html=1;fillColor=#238636;strokeColor=#2ea043;fontColor=#ffffff;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="1000" y="360" width="120" height="60" as="geometry"/>
+        </mxCell>
+        <!-- Arrows -->
+        <mxCell id="e1" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#58a6ff;" edge="1" source="start" target="auth" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e2" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#58a6ff;" edge="1" source="auth" target="valid" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e3" value="No" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#f85149;fontColor=#f85149;fontSize=10;" edge="1" source="valid" target="fallback" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e4" value="Yes" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#3fb950;fontColor=#3fb950;fontSize=10;" edge="1" source="valid" target="load-perms" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e5" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#58a6ff;" edge="1" source="load-perms" target="call-approve" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e6" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#58a6ff;" edge="1" source="call-approve" target="authorized" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e7" value="No" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#f85149;fontColor=#f85149;fontSize=10;" edge="1" source="authorized" target="denied" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e8" value="Yes" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#3fb950;fontColor=#3fb950;fontSize=10;" edge="1" source="authorized" target="update" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e9" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#3fb950;" edge="1" source="update" target="end" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

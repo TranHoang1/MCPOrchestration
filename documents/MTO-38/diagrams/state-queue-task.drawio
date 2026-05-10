@@ -1,0 +1,46 @@
+<mxGraphModel dx="1422" dy="762" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
+  <root>
+    <mxCell id="0" />
+    <mxCell id="1" parent="0" />
+    <mxCell id="2" value="" style="ellipse;html=1;shape=mxgraph.flowchart.start_2;fontSize=12;fillColor=#000000;" vertex="1" parent="1">
+      <mxGeometry x="100" y="360" width="30" height="30" as="geometry" />
+    </mxCell>
+    <mxCell id="3" value="PENDING" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+      <mxGeometry x="200" y="350" width="120" height="50" as="geometry" />
+    </mxCell>
+    <mxCell id="4" value="IN_PROGRESS" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+      <mxGeometry x="400" y="350" width="120" height="50" as="geometry" />
+    </mxCell>
+    <mxCell id="5" value="COMPLETED" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+      <mxGeometry x="620" y="250" width="120" height="50" as="geometry" />
+    </mxCell>
+    <mxCell id="6" value="FAILED" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+      <mxGeometry x="620" y="450" width="120" height="50" as="geometry" />
+    </mxCell>
+    <mxCell id="7" value="STUCK" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="1">
+      <mxGeometry x="400" y="520" width="120" height="50" as="geometry" />
+    </mxCell>
+    <mxCell id="8" value="" style="endArrow=classic;html=1;" edge="1" source="2" target="3" parent="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="9" value="Worker picks up" style="endArrow=classic;html=1;" edge="1" source="3" target="4" parent="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="10" value="Success" style="endArrow=classic;html=1;" edge="1" source="4" target="5" parent="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="11" value="Error (max retries)" style="endArrow=classic;html=1;" edge="1" source="4" target="6" parent="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="12" value="Timeout > 5min" style="endArrow=classic;html=1;" edge="1" source="4" target="7" parent="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="13" value="Watchdog retry" style="endArrow=classic;html=1;curved=1;" edge="1" source="7" target="3" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <Array as="points">
+          <mxPoint x="300" y="545" />
+        </Array>
+      </mxGeometry>
+    </mxCell>
+  </root>
+</mxGraphModel>

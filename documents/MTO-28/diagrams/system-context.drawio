@@ -1,0 +1,57 @@
+<mxGraphModel adaptiveColors="auto">
+  <root>
+    <mxCell id="0"/>
+    <mxCell id="1" parent="0"/>
+    <mxCell id="title" value="&lt;b&gt;MTO-28: Content Segmentation — System Context&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=13;" vertex="1" parent="1">
+      <mxGeometry x="250" y="10" width="400" height="30" as="geometry"/>
+    </mxCell>
+    <mxCell id="center" value="&lt;b&gt;Content Segmentation&lt;br&gt;Service&lt;/b&gt;&#xa;(MTO-28)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8f5e9;strokeColor=#388e3c;fontSize=12;fontStyle=0;" vertex="1" parent="1">
+      <mxGeometry x="340" y="220" width="180" height="80" as="geometry"/>
+    </mxCell>
+    <mxCell id="pii" value="PII Masking Engine&#xa;(MTO-27)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1f5fe;strokeColor=#0288d1;" vertex="1" parent="1">
+      <mxGeometry x="60" y="240" width="160" height="60" as="geometry"/>
+    </mxCell>
+    <mxCell id="pipeline" value="KB Refinery&#xa;Pipeline" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1f5fe;strokeColor=#0288d1;" vertex="1" parent="1">
+      <mxGeometry x="340" y="60" width="180" height="60" as="geometry"/>
+    </mxCell>
+    <mxCell id="openai" value="OpenAI API" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f3e5f5;strokeColor=#7b1fa2;" vertex="1" parent="1">
+      <mxGeometry x="640" y="120" width="140" height="50" as="geometry"/>
+    </mxCell>
+    <mxCell id="ollama" value="Ollama&#xa;(Local LLM)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff3e0;strokeColor=#f57c00;" vertex="1" parent="1">
+      <mxGeometry x="640" y="240" width="140" height="50" as="geometry"/>
+    </mxCell>
+    <mxCell id="azure" value="Azure OpenAI" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f3e5f5;strokeColor=#7b1fa2;" vertex="1" parent="1">
+      <mxGeometry x="640" y="360" width="140" height="50" as="geometry"/>
+    </mxCell>
+    <mxCell id="kbentry" value="KbEntry Model&#xa;(MTO-26)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1f5fe;strokeColor=#0288d1;" vertex="1" parent="1">
+      <mxGeometry x="60" y="380" width="160" height="60" as="geometry"/>
+    </mxCell>
+    <mxCell id="config" value="application.yml&#xa;(Configuration)" style="shape=mxgraph.flowchart.document;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;" vertex="1" parent="1">
+      <mxGeometry x="340" y="400" width="180" height="60" as="geometry"/>
+    </mxCell>
+    <mxCell id="e1" value="masked text" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;" edge="1" source="pii" target="center" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e2" value="segment()" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;" edge="1" source="pipeline" target="center" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e3" value="SegmentationResult" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;dashed=1;" edge="1" source="center" target="pipeline" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e4" value="Chat API" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;" edge="1" source="center" target="openai" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e5" value="Local API" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;" edge="1" source="center" target="ollama" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e6" value="Chat API" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;" edge="1" source="center" target="azure" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e7" value="maps to" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;dashed=1;" edge="1" source="center" target="kbentry" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e8" value="reads config" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;dashed=1;" edge="1" source="center" target="config" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+  </root>
+</mxGraphModel>

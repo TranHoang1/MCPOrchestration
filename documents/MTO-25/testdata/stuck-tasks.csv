@@ -1,0 +1,4 @@
+task_id,task_type,status,started_at,retry_count,worker_id
+550e8400-e29b-41d4-a716-446655440001,jira_ticket_scan,Processing,2026-05-08T08:00:00Z,0,worker-1
+550e8400-e29b-41d4-a716-446655440002,document_extract,Processing,2026-05-08T08:00:00Z,2,worker-1
+550e8400-e29b-41d4-a716-446655440003,batch_index,Processing,2026-05-08T08:00:00Z,3,worker-1

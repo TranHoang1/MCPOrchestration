@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MCP Orchestrator — 3D Graph Viewer</title>
+    <script src="https://unpkg.com/3d-force-graph@1"></script>
+    <style>
+        :root {
+            --bg: #0d1117;
+            --surface: #161b22;
+            --border: #30363d;
+            --text: #c9d1d9;
+            --muted: #8b949e;
+            --accent: #58a6ff;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            overflow: hidden;
+        }
+        #controls {
+            position: fixed;
+            top: 16px;
+            left: 16px;
+            z-index: 100;
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        #controls select, #controls input {
+            padding: 6px 12px;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            background: var(--surface);
+            color: var(--text);
+            font-size: 0.85rem;
+        }
+        #controls input { width: 180px; }
+        #graph-container { width: 100vw; height: 100vh; }
+        #details-panel {
+            position: fixed;
+            top: 60px;
+            right: 16px;
+            width: 300px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 16px;
+            z-index: 100;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        #details-panel.hidden { display: none; }
+        #details-panel h3 { margin-bottom: 8px; color: var(--accent); }
+        #details-panel .field { margin-bottom: 6px; font-size: 0.85rem; }
+        #details-panel .field .label { color: var(--muted); }
+        #legend {
+            position: fixed;
+            bottom: 16px;
+            left: 16px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 12px;
+            z-index: 100;
+            font-size: 0.8rem;
+        }
+        #legend .item { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
+        #legend .dot { width: 12px; height: 12px; border-radius: 50%; }
+        #stats {
+            position: fixed;
+            bottom: 16px;
+            right: 16px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 8px 12px;
+            font-size: 0.8rem;
+            color: var(--muted);
+            z-index: 100;
+        }
+    </style>
+</head>
+<body>
+<div id="controls">
+    <input id="project-select" placeholder="Project key (e.g. MTO)" value="MTO">
+    <select id="view-select">
+        <option value="hierarchy">Hierarchy</option>
+        <option value="dependency">Dependency</option>
+        <option value="team">Team</option>
+    </select>
+    <input id="search" placeholder="Search ticket...">
+</div>
+<div id="graph-container"></div>
+<div id="details-panel" class="hidden"></div>
+<div id="legend"></div>
+<div id="stats">Nodes: 0 | Edges: 0</div>
+
+<script>
+(function() {
+    'use strict';
+
+    let graph = null;
+    let graphData = { nodes: [], edges: [] };
+
+    function init() {
+        graph = ForceGraph3D()(document.getElementById('graph-container'))
+            .backgroundColor('#0d1117')
+            .nodeLabel(n => `${n.id}: ${n.label}`)
+            .nodeColor(n => n.color)
+            .nodeVal(n => n.size)
+            .linkColor(l => l.color)
+            .linkWidth(l => l.width)
+            .linkLabel(l => l.label)
+            .linkDirectionalArrowLength(4)
+            .linkDirectionalArrowRelPos(1)
+            .onNodeClick(n => showDetails(n))
+            .onNodeHover(n => highlightConnected(n))
+            .d3AlphaDecay(0.02)
+            .d3VelocityDecay(0.3)
+            .warmupTicks(100)
+            .cooldownTicks(200);
+
+        bindControls();
+        loadGraph();
+    }
+
+    function bindControls() {
+        document.getElementById('view-select').onchange = loadGraph;
+        document.getElementById('project-select').onchange = loadGraph;
+        document.getElementById('search').oninput = (e) => searchNode(e.target.value);
+    }
+
+    function loadGraph() {
+        const project = document.getElementById('project-select').value.trim();
+        const view = document.getElementById('view-select').value;
+        if (!project) return;
+
+        fetch(`/sync/graph/${project}?view=${view}`)
+            .then(r => { if (r.ok) return r.json(); throw new Error('Failed'); })
+            .then(data => {
+                graphData = data;
+                const links = data.edges.map(e => ({ ...e }));
+                graph.graphData({ nodes: data.nodes, links: links });
+                updateStats(data.metadata);
+                updateLegend(data.nodes);
+            })
+            .catch(err => console.error('Graph load failed:', err));
+    }
+
+    function showDetails(node) {
+        const panel = document.getElementById('details-panel');
+        panel.classList.remove('hidden');
+        panel.innerHTML = `
+            <h3>${node.id}</h3>
+            <div class="field"><span class="label">Summary:</span> ${node.label}</div>
+            <div class="field"><span class="label">Type:</span> ${node.type}</div>
+            <div class="field"><span class="label">Status:</span> ${node.status}</div>
+            <div class="field"><span class="label">Priority:</span> ${node.priority || 'N/A'}</div>
+            <div class="field"><span class="label">Group:</span> ${node.group}</div>
+        `;
+    }
+
+    function highlightConnected(node) {
+        if (!node) {
+            graph.nodeColor(n => n.color);
+            graph.linkColor(l => l.color);
+            return;
+        }
+        const connected = new Set();
+        graphData.edges.forEach(e => {
+            if (e.source === node.id || e.source.id === node.id) connected.add(e.target.id || e.target);
+            if (e.target === node.id || e.target.id === node.id) connected.add(e.source.id || e.source);
+        });
+        connected.add(node.id);
+
+        graph.nodeColor(n => connected.has(n.id) ? n.color : '#333333');
+        graph.linkColor(l => {
+            const src = l.source.id || l.source;
+            const tgt = l.target.id || l.target;
+            return (src === node.id || tgt === node.id) ? '#ffffff' : '#222222';
+        });
+    }
+
+    function searchNode(query) {
+        if (!query) return;
+        const found = graphData.nodes.find(n =>
+            n.id.toLowerCase().includes(query.toLowerCase()) ||
+            n.label.toLowerCase().includes(query.toLowerCase())
+        );
+        if (found) {
+            graph.cameraPosition({ x: found.x, y: found.y, z: found.z + 200 }, found, 1000);
+            showDetails(found);
+        }
+    }
+
+    function updateStats(metadata) {
+        document.getElementById('stats').textContent =
+            `Nodes: ${metadata.nodeCount} | Edges: ${metadata.edgeCount} | View: ${metadata.viewMode}`;
+    }
+
+    function updateLegend(nodes) {
+        const groups = [...new Set(nodes.map(n => n.group))];
+        const colorMap = {};
+        nodes.forEach(n => { colorMap[n.group] = n.color; });
+
+        const legend = document.getElementById('legend');
+        legend.innerHTML = groups.map(g =>
+            `<div class="item"><div class="dot" style="background:${colorMap[g]}"></div>${g}</div>`
+        ).join('');
+    }
+
+    document.addEventListener('DOMContentLoaded', init);
+})();
+</script>
+</body>
+</html>

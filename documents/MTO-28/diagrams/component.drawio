@@ -1,0 +1,48 @@
+<mxGraphModel adaptiveColors="auto">
+  <root>
+    <mxCell id="0"/>
+    <mxCell id="1" parent="0"/>
+    <mxCell id="title" value="&lt;b&gt;MTO-28: Content Segmentation — Component Diagram&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=13;" vertex="1" parent="1">
+      <mxGeometry x="180" y="10" width="420" height="30" as="geometry"/>
+    </mxCell>
+    <mxCell id="pkg" value="com.orchestrator.mcp.segmentation" style="swimlane;startSize=30;fillColor=#e8f5e9;strokeColor=#388e3c;html=1;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="40" y="60" width="700" height="500" as="geometry"/>
+    </mxCell>
+    <mxCell id="c1" value="&lt;b&gt;«interface»&lt;br&gt;ContentSegmentationService&lt;/b&gt;&#xa;&#xa;+ segment(maskedText): SegmentationResult" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#e1f5fe;strokeColor=#0288d1;align=left;spacingLeft=10;verticalAlign=top;spacingTop=5;" vertex="1" parent="pkg">
+      <mxGeometry x="20" y="50" width="280" height="80" as="geometry"/>
+    </mxCell>
+    <mxCell id="c2" value="&lt;b&gt;ContentSegmentationServiceImpl&lt;/b&gt;&#xa;&#xa;- validateInput()&#xa;- callLlm()&#xa;- parseResponse()&#xa;- enforceBrLocalOnly()" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#e8f5e9;strokeColor=#388e3c;align=left;spacingLeft=10;verticalAlign=top;spacingTop=5;" vertex="1" parent="pkg">
+      <mxGeometry x="20" y="170" width="280" height="110" as="geometry"/>
+    </mxCell>
+    <mxCell id="c3" value="&lt;b&gt;SegmentationPromptBuilder&lt;/b&gt;&#xa;&#xa;+ buildSystemPrompt(): String&#xa;+ buildUserPrompt(text): String&#xa;+ buildBrPrompt(br): String" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff3e0;strokeColor=#f57c00;align=left;spacingLeft=10;verticalAlign=top;spacingTop=5;" vertex="1" parent="pkg">
+      <mxGeometry x="380" y="50" width="280" height="100" as="geometry"/>
+    </mxCell>
+    <mxCell id="c4" value="&lt;b&gt;«interface»&lt;br&gt;SegmentationAiService&lt;/b&gt;&#xa;(LangChain4j AiService)&#xa;&#xa;+ classify(maskedText): String" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f3e5f5;strokeColor=#7b1fa2;align=left;spacingLeft=10;verticalAlign=top;spacingTop=5;" vertex="1" parent="pkg">
+      <mxGeometry x="380" y="190" width="280" height="90" as="geometry"/>
+    </mxCell>
+    <mxCell id="c5" value="&lt;b&gt;ChatModelFactory&lt;/b&gt;&#xa;&#xa;+ create(config): ChatLanguageModel&#xa;- createOpenAiModel()&#xa;- createOllamaModel()&#xa;- createAzureModel()" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff3e0;strokeColor=#f57c00;align=left;spacingLeft=10;verticalAlign=top;spacingTop=5;" vertex="1" parent="pkg">
+      <mxGeometry x="380" y="320" width="280" height="110" as="geometry"/>
+    </mxCell>
+    <mxCell id="c6" value="&lt;b&gt;SegmentationConfig&lt;/b&gt;&#xa;(@Serializable)&#xa;&#xa;provider, modelName, temperature,&#xa;maxTokens, apiKey, baseUrl,&#xa;timeoutSeconds, brLocalOnly,&#xa;ollamaUrl, ollamaModel" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;align=left;spacingLeft=10;verticalAlign=top;spacingTop=5;" vertex="1" parent="pkg">
+      <mxGeometry x="20" y="320" width="280" height="130" as="geometry"/>
+    </mxCell>
+    <mxCell id="c7" value="&lt;b&gt;SegmentationModule&lt;/b&gt;&#xa;(Koin DI)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;align=left;spacingLeft=10;verticalAlign=top;spacingTop=5;" vertex="1" parent="pkg">
+      <mxGeometry x="180" y="460" width="160" height="30" as="geometry"/>
+    </mxCell>
+    <mxCell id="re1" value="implements" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endSize=12;endFill=0;dashed=1;" edge="1" source="c2" target="c1" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="re2" value="uses" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=open;endSize=8;dashed=1;" edge="1" source="c2" target="c3" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="re3" value="calls" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=open;endSize=8;dashed=1;" edge="1" source="c2" target="c4" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="re4" value="reads" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=open;endSize=8;dashed=1;" edge="1" source="c2" target="c6" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="re5" value="creates model" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=open;endSize=8;dashed=1;" edge="1" source="c5" target="c4" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+  </root>
+</mxGraphModel>

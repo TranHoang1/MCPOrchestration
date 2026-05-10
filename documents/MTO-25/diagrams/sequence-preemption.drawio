@@ -1,0 +1,85 @@
+<mxGraphModel adaptiveColors="auto">
+  <root>
+    <mxCell id="0"/>
+    <mxCell id="1" parent="0"/>
+    <mxCell id="title" value="&lt;b&gt;Sequence: Preemption Flow&lt;/b&gt;" style="text;html=1;align=center;fontSize=13;fontStyle=1;" vertex="1" parent="1">
+      <mxGeometry x="250" y="10" width="300" height="30" as="geometry"/>
+    </mxCell>
+    <mxCell id="ll1" value="HPQ Caller" style="shape=umlLifeline;perimeter=lifelinePerimeter;html=1;size=40;fillColor=#e1f5fe;strokeColor=#0288d1;" vertex="1" parent="1">
+      <mxGeometry x="60" y="50" width="80" height="500" as="geometry"/>
+    </mxCell>
+    <mxCell id="ll2" value="DualPriority&#xa;Queue" style="shape=umlLifeline;perimeter=lifelinePerimeter;html=1;size=40;fillColor=#fff3e0;strokeColor=#f57c00;" vertex="1" parent="1">
+      <mxGeometry x="240" y="50" width="100" height="500" as="geometry"/>
+    </mxCell>
+    <mxCell id="ll3" value="QueueWorker" style="shape=umlLifeline;perimeter=lifelinePerimeter;html=1;size=40;fillColor=#e8f5e9;strokeColor=#388e3c;" vertex="1" parent="1">
+      <mxGeometry x="440" y="50" width="100" height="500" as="geometry"/>
+    </mxCell>
+    <mxCell id="ll4" value="NPQ Task Job" style="shape=umlLifeline;perimeter=lifelinePerimeter;html=1;size=40;fillColor=#fce4ec;strokeColor=#c62828;" vertex="1" parent="1">
+      <mxGeometry x="640" y="50" width="100" height="500" as="geometry"/>
+    </mxCell>
+    <mxCell id="ll5" value="TaskState&#xa;Repository" style="shape=umlLifeline;perimeter=lifelinePerimeter;html=1;size=40;fillColor=#f3e5f5;strokeColor=#7b1fa2;" vertex="1" parent="1">
+      <mxGeometry x="840" y="50" width="100" height="500" as="geometry"/>
+    </mxCell>
+    <mxCell id="note1" value="NPQ task is currently&#xa;being processed" style="shape=note;size=14;fillColor=#fffde7;strokeColor=#f9a825;html=1;fontSize=10;" vertex="1" parent="1">
+      <mxGeometry x="600" y="100" width="140" height="40" as="geometry"/>
+    </mxCell>
+    <mxCell id="m1" value="send(hpqTask) → HPQ" style="html=1;endSize=6;startSize=6;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="100" y="160" as="sourcePoint"/>
+        <mxPoint x="290" y="160" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="m2" value="preemption signal" style="html=1;endSize=6;startSize=6;strokeColor=#c62828;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="290" y="200" as="sourcePoint"/>
+        <mxPoint x="490" y="200" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="m3" value="job.cancel()" style="html=1;endSize=6;startSize=6;strokeColor=#c62828;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="490" y="240" as="sourcePoint"/>
+        <mxPoint x="690" y="240" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="m4" value="CancellationException" style="html=1;endSize=6;startSize=6;dashed=1;strokeColor=#c62828;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="690" y="280" as="sourcePoint"/>
+        <mxPoint x="490" y="280" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="m5" value="UPDATE npqTask status=Pending" style="html=1;endSize=6;startSize=6;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="490" y="320" as="sourcePoint"/>
+        <mxPoint x="890" y="320" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="m6" value="re-send npqTask → NPQ" style="html=1;endSize=6;startSize=6;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="490" y="360" as="sourcePoint"/>
+        <mxPoint x="290" y="360" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="m7" value="receive hpqTask from HPQ" style="html=1;endSize=6;startSize=6;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="490" y="400" as="sourcePoint"/>
+        <mxPoint x="290" y="400" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="m8" value="UPDATE hpqTask status=Processing" style="html=1;endSize=6;startSize=6;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="490" y="440" as="sourcePoint"/>
+        <mxPoint x="890" y="440" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="m9" value="process(hpqTask)" style="html=1;endSize=6;startSize=6;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="490" y="480" as="sourcePoint"/>
+        <mxPoint x="540" y="480" as="targetPoint"/>
+        <Array as="points">
+          <mxPoint x="540" y="480"/>
+          <mxPoint x="540" y="510"/>
+        </Array>
+      </mxGeometry>
+    </mxCell>
+  </root>
+</mxGraphModel>

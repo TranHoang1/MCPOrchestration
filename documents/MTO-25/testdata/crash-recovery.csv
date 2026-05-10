@@ -1,0 +1,6 @@
+task_id,task_type,status,retry_count,worker_id
+660e8400-e29b-41d4-a716-446655440001,jira_ticket_scan,Processing,0,worker-crashed
+660e8400-e29b-41d4-a716-446655440002,document_extract,Processing,1,worker-crashed
+660e8400-e29b-41d4-a716-446655440003,batch_index,Processing,2,worker-crashed
+660e8400-e29b-41d4-a716-446655440004,user_upload,Processing,3,worker-crashed
+660e8400-e29b-41d4-a716-446655440005,periodic_cleanup,Processing,0,worker-crashed

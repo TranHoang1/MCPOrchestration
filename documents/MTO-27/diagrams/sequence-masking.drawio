@@ -1,0 +1,92 @@
+<mxGraphModel adaptiveColors="auto">
+  <root>
+    <mxCell id="0"/>
+    <mxCell id="1" parent="0"/>
+    <mxCell id="title" value="&lt;b&gt;Sequence Diagram — PII Masking Flow&lt;/b&gt;" style="text;html=1;align=center;fontSize=13;fontStyle=1;" vertex="1" parent="1">
+      <mxGeometry x="200" y="10" width="400" height="30" as="geometry"/>
+    </mxCell>
+    <mxCell id="ll1" value="Pipeline" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;size=40;fillColor=#e1f5fe;strokeColor=#0288d1;" vertex="1" parent="1">
+      <mxGeometry x="80" y="50" width="100" height="550" as="geometry"/>
+    </mxCell>
+    <mxCell id="ll2" value="PiiMaskingEngine" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;size=40;fillColor=#e8f5e9;strokeColor=#388e3c;" vertex="1" parent="1">
+      <mxGeometry x="260" y="50" width="120" height="550" as="geometry"/>
+    </mxCell>
+    <mxCell id="ll3" value="EmailStrategy" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;size=40;fillColor=#fff3e0;strokeColor=#f57c00;" vertex="1" parent="1">
+      <mxGeometry x="450" y="50" width="100" height="550" as="geometry"/>
+    </mxCell>
+    <mxCell id="ll4" value="PhoneStrategy" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;size=40;fillColor=#fff3e0;strokeColor=#f57c00;" vertex="1" parent="1">
+      <mxGeometry x="620" y="50" width="100" height="550" as="geometry"/>
+    </mxCell>
+    <mxCell id="ll5" value="BankAccountStrategy" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;size=40;fillColor=#fff3e0;strokeColor=#f57c00;" vertex="1" parent="1">
+      <mxGeometry x="790" y="50" width="120" height="550" as="geometry"/>
+    </mxCell>
+    <mxCell id="m1" value="mask(rawText)" style="html=1;endSize=6;startSize=6;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="130" y="120" as="sourcePoint"/>
+        <mxPoint x="320" y="120" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="m2" value="detect(text)" style="html=1;endSize=6;startSize=6;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="320" y="160" as="sourcePoint"/>
+        <mxPoint x="500" y="160" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="m3" value="List&lt;PiiMatch&gt;" style="html=1;endSize=6;startSize=6;dashed=1;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="500" y="200" as="sourcePoint"/>
+        <mxPoint x="320" y="200" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="m4" value="detect(text)" style="html=1;endSize=6;startSize=6;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="320" y="240" as="sourcePoint"/>
+        <mxPoint x="670" y="240" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="m5" value="List&lt;PiiMatch&gt;" style="html=1;endSize=6;startSize=6;dashed=1;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="670" y="280" as="sourcePoint"/>
+        <mxPoint x="320" y="280" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="m6" value="detect(text)" style="html=1;endSize=6;startSize=6;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="320" y="320" as="sourcePoint"/>
+        <mxPoint x="850" y="320" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="m7" value="List&lt;PiiMatch&gt; (context-filtered)" style="html=1;endSize=6;startSize=6;dashed=1;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="850" y="360" as="sourcePoint"/>
+        <mxPoint x="320" y="360" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="m8" value="removeOverlaps()" style="html=1;endSize=6;startSize=6;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="320" y="410" as="sourcePoint"/>
+        <mxPoint x="320" y="440" as="targetPoint"/>
+        <Array as="points">
+          <mxPoint x="370" y="410"/>
+          <mxPoint x="370" y="440"/>
+        </Array>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="m9" value="replaceWithPlaceholders()" style="html=1;endSize=6;startSize=6;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="320" y="470" as="sourcePoint"/>
+        <mxPoint x="320" y="500" as="targetPoint"/>
+        <Array as="points">
+          <mxPoint x="370" y="470"/>
+          <mxPoint x="370" y="500"/>
+        </Array>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="m10" value="MaskingResult" style="html=1;endSize=6;startSize=6;dashed=1;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="320" y="540" as="sourcePoint"/>
+        <mxPoint x="130" y="540" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+  </root>
+</mxGraphModel>

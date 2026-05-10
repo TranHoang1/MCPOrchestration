@@ -1,0 +1,141 @@
+<mxGraphModel adaptiveColors="auto">
+  <root>
+    <mxCell id="0"/>
+    <mxCell id="1" parent="0"/>
+    <mxCell id="title" value="&lt;b&gt;MTO-28: Content Segmentation — Class Diagram&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=13;" vertex="1" parent="1">
+      <mxGeometry x="250" y="10" width="380" height="30" as="geometry"/>
+    </mxCell>
+    <mxCell id="cls_iface" value="&lt;b&gt;«interface»&lt;br&gt;ContentSegmentationService&lt;/b&gt;" style="swimlane;startSize=40;fillColor=#e1f5fe;strokeColor=#0288d1;html=1;fontSize=10;" vertex="1" parent="1">
+      <mxGeometry x="40" y="60" width="280" height="80" as="geometry"/>
+    </mxCell>
+    <mxCell id="cls_iface_m1" value="+ segment(maskedText: String): SegmentationResult" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=9;" vertex="1" parent="cls_iface">
+      <mxGeometry x="5" y="50" width="270" height="20" as="geometry"/>
+    </mxCell>
+    <mxCell id="cls_impl" value="&lt;b&gt;ContentSegmentationServiceImpl&lt;/b&gt;" style="swimlane;startSize=24;fillColor=#e8f5e9;strokeColor=#388e3c;html=1;fontSize=10;" vertex="1" parent="1">
+      <mxGeometry x="40" y="200" width="280" height="160" as="geometry"/>
+    </mxCell>
+    <mxCell id="cls_impl_f1" value="- config: SegmentationConfig" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=9;" vertex="1" parent="cls_impl">
+      <mxGeometry x="5" y="30" width="170" height="20" as="geometry"/>
+    </mxCell>
+    <mxCell id="cls_impl_f2" value="- aiService: SegmentationAiService" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=9;" vertex="1" parent="cls_impl">
+      <mxGeometry x="5" y="50" width="190" height="20" as="geometry"/>
+    </mxCell>
+    <mxCell id="cls_impl_f3" value="- localAiService: SegmentationAiService?" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=9;" vertex="1" parent="cls_impl">
+      <mxGeometry x="5" y="70" width="220" height="20" as="geometry"/>
+    </mxCell>
+    <mxCell id="cls_impl_m1" value="+ segment(maskedText: String): SegmentationResult" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=9;" vertex="1" parent="cls_impl">
+      <mxGeometry x="5" y="95" width="270" height="20" as="geometry"/>
+    </mxCell>
+    <mxCell id="cls_impl_m2" value="- validateInput(text: String)" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=9;" vertex="1" parent="cls_impl">
+      <mxGeometry x="5" y="115" width="160" height="20" as="geometry"/>
+    </mxCell>
+    <mxCell id="cls_impl_m3" value="- callLlm(text: String): String" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=9;" vertex="1" parent="cls_impl">
+      <mxGeometry x="5" y="135" width="180" height="20" as="geometry"/>
+    </mxCell>
+    <mxCell id="cls_result" value="&lt;b&gt;«data class»&lt;br&gt;SegmentationResult&lt;/b&gt;" style="swimlane;startSize=40;fillColor=#e8f5e9;strokeColor=#388e3c;html=1;fontSize=10;" vertex="1" parent="1">
+      <mxGeometry x="400" y="60" width="250" height="180" as="geometry"/>
+    </mxCell>
+    <mxCell id="cls_result_f1" value="+ publicContent: String" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=9;" vertex="1" parent="cls_result">
+      <mxGeometry x="5" y="45" width="130" height="20" as="geometry"/>
+    </mxCell>
+    <mxCell id="cls_result_f2" value="+ technicalContent: String" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=9;" vertex="1" parent="cls_result">
+      <mxGeometry x="5" y="65" width="150" height="20" as="geometry"/>
+    </mxCell>
+    <mxCell id="cls_result_f3" value="+ businessRules: String" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=9;" vertex="1" parent="cls_result">
+      <mxGeometry x="5" y="85" width="140" height="20" as="geometry"/>
+    </mxCell>
+    <mxCell id="cls_result_f4" value="+ brSensitivityLevel: BrSensitivityLevel?" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=9;" vertex="1" parent="cls_result">
+      <mxGeometry x="5" y="105" width="220" height="20" as="geometry"/>
+    </mxCell>
+    <mxCell id="cls_result_f5" value="+ processingTimeMs: Long" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=9;" vertex="1" parent="cls_result">
+      <mxGeometry x="5" y="125" width="150" height="20" as="geometry"/>
+    </mxCell>
+    <mxCell id="cls_result_f6" value="+ provider: String" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=9;" vertex="1" parent="cls_result">
+      <mxGeometry x="5" y="145" width="120" height="20" as="geometry"/>
+    </mxCell>
+    <mxCell id="cls_result_f7" value="+ degraded: Boolean" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=9;" vertex="1" parent="cls_result">
+      <mxGeometry x="5" y="160" width="120" height="20" as="geometry"/>
+    </mxCell>
+    <mxCell id="cls_enum" value="&lt;b&gt;«enum»&lt;br&gt;BrSensitivityLevel&lt;/b&gt;" style="swimlane;startSize=40;fillColor=#fff3e0;strokeColor=#f57c00;html=1;fontSize=10;" vertex="1" parent="1">
+      <mxGeometry x="700" y="60" width="180" height="120" as="geometry"/>
+    </mxCell>
+    <mxCell id="cls_enum_f1" value="LEVEL_1 (Confidential)" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=9;" vertex="1" parent="cls_enum">
+      <mxGeometry x="5" y="50" width="130" height="20" as="geometry"/>
+    </mxCell>
+    <mxCell id="cls_enum_f2" value="LEVEL_2 (Internal)" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=9;" vertex="1" parent="cls_enum">
+      <mxGeometry x="5" y="70" width="110" height="20" as="geometry"/>
+    </mxCell>
+    <mxCell id="cls_enum_f3" value="LEVEL_3 (Restricted)" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=9;" vertex="1" parent="cls_enum">
+      <mxGeometry x="5" y="90" width="120" height="20" as="geometry"/>
+    </mxCell>
+    <mxCell id="cls_config" value="&lt;b&gt;«data class»&lt;br&gt;SegmentationConfig&lt;/b&gt;" style="swimlane;startSize=40;fillColor=#f5f5f5;strokeColor=#666666;html=1;fontSize=10;" vertex="1" parent="1">
+      <mxGeometry x="40" y="420" width="250" height="200" as="geometry"/>
+    </mxCell>
+    <mxCell id="cls_config_f1" value="+ provider: String = &quot;openai&quot;" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=9;" vertex="1" parent="cls_config">
+      <mxGeometry x="5" y="45" width="160" height="20" as="geometry"/>
+    </mxCell>
+    <mxCell id="cls_config_f2" value="+ modelName: String = &quot;gpt-4o-mini&quot;" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=9;" vertex="1" parent="cls_config">
+      <mxGeometry x="5" y="65" width="200" height="20" as="geometry"/>
+    </mxCell>
+    <mxCell id="cls_config_f3" value="+ temperature: Double = 0.1" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=9;" vertex="1" parent="cls_config">
+      <mxGeometry x="5" y="85" width="160" height="20" as="geometry"/>
+    </mxCell>
+    <mxCell id="cls_config_f4" value="+ maxTokens: Int = 2000" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=9;" vertex="1" parent="cls_config">
+      <mxGeometry x="5" y="105" width="140" height="20" as="geometry"/>
+    </mxCell>
+    <mxCell id="cls_config_f5" value="+ timeoutSeconds: Int = 10" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=9;" vertex="1" parent="cls_config">
+      <mxGeometry x="5" y="125" width="150" height="20" as="geometry"/>
+    </mxCell>
+    <mxCell id="cls_config_f6" value="+ brLocalOnly: Boolean = false" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=9;" vertex="1" parent="cls_config">
+      <mxGeometry x="5" y="145" width="170" height="20" as="geometry"/>
+    </mxCell>
+    <mxCell id="cls_config_f7" value="+ ollamaUrl: String" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=9;" vertex="1" parent="cls_config">
+      <mxGeometry x="5" y="165" width="110" height="20" as="geometry"/>
+    </mxCell>
+    <mxCell id="cls_factory" value="&lt;b&gt;ChatModelFactory&lt;/b&gt;" style="swimlane;startSize=24;fillColor=#fff3e0;strokeColor=#f57c00;html=1;fontSize=10;" vertex="1" parent="1">
+      <mxGeometry x="400" y="300" width="250" height="100" as="geometry"/>
+    </mxCell>
+    <mxCell id="cls_factory_m1" value="+ create(config): ChatLanguageModel" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=9;" vertex="1" parent="cls_factory">
+      <mxGeometry x="5" y="30" width="200" height="20" as="geometry"/>
+    </mxCell>
+    <mxCell id="cls_factory_m2" value="- createOpenAiModel(config): ChatLanguageModel" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=9;" vertex="1" parent="cls_factory">
+      <mxGeometry x="5" y="50" width="250" height="20" as="geometry"/>
+    </mxCell>
+    <mxCell id="cls_factory_m3" value="- createOllamaModel(config): ChatLanguageModel" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=9;" vertex="1" parent="cls_factory">
+      <mxGeometry x="5" y="70" width="250" height="20" as="geometry"/>
+    </mxCell>
+    <mxCell id="cls_exc" value="&lt;b&gt;«sealed»&lt;br&gt;SegmentationException&lt;/b&gt;" style="swimlane;startSize=40;fillColor=#fce4ec;strokeColor=#c62828;html=1;fontSize=10;" vertex="1" parent="1">
+      <mxGeometry x="700" y="240" width="200" height="130" as="geometry"/>
+    </mxCell>
+    <mxCell id="cls_exc_f1" value="InvalidInputException" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=9;" vertex="1" parent="cls_exc">
+      <mxGeometry x="5" y="50" width="120" height="20" as="geometry"/>
+    </mxCell>
+    <mxCell id="cls_exc_f2" value="LlmTimeoutException" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=9;" vertex="1" parent="cls_exc">
+      <mxGeometry x="5" y="70" width="120" height="20" as="geometry"/>
+    </mxCell>
+    <mxCell id="cls_exc_f3" value="InvalidLlmResponseException" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=9;" vertex="1" parent="cls_exc">
+      <mxGeometry x="5" y="90" width="160" height="20" as="geometry"/>
+    </mxCell>
+    <mxCell id="cls_exc_f4" value="ProviderUnavailableException" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=9;" vertex="1" parent="cls_exc">
+      <mxGeometry x="5" y="110" width="160" height="20" as="geometry"/>
+    </mxCell>
+    <mxCell id="rel1" value="implements" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endSize=12;endFill=0;dashed=1;" edge="1" source="cls_impl" target="cls_iface" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="rel2" value="returns" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=open;endSize=8;dashed=1;" edge="1" source="cls_iface" target="cls_result" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="rel3" value="uses" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=open;endSize=8;" edge="1" source="cls_result" target="cls_enum" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="rel4" value="uses" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=open;endSize=8;dashed=1;" edge="1" source="cls_impl" target="cls_config" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="rel5" value="uses" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=open;endSize=8;dashed=1;" edge="1" source="cls_impl" target="cls_factory" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="rel6" value="throws" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=open;endSize=8;dashed=1;" edge="1" source="cls_impl" target="cls_exc" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+  </root>
+</mxGraphModel>

@@ -1,0 +1,71 @@
+<mxfile host="app.diagrams.net" modified="2026-05-09" agent="UI Agent" version="24.0">
+  <diagram id="create-user" name="Create User Modal">
+    <mxGraphModel dx="800" dy="600" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="600" pageHeight="700" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+        <!-- Modal Overlay -->
+        <mxCell id="overlay" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#000000;opacity=50;" vertex="1" parent="1">
+          <mxGeometry x="0" y="0" width="600" height="700" as="geometry"/>
+        </mxCell>
+        <!-- Modal Container -->
+        <mxCell id="modal" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#161b22;strokeColor=#30363d;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="50" y="30" width="500" height="640" as="geometry"/>
+        </mxCell>
+        <!-- Modal Header -->
+        <mxCell id="modal-header" value="Create New User" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#0d1117;strokeColor=#30363d;fontColor=#c9d1d9;fontSize=16;fontStyle=1;align=left;spacingLeft=20;" vertex="1" parent="1">
+          <mxGeometry x="50" y="30" width="500" height="50" as="geometry"/>
+        </mxCell>
+        <mxCell id="btn-close" value="✕" style="text;html=1;align=center;verticalAlign=middle;fontColor=#8b949e;fontSize=18;" vertex="1" parent="1">
+          <mxGeometry x="510" y="35" width="30" height="40" as="geometry"/>
+        </mxCell>
+        <!-- Form Fields -->
+        <mxCell id="lbl-email" value="Email *" style="text;html=1;align=left;verticalAlign=middle;fontColor=#c9d1d9;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="80" y="100" width="440" height="25" as="geometry"/>
+        </mxCell>
+        <mxCell id="input-email" value="user@company.com" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0d1117;strokeColor=#30363d;fontColor=#8b949e;fontSize=12;align=left;spacingLeft=10;" vertex="1" parent="1">
+          <mxGeometry x="80" y="125" width="440" height="35" as="geometry"/>
+        </mxCell>
+        <mxCell id="lbl-name" value="Display Name *" style="text;html=1;align=left;verticalAlign=middle;fontColor=#c9d1d9;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="80" y="180" width="440" height="25" as="geometry"/>
+        </mxCell>
+        <mxCell id="input-name" value="John Doe" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0d1117;strokeColor=#30363d;fontColor=#8b949e;fontSize=12;align=left;spacingLeft=10;" vertex="1" parent="1">
+          <mxGeometry x="80" y="205" width="440" height="35" as="geometry"/>
+        </mxCell>
+        <mxCell id="lbl-role" value="Role *" style="text;html=1;align=left;verticalAlign=middle;fontColor=#c9d1d9;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="80" y="260" width="440" height="25" as="geometry"/>
+        </mxCell>
+        <mxCell id="select-role" value="Select role ▼" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0d1117;strokeColor=#30363d;fontColor=#8b949e;fontSize=12;align=left;spacingLeft=10;" vertex="1" parent="1">
+          <mxGeometry x="80" y="285" width="440" height="35" as="geometry"/>
+        </mxCell>
+        <mxCell id="lbl-token" value="Jira API Token *" style="text;html=1;align=left;verticalAlign=middle;fontColor=#c9d1d9;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="80" y="340" width="440" height="25" as="geometry"/>
+        </mxCell>
+        <mxCell id="input-token" value="••••••••••••••••" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0d1117;strokeColor=#30363d;fontColor=#8b949e;fontSize=12;align=left;spacingLeft=10;" vertex="1" parent="1">
+          <mxGeometry x="80" y="365" width="440" height="35" as="geometry"/>
+        </mxCell>
+        <mxCell id="token-hint" value="🔒 Token will be encrypted at rest (AES-256-GCM)" style="text;html=1;align=left;verticalAlign=middle;fontColor=#8b949e;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="80" y="400" width="440" height="20" as="geometry"/>
+        </mxCell>
+        <!-- Validation Message -->
+        <mxCell id="validation" value="⚠️ Jira token will be validated before saving" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1c1917;strokeColor=#854d0e;fontColor=#d29922;fontSize=11;align=left;spacingLeft=10;" vertex="1" parent="1">
+          <mxGeometry x="80" y="440" width="440" height="35" as="geometry"/>
+        </mxCell>
+        <!-- Project Assignment (optional) -->
+        <mxCell id="lbl-projects" value="Initial Project Assignment (optional)" style="text;html=1;align=left;verticalAlign=middle;fontColor=#c9d1d9;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="80" y="500" width="440" height="25" as="geometry"/>
+        </mxCell>
+        <mxCell id="input-projects" value="MTO, SCRUM (comma-separated)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0d1117;strokeColor=#30363d;fontColor=#8b949e;fontSize=12;align=left;spacingLeft=10;" vertex="1" parent="1">
+          <mxGeometry x="80" y="525" width="440" height="35" as="geometry"/>
+        </mxCell>
+        <!-- Action Buttons -->
+        <mxCell id="btn-cancel" value="Cancel" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#21262d;strokeColor=#30363d;fontColor=#c9d1d9;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="280" y="600" width="100" height="35" as="geometry"/>
+        </mxCell>
+        <mxCell id="btn-save" value="Create User" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#238636;strokeColor=#2ea043;fontColor=#ffffff;fontSize=13;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="400" y="600" width="120" height="35" as="geometry"/>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

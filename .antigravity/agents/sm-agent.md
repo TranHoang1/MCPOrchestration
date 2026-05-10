@@ -221,6 +221,18 @@ SM: BÁO CÁO TỔNG KẾT
 5. Nếu có ERROR → gọi lại TA agent để fix
 6. Update STATUS.json
 
+### Step 2.5: UI Design (UI Agent — conditional)
+**Trigger:** Ticket có UI components (keywords: "UI", "admin", "dashboard", "viewer", "page", "screen", "frontend", "/admin", "web interface", "visualization")
+
+1. Kiểm tra FSD.md — tìm keywords UI: endpoints có HTML response, admin pages, viewer, dashboard
+2. Nếu KHÔNG có UI → SKIP, ghi pipeline.log: `[SM] [Phase-2.5] [SKIP] — No UI components detected`
+3. Nếu CÓ UI:
+   - Ghi pipeline.log: `[SM] [Phase-2.5] [START] — Invoking UI Agent`
+   - **invokeSubAgent("ui-agent")** — UI tạo UI-SPEC.md + wireframes
+   - Ghi pipeline.log: `[SM] [Phase-2.5] [DONE] — UI Agent returned`
+   - Verify: UI-SPEC.md exists
+   - Update STATUS.json
+
 ### Step 3: Design (SA → TDD)
 1. Ghi pipeline.log: `[SM] [Phase-3] [START] — Invoking SA Agent`
 2. **invokeSubAgent("sa-agent")** — SA tạo TDD + Diagrams + sa-agent.log
@@ -239,10 +251,21 @@ SM: BÁO CÁO TỔNG KẾT
 - Verify: SM Review STP/STC (6 test levels, RTM 100% coverage).
 - Ghi pipeline.log: `[SM] [Phase-4] [DONE]`
 
-### Step 5: Implementation (DEV → Code)
+### Step 5: Implementation (UI Prototype + DEV Code)
 - Ghi pipeline.log: `[SM] [Phase-5] [START]`
 - Verify Jira status = IN PROGRESS.
-- **invokeSubAgent("dev-agent")** — DEV implement code + dev-agent.log
+
+**Step 5a: UI Prototype (conditional — nếu ticket có UI)**
+- Kiểm tra: UI-SPEC.md tồn tại? (từ Phase 2.5)
+- Nếu CÓ UI-SPEC.md:
+  - Ghi pipeline.log: `[SM] [Phase-5a] [START] — Invoking UI Agent (prototype)`
+  - **invokeSubAgent("ui-agent")** — UI tạo HTML/CSS prototype
+  - Verify: static HTML files tồn tại, render được
+  - Ghi pipeline.log: `[SM] [Phase-5a] [DONE] — UI prototype created`
+- Nếu KHÔNG có UI-SPEC.md → SKIP Phase 5a
+
+**Step 5b: DEV Implementation**
+- **invokeSubAgent("dev-agent")** — DEV implement code (wire API vào prototype nếu có)
 - Verify: build passes, tests pass
 - Ghi pipeline.log: `[SM] [Phase-5] [DONE]`
 

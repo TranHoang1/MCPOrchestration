@@ -1,0 +1,17 @@
+{
+  "ticket": "MTO-35",
+  "currentPhase": "specification",
+  "phases": {
+    "requirements": { "status": "done", "file": "BRD.md", "version": 1, "completedAt": "2026-05-09T10:00:00Z" },
+    "specification": { "status": "done", "file": "FSD.md", "version": 1, "completedAt": "2026-05-09T12:00:00Z" },
+    "design": { "status": "done", "file": "TDD.md", "version": 1, "completedAt": "2026-05-09T10:00:00Z" },
+    "test_planning": { "status": "done", "file": "STP.md", "version": 1, "completedAt": "2026-05-09T12:00:00Z" },
+    "test_cases": { "status": "done", "file": "STC.md", "version": 1, "completedAt": "2026-05-09T12:00:00Z" },
+    "deployment_guide": { "status": "done", "file": "DPG.md", "version": 1, "completedAt": "2026-05-09T12:00:00Z" },
+    "release_notes": { "status": "done", "file": "RLN.md", "version": 1, "completedAt": "2026-05-09T12:00:00Z" },
+    "implementation": { "status": "not_started" },
+    "testing": { "status": "not_started" },
+    "deployment": { "status": "not_started" }
+  },
+  "lastUpdated": "2026-05-09T12:00:00Z"
+}

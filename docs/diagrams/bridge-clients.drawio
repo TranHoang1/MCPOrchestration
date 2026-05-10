@@ -1,0 +1,173 @@
+<mxGraphModel dx="1100" dy="680" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1100" pageHeight="700" math="0" shadow="0">
+  <root>
+    <mxCell id="0" />
+    <mxCell id="1" parent="0" />
+
+    <!-- Title -->
+    <mxCell id="title" value="Multi-Language Bridge Clients" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=16;fontStyle=1;fontColor=#1a1a2e;" vertex="1" parent="1">
+      <mxGeometry x="370" y="20" width="260" height="30" as="geometry" />
+    </mxCell>
+    <mxCell id="subtitle" value="Each bridge translates stdio (MCP protocol) ↔ HTTP Streamable transport" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=10;fontColor=#666666;fontStyle=2;" vertex="1" parent="1">
+      <mxGeometry x="310" y="50" width="380" height="20" as="geometry" />
+    </mxCell>
+
+    <!-- AI Agent (top center) -->
+    <mxCell id="agent" value="&lt;b&gt;AI Agent&lt;/b&gt;&lt;br&gt;(Claude, Kiro, Cursor, Copilot)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;arcSize=12;fontSize=12;" vertex="1" parent="1">
+      <mxGeometry x="400" y="80" width="200" height="60" as="geometry" />
+    </mxCell>
+
+    <!-- stdio label -->
+    <mxCell id="stdio-label" value="stdio (JSON-RPC)" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=9;fontColor=#6c8ebf;fontStyle=1;" vertex="1" parent="1">
+      <mxGeometry x="440" y="150" width="110" height="20" as="geometry" />
+    </mxCell>
+
+    <!-- Bridge Clients Row -->
+    <mxCell id="node-bridge" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;arcSize=8;" vertex="1" parent="1">
+      <mxGeometry x="40" y="190" width="170" height="160" as="geometry" />
+    </mxCell>
+    <mxCell id="node-icon" value="🟢" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=20;" vertex="1" parent="1">
+      <mxGeometry x="100" y="195" width="40" height="30" as="geometry" />
+    </mxCell>
+    <mxCell id="node-title" value="&lt;b&gt;Node.js Bridge&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=11;fontColor=#333333;" vertex="1" parent="1">
+      <mxGeometry x="70" y="225" width="110" height="20" as="geometry" />
+    </mxCell>
+    <mxCell id="node-details" value="• TypeScript + MCP SDK&lt;br&gt;• Full featured (reference)&lt;br&gt;• Health check loop&lt;br&gt;• Auto-reconnect&lt;br&gt;• Local tools built-in" style="text;html=1;align=left;verticalAlign=top;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=9;fontColor=#555555;" vertex="1" parent="1">
+      <mxGeometry x="50" y="248" width="140" height="80" as="geometry" />
+    </mxCell>
+
+    <mxCell id="py-bridge" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;arcSize=8;" vertex="1" parent="1">
+      <mxGeometry x="230" y="190" width="170" height="160" as="geometry" />
+    </mxCell>
+    <mxCell id="py-icon" value="🐍" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=20;" vertex="1" parent="1">
+      <mxGeometry x="290" y="195" width="40" height="30" as="geometry" />
+    </mxCell>
+    <mxCell id="py-title" value="&lt;b&gt;Python Bridge&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=11;fontColor=#333333;" vertex="1" parent="1">
+      <mxGeometry x="265" y="225" width="100" height="20" as="geometry" />
+    </mxCell>
+    <mxCell id="py-details" value="• asyncio + httpx&lt;br&gt;• pip installable&lt;br&gt;• Health check loop&lt;br&gt;• Auto-reconnect&lt;br&gt;• PyPI published" style="text;html=1;align=left;verticalAlign=top;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=9;fontColor=#555555;" vertex="1" parent="1">
+      <mxGeometry x="245" y="248" width="110" height="80" as="geometry" />
+    </mxCell>
+
+    <mxCell id="bash-bridge" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;arcSize=8;" vertex="1" parent="1">
+      <mxGeometry x="420" y="190" width="170" height="160" as="geometry" />
+    </mxCell>
+    <mxCell id="bash-icon" value="🐚" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=20;" vertex="1" parent="1">
+      <mxGeometry x="480" y="195" width="40" height="30" as="geometry" />
+    </mxCell>
+    <mxCell id="bash-title" value="&lt;b&gt;Bash Bridge&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=11;fontColor=#333333;" vertex="1" parent="1">
+      <mxGeometry x="460" y="225" width="90" height="20" as="geometry" />
+    </mxCell>
+    <mxCell id="bash-details" value="• curl + jq&lt;br&gt;• Zero dependencies&lt;br&gt;• Single .sh file&lt;br&gt;• Linux/macOS&lt;br&gt;• Lightweight" style="text;html=1;align=left;verticalAlign=top;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=9;fontColor=#555555;" vertex="1" parent="1">
+      <mxGeometry x="440" y="248" width="100" height="80" as="geometry" />
+    </mxCell>
+
+    <mxCell id="ps-bridge" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;arcSize=8;" vertex="1" parent="1">
+      <mxGeometry x="610" y="190" width="170" height="160" as="geometry" />
+    </mxCell>
+    <mxCell id="ps-icon" value="⚡" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=20;" vertex="1" parent="1">
+      <mxGeometry x="670" y="195" width="40" height="30" as="geometry" />
+    </mxCell>
+    <mxCell id="ps-title" value="&lt;b&gt;PowerShell Bridge&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=11;fontColor=#333333;" vertex="1" parent="1">
+      <mxGeometry x="640" y="225" width="130" height="20" as="geometry" />
+    </mxCell>
+    <mxCell id="ps-details" value="• Invoke-RestMethod&lt;br&gt;• Windows native&lt;br&gt;• Single .ps1 file&lt;br&gt;• No extra installs&lt;br&gt;• Cross-platform (pwsh)" style="text;html=1;align=left;verticalAlign=top;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=9;fontColor=#555555;" vertex="1" parent="1">
+      <mxGeometry x="625" y="248" width="140" height="80" as="geometry" />
+    </mxCell>
+
+    <mxCell id="cmd-bridge" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;arcSize=8;" vertex="1" parent="1">
+      <mxGeometry x="800" y="190" width="170" height="160" as="geometry" />
+    </mxCell>
+    <mxCell id="cmd-icon" value="🪟" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=20;" vertex="1" parent="1">
+      <mxGeometry x="860" y="195" width="40" height="30" as="geometry" />
+    </mxCell>
+    <mxCell id="cmd-title" value="&lt;b&gt;CMD Bridge&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=11;fontColor=#333333;" vertex="1" parent="1">
+      <mxGeometry x="850" y="225" width="80" height="20" as="geometry" />
+    </mxCell>
+    <mxCell id="cmd-details" value="• Windows Batch&lt;br&gt;• Legacy support&lt;br&gt;• Single .cmd file&lt;br&gt;• No runtime needed&lt;br&gt;• Minimal footprint" style="text;html=1;align=left;verticalAlign=top;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=9;fontColor=#555555;" vertex="1" parent="1">
+      <mxGeometry x="815" y="248" width="120" height="80" as="geometry" />
+    </mxCell>
+
+    <!-- Arrows from agent to bridges -->
+    <mxCell id="ea1" style="edgeStyle=orthogonalEdgeStyle;rounded=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;strokeColor=#6c8ebf;" edge="1" parent="1" source="agent" target="node-bridge">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="ea2" style="edgeStyle=orthogonalEdgeStyle;rounded=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;strokeColor=#6c8ebf;" edge="1" parent="1" source="agent" target="py-bridge">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="ea3" style="edgeStyle=orthogonalEdgeStyle;rounded=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;strokeColor=#6c8ebf;" edge="1" parent="1" source="agent" target="bash-bridge">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="ea4" style="edgeStyle=orthogonalEdgeStyle;rounded=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;strokeColor=#6c8ebf;" edge="1" parent="1" source="agent" target="ps-bridge">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="ea5" style="edgeStyle=orthogonalEdgeStyle;rounded=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;strokeColor=#6c8ebf;" edge="1" parent="1" source="agent" target="cmd-bridge">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+
+    <!-- Server (bottom center) -->
+    <mxCell id="server" value="&lt;b&gt;MCP Orchestrator Server&lt;/b&gt;&lt;br&gt;Kotlin/Ktor — HTTP Streamable — Port 9180" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;arcSize=12;fontSize=12;" vertex="1" parent="1">
+      <mxGeometry x="320" y="430" width="360" height="60" as="geometry" />
+    </mxCell>
+
+    <!-- HTTP label -->
+    <mxCell id="http-label" value="HTTP POST /mcp (Streamable Transport)" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=9;fontColor=#82b366;fontStyle=1;" vertex="1" parent="1">
+      <mxGeometry x="380" y="390" width="240" height="20" as="geometry" />
+    </mxCell>
+
+    <!-- Arrows from bridges to server -->
+    <mxCell id="es1" style="edgeStyle=orthogonalEdgeStyle;rounded=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.2;entryY=0;entryDx=0;entryDy=0;strokeColor=#82b366;" edge="1" parent="1" source="node-bridge" target="server">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="es2" style="edgeStyle=orthogonalEdgeStyle;rounded=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.35;entryY=0;entryDx=0;entryDy=0;strokeColor=#82b366;" edge="1" parent="1" source="py-bridge" target="server">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="es3" style="edgeStyle=orthogonalEdgeStyle;rounded=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;strokeColor=#82b366;" edge="1" parent="1" source="bash-bridge" target="server">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="es4" style="edgeStyle=orthogonalEdgeStyle;rounded=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.65;entryY=0;entryDx=0;entryDy=0;strokeColor=#82b366;" edge="1" parent="1" source="ps-bridge" target="server">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="es5" style="edgeStyle=orthogonalEdgeStyle;rounded=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.8;entryY=0;entryDx=0;entryDy=0;strokeColor=#82b366;" edge="1" parent="1" source="cmd-bridge" target="server">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+
+    <!-- Upstream servers -->
+    <mxCell id="upstream-row" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;dashed=1;arcSize=6;" vertex="1" parent="1">
+      <mxGeometry x="200" y="560" width="600" height="80" as="geometry" />
+    </mxCell>
+    <mxCell id="upstream-title" value="Upstream MCP Servers (N servers, M tools)" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=10;fontStyle=1;fontColor=#b85450;" vertex="1" parent="1">
+      <mxGeometry x="340" y="565" width="260" height="20" as="geometry" />
+    </mxCell>
+    <mxCell id="us1" value="Jira" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;arcSize=10;fontSize=10;" vertex="1" parent="1">
+      <mxGeometry x="220" y="590" width="80" height="35" as="geometry" />
+    </mxCell>
+    <mxCell id="us2" value="GitHub" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;arcSize=10;fontSize=10;" vertex="1" parent="1">
+      <mxGeometry x="320" y="590" width="80" height="35" as="geometry" />
+    </mxCell>
+    <mxCell id="us3" value="PostgreSQL" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;arcSize=10;fontSize=10;" vertex="1" parent="1">
+      <mxGeometry x="420" y="590" width="80" height="35" as="geometry" />
+    </mxCell>
+    <mxCell id="us4" value="Fetch" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;arcSize=10;fontSize=10;" vertex="1" parent="1">
+      <mxGeometry x="520" y="590" width="80" height="35" as="geometry" />
+    </mxCell>
+    <mxCell id="us5" value="Custom..." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;arcSize=10;fontSize=10;" vertex="1" parent="1">
+      <mxGeometry x="620" y="590" width="80" height="35" as="geometry" />
+    </mxCell>
+    <mxCell id="us6" value="Server N" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;arcSize=10;fontSize=10;" vertex="1" parent="1">
+      <mxGeometry x="720" y="590" width="70" height="35" as="geometry" />
+    </mxCell>
+
+    <!-- Arrow server to upstream -->
+    <mxCell id="es-up" style="edgeStyle=orthogonalEdgeStyle;rounded=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;strokeColor=#b85450;strokeWidth=2;" edge="1" parent="1" source="server" target="upstream-row">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="up-proto" value="stdio / HTTP" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=9;fontColor=#b85450;fontStyle=1;" vertex="1" parent="1">
+      <mxGeometry x="460" y="520" width="80" height="20" as="geometry" />
+    </mxCell>
+
+    <!-- Feature callouts -->
+    <mxCell id="feat1" value="✅ Health Check (30s ping)&lt;br&gt;✅ Auto-Reconnect (exp. backoff)&lt;br&gt;✅ Local Tools (file write, embed)" style="text;html=1;align=left;verticalAlign=top;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=9;fontColor=#82b366;" vertex="1" parent="1">
+      <mxGeometry x="750" y="430" width="210" height="50" as="geometry" />
+    </mxCell>
+  </root>
+</mxGraphModel>

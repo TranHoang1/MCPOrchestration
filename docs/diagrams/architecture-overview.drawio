@@ -1,0 +1,173 @@
+<mxGraphModel dx="1422" dy="762" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1400" pageHeight="900" math="0" shadow="0">
+  <root>
+    <mxCell id="0" />
+    <mxCell id="1" parent="0" />
+
+    <!-- Title -->
+    <mxCell id="title" value="MCP Orchestrator — Architecture Overview" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=18;fontStyle=1;fontColor=#1a1a2e;" vertex="1" parent="1">
+      <mxGeometry x="370" y="20" width="420" height="40" as="geometry" />
+    </mxCell>
+
+    <!-- AI Agent Layer -->
+    <mxCell id="agent-group" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;dashed=1;arcSize=8;" vertex="1" parent="1">
+      <mxGeometry x="200" y="80" width="760" height="100" as="geometry" />
+    </mxCell>
+    <mxCell id="agent-label" value="AI Agent Layer" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=11;fontStyle=1;fontColor=#666666;" vertex="1" parent="1">
+      <mxGeometry x="210" y="82" width="100" height="20" as="geometry" />
+    </mxCell>
+
+    <mxCell id="agent1" value="&lt;b&gt;Claude Desktop&lt;/b&gt;&lt;br&gt;AI Agent" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;arcSize=12;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="220" y="110" width="130" height="50" as="geometry" />
+    </mxCell>
+    <mxCell id="agent2" value="&lt;b&gt;Kiro IDE&lt;/b&gt;&lt;br&gt;AI Agent" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;arcSize=12;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="370" y="110" width="130" height="50" as="geometry" />
+    </mxCell>
+    <mxCell id="agent3" value="&lt;b&gt;Cursor&lt;/b&gt;&lt;br&gt;AI Agent" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;arcSize=12;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="520" y="110" width="130" height="50" as="geometry" />
+    </mxCell>
+    <mxCell id="agent4" value="&lt;b&gt;VS Code Copilot&lt;/b&gt;&lt;br&gt;AI Agent" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;arcSize=12;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="670" y="110" width="130" height="50" as="geometry" />
+    </mxCell>
+    <mxCell id="agent5" value="&lt;b&gt;Custom Agent&lt;/b&gt;&lt;br&gt;Any MCP Client" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;arcSize=12;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="820" y="110" width="130" height="50" as="geometry" />
+    </mxCell>
+
+    <!-- stdio arrows from agents to bridge -->
+    <mxCell id="e1" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.15;entryY=0;entryDx=0;entryDy=0;strokeColor=#6c8ebf;" edge="1" parent="1" source="agent1" target="bridge-group">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="e2" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.35;entryY=0;entryDx=0;entryDy=0;strokeColor=#6c8ebf;" edge="1" parent="1" source="agent2" target="bridge-group">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="e3" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;strokeColor=#6c8ebf;" edge="1" parent="1" source="agent3" target="bridge-group">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="e4" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.65;entryY=0;entryDx=0;entryDy=0;strokeColor=#6c8ebf;" edge="1" parent="1" source="agent4" target="bridge-group">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="e5" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.85;entryY=0;entryDx=0;entryDy=0;strokeColor=#6c8ebf;" edge="1" parent="1" source="agent5" target="bridge-group">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+
+    <!-- Protocol label -->
+    <mxCell id="proto1" value="stdio (MCP)" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=9;fontColor=#6c8ebf;fontStyle=2;" vertex="1" parent="1">
+      <mxGeometry x="530" y="185" width="80" height="20" as="geometry" />
+    </mxCell>
+
+    <!-- Bridge Client Layer -->
+    <mxCell id="bridge-group" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;arcSize=6;" vertex="1" parent="1">
+      <mxGeometry x="250" y="210" width="660" height="110" as="geometry" />
+    </mxCell>
+    <mxCell id="bridge-title" value="Bridge Client Layer (stdio ↔ HTTP)" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=12;fontStyle=1;fontColor=#d6b656;" vertex="1" parent="1">
+      <mxGeometry x="400" y="215" width="260" height="25" as="geometry" />
+    </mxCell>
+
+    <mxCell id="br1" value="&lt;b&gt;Node.js&lt;/b&gt;&lt;br&gt;TypeScript" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;arcSize=10;fontSize=10;" vertex="1" parent="1">
+      <mxGeometry x="270" y="250" width="100" height="50" as="geometry" />
+    </mxCell>
+    <mxCell id="br2" value="&lt;b&gt;Python&lt;/b&gt;&lt;br&gt;asyncio" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;arcSize=10;fontSize=10;" vertex="1" parent="1">
+      <mxGeometry x="385" y="250" width="100" height="50" as="geometry" />
+    </mxCell>
+    <mxCell id="br3" value="&lt;b&gt;Bash&lt;/b&gt;&lt;br&gt;curl + jq" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;arcSize=10;fontSize=10;" vertex="1" parent="1">
+      <mxGeometry x="500" y="250" width="100" height="50" as="geometry" />
+    </mxCell>
+    <mxCell id="br4" value="&lt;b&gt;PowerShell&lt;/b&gt;&lt;br&gt;Invoke-RestMethod" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;arcSize=10;fontSize=10;" vertex="1" parent="1">
+      <mxGeometry x="615" y="250" width="120" height="50" as="geometry" />
+    </mxCell>
+    <mxCell id="br5" value="&lt;b&gt;CMD&lt;/b&gt;&lt;br&gt;Windows Batch" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;arcSize=10;fontSize=10;" vertex="1" parent="1">
+      <mxGeometry x="750" y="250" width="100" height="50" as="geometry" />
+    </mxCell>
+
+    <!-- Bridge features -->
+    <mxCell id="bf1" value="• Health Check (ping 30s)  • Auto-Reconnect  • Local Tools (stream_write, embed_images)" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=9;fontColor=#999999;fontStyle=2;" vertex="1" parent="1">
+      <mxGeometry x="340" y="300" width="380" height="20" as="geometry" />
+    </mxCell>
+
+    <!-- HTTP arrow from bridge to server -->
+    <mxCell id="e6" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;strokeColor=#d6b656;strokeWidth=2;" edge="1" parent="1" source="bridge-group" target="server">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="proto2" value="HTTP Streamable (POST /mcp, port 9180)" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=9;fontColor=#d6b656;fontStyle=1;" vertex="1" parent="1">
+      <mxGeometry x="430" y="330" width="250" height="20" as="geometry" />
+    </mxCell>
+
+    <!-- Orchestrator Server -->
+    <mxCell id="server" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;arcSize=6;" vertex="1" parent="1">
+      <mxGeometry x="280" y="370" width="600" height="200" as="geometry" />
+    </mxCell>
+    <mxCell id="server-title" value="MCP Orchestrator Server (Kotlin/Ktor)" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=13;fontStyle=1;fontColor=#82b366;" vertex="1" parent="1">
+      <mxGeometry x="380" y="375" width="300" height="25" as="geometry" />
+    </mxCell>
+
+    <mxCell id="s1" value="&lt;b&gt;Semantic Discovery&lt;/b&gt;&lt;br&gt;find_tools (pgvector)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;arcSize=10;fontSize=10;" vertex="1" parent="1">
+      <mxGeometry x="300" y="410" width="150" height="50" as="geometry" />
+    </mxCell>
+    <mxCell id="s2" value="&lt;b&gt;Dynamic Execution&lt;/b&gt;&lt;br&gt;execute_dynamic_tool" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;arcSize=10;fontSize=10;" vertex="1" parent="1">
+      <mxGeometry x="470" y="410" width="150" height="50" as="geometry" />
+    </mxCell>
+    <mxCell id="s3" value="&lt;b&gt;Tool Management&lt;/b&gt;&lt;br&gt;toggle / auto-approve" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;arcSize=10;fontSize=10;" vertex="1" parent="1">
+      <mxGeometry x="640" y="410" width="150" height="50" as="geometry" />
+    </mxCell>
+    <mxCell id="s4" value="&lt;b&gt;Health Monitor&lt;/b&gt;&lt;br&gt;ping + auto-reconnect" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;arcSize=10;fontSize=10;" vertex="1" parent="1">
+      <mxGeometry x="300" y="480" width="150" height="50" as="geometry" />
+    </mxCell>
+    <mxCell id="s5" value="&lt;b&gt;File Proxy&lt;/b&gt;&lt;br&gt;transparent transfer" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;arcSize=10;fontSize=10;" vertex="1" parent="1">
+      <mxGeometry x="470" y="480" width="150" height="50" as="geometry" />
+    </mxCell>
+    <mxCell id="s6" value="&lt;b&gt;Agent Logging&lt;/b&gt;&lt;br&gt;structured logs" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;arcSize=10;fontSize=10;" vertex="1" parent="1">
+      <mxGeometry x="640" y="480" width="150" height="50" as="geometry" />
+    </mxCell>
+
+    <!-- Vector DB -->
+    <mxCell id="vectordb" value="&lt;b&gt;Qdrant / pgvector&lt;/b&gt;&lt;br&gt;Vector Database" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=10;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=10;" vertex="1" parent="1">
+      <mxGeometry x="100" y="440" width="130" height="60" as="geometry" />
+    </mxCell>
+    <mxCell id="e-vdb" style="edgeStyle=orthogonalEdgeStyle;rounded=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;strokeColor=#9673a6;dashed=1;" edge="1" parent="1" source="s1" target="vectordb">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+
+    <!-- Embedding -->
+    <mxCell id="embed" value="&lt;b&gt;Ollama / OpenAI&lt;/b&gt;&lt;br&gt;Embeddings" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;arcSize=10;fontSize=10;" vertex="1" parent="1">
+      <mxGeometry x="100" y="370" width="130" height="50" as="geometry" />
+    </mxCell>
+    <mxCell id="e-emb" style="rounded=1;exitX=0;exitY=0;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;strokeColor=#9673a6;dashed=1;" edge="1" parent="1" source="s1" target="embed">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+
+    <!-- Upstream Servers -->
+    <mxCell id="e7" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;strokeColor=#82b366;strokeWidth=2;" edge="1" parent="1" source="server" target="upstream-group">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="proto3" value="stdio / HTTP Streamable" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=9;fontColor=#82b366;fontStyle=1;" vertex="1" parent="1">
+      <mxGeometry x="480" y="580" width="140" height="20" as="geometry" />
+    </mxCell>
+
+    <mxCell id="upstream-group" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;dashed=1;arcSize=6;" vertex="1" parent="1">
+      <mxGeometry x="220" y="610" width="720" height="100" as="geometry" />
+    </mxCell>
+    <mxCell id="upstream-label" value="Upstream MCP Servers (auto-discovered tools)" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=11;fontStyle=1;fontColor=#b85450;" vertex="1" parent="1">
+      <mxGeometry x="380" y="612" width="300" height="20" as="geometry" />
+    </mxCell>
+
+    <mxCell id="up1" value="&lt;b&gt;Jira MCP&lt;/b&gt;&lt;br&gt;Project Tracker" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;arcSize=10;fontSize=10;" vertex="1" parent="1">
+      <mxGeometry x="240" y="640" width="120" height="50" as="geometry" />
+    </mxCell>
+    <mxCell id="up2" value="&lt;b&gt;PostgreSQL MCP&lt;/b&gt;&lt;br&gt;Database" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;arcSize=10;fontSize=10;" vertex="1" parent="1">
+      <mxGeometry x="380" y="640" width="120" height="50" as="geometry" />
+    </mxCell>
+    <mxCell id="up3" value="&lt;b&gt;Confluence MCP&lt;/b&gt;&lt;br&gt;Knowledge Base" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;arcSize=10;fontSize=10;" vertex="1" parent="1">
+      <mxGeometry x="520" y="640" width="120" height="50" as="geometry" />
+    </mxCell>
+    <mxCell id="up4" value="&lt;b&gt;GitHub MCP&lt;/b&gt;&lt;br&gt;Source Control" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;arcSize=10;fontSize=10;" vertex="1" parent="1">
+      <mxGeometry x="660" y="640" width="120" height="50" as="geometry" />
+    </mxCell>
+    <mxCell id="up5" value="&lt;b&gt;Server N&lt;/b&gt;&lt;br&gt;Any MCP Server" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;arcSize=10;fontSize=10;" vertex="1" parent="1">
+      <mxGeometry x="800" y="640" width="120" height="50" as="geometry" />
+    </mxCell>
+
+    <!-- Legend -->
+    <mxCell id="legend" value="&lt;b&gt;Legend:&lt;/b&gt; Blue = AI Agents | Yellow = Bridge Clients | Green = Orchestrator | Red = Upstream Servers | Purple = Infrastructure" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=9;fontColor=#666666;" vertex="1" parent="1">
+      <mxGeometry x="220" y="730" width="560" height="20" as="geometry" />
+    </mxCell>
+  </root>
+</mxGraphModel>

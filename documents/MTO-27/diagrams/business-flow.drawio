@@ -1,0 +1,78 @@
+<mxGraphModel adaptiveColors="auto">
+  <root>
+    <mxCell id="0"/>
+    <mxCell id="1" parent="0"/>
+    <mxCell id="lane1" value="KB Ingestion Pipeline" style="swimlane;horizontal=0;startSize=110;fillColor=#f5f5f5;html=1;" vertex="1" parent="1">
+      <mxGeometry x="0" y="0" width="1400" height="150" as="geometry"/>
+    </mxCell>
+    <mxCell id="n1" value="Raw Text Input" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1f5fe;strokeColor=#0288d1;" vertex="1" parent="lane1">
+      <mxGeometry x="120" y="45" width="140" height="60" as="geometry"/>
+    </mxCell>
+    <mxCell id="n2" value="Call PiiMaskingEngine.mask()" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1f5fe;strokeColor=#0288d1;" vertex="1" parent="lane1">
+      <mxGeometry x="300" y="45" width="160" height="60" as="geometry"/>
+    </mxCell>
+    <mxCell id="lane2" value="PII Masking Engine" style="swimlane;horizontal=0;startSize=110;fillColor=#e8f5e9;html=1;" vertex="1" parent="1">
+      <mxGeometry x="0" y="150" width="1400" height="150" as="geometry"/>
+    </mxCell>
+    <mxCell id="n3" value="Email Strategy&#xa;(Priority 1)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8f5e9;strokeColor=#388e3c;" vertex="1" parent="lane2">
+      <mxGeometry x="120" y="45" width="140" height="60" as="geometry"/>
+    </mxCell>
+    <mxCell id="n4" value="Phone Strategy&#xa;(Priority 2)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8f5e9;strokeColor=#388e3c;" vertex="1" parent="lane2">
+      <mxGeometry x="300" y="45" width="140" height="60" as="geometry"/>
+    </mxCell>
+    <mxCell id="n5" value="Bank Account Strategy&#xa;(Priority 3)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8f5e9;strokeColor=#388e3c;" vertex="1" parent="lane2">
+      <mxGeometry x="480" y="45" width="160" height="60" as="geometry"/>
+    </mxCell>
+    <mxCell id="n6" value="ID Card Strategy&#xa;(Priority 4)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8f5e9;strokeColor=#388e3c;" vertex="1" parent="lane2">
+      <mxGeometry x="680" y="45" width="140" height="60" as="geometry"/>
+    </mxCell>
+    <mxCell id="n7" value="Name Strategy&#xa;(Priority 5)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8f5e9;strokeColor=#388e3c;" vertex="1" parent="lane2">
+      <mxGeometry x="860" y="45" width="140" height="60" as="geometry"/>
+    </mxCell>
+    <mxCell id="n8" value="Build MaskingResult&#xa;(maskedText + mappings)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8f5e9;strokeColor=#388e3c;" vertex="1" parent="lane2">
+      <mxGeometry x="1040" y="45" width="180" height="60" as="geometry"/>
+    </mxCell>
+    <mxCell id="lane3" value="Downstream (LLM + Storage)" style="swimlane;horizontal=0;startSize=110;fillColor=#fff3e0;html=1;" vertex="1" parent="1">
+      <mxGeometry x="0" y="300" width="1400" height="150" as="geometry"/>
+    </mxCell>
+    <mxCell id="n9" value="Send maskedText&#xa;to LLM" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff3e0;strokeColor=#f57c00;" vertex="1" parent="lane3">
+      <mxGeometry x="120" y="45" width="140" height="60" as="geometry"/>
+    </mxCell>
+    <mxCell id="n10" value="Encrypt mappings&#xa;(EncryptionService)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff3e0;strokeColor=#f57c00;" vertex="1" parent="lane3">
+      <mxGeometry x="300" y="45" width="160" height="60" as="geometry"/>
+    </mxCell>
+    <mxCell id="n11" value="Persist to&#xa;pii_mapping table" style="shape=cylinder3;whiteSpace=wrap;html=1;fillColor=#f3e5f5;strokeColor=#7b1fa2;" vertex="1" parent="lane3">
+      <mxGeometry x="500" y="40" width="120" height="70" as="geometry"/>
+    </mxCell>
+    <mxCell id="e1" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;" edge="1" source="n1" target="n2" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e2" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;" edge="1" source="n2" target="n3" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e3" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;" edge="1" source="n3" target="n4" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e4" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;" edge="1" source="n4" target="n5" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e5" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;" edge="1" source="n5" target="n6" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e6" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;" edge="1" source="n6" target="n7" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e7" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;" edge="1" source="n7" target="n8" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e8" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;" edge="1" source="n8" target="n9" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e9" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;" edge="1" source="n8" target="n10" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e10" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;" edge="1" source="n10" target="n11" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+  </root>
+</mxGraphModel>

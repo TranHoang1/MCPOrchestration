@@ -1,0 +1,54 @@
+<mxGraphModel adaptiveColors="auto">
+  <root>
+    <mxCell id="0"/>
+    <mxCell id="1" parent="0"/>
+    <mxCell id="title" value="Class Diagram — KB Store" style="text;html=1;fontSize=14;fontStyle=1;align=center;" vertex="1" parent="1">
+      <mxGeometry x="300" y="10" width="300" height="30" as="geometry"/>
+    </mxCell>
+    <mxCell id="c1" value="&lt;b&gt;&amp;lt;&amp;lt;interface&amp;gt;&amp;gt;&lt;/b&gt;&#xa;&lt;b&gt;KbEntryRepository&lt;/b&gt;&#xa;─────────────────&#xa;+ upsert(entry: KbEntry)&#xa;+ upsertBatch(entries: List): Int&#xa;+ findByIssueKey(key: String): KbEntry?&#xa;+ findByProjectKey(key: String): List&#xa;+ findByContentHash(proj, hash): KbEntry?&#xa;+ updateLastSyncedAt(key, at)&#xa;+ delete(issueKey: String)" style="text;html=1;align=left;verticalAlign=top;whiteSpace=wrap;fillColor=#e8f5e9;strokeColor=#388e3c;rounded=1;" vertex="1" parent="1">
+      <mxGeometry x="40" y="60" width="260" height="180" as="geometry"/>
+    </mxCell>
+    <mxCell id="c2" value="&lt;b&gt;KbEntryRepositoryImpl&lt;/b&gt;&#xa;─────────────────&#xa;- dataSource: HikariDataSource&#xa;- encryptionService: EncryptionService&#xa;─────────────────&#xa;+ upsert(entry: KbEntry)&#xa;+ upsertBatch(entries: List): Int&#xa;- setEntryParams(stmt, entry)&#xa;- mapRow(rs: ResultSet): KbEntry" style="text;html=1;align=left;verticalAlign=top;whiteSpace=wrap;fillColor=#c8e6c9;strokeColor=#388e3c;rounded=1;" vertex="1" parent="1">
+      <mxGeometry x="40" y="300" width="260" height="170" as="geometry"/>
+    </mxCell>
+    <mxCell id="c3" value="&lt;b&gt;&amp;lt;&amp;lt;interface&amp;gt;&amp;gt;&lt;/b&gt;&#xa;&lt;b&gt;PiiMappingRepository&lt;/b&gt;&#xa;─────────────────&#xa;+ insertBatch(mappings: List): Int&#xa;+ findByIssueKey(key: String): List&#xa;+ deleteByIssueKey(key: String): Int&#xa;+ replaceForIssueKey(key, mappings): Int" style="text;html=1;align=left;verticalAlign=top;whiteSpace=wrap;fillColor=#e8f5e9;strokeColor=#388e3c;rounded=1;" vertex="1" parent="1">
+      <mxGeometry x="360" y="60" width="260" height="140" as="geometry"/>
+    </mxCell>
+    <mxCell id="c4" value="&lt;b&gt;PiiMappingRepositoryImpl&lt;/b&gt;&#xa;─────────────────&#xa;- dataSource: HikariDataSource&#xa;- encryptionService: EncryptionService&#xa;─────────────────&#xa;+ insertBatch(mappings: List): Int&#xa;+ replaceForIssueKey(key, mappings): Int&#xa;- setMappingParams(stmt, mapping)&#xa;- mapRow(rs: ResultSet): PiiMapping" style="text;html=1;align=left;verticalAlign=top;whiteSpace=wrap;fillColor=#c8e6c9;strokeColor=#388e3c;rounded=1;" vertex="1" parent="1">
+      <mxGeometry x="360" y="300" width="260" height="170" as="geometry"/>
+    </mxCell>
+    <mxCell id="c5" value="&lt;b&gt;&amp;lt;&amp;lt;interface&amp;gt;&amp;gt;&lt;/b&gt;&#xa;&lt;b&gt;EncryptionService&lt;/b&gt;&#xa;─────────────────&#xa;+ encrypt(plaintext: String): ByteArray&#xa;+ decrypt(ciphertext: ByteArray): String" style="text;html=1;align=left;verticalAlign=top;whiteSpace=wrap;fillColor=#fff3e0;strokeColor=#f57c00;rounded=1;" vertex="1" parent="1">
+      <mxGeometry x="680" y="60" width="250" height="110" as="geometry"/>
+    </mxCell>
+    <mxCell id="c6" value="&lt;b&gt;EncryptionServiceImpl&lt;/b&gt;&#xa;─────────────────&#xa;- secretKey: SecretKeySpec&#xa;- secureRandom: SecureRandom&#xa;─────────────────&#xa;+ encrypt(plaintext: String): ByteArray&#xa;+ decrypt(ciphertext: ByteArray): String&#xa;- createCipher(mode, iv): Cipher" style="text;html=1;align=left;verticalAlign=top;whiteSpace=wrap;fillColor=#ffe0b2;strokeColor=#f57c00;rounded=1;" vertex="1" parent="1">
+      <mxGeometry x="680" y="230" width="250" height="160" as="geometry"/>
+    </mxCell>
+    <mxCell id="c7" value="&lt;b&gt;KbEntry&lt;/b&gt; (data class)&#xa;─────────────────&#xa;+ id: UUID&#xa;+ issueKey: String&#xa;+ projectKey: String&#xa;+ publicContent: String?&#xa;+ technicalContent: String?&#xa;+ businessRules: String?&#xa;+ maskedFull: String?&#xa;+ brSensitivityLevel: BrSensitivityLevel&#xa;+ contentHash: String&#xa;+ createdAt: Instant&#xa;+ updatedAt: Instant&#xa;+ lastSyncedAt: Instant?" style="text;html=1;align=left;verticalAlign=top;whiteSpace=wrap;fillColor=#f3e5f5;strokeColor=#7b1fa2;rounded=1;" vertex="1" parent="1">
+      <mxGeometry x="40" y="530" width="260" height="240" as="geometry"/>
+    </mxCell>
+    <mxCell id="c8" value="&lt;b&gt;PiiMapping&lt;/b&gt; (data class)&#xa;─────────────────&#xa;+ id: UUID&#xa;+ issueKey: String&#xa;+ placeholder: String&#xa;+ originalValue: String&#xa;+ mappingType: MappingType&#xa;+ createdAt: Instant" style="text;html=1;align=left;verticalAlign=top;whiteSpace=wrap;fillColor=#f3e5f5;strokeColor=#7b1fa2;rounded=1;" vertex="1" parent="1">
+      <mxGeometry x="360" y="530" width="260" height="150" as="geometry"/>
+    </mxCell>
+    <mxCell id="c9" value="&lt;b&gt;&amp;lt;&amp;lt;enum&amp;gt;&amp;gt;&lt;/b&gt;&#xa;&lt;b&gt;BrSensitivityLevel&lt;/b&gt;&#xa;─────────────────&#xa;CONFIDENTIAL(1)&#xa;INTERNAL(2)&#xa;RESTRICTED(3)" style="text;html=1;align=left;verticalAlign=top;whiteSpace=wrap;fillColor=#f3e5f5;strokeColor=#7b1fa2;rounded=1;" vertex="1" parent="1">
+      <mxGeometry x="680" y="530" width="180" height="120" as="geometry"/>
+    </mxCell>
+    <mxCell id="c10" value="&lt;b&gt;&amp;lt;&amp;lt;enum&amp;gt;&amp;gt;&lt;/b&gt;&#xa;&lt;b&gt;MappingType&lt;/b&gt;&#xa;─────────────────&#xa;NAME&#xa;ID_CARD&#xa;PHONE&#xa;BANK_ACCOUNT&#xa;EMAIL" style="text;html=1;align=left;verticalAlign=top;whiteSpace=wrap;fillColor=#f3e5f5;strokeColor=#7b1fa2;rounded=1;" vertex="1" parent="1">
+      <mxGeometry x="680" y="670" width="180" height="140" as="geometry"/>
+    </mxCell>
+    <mxCell id="impl1" value="implements" style="html=1;dashed=1;endArrow=block;endFill=0;endSize=10;" edge="1" source="c2" target="c1" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="impl2" value="implements" style="html=1;dashed=1;endArrow=block;endFill=0;endSize=10;" edge="1" source="c4" target="c3" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="impl3" value="implements" style="html=1;dashed=1;endArrow=block;endFill=0;endSize=10;" edge="1" source="c6" target="c5" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="dep1" value="uses" style="html=1;dashed=1;endArrow=open;endSize=8;" edge="1" source="c2" target="c6" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="dep2" value="uses" style="html=1;dashed=1;endArrow=open;endSize=8;" edge="1" source="c4" target="c6" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+  </root>
+</mxGraphModel>

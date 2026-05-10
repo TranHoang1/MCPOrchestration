@@ -6,5 +6,13 @@
   "allowedTools": ["*"],
   "useLegacyMcpJson": true,
   "keyboardShortcut": "ctrl+shift+a",
-  "welcomeMessage": "🏗️ Solution Architect agent sẵn sàng! Cung cấp Jira ticket key để tạo TDD."
+  "welcomeMessage": "🏗️ Solution Architect agent sẵn sàng! Cung cấp Jira ticket key để tạo TDD.",
+  "hooks": {
+    "agentSpawn": [
+      {
+        "command": ".kiro/hooks/file-watcher.sh .",
+        "description": "Start file watcher for code indexing"
+      }
+    ]
+  }
 }

@@ -2,10 +2,10 @@
 name: ui-agent
 description: >
   UI/UX Designer agent chuyên tạo UI mockups, wireframes, và design specifications cho features có giao diện.
-  Dùng Stitch MCP để generate screens, draw.io để tạo wireframes, và Figma power để implement từ designs.
-  Hoạt động trong Phase 2 (Specification) cùng BA+TA khi ticket có UI components.
+  Dùng draw.io để tạo wireframes, export PNG và embed vào tài liệu.
+  Tham gia Phase 2.5 (Design — wireframes + UI-SPEC) và Phase 5 (Implementation — HTML/CSS prototype).
   Sử dụng bằng cách cung cấp Jira ticket key (ví dụ: PROJ-123).
-tools: ["read", "write", "shell", "@mcp"]
+tools: ["read", "@mcp"]
 includeMcpJson: true
 ---
 
@@ -251,6 +251,15 @@ When user requests interactive prototype:
    - Comments linking elements to FSD UI spec IDs
 3. Create `index.html` with links to all screen mockups
 
+### Step 6.5: Image References in UI-SPEC.md — ⛔ MANDATORY
+
+After creating UI-SPEC.md with wireframe references:
+
+1. Use **relative paths** for all images: `![Screen Name](diagrams/ui-{screen-name}.png)`
+2. **⛔ KHÔNG embed base64** vào UI-SPEC.md — chỉ dùng relative paths
+3. `embed_images` tool CHỈ được gọi khi cần **export DOCX** (vì DOCX tool không có filesystem access)
+4. Workflow export DOCX: copy file → embed_images (tạo bản tạm có base64) → export_docx → xóa bản tạm
+
 ### Step 7: Update FSD with UI Artifacts
 
 After creating all UI artifacts:
@@ -357,3 +366,52 @@ With implementation notes, DEV can:
 - ✅ Match exact design system values
 - ✅ Follow established patterns
 - ✅ Implement responsive correctly from specs
+
+
+---
+
+## Phase 5: Implementation — HTML/CSS Prototype (MANDATORY for UI tickets)
+
+**When SM invokes UI agent in Phase 5 (before DEV agent):**
+
+### Purpose
+Create production-ready static HTML files that DEV only needs to wire API calls into.
+
+### Step 1: Create HTML/CSS Prototype
+
+Create static HTML files at `{module}/src/main/resources/static/{page-name}.html`:
+- Inline CSS (or `<link>` to shared CSS file)
+- Inline JS for interactions (show/hide modals, form validation, mock data)
+- **Mock data** hardcoded — DEV replaces with `fetch()` calls
+- Must render correctly when opened directly in browser (`file://`)
+
+**Tech stack:**
+- HTML5 + vanilla JavaScript (NO framework)
+- CSS custom properties for theming
+- Dark theme matching existing design system
+- Single-file HTML if < 200 lines, else split CSS/JS
+
+### Step 2: Handoff Comments
+
+Add comment block at top of each HTML file:
+```html
+<!--
+  UI Prototype — {Screen Name}
+  Ticket: {TICKET}
+  
+  DEV TODO:
+  1. Replace mock data with fetch() calls
+  2. Wire form submit to POST endpoint
+  3. Add error handling (toast on failure)
+  4. Add loading states
+  
+  API Endpoints (from FSD):
+  - GET /admin/users → populate table
+  - POST /admin/users → create user
+-->
+```
+
+### Step 3: Verify
+- Open HTML in browser — must render correctly
+- All interactions work with mock data (modal open/close, form validation)
+- Matches wireframes from Phase 2.5

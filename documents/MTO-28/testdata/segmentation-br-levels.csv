@@ -1,0 +1,10 @@
+id,input,expectedLevel,reason
+1,"lãi suất = base + 2.5%",LEVEL_1,Interest rate formula
+2,"phí trả nợ trước hạn: 3%",LEVEL_1,Fee percentage
+3,"commission rate: 1.5% per transaction",LEVEL_1,Commission rate
+4,"điều kiện duyệt vay: thu nhập >= 10 triệu",LEVEL_2,Approval condition
+5,"risk score threshold: 650",LEVEL_2,Risk threshold
+6,"scoring criteria: age > 25 AND income > 8M",LEVEL_2,Scoring criteria
+7,"SLA xử lý hồ sơ: 3 ngày làm việc",LEVEL_3,SLA definition
+8,"quy trình duyệt: submit → review → approve",LEVEL_3,Process workflow
+9,"No business rules here just code and logs",null,No BR content

@@ -1,0 +1,69 @@
+<mxGraphModel adaptiveColors="auto">
+  <root>
+    <mxCell id="0"/>
+    <mxCell id="1" parent="0"/>
+    <mxCell id="title" value="&lt;b&gt;Class Diagram — PII Masking Engine&lt;/b&gt;" style="text;html=1;align=center;fontSize=13;fontStyle=1;" vertex="1" parent="1">
+      <mxGeometry x="250" y="10" width="350" height="30" as="geometry"/>
+    </mxCell>
+    <mxCell id="iface_engine" value="&lt;b&gt;&amp;lt;&amp;lt;interface&amp;gt;&amp;gt;&lt;/b&gt;&#xa;&lt;b&gt;PiiMaskingEngine&lt;/b&gt;&#xa;──────────────────&#xa;+ mask(text: String): MaskingResult" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#e1f5fe;strokeColor=#0288d1;fontSize=10;align=left;spacingLeft=8;" vertex="1" parent="1">
+      <mxGeometry x="40" y="60" width="260" height="80" as="geometry"/>
+    </mxCell>
+    <mxCell id="impl_engine" value="&lt;b&gt;PiiMaskingEngineImpl&lt;/b&gt;&#xa;──────────────────&#xa;- strategies: List&amp;lt;PiiDetectionStrategy&amp;gt;&#xa;- config: MaskingConfig&#xa;──────────────────&#xa;+ mask(text: String): MaskingResult&#xa;- collectMatches(text): List&amp;lt;PiiMatch&amp;gt;&#xa;- removeOverlaps(matches): List&amp;lt;PiiMatch&amp;gt;&#xa;- buildResult(text, matches): MaskingResult&#xa;- formatPlaceholder(type, count): String" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#e8f5e9;strokeColor=#388e3c;fontSize=10;align=left;spacingLeft=8;" vertex="1" parent="1">
+      <mxGeometry x="40" y="200" width="280" height="170" as="geometry"/>
+    </mxCell>
+    <mxCell id="iface_strategy" value="&lt;b&gt;&amp;lt;&amp;lt;interface&amp;gt;&amp;gt;&lt;/b&gt;&#xa;&lt;b&gt;PiiDetectionStrategy&lt;/b&gt;&#xa;──────────────────&#xa;+ piiType: PiiType&#xa;+ priority: Int&#xa;+ detect(text: String): List&amp;lt;PiiMatch&amp;gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#e1f5fe;strokeColor=#0288d1;fontSize=10;align=left;spacingLeft=8;" vertex="1" parent="1">
+      <mxGeometry x="440" y="60" width="260" height="110" as="geometry"/>
+    </mxCell>
+    <mxCell id="cls_email" value="&lt;b&gt;EmailDetectionStrategy&lt;/b&gt;&#xa;──────────────────&#xa;- pattern: Regex&#xa;+ piiType = EMAIL&#xa;+ priority = 1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff3e0;strokeColor=#f57c00;fontSize=10;align=left;spacingLeft=8;" vertex="1" parent="1">
+      <mxGeometry x="380" y="240" width="200" height="90" as="geometry"/>
+    </mxCell>
+    <mxCell id="cls_phone" value="&lt;b&gt;PhoneDetectionStrategy&lt;/b&gt;&#xa;──────────────────&#xa;- pattern: Regex&#xa;+ piiType = PHONE&#xa;+ priority = 2" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff3e0;strokeColor=#f57c00;fontSize=10;align=left;spacingLeft=8;" vertex="1" parent="1">
+      <mxGeometry x="600" y="240" width="200" height="90" as="geometry"/>
+    </mxCell>
+    <mxCell id="cls_bank" value="&lt;b&gt;BankAccountDetectionStrategy&lt;/b&gt;&#xa;──────────────────&#xa;- pattern: Regex&#xa;- config: MaskingConfig&#xa;+ piiType = BANK_ACCOUNT&#xa;+ priority = 3&#xa;- hasContext(text, range): Boolean" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff3e0;strokeColor=#f57c00;fontSize=10;align=left;spacingLeft=8;" vertex="1" parent="1">
+      <mxGeometry x="380" y="370" width="230" height="120" as="geometry"/>
+    </mxCell>
+    <mxCell id="cls_id" value="&lt;b&gt;IdCardDetectionStrategy&lt;/b&gt;&#xa;──────────────────&#xa;- pattern: Regex&#xa;+ piiType = ID_CARD&#xa;+ priority = 4" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff3e0;strokeColor=#f57c00;fontSize=10;align=left;spacingLeft=8;" vertex="1" parent="1">
+      <mxGeometry x="640" y="370" width="200" height="90" as="geometry"/>
+    </mxCell>
+    <mxCell id="cls_name" value="&lt;b&gt;NameDetectionStrategy&lt;/b&gt;&#xa;──────────────────&#xa;- config: MaskingConfig&#xa;+ piiType = NAME&#xa;+ priority = 5" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff3e0;strokeColor=#f57c00;fontSize=10;align=left;spacingLeft=8;" vertex="1" parent="1">
+      <mxGeometry x="640" y="490" width="200" height="90" as="geometry"/>
+    </mxCell>
+    <mxCell id="cls_result" value="&lt;b&gt;MaskingResult&lt;/b&gt;&#xa;──────────────────&#xa;+ maskedText: String&#xa;+ mappings: List&amp;lt;PiiMappingEntry&amp;gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=10;align=left;spacingLeft=8;" vertex="1" parent="1">
+      <mxGeometry x="40" y="430" width="240" height="80" as="geometry"/>
+    </mxCell>
+    <mxCell id="cls_match" value="&lt;b&gt;PiiMatch&lt;/b&gt; (internal)&#xa;──────────────────&#xa;+ startIndex: Int&#xa;+ endIndex: Int&#xa;+ originalValue: String&#xa;+ piiType: PiiType&#xa;+ priority: Int" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=10;align=left;spacingLeft=8;" vertex="1" parent="1">
+      <mxGeometry x="40" y="540" width="200" height="120" as="geometry"/>
+    </mxCell>
+    <mxCell id="cls_config" value="&lt;b&gt;MaskingConfig&lt;/b&gt;&#xa;──────────────────&#xa;+ enabledStrategies: Set&amp;lt;PiiType&amp;gt;&#xa;+ contextWindow: Int = 50&#xa;+ contextKeywords: List&amp;lt;String&amp;gt;&#xa;+ namePrefixes: List&amp;lt;String&amp;gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=10;align=left;spacingLeft=8;" vertex="1" parent="1">
+      <mxGeometry x="380" y="530" width="230" height="110" as="geometry"/>
+    </mxCell>
+    <mxCell id="e1" value="implements" style="html=1;endArrow=block;endFill=0;dashed=1;" edge="1" source="impl_engine" target="iface_engine" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e2" value="uses *" style="html=1;endArrow=open;endSize=8;" edge="1" source="impl_engine" target="iface_strategy" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e3" value="" style="html=1;endArrow=block;endFill=0;dashed=1;" edge="1" source="cls_email" target="iface_strategy" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e4" value="" style="html=1;endArrow=block;endFill=0;dashed=1;" edge="1" source="cls_phone" target="iface_strategy" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e5" value="" style="html=1;endArrow=block;endFill=0;dashed=1;" edge="1" source="cls_bank" target="iface_strategy" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e6" value="" style="html=1;endArrow=block;endFill=0;dashed=1;" edge="1" source="cls_id" target="iface_strategy" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e7" value="" style="html=1;endArrow=block;endFill=0;dashed=1;" edge="1" source="cls_name" target="iface_strategy" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e8" value="returns" style="html=1;endArrow=open;endSize=8;dashed=1;" edge="1" source="impl_engine" target="cls_result" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e9" value="uses" style="html=1;endArrow=open;endSize=8;" edge="1" source="impl_engine" target="cls_config" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+  </root>
+</mxGraphModel>

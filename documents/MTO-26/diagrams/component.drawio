@@ -1,0 +1,84 @@
+<mxGraphModel adaptiveColors="auto">
+  <root>
+    <mxCell id="0"/>
+    <mxCell id="1" parent="0"/>
+    <mxCell id="title" value="Component Diagram — kbstore Package" style="text;html=1;fontSize=14;fontStyle=1;align=center;" vertex="1" parent="1">
+      <mxGeometry x="220" y="10" width="360" height="30" as="geometry"/>
+    </mxCell>
+    <mxCell id="pkg" value="&lt;b&gt;com.orchestrator.mcp.kbstore&lt;/b&gt;" style="swimlane;startSize=30;fillColor=#f5f5f5;strokeColor=#666666;html=1;" vertex="1" parent="1">
+      <mxGeometry x="40" y="60" width="720" height="480" as="geometry"/>
+    </mxCell>
+    <mxCell id="configPkg" value="&lt;b&gt;config&lt;/b&gt;" style="swimlane;startSize=24;fillColor=#fce4ec;strokeColor=#c62828;html=1;" vertex="1" parent="pkg">
+      <mxGeometry x="20" y="40" width="160" height="80" as="geometry"/>
+    </mxCell>
+    <mxCell id="cfgClass" value="KbStoreConfig" style="rounded=1;whiteSpace=wrap;html=1;fontSize=10;" vertex="1" parent="configPkg">
+      <mxGeometry x="10" y="35" width="140" height="35" as="geometry"/>
+    </mxCell>
+    <mxCell id="modelPkg" value="&lt;b&gt;model&lt;/b&gt;" style="swimlane;startSize=24;fillColor=#f3e5f5;strokeColor=#7b1fa2;html=1;" vertex="1" parent="pkg">
+      <mxGeometry x="20" y="140" width="160" height="180" as="geometry"/>
+    </mxCell>
+    <mxCell id="mdlKb" value="KbEntry" style="rounded=1;whiteSpace=wrap;html=1;fontSize=10;" vertex="1" parent="modelPkg">
+      <mxGeometry x="10" y="30" width="140" height="30" as="geometry"/>
+    </mxCell>
+    <mxCell id="mdlPii" value="PiiMapping" style="rounded=1;whiteSpace=wrap;html=1;fontSize=10;" vertex="1" parent="modelPkg">
+      <mxGeometry x="10" y="65" width="140" height="30" as="geometry"/>
+    </mxCell>
+    <mxCell id="mdlEnum1" value="BrSensitivityLevel" style="rounded=1;whiteSpace=wrap;html=1;fontSize=10;" vertex="1" parent="modelPkg">
+      <mxGeometry x="10" y="100" width="140" height="30" as="geometry"/>
+    </mxCell>
+    <mxCell id="mdlEnum2" value="MappingType" style="rounded=1;whiteSpace=wrap;html=1;fontSize=10;" vertex="1" parent="modelPkg">
+      <mxGeometry x="10" y="135" width="140" height="30" as="geometry"/>
+    </mxCell>
+    <mxCell id="encPkg" value="&lt;b&gt;encryption&lt;/b&gt;" style="swimlane;startSize=24;fillColor=#fff3e0;strokeColor=#f57c00;html=1;" vertex="1" parent="pkg">
+      <mxGeometry x="260" y="40" width="200" height="120" as="geometry"/>
+    </mxCell>
+    <mxCell id="encIface" value="&amp;lt;&amp;lt;interface&amp;gt;&amp;gt;&#xa;EncryptionService" style="rounded=1;whiteSpace=wrap;html=1;fontSize=10;fontStyle=2;" vertex="1" parent="encPkg">
+      <mxGeometry x="10" y="30" width="180" height="35" as="geometry"/>
+    </mxCell>
+    <mxCell id="encImplC" value="EncryptionServiceImpl" style="rounded=1;whiteSpace=wrap;html=1;fontSize=10;" vertex="1" parent="encPkg">
+      <mxGeometry x="10" y="75" width="180" height="35" as="geometry"/>
+    </mxCell>
+    <mxCell id="repoPkg" value="&lt;b&gt;repository&lt;/b&gt;" style="swimlane;startSize=24;fillColor=#e8f5e9;strokeColor=#388e3c;html=1;" vertex="1" parent="pkg">
+      <mxGeometry x="260" y="180" width="200" height="200" as="geometry"/>
+    </mxCell>
+    <mxCell id="repoIface1" value="&amp;lt;&amp;lt;interface&amp;gt;&amp;gt;&#xa;KbEntryRepository" style="rounded=1;whiteSpace=wrap;html=1;fontSize=10;fontStyle=2;" vertex="1" parent="repoPkg">
+      <mxGeometry x="10" y="30" width="180" height="35" as="geometry"/>
+    </mxCell>
+    <mxCell id="repoImpl1" value="KbEntryRepositoryImpl" style="rounded=1;whiteSpace=wrap;html=1;fontSize=10;" vertex="1" parent="repoPkg">
+      <mxGeometry x="10" y="75" width="180" height="35" as="geometry"/>
+    </mxCell>
+    <mxCell id="repoIface2" value="&amp;lt;&amp;lt;interface&amp;gt;&amp;gt;&#xa;PiiMappingRepository" style="rounded=1;whiteSpace=wrap;html=1;fontSize=10;fontStyle=2;" vertex="1" parent="repoPkg">
+      <mxGeometry x="10" y="120" width="180" height="35" as="geometry"/>
+    </mxCell>
+    <mxCell id="repoImpl2" value="PiiMappingRepositoryImpl" style="rounded=1;whiteSpace=wrap;html=1;fontSize=10;" vertex="1" parent="repoPkg">
+      <mxGeometry x="10" y="160" width="180" height="35" as="geometry"/>
+    </mxCell>
+    <mxCell id="diPkg" value="&lt;b&gt;di&lt;/b&gt;" style="swimlane;startSize=24;fillColor=#e1f5fe;strokeColor=#0288d1;html=1;" vertex="1" parent="pkg">
+      <mxGeometry x="530" y="40" width="160" height="80" as="geometry"/>
+    </mxCell>
+    <mxCell id="diModule" value="KbStoreModule" style="rounded=1;whiteSpace=wrap;html=1;fontSize=10;" vertex="1" parent="diPkg">
+      <mxGeometry x="10" y="35" width="140" height="35" as="geometry"/>
+    </mxCell>
+    <mxCell id="migPkg" value="&lt;b&gt;migration (SQL)&lt;/b&gt;" style="swimlane;startSize=24;fillColor=#f5f5f5;strokeColor=#666666;html=1;" vertex="1" parent="pkg">
+      <mxGeometry x="530" y="180" width="160" height="120" as="geometry"/>
+    </mxCell>
+    <mxCell id="v6" value="V6__create_kb_entries" style="rounded=1;whiteSpace=wrap;html=1;fontSize=10;" vertex="1" parent="migPkg">
+      <mxGeometry x="10" y="35" width="140" height="30" as="geometry"/>
+    </mxCell>
+    <mxCell id="v7" value="V7__create_pii_mapping" style="rounded=1;whiteSpace=wrap;html=1;fontSize=10;" vertex="1" parent="migPkg">
+      <mxGeometry x="10" y="75" width="140" height="30" as="geometry"/>
+    </mxCell>
+    <mxCell id="e1c" value="uses" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;" edge="1" source="repoPkg" target="encPkg" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e2c" value="uses" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;" edge="1" source="repoPkg" target="modelPkg" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e3c" value="wires" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;dashed=1;" edge="1" source="diPkg" target="repoPkg" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e4c" value="wires" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;dashed=1;" edge="1" source="diPkg" target="encPkg" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+  </root>
+</mxGraphModel>

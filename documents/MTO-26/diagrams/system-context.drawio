@@ -1,0 +1,51 @@
+<mxGraphModel adaptiveColors="auto">
+  <root>
+    <mxCell id="0"/>
+    <mxCell id="1" parent="0"/>
+    <mxCell id="title" value="System Context — KB Entries Schema" style="text;html=1;fontSize=14;fontStyle=1;align=center;" vertex="1" parent="1">
+      <mxGeometry x="300" y="10" width="300" height="30" as="geometry"/>
+    </mxCell>
+    <mxCell id="kbstore" value="&lt;b&gt;KB Store Module&lt;/b&gt;&#xa;(kbstore package)" style="swimlane;startSize=40;fillColor=#e1f5fe;strokeColor=#0288d1;html=1;rounded=1;" vertex="1" parent="1">
+      <mxGeometry x="280" y="140" width="340" height="280" as="geometry"/>
+    </mxCell>
+    <mxCell id="repo1" value="KbEntryRepository" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8f5e9;strokeColor=#388e3c;" vertex="1" parent="kbstore">
+      <mxGeometry x="20" y="60" width="140" height="40" as="geometry"/>
+    </mxCell>
+    <mxCell id="repo2" value="PiiMappingRepository" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8f5e9;strokeColor=#388e3c;" vertex="1" parent="kbstore">
+      <mxGeometry x="180" y="60" width="140" height="40" as="geometry"/>
+    </mxCell>
+    <mxCell id="enc" value="EncryptionService" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff3e0;strokeColor=#f57c00;" vertex="1" parent="kbstore">
+      <mxGeometry x="90" y="120" width="160" height="40" as="geometry"/>
+    </mxCell>
+    <mxCell id="models" value="Domain Models&#xa;(KbEntry, PiiMapping)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f3e5f5;strokeColor=#7b1fa2;" vertex="1" parent="kbstore">
+      <mxGeometry x="90" y="180" width="160" height="40" as="geometry"/>
+    </mxCell>
+    <mxCell id="config" value="KbStoreConfig" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;" vertex="1" parent="kbstore">
+      <mxGeometry x="90" y="230" width="160" height="40" as="geometry"/>
+    </mxCell>
+    <mxCell id="sync" value="Sync Service&#xa;(existing)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;dashed=1;" vertex="1" parent="1">
+      <mxGeometry x="60" y="60" width="140" height="60" as="geometry"/>
+    </mxCell>
+    <mxCell id="pg" value="PostgreSQL 16+" style="shape=cylinder3;whiteSpace=wrap;html=1;fillColor=#f3e5f5;strokeColor=#7b1fa2;size=10;" vertex="1" parent="1">
+      <mxGeometry x="390" y="500" width="120" height="70" as="geometry"/>
+    </mxCell>
+    <mxCell id="envkey" value="Environment&#xa;(KB_ENCRYPTION_KEY)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fce4ec;strokeColor=#c62828;dashed=1;" vertex="1" parent="1">
+      <mxGeometry x="700" y="240" width="160" height="60" as="geometry"/>
+    </mxCell>
+    <mxCell id="koin" value="Koin DI&#xa;(AppModule)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;dashed=1;" vertex="1" parent="1">
+      <mxGeometry x="700" y="140" width="140" height="60" as="geometry"/>
+    </mxCell>
+    <mxCell id="e1" value="uses" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;" edge="1" source="sync" target="kbstore" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e2" value="persists to" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;" edge="1" source="kbstore" target="pg" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e3" value="reads key" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;dashed=1;" edge="1" source="kbstore" target="envkey" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e4" value="registers" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;dashed=1;" edge="1" source="koin" target="kbstore" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+  </root>
+</mxGraphModel>

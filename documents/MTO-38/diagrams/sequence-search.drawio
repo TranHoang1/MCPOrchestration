@@ -1,0 +1,69 @@
+<mxGraphModel dx="1422" dy="762" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
+  <root>
+    <mxCell id="0" />
+    <mxCell id="1" parent="0" />
+    <mxCell id="2" value="AI Agent" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;newEdgeStyle={&quot;edgeStyle&quot;:&quot;elbowEdgeStyle&quot;,&quot;elbow&quot;:&quot;vertical&quot;,&quot;curved&quot;:0,&quot;rounded&quot;:0};" vertex="1" parent="1">
+      <mxGeometry x="80" y="40" width="100" height="600" as="geometry" />
+    </mxCell>
+    <mxCell id="3" value="Orchestrator" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;" vertex="1" parent="1">
+      <mxGeometry x="260" y="40" width="100" height="600" as="geometry" />
+    </mxCell>
+    <mxCell id="4" value="KB Server" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;" vertex="1" parent="1">
+      <mxGeometry x="440" y="40" width="100" height="600" as="geometry" />
+    </mxCell>
+    <mxCell id="5" value="Ollama" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;" vertex="1" parent="1">
+      <mxGeometry x="620" y="40" width="100" height="600" as="geometry" />
+    </mxCell>
+    <mxCell id="6" value="PostgreSQL" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;" vertex="1" parent="1">
+      <mxGeometry x="800" y="40" width="100" height="600" as="geometry" />
+    </mxCell>
+    <mxCell id="7" value="tools/call(kb_search, {query})" style="html=1;verticalAlign=bottom;endArrow=block;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="130" y="120" as="sourcePoint" />
+        <mxPoint x="310" y="120" as="targetPoint" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="8" value="route to kb-server" style="html=1;verticalAlign=bottom;endArrow=block;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="310" y="160" as="sourcePoint" />
+        <mxPoint x="490" y="160" as="targetPoint" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="9" value="generateEmbedding(query)" style="html=1;verticalAlign=bottom;endArrow=block;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="490" y="200" as="sourcePoint" />
+        <mxPoint x="670" y="200" as="targetPoint" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="10" value="vector[768]" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="670" y="240" as="sourcePoint" />
+        <mxPoint x="490" y="240" as="targetPoint" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="11" value="SELECT ... ORDER BY embedding &lt;=&gt; $1" style="html=1;verticalAlign=bottom;endArrow=block;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="490" y="280" as="sourcePoint" />
+        <mxPoint x="850" y="280" as="targetPoint" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="12" value="results[]" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="850" y="320" as="sourcePoint" />
+        <mxPoint x="490" y="320" as="targetPoint" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="13" value="CallToolResult(results)" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="490" y="380" as="sourcePoint" />
+        <mxPoint x="310" y="380" as="targetPoint" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="14" value="JSON response" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="310" y="420" as="sourcePoint" />
+        <mxPoint x="130" y="420" as="targetPoint" />
+      </mxGeometry>
+    </mxCell>
+  </root>
+</mxGraphModel>

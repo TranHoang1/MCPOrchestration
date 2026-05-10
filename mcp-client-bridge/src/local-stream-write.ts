@@ -33,17 +33,14 @@ export interface StreamWriteResult {
   total_size: number;
   file_size_before: number;
   mode: string;
+  message?: string;
 }
 
 export function handleStreamWrite(args: StreamWriteArgs): StreamWriteResult {
   const rawPath = args.file_path;
   const mode = args.mode ?? 'write';
-  const content = mode === 'create' ? (args.content ?? '') : args.content;
+  const content = args.content ?? '';
   const encoding = args.encoding ?? 'utf-8';
-
-  if (mode !== 'create' && content == null) {
-    throw new Error("'content' is required for mode 'write' or 'append'");
-  }
 
   // Resolve relative paths against workspace root
   const filePath = path.isAbsolute(rawPath) ? rawPath : path.resolve(getWorkspaceRoot(), rawPath);
@@ -54,19 +51,30 @@ export function handleStreamWrite(args: StreamWriteArgs): StreamWriteResult {
     fs.mkdirSync(dir, { recursive: true });
   }
 
-  // Get file size before write
-  const fileSizeBefore = fs.existsSync(filePath) ? fs.statSync(filePath).size : 0;
+  const fileExists = fs.existsSync(filePath);
+  const fileSizeBefore = fileExists ? fs.statSync(filePath).size : 0;
 
-  // Create, write, or append
-  if (mode === 'create') {
-    if (fs.existsSync(filePath)) {
-      throw new Error(`File already exists: ${filePath}. Use mode='write' to overwrite or mode='append' to add content.`);
-    }
-    fs.writeFileSync(filePath, content ?? '', { encoding });
+  // File exists + no content → no-op
+  if (fileExists && content === '') {
+    return {
+      file_path: filePath,
+      bytes_written: 0,
+      total_size: fileSizeBefore,
+      file_size_before: fileSizeBefore,
+      mode: 'no-op',
+      message: 'File already exists and no content provided',
+    };
+  }
+
+  // File does not exist → create (regardless of mode)
+  // File exists + has content → use mode to decide append or overwrite
+  if (!fileExists) {
+    fs.writeFileSync(filePath, content, { encoding });
   } else if (mode === 'append') {
-    fs.appendFileSync(filePath, content ?? '', { encoding });
+    fs.appendFileSync(filePath, content, { encoding });
   } else {
-    fs.writeFileSync(filePath, content ?? '', { encoding });
+    // mode === 'write' or 'create' (overwrite)
+    fs.writeFileSync(filePath, content, { encoding });
   }
 
   const stats = fs.statSync(filePath);

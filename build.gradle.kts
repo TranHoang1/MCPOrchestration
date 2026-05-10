@@ -25,6 +25,8 @@ subprojects {
 
     tasks.withType<Test> {
         useJUnitPlatform()
+        // Isolate test classes to prevent Koin/Kotest state pollution
+        forkEvery = 100
         testLogging {
             events("passed", "skipped", "failed")
             showStandardStreams = true

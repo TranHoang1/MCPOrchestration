@@ -1,0 +1,108 @@
+<mxGraphModel dx="1422" dy="762" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
+  <root>
+    <mxCell id="0" />
+    <mxCell id="1" parent="0" />
+    <mxCell id="2" value="KB Server Architecture" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=16;fontStyle=1;" vertex="1" parent="1">
+      <mxGeometry x="400" y="20" width="300" height="30" as="geometry" />
+    </mxCell>
+    <mxCell id="3" value="Transport Layer" style="swimlane;startSize=20;fillColor=#f5f5f5;strokeColor=#666666;fontColor=#333333;" vertex="1" parent="1">
+      <mxGeometry x="80" y="70" width="400" height="80" as="geometry" />
+    </mxCell>
+    <mxCell id="4" value="StdioServerTransport" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="3">
+      <mxGeometry x="20" y="30" width="160" height="40" as="geometry" />
+    </mxCell>
+    <mxCell id="5" value="KbHttpTransport (Ktor)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="3">
+      <mxGeometry x="210" y="30" width="160" height="40" as="geometry" />
+    </mxCell>
+    <mxCell id="6" value="Protocol Layer" style="swimlane;startSize=20;fillColor=#f5f5f5;strokeColor=#666666;fontColor=#333333;" vertex="1" parent="1">
+      <mxGeometry x="80" y="170" width="400" height="80" as="geometry" />
+    </mxCell>
+    <mxCell id="7" value="KbMcpServerFactory" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="6">
+      <mxGeometry x="20" y="30" width="160" height="40" as="geometry" />
+    </mxCell>
+    <mxCell id="8" value="KbToolRegistrar" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="6">
+      <mxGeometry x="210" y="30" width="160" height="40" as="geometry" />
+    </mxCell>
+    <mxCell id="9" value="Handler Layer (13 Tools)" style="swimlane;startSize=20;fillColor=#f5f5f5;strokeColor=#666666;fontColor=#333333;" vertex="1" parent="1">
+      <mxGeometry x="80" y="270" width="940" height="80" as="geometry" />
+    </mxCell>
+    <mxCell id="10" value="Search" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="9">
+      <mxGeometry x="10" y="30" width="60" height="40" as="geometry" />
+    </mxCell>
+    <mxCell id="11" value="Read" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="9">
+      <mxGeometry x="80" y="30" width="60" height="40" as="geometry" />
+    </mxCell>
+    <mxCell id="12" value="Ingest" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="9">
+      <mxGeometry x="150" y="30" width="60" height="40" as="geometry" />
+    </mxCell>
+    <mxCell id="13" value="Delete" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="9">
+      <mxGeometry x="220" y="30" width="60" height="40" as="geometry" />
+    </mxCell>
+    <mxCell id="14" value="Link" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="9">
+      <mxGeometry x="290" y="30" width="60" height="40" as="geometry" />
+    </mxCell>
+    <mxCell id="15" value="Feedback" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="9">
+      <mxGeometry x="360" y="30" width="60" height="40" as="geometry" />
+    </mxCell>
+    <mxCell id="16" value="Audit" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="9">
+      <mxGeometry x="430" y="30" width="60" height="40" as="geometry" />
+    </mxCell>
+    <mxCell id="17" value="Sync" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="9">
+      <mxGeometry x="500" y="30" width="60" height="40" as="geometry" />
+    </mxCell>
+    <mxCell id="18" value="Unmask" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="9">
+      <mxGeometry x="570" y="30" width="60" height="40" as="geometry" />
+    </mxCell>
+    <mxCell id="19" value="Graph" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="9">
+      <mxGeometry x="640" y="30" width="60" height="40" as="geometry" />
+    </mxCell>
+    <mxCell id="20" value="Network" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="9">
+      <mxGeometry x="710" y="30" width="60" height="40" as="geometry" />
+    </mxCell>
+    <mxCell id="21" value="Service Layer" style="swimlane;startSize=20;fillColor=#f5f5f5;strokeColor=#666666;fontColor=#333333;" vertex="1" parent="1">
+      <mxGeometry x="80" y="370" width="940" height="80" as="geometry" />
+    </mxCell>
+    <mxCell id="22" value="EmbeddingService" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="21">
+      <mxGeometry x="10" y="30" width="130" height="40" as="geometry" />
+    </mxCell>
+    <mxCell id="23" value="AuditService" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="21">
+      <mxGeometry x="150" y="30" width="110" height="40" as="geometry" />
+    </mxCell>
+    <mxCell id="24" value="PiiMaskingEngine" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="21">
+      <mxGeometry x="270" y="30" width="130" height="40" as="geometry" />
+    </mxCell>
+    <mxCell id="25" value="QueueService" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="21">
+      <mxGeometry x="410" y="30" width="110" height="40" as="geometry" />
+    </mxCell>
+    <mxCell id="26" value="GraphService" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="21">
+      <mxGeometry x="530" y="30" width="110" height="40" as="geometry" />
+    </mxCell>
+    <mxCell id="27" value="NetworkService" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="21">
+      <mxGeometry x="650" y="30" width="110" height="40" as="geometry" />
+    </mxCell>
+    <mxCell id="28" value="Data Layer" style="swimlane;startSize=20;fillColor=#f5f5f5;strokeColor=#666666;fontColor=#333333;" vertex="1" parent="1">
+      <mxGeometry x="80" y="470" width="940" height="80" as="geometry" />
+    </mxCell>
+    <mxCell id="29" value="KbEntryRepository" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="28">
+      <mxGeometry x="10" y="30" width="140" height="40" as="geometry" />
+    </mxCell>
+    <mxCell id="30" value="KbVectorClient" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="28">
+      <mxGeometry x="160" y="30" width="120" height="40" as="geometry" />
+    </mxCell>
+    <mxCell id="31" value="AuditEventRepository" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="28">
+      <mxGeometry x="290" y="30" width="150" height="40" as="geometry" />
+    </mxCell>
+    <mxCell id="32" value="QueueTaskRepository" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="28">
+      <mxGeometry x="450" y="30" width="150" height="40" as="geometry" />
+    </mxCell>
+    <mxCell id="33" value="Infrastructure" style="swimlane;startSize=20;fillColor=#f5f5f5;strokeColor=#666666;fontColor=#333333;" vertex="1" parent="1">
+      <mxGeometry x="80" y="570" width="940" height="80" as="geometry" />
+    </mxCell>
+    <mxCell id="34" value="PostgreSQL + pgvector" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=10;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="33">
+      <mxGeometry x="100" y="20" width="150" height="50" as="geometry" />
+    </mxCell>
+    <mxCell id="35" value="Ollama (Embeddings)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="33">
+      <mxGeometry x="300" y="25" width="150" height="40" as="geometry" />
+    </mxCell>
+  </root>
+</mxGraphModel>

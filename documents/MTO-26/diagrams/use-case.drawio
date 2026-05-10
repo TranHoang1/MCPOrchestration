@@ -1,0 +1,72 @@
+<mxGraphModel adaptiveColors="auto">
+  <root>
+    <mxCell id="0"/>
+    <mxCell id="1" parent="0"/>
+    <mxCell id="sys" value="KB Entries Schema System" style="swimlane;startSize=30;fillColor=#f5f5f5;strokeColor=#666666;html=1;fontSize=13;fontStyle=1;" vertex="1" parent="1">
+      <mxGeometry x="200" y="20" width="600" height="560" as="geometry"/>
+    </mxCell>
+    <mxCell id="uc1" value="UC-1: Store KB Entry&#xa;(4 Content Layers)" style="ellipse;whiteSpace=wrap;html=1;fillColor=#e1f5fe;strokeColor=#0288d1;" vertex="1" parent="sys">
+      <mxGeometry x="40" y="50" width="180" height="80" as="geometry"/>
+    </mxCell>
+    <mxCell id="uc2" value="UC-2: Encrypt/Decrypt&#xa;Business Rules" style="ellipse;whiteSpace=wrap;html=1;fillColor=#fff3e0;strokeColor=#f57c00;" vertex="1" parent="sys">
+      <mxGeometry x="40" y="160" width="180" height="80" as="geometry"/>
+    </mxCell>
+    <mxCell id="uc3" value="UC-3: Manage&#xa;PII Mappings" style="ellipse;whiteSpace=wrap;html=1;fillColor=#fff3e0;strokeColor=#f57c00;" vertex="1" parent="sys">
+      <mxGeometry x="40" y="270" width="180" height="80" as="geometry"/>
+    </mxCell>
+    <mxCell id="uc4" value="UC-4: Detect&#xa;Content Changes" style="ellipse;whiteSpace=wrap;html=1;fillColor=#e8f5e9;strokeColor=#388e3c;" vertex="1" parent="sys">
+      <mxGeometry x="40" y="380" width="180" height="80" as="geometry"/>
+    </mxCell>
+    <mxCell id="uc5" value="UC-5: Query KB&#xa;by Project" style="ellipse;whiteSpace=wrap;html=1;fillColor=#e8f5e9;strokeColor=#388e3c;" vertex="1" parent="sys">
+      <mxGeometry x="40" y="470" width="180" height="80" as="geometry"/>
+    </mxCell>
+    <mxCell id="uc6" value="UC-6: Batch&#xa;Upsert Entries" style="ellipse;whiteSpace=wrap;html=1;fillColor=#e1f5fe;strokeColor=#0288d1;" vertex="1" parent="sys">
+      <mxGeometry x="340" y="50" width="180" height="80" as="geometry"/>
+    </mxCell>
+    <mxCell id="uc7" value="UC-7: Run&#xa;DB Migration" style="ellipse;whiteSpace=wrap;html=1;fillColor=#f3e5f5;strokeColor=#7b1fa2;" vertex="1" parent="sys">
+      <mxGeometry x="340" y="160" width="180" height="80" as="geometry"/>
+    </mxCell>
+    <mxCell id="uc8" value="UC-8: Configure&#xa;Encryption Keys" style="ellipse;whiteSpace=wrap;html=1;fillColor=#fce4ec;strokeColor=#c62828;" vertex="1" parent="sys">
+      <mxGeometry x="340" y="270" width="180" height="80" as="geometry"/>
+    </mxCell>
+    <mxCell id="actor1" value="Sync Service" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;" vertex="1" parent="1">
+      <mxGeometry x="80" y="130" width="40" height="60" as="geometry"/>
+    </mxCell>
+    <mxCell id="actor2" value="Admin" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;" vertex="1" parent="1">
+      <mxGeometry x="80" y="350" width="40" height="60" as="geometry"/>
+    </mxCell>
+    <mxCell id="actor3" value="DevOps" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;" vertex="1" parent="1">
+      <mxGeometry x="900" y="200" width="40" height="60" as="geometry"/>
+    </mxCell>
+    <mxCell id="ea1" style="html=1;endArrow=none;" edge="1" source="actor1" target="uc1" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="ea2" style="html=1;endArrow=none;" edge="1" source="actor1" target="uc4" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="ea3" style="html=1;endArrow=none;" edge="1" source="actor1" target="uc6" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="ea4" style="html=1;endArrow=none;" edge="1" source="actor2" target="uc2" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="ea5" style="html=1;endArrow=none;" edge="1" source="actor2" target="uc3" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="ea6" style="html=1;endArrow=none;" edge="1" source="actor2" target="uc5" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="ea7" style="html=1;endArrow=none;" edge="1" source="actor3" target="uc7" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="ea8" style="html=1;endArrow=none;" edge="1" source="actor3" target="uc8" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="inc1" value="&lt;i&gt;&amp;lt;&amp;lt;include&amp;gt;&amp;gt;&lt;/i&gt;" style="html=1;dashed=1;endArrow=open;endSize=8;" edge="1" source="uc1" target="uc2" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="inc2" value="&lt;i&gt;&amp;lt;&amp;lt;include&amp;gt;&amp;gt;&lt;/i&gt;" style="html=1;dashed=1;endArrow=open;endSize=8;" edge="1" source="uc3" target="uc2" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+  </root>
+</mxGraphModel>

@@ -1,0 +1,48 @@
+<mxGraphModel adaptiveColors="auto">
+  <root>
+    <mxCell id="0"/>
+    <mxCell id="1" parent="0"/>
+    <mxCell id="table" value="&lt;b&gt;queue_tasks&lt;/b&gt;" style="swimlane;startSize=24;fillColor=#f3e5f5;strokeColor=#7b1fa2;html=1;fontSize=12;" vertex="1" parent="1">
+      <mxGeometry x="200" y="60" width="300" height="380" as="geometry"/>
+    </mxCell>
+    <mxCell id="col1" value="&lt;b&gt;PK&lt;/b&gt; task_id : UUID" style="text;html=1;align=left;spacingLeft=10;fillColor=#e1f5fe;strokeColor=#0288d1;rounded=1;" vertex="1" parent="table">
+      <mxGeometry x="10" y="34" width="280" height="26" as="geometry"/>
+    </mxCell>
+    <mxCell id="col2" value="task_type : VARCHAR(100) NOT NULL" style="text;html=1;align=left;spacingLeft=10;" vertex="1" parent="table">
+      <mxGeometry x="10" y="66" width="280" height="26" as="geometry"/>
+    </mxCell>
+    <mxCell id="col3" value="payload : JSONB NOT NULL" style="text;html=1;align=left;spacingLeft=10;" vertex="1" parent="table">
+      <mxGeometry x="10" y="98" width="280" height="26" as="geometry"/>
+    </mxCell>
+    <mxCell id="col4" value="status : VARCHAR(20) NOT NULL [Pending|Processing|Completed|Failed]" style="text;html=1;align=left;spacingLeft=10;fontSize=9;" vertex="1" parent="table">
+      <mxGeometry x="10" y="130" width="280" height="26" as="geometry"/>
+    </mxCell>
+    <mxCell id="col5" value="priority : VARCHAR(10) NOT NULL [High|Normal]" style="text;html=1;align=left;spacingLeft=10;" vertex="1" parent="table">
+      <mxGeometry x="10" y="162" width="280" height="26" as="geometry"/>
+    </mxCell>
+    <mxCell id="col6" value="created_at : TIMESTAMP NOT NULL DEFAULT NOW()" style="text;html=1;align=left;spacingLeft=10;" vertex="1" parent="table">
+      <mxGeometry x="10" y="194" width="280" height="26" as="geometry"/>
+    </mxCell>
+    <mxCell id="col7" value="started_at : TIMESTAMP NULL" style="text;html=1;align=left;spacingLeft=10;" vertex="1" parent="table">
+      <mxGeometry x="10" y="226" width="280" height="26" as="geometry"/>
+    </mxCell>
+    <mxCell id="col8" value="completed_at : TIMESTAMP NULL" style="text;html=1;align=left;spacingLeft=10;" vertex="1" parent="table">
+      <mxGeometry x="10" y="258" width="280" height="26" as="geometry"/>
+    </mxCell>
+    <mxCell id="col9" value="retry_count : INT NOT NULL DEFAULT 0" style="text;html=1;align=left;spacingLeft=10;" vertex="1" parent="table">
+      <mxGeometry x="10" y="290" width="280" height="26" as="geometry"/>
+    </mxCell>
+    <mxCell id="col10" value="error_message : TEXT NULL" style="text;html=1;align=left;spacingLeft=10;" vertex="1" parent="table">
+      <mxGeometry x="10" y="322" width="280" height="26" as="geometry"/>
+    </mxCell>
+    <mxCell id="col11" value="worker_id : VARCHAR(50) NULL" style="text;html=1;align=left;spacingLeft=10;" vertex="1" parent="table">
+      <mxGeometry x="10" y="354" width="280" height="26" as="geometry"/>
+    </mxCell>
+    <mxCell id="idx" value="&lt;b&gt;Indexes&lt;/b&gt;&#xa;• idx_queue_tasks_status (status)&#xa;• idx_queue_tasks_priority_status (priority, status)&#xa;• idx_queue_tasks_started_at (started_at) WHERE status='Processing'" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;align=left;spacingLeft=10;fontSize=10;" vertex="1" parent="1">
+      <mxGeometry x="560" y="120" width="320" height="100" as="geometry"/>
+    </mxCell>
+    <mxCell id="eidx" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;dashed=1;" edge="1" source="table" target="idx" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+  </root>
+</mxGraphModel>

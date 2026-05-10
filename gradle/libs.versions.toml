@@ -31,7 +31,7 @@ hikaricp = "5.1.0"
 junit = "5.11.4"
 kotest = "5.9.1"
 mockk = "1.14.2"
-testcontainers = "1.21.1"
+testcontainers = "1.21.4"
 
 [libraries]
 # MCP SDK

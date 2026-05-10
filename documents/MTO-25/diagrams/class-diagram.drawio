@@ -1,0 +1,51 @@
+<mxGraphModel adaptiveColors="auto">
+  <root>
+    <mxCell id="0"/>
+    <mxCell id="1" parent="0"/>
+    <mxCell id="title" value="&lt;b&gt;Class Diagram — Queue Module&lt;/b&gt;" style="text;html=1;align=center;fontSize=14;fontStyle=1;" vertex="1" parent="1">
+      <mxGeometry x="250" y="10" width="400" height="30" as="geometry"/>
+    </mxCell>
+    <mxCell id="cls1" value="&lt;b&gt;&amp;lt;&amp;lt;interface&amp;gt;&amp;gt;&lt;br&gt;QueueService&lt;/b&gt;&lt;hr&gt;+ enqueue(task, priority): UUID&lt;br&gt;+ getTaskStatus(taskId): TaskStatus?&lt;br&gt;+ getQueueMetrics(): QueueMetrics" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#e8f5e9;strokeColor=#388e3c;align=left;spacingLeft=5;fontSize=10;" vertex="1" parent="1">
+      <mxGeometry x="40" y="60" width="260" height="100" as="geometry"/>
+    </mxCell>
+    <mxCell id="cls2" value="&lt;b&gt;QueueServiceImpl&lt;/b&gt;&lt;hr&gt;- queue: DualPriorityQueue&lt;br&gt;- repo: TaskStateRepository&lt;br&gt;- handlers: Map&amp;lt;String, TaskHandler&amp;gt;&lt;hr&gt;+ enqueue(task, priority): UUID&lt;br&gt;+ getTaskStatus(taskId): TaskStatus?&lt;br&gt;+ getQueueMetrics(): QueueMetrics" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#e8f5e9;strokeColor=#388e3c;align=left;spacingLeft=5;fontSize=10;" vertex="1" parent="1">
+      <mxGeometry x="40" y="220" width="260" height="140" as="geometry"/>
+    </mxCell>
+    <mxCell id="cls3" value="&lt;b&gt;DualPriorityQueue&lt;/b&gt;&lt;hr&gt;- hpq: Channel&amp;lt;QueueTask&amp;gt;(100)&lt;br&gt;- npq: Channel&amp;lt;QueueTask&amp;gt;(1000)&lt;br&gt;- preemptionSignal: Channel&amp;lt;Unit&amp;gt;&lt;hr&gt;+ sendHigh(task)&lt;br&gt;+ sendNormal(task)&lt;br&gt;+ selectNext(): QueueTask&lt;br&gt;+ requeue(task)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff3e0;strokeColor=#f57c00;align=left;spacingLeft=5;fontSize=10;" vertex="1" parent="1">
+      <mxGeometry x="360" y="60" width="260" height="160" as="geometry"/>
+    </mxCell>
+    <mxCell id="cls4" value="&lt;b&gt;QueueWorker&lt;/b&gt;&lt;hr&gt;- queue: DualPriorityQueue&lt;br&gt;- repo: TaskStateRepository&lt;br&gt;- handlers: Map&amp;lt;String, TaskHandler&amp;gt;&lt;br&gt;- config: QueueConfig&lt;br&gt;- supervisorJob: SupervisorJob&lt;br&gt;- currentNpqJob: Job?&lt;hr&gt;+ start()&lt;br&gt;+ stop()&lt;br&gt;- processTask(task)&lt;br&gt;- handlePreemption()&lt;br&gt;- retryWithBackoff(task, error)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#e8f5e9;strokeColor=#388e3c;align=left;spacingLeft=5;fontSize=10;" vertex="1" parent="1">
+      <mxGeometry x="360" y="280" width="260" height="200" as="geometry"/>
+    </mxCell>
+    <mxCell id="cls5" value="&lt;b&gt;&amp;lt;&amp;lt;interface&amp;gt;&amp;gt;&lt;br&gt;TaskHandler&lt;/b&gt;&lt;hr&gt;+ taskType: String&lt;br&gt;+ handle(task: QueueTask)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#e8f5e9;strokeColor=#388e3c;align=left;spacingLeft=5;fontSize=10;" vertex="1" parent="1">
+      <mxGeometry x="680" y="60" width="220" height="80" as="geometry"/>
+    </mxCell>
+    <mxCell id="cls6" value="&lt;b&gt;&amp;lt;&amp;lt;interface&amp;gt;&amp;gt;&lt;br&gt;TaskStateRepository&lt;/b&gt;&lt;hr&gt;+ insert(task): UUID&lt;br&gt;+ updateStatus(taskId, status, workerId?)&lt;br&gt;+ markCompleted(taskId)&lt;br&gt;+ markFailed(taskId, error)&lt;br&gt;+ incrementRetryAndRequeue(taskId)&lt;br&gt;+ findStuckTasks(threshold): List&lt;br&gt;+ findProcessingTasks(): List&lt;br&gt;+ getMetrics(): QueueMetrics" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f3e5f5;strokeColor=#7b1fa2;align=left;spacingLeft=5;fontSize=10;" vertex="1" parent="1">
+      <mxGeometry x="40" y="420" width="260" height="160" as="geometry"/>
+    </mxCell>
+    <mxCell id="cls7" value="&lt;b&gt;QueueWatchdog&lt;/b&gt;&lt;hr&gt;- repo: TaskStateRepository&lt;br&gt;- config: QueueConfig&lt;hr&gt;+ start()&lt;br&gt;+ stop()&lt;br&gt;- scanStuckTasks()" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fce4ec;strokeColor=#c62828;align=left;spacingLeft=5;fontSize=10;" vertex="1" parent="1">
+      <mxGeometry x="680" y="280" width="220" height="120" as="geometry"/>
+    </mxCell>
+    <mxCell id="cls8" value="&lt;b&gt;QueueTask&lt;/b&gt;&lt;hr&gt;+ taskId: UUID&lt;br&gt;+ taskType: String&lt;br&gt;+ payload: JsonObject&lt;br&gt;+ status: TaskStatus&lt;br&gt;+ priority: Priority&lt;br&gt;+ createdAt: Instant&lt;br&gt;+ retryCount: Int" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;align=left;spacingLeft=5;fontSize=10;" vertex="1" parent="1">
+      <mxGeometry x="680" y="440" width="220" height="140" as="geometry"/>
+    </mxCell>
+    <mxCell id="e1" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;endSize=10;endFill=0;dashed=1;" edge="1" source="cls2" target="cls1" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e2" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=diamond;endSize=10;endFill=1;" edge="1" source="cls2" target="cls3" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e3" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=diamond;endSize=10;endFill=1;" edge="1" source="cls4" target="cls3" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e4" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;dashed=1;" edge="1" source="cls4" target="cls5" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e5" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;" edge="1" source="cls4" target="cls6" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e6" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;" edge="1" source="cls7" target="cls6" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+  </root>
+</mxGraphModel>

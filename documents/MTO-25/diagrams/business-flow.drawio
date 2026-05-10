@@ -1,0 +1,87 @@
+<mxGraphModel adaptiveColors="auto">
+  <root>
+    <mxCell id="0"/>
+    <mxCell id="1" parent="0"/>
+    <mxCell id="lane1" value="Task Producer" style="swimlane;horizontal=0;startSize=110;fillColor=#f5f5f5;html=1;" vertex="1" parent="1">
+      <mxGeometry x="0" y="0" width="1800" height="150" as="geometry"/>
+    </mxCell>
+    <mxCell id="n1" value="User/UI Request" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1f5fe;strokeColor=#0288d1;" vertex="1" parent="lane1">
+      <mxGeometry x="120" y="45" width="140" height="60" as="geometry"/>
+    </mxCell>
+    <mxCell id="n2" value="System/Batch Scan" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff3e0;strokeColor=#f57c00;" vertex="1" parent="lane1">
+      <mxGeometry x="120" y="85" width="140" height="60" as="geometry"/>
+    </mxCell>
+    <mxCell id="lane2" value="Queue Layer" style="swimlane;horizontal=0;startSize=110;fillColor=#e8f4f8;html=1;" vertex="1" parent="1">
+      <mxGeometry x="0" y="150" width="1800" height="150" as="geometry"/>
+    </mxCell>
+    <mxCell id="n3" value="&lt;b&gt;HPQ&lt;/b&gt;&lt;br&gt;(capacity=100)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1f5fe;strokeColor=#0288d1;" vertex="1" parent="lane2">
+      <mxGeometry x="300" y="25" width="140" height="60" as="geometry"/>
+    </mxCell>
+    <mxCell id="n4" value="&lt;b&gt;NPQ&lt;/b&gt;&lt;br&gt;(capacity=1000)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff3e0;strokeColor=#f57c00;" vertex="1" parent="lane2">
+      <mxGeometry x="300" y="90" width="140" height="60" as="geometry"/>
+    </mxCell>
+    <mxCell id="n5" value="Persist to&#xa;PostgreSQL" style="shape=cylinder3;whiteSpace=wrap;html=1;fillColor=#f3e5f5;strokeColor=#7b1fa2;size=10;" vertex="1" parent="lane2">
+      <mxGeometry x="480" y="45" width="120" height="60" as="geometry"/>
+    </mxCell>
+    <mxCell id="lane3" value="Worker Layer" style="swimlane;horizontal=0;startSize=110;fillColor=#e8f5e9;html=1;" vertex="1" parent="1">
+      <mxGeometry x="0" y="300" width="1800" height="150" as="geometry"/>
+    </mxCell>
+    <mxCell id="n6" value="&lt;b&gt;select {}&lt;/b&gt;&#xa;HPQ first" style="rhombus;whiteSpace=wrap;html=1;fillColor=#e8f5e9;strokeColor=#388e3c;" vertex="1" parent="lane3">
+      <mxGeometry x="660" y="35" width="140" height="80" as="geometry"/>
+    </mxCell>
+    <mxCell id="n7" value="Process Task&#xa;(SupervisorJob)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8f5e9;strokeColor=#388e3c;" vertex="1" parent="lane3">
+      <mxGeometry x="840" y="45" width="140" height="60" as="geometry"/>
+    </mxCell>
+    <mxCell id="n8" value="Preempt NPQ?&#xa;(HPQ signal)" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fce4ec;strokeColor=#c62828;" vertex="1" parent="lane3">
+      <mxGeometry x="1020" y="35" width="140" height="80" as="geometry"/>
+    </mxCell>
+    <mxCell id="n9" value="Cancel NPQ Job&#xa;Re-queue task" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fce4ec;strokeColor=#c62828;" vertex="1" parent="lane3">
+      <mxGeometry x="1200" y="45" width="140" height="60" as="geometry"/>
+    </mxCell>
+    <mxCell id="lane4" value="Completion" style="swimlane;horizontal=0;startSize=110;fillColor=#fff9e6;html=1;" vertex="1" parent="1">
+      <mxGeometry x="0" y="450" width="1800" height="150" as="geometry"/>
+    </mxCell>
+    <mxCell id="n10" value="Task Completed&#xa;(Ack)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8f5e9;strokeColor=#388e3c;" vertex="1" parent="lane4">
+      <mxGeometry x="1380" y="25" width="140" height="60" as="geometry"/>
+    </mxCell>
+    <mxCell id="n11" value="Task Failed&#xa;(Retry?)" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fce4ec;strokeColor=#c62828;" vertex="1" parent="lane4">
+      <mxGeometry x="1380" y="85" width="140" height="60" as="geometry"/>
+    </mxCell>
+    <mxCell id="n12" value="Watchdog&#xa;(scan stuck)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;dashed=1;" vertex="1" parent="lane4">
+      <mxGeometry x="1560" y="45" width="140" height="60" as="geometry"/>
+    </mxCell>
+    <mxCell id="e1" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;" edge="1" source="n1" target="n3" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e2" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;" edge="1" source="n2" target="n4" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e3" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;" edge="1" source="n3" target="n5" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e4" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;" edge="1" source="n4" target="n5" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e5" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;" edge="1" source="n3" target="n6" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e6" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;dashed=1;" edge="1" source="n4" target="n6" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e7" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;" edge="1" source="n6" target="n7" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e8" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;" edge="1" source="n7" target="n8" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e9" value="Yes" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;" edge="1" source="n8" target="n9" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e10" value="Success" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;" edge="1" source="n7" target="n10" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e11" value="Failure" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;" edge="1" source="n7" target="n11" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+  </root>
+</mxGraphModel>

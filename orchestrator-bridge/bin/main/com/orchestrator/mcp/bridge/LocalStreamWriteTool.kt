@@ -21,7 +21,8 @@ class LocalStreamWriteTool {
             description = "Write content directly to a file on disk without buffering. " +
                 "Supports absolute and relative paths (relative resolved from workspace root). " +
                 "Modes: 'write' (overwrite/create), 'append' (add to end), 'create' (fail if file exists). " +
-                "Use append mode to build large files incrementally. Content is optional for create mode.",
+                "If file does not exist, it will be created automatically. " +
+                "If file already exists and no content is provided, no changes are made (no-op).",
             inputSchema = streamWriteSchema()
         ) { request ->
             handleWrite(request.arguments)
@@ -31,13 +32,8 @@ class LocalStreamWriteTool {
     private fun handleWrite(args: JsonObject?): CallToolResult {
         val rawPath = args?.get("file_path")?.jsonPrimitive?.content
             ?: return errorResult("Missing 'file_path' parameter")
+        val content = args["content"]?.jsonPrimitive?.content ?: ""
         val mode = args["mode"]?.jsonPrimitive?.content ?: "write"
-        val content = if (mode == "create") {
-            args["content"]?.jsonPrimitive?.content ?: ""
-        } else {
-            args["content"]?.jsonPrimitive?.content
-                ?: return errorResult("Missing 'content' parameter")
-        }
         val encoding = args["encoding"]?.jsonPrimitive?.content ?: "utf-8"
 
         if (mode !in listOf("write", "append", "create")) {
@@ -48,19 +44,23 @@ class LocalStreamWriteTool {
 
         return try {
             val file = File(filePath)
+            val fileExists = file.exists()
+            val fileSizeBefore = if (fileExists) file.length() else 0L
+
+            // File exists + no content → no-op
+            if (fileExists && content.isEmpty()) {
+                return buildNoOpResult(filePath, fileSizeBefore)
+            }
+
             file.parentFile?.mkdirs()
-            val fileSizeBefore = if (file.exists()) file.length() else 0L
             val charset = Charset.forName(encoding)
-            when (mode) {
-                "create" -> {
-                    if (file.exists()) {
-                        return errorResult("File already exists: $filePath. Use mode='write' to overwrite or mode='append' to add content.")
-                    }
-                    file.writeText(content, charset)
-                }
-                "append" -> file.appendText(content, charset)
+
+            when {
+                !fileExists -> file.writeText(content, charset)
+                mode == "append" -> file.appendText(content, charset)
                 else -> file.writeText(content, charset)
             }
+
             val totalSize = file.length()
             val bytesWritten = totalSize - fileSizeBefore
             logger.debug("Wrote $bytesWritten bytes to $filePath (mode=$mode)")
@@ -78,6 +78,18 @@ class LocalStreamWriteTool {
         }
     }
 
+    private fun buildNoOpResult(filePath: String, fileSize: Long): CallToolResult {
+        val result = buildJsonObject {
+            put("file_path", filePath)
+            put("bytes_written", 0L)
+            put("total_size", fileSize)
+            put("file_size_before", fileSize)
+            put("mode", "no-op")
+            put("message", "File already exists and no content provided")
+        }
+        return CallToolResult(content = listOf(TextContent(text = result.toString())))
+    }
+
     private fun errorResult(message: String): CallToolResult {
         return CallToolResult(content = listOf(TextContent(text = message)), isError = true)
     }
@@ -87,15 +99,25 @@ private fun streamWriteSchema(): ToolSchema = ToolSchema(
     properties = buildJsonObject {
         putJsonObject("file_path") {
             put("type", "string")
-            put("description", "Path to the output file. Supports absolute or relative path (resolved from workspace root)")
+            put(
+                "description",
+                "Path to the output file. Supports absolute or relative path (resolved from workspace root)"
+            )
         }
         putJsonObject("content") {
             put("type", "string")
-            put("description", "Text content to write. Optional when mode='create' (defaults to empty string)")
+            put(
+                "description",
+                "Text content to write. Optional — if omitted or empty, creates an empty file " +
+                    "(or no-op if file already exists)."
+            )
         }
         putJsonObject("mode") {
             put("type", "string")
-            put("description", "Write mode: 'write' (overwrite/create), 'append' (add to end), or 'create' (fail if file exists). Default: 'write'")
+            put(
+                "description",
+                "write, append, or create. 'create' fails if file already exists. Default: 'write'"
+            )
         }
         putJsonObject("encoding") {
             put("type", "string")

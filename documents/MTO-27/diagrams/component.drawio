@@ -1,0 +1,75 @@
+<mxGraphModel adaptiveColors="auto">
+  <root>
+    <mxCell id="0"/>
+    <mxCell id="1" parent="0"/>
+    <mxCell id="title" value="&lt;b&gt;Component Diagram — PII Masking Engine&lt;/b&gt;" style="text;html=1;align=center;fontSize=13;fontStyle=1;" vertex="1" parent="1">
+      <mxGeometry x="180" y="10" width="400" height="30" as="geometry"/>
+    </mxCell>
+    <mxCell id="pkg_masking" value="&lt;b&gt;com.orchestrator.mcp.masking&lt;/b&gt;" style="swimlane;startSize=24;fillColor=#e8f5e9;strokeColor=#388e3c;html=1;" vertex="1" parent="1">
+      <mxGeometry x="40" y="50" width="700" height="500" as="geometry"/>
+    </mxCell>
+    <mxCell id="c_engine" value="&lt;b&gt;&amp;lt;&amp;lt;interface&amp;gt;&amp;gt;&lt;/b&gt;&#xa;PiiMaskingEngine" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#e1f5fe;strokeColor=#0288d1;fontSize=11;" vertex="1" parent="pkg_masking">
+      <mxGeometry x="20" y="40" width="180" height="50" as="geometry"/>
+    </mxCell>
+    <mxCell id="c_impl" value="&lt;b&gt;PiiMaskingEngineImpl&lt;/b&gt;&#xa;+ mask(text): MaskingResult" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#e8f5e9;strokeColor=#388e3c;fontSize=10;" vertex="1" parent="pkg_masking">
+      <mxGeometry x="20" y="120" width="200" height="50" as="geometry"/>
+    </mxCell>
+    <mxCell id="pkg_model" value="model" style="swimlane;startSize=20;fillColor=#f5f5f5;strokeColor=#666666;html=1;fontSize=10;" vertex="1" parent="pkg_masking">
+      <mxGeometry x="20" y="200" width="200" height="120" as="geometry"/>
+    </mxCell>
+    <mxCell id="c_result" value="MaskingResult" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=10;" vertex="1" parent="pkg_model">
+      <mxGeometry x="10" y="30" width="120" height="35" as="geometry"/>
+    </mxCell>
+    <mxCell id="c_match" value="PiiMatch" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=10;" vertex="1" parent="pkg_model">
+      <mxGeometry x="10" y="75" width="120" height="35" as="geometry"/>
+    </mxCell>
+    <mxCell id="pkg_strategy" value="strategy" style="swimlane;startSize=20;fillColor=#fff3e0;strokeColor=#f57c00;html=1;fontSize=10;" vertex="1" parent="pkg_masking">
+      <mxGeometry x="260" y="40" width="420" height="280" as="geometry"/>
+    </mxCell>
+    <mxCell id="c_strat_iface" value="&lt;b&gt;&amp;lt;&amp;lt;interface&amp;gt;&amp;gt;&lt;/b&gt;&#xa;PiiDetectionStrategy" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#e1f5fe;strokeColor=#0288d1;fontSize=10;" vertex="1" parent="pkg_strategy">
+      <mxGeometry x="130" y="30" width="160" height="45" as="geometry"/>
+    </mxCell>
+    <mxCell id="c_email" value="EmailDetectionStrategy" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff3e0;strokeColor=#f57c00;fontSize=10;" vertex="1" parent="pkg_strategy">
+      <mxGeometry x="10" y="100" width="170" height="35" as="geometry"/>
+    </mxCell>
+    <mxCell id="c_phone" value="PhoneDetectionStrategy" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff3e0;strokeColor=#f57c00;fontSize=10;" vertex="1" parent="pkg_strategy">
+      <mxGeometry x="10" y="145" width="170" height="35" as="geometry"/>
+    </mxCell>
+    <mxCell id="c_bank" value="BankAccountDetectionStrategy" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff3e0;strokeColor=#f57c00;fontSize=10;" vertex="1" parent="pkg_strategy">
+      <mxGeometry x="10" y="190" width="190" height="35" as="geometry"/>
+    </mxCell>
+    <mxCell id="c_id" value="IdCardDetectionStrategy" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff3e0;strokeColor=#f57c00;fontSize=10;" vertex="1" parent="pkg_strategy">
+      <mxGeometry x="220" y="100" width="170" height="35" as="geometry"/>
+    </mxCell>
+    <mxCell id="c_name" value="NameDetectionStrategy" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff3e0;strokeColor=#f57c00;fontSize=10;" vertex="1" parent="pkg_strategy">
+      <mxGeometry x="220" y="145" width="170" height="35" as="geometry"/>
+    </mxCell>
+    <mxCell id="pkg_config" value="config" style="swimlane;startSize=20;fillColor=#f5f5f5;strokeColor=#666666;html=1;fontSize=10;" vertex="1" parent="pkg_masking">
+      <mxGeometry x="20" y="350" width="200" height="70" as="geometry"/>
+    </mxCell>
+    <mxCell id="c_config" value="MaskingConfig" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=10;" vertex="1" parent="pkg_config">
+      <mxGeometry x="10" y="28" width="120" height="35" as="geometry"/>
+    </mxCell>
+    <mxCell id="pkg_di" value="di" style="swimlane;startSize=20;fillColor=#f5f5f5;strokeColor=#666666;html=1;fontSize=10;" vertex="1" parent="pkg_masking">
+      <mxGeometry x="20" y="440" width="200" height="50" as="geometry"/>
+    </mxCell>
+    <mxCell id="c_module" value="MaskingModule" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=10;" vertex="1" parent="pkg_di">
+      <mxGeometry x="10" y="22" width="120" height="25" as="geometry"/>
+    </mxCell>
+    <mxCell id="e_impl_iface" value="implements" style="html=1;endArrow=block;endFill=0;dashed=1;fontSize=9;" edge="1" source="c_impl" target="c_engine" parent="pkg_masking">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e_email_strat" value="" style="html=1;endArrow=block;endFill=0;dashed=1;fontSize=9;" edge="1" source="c_email" target="c_strat_iface" parent="pkg_masking">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e_phone_strat" value="" style="html=1;endArrow=block;endFill=0;dashed=1;fontSize=9;" edge="1" source="c_phone" target="c_strat_iface" parent="pkg_masking">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e_id_strat" value="" style="html=1;endArrow=block;endFill=0;dashed=1;fontSize=9;" edge="1" source="c_id" target="c_strat_iface" parent="pkg_masking">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e_name_strat" value="" style="html=1;endArrow=block;endFill=0;dashed=1;fontSize=9;" edge="1" source="c_name" target="c_strat_iface" parent="pkg_masking">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+  </root>
+</mxGraphModel>

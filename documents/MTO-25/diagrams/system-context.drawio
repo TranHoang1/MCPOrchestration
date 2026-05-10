@@ -1,0 +1,42 @@
+<mxGraphModel adaptiveColors="auto">
+  <root>
+    <mxCell id="0"/>
+    <mxCell id="1" parent="0"/>
+    <mxCell id="title" value="&lt;b&gt;System Context — Dual-Priority Queue&lt;/b&gt;" style="text;html=1;align=center;fontSize=14;fontStyle=1;" vertex="1" parent="1">
+      <mxGeometry x="300" y="10" width="300" height="30" as="geometry"/>
+    </mxCell>
+    <mxCell id="user" value="&lt;b&gt;User/UI&lt;/b&gt;&#xa;(High-Priority Tasks)" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;" vertex="1" parent="1">
+      <mxGeometry x="60" y="120" width="40" height="60" as="geometry"/>
+    </mxCell>
+    <mxCell id="batch" value="&lt;b&gt;System/Batch&lt;/b&gt;&#xa;(Normal-Priority Tasks)" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;" vertex="1" parent="1">
+      <mxGeometry x="60" y="320" width="40" height="60" as="geometry"/>
+    </mxCell>
+    <mxCell id="system" value="&lt;b&gt;Dual-Priority Queue System&lt;/b&gt;&#xa;&#xa;• QueueService (enqueue API)&#xa;• DualPriorityQueue (HPQ + NPQ)&#xa;• QueueWorker (processing)&#xa;• QueueWatchdog (monitoring)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1f5fe;strokeColor=#0288d1;fontSize=11;align=left;spacingLeft=10;" vertex="1" parent="1">
+      <mxGeometry x="280" y="140" width="300" height="160" as="geometry"/>
+    </mxCell>
+    <mxCell id="postgres" value="&lt;b&gt;PostgreSQL&lt;/b&gt;&#xa;queue_tasks table" style="shape=cylinder3;whiteSpace=wrap;html=1;fillColor=#f3e5f5;strokeColor=#7b1fa2;size=10;" vertex="1" parent="1">
+      <mxGeometry x="720" y="140" width="140" height="80" as="geometry"/>
+    </mxCell>
+    <mxCell id="handlers" value="&lt;b&gt;Task Handlers&lt;/b&gt;&#xa;(Business Logic)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8f5e9;strokeColor=#388e3c;" vertex="1" parent="1">
+      <mxGeometry x="720" y="280" width="140" height="60" as="geometry"/>
+    </mxCell>
+    <mxCell id="logging" value="&lt;b&gt;Logging&lt;/b&gt;&#xa;(Logback)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;" vertex="1" parent="1">
+      <mxGeometry x="720" y="380" width="140" height="60" as="geometry"/>
+    </mxCell>
+    <mxCell id="e1" value="Enqueue HPQ" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;" edge="1" source="user" target="system" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e2" value="Enqueue NPQ" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;" edge="1" source="batch" target="system" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e3" value="JDBC&#xa;(state CRUD)" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;" edge="1" source="system" target="postgres" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e4" value="Execute task" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;" edge="1" source="system" target="handlers" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e5" value="Log events" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;dashed=1;" edge="1" source="system" target="logging" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+  </root>
+</mxGraphModel>

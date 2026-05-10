@@ -56,6 +56,12 @@ dependencies {
     implementation("org.apache.pdfbox:pdfbox:3.0.4")
     implementation("org.apache.poi:poi-ooxml:5.3.0")
 
+    // LangChain4j (MTO-28: Content Segmentation)
+    implementation("dev.langchain4j:langchain4j:1.0.0-beta1")
+    implementation("dev.langchain4j:langchain4j-open-ai:1.0.0-beta1")
+    implementation("dev.langchain4j:langchain4j-ollama:1.0.0-beta1")
+    implementation("dev.langchain4j:langchain4j-azure-open-ai:1.0.0-beta1")
+
     // Testing
     testImplementation(libs.junit.jupiter)
     testImplementation(libs.junit.jupiter.api)
@@ -67,7 +73,7 @@ dependencies {
     testImplementation(libs.ktor.server.test.host)
     testImplementation(libs.ktor.client.mock)
     testImplementation(libs.testcontainers.junit)
-    testImplementation("org.testcontainers:postgresql:1.21.1")
+    testImplementation("org.testcontainers:postgresql:1.21.4")
     testImplementation(libs.koin.test)
 }
 

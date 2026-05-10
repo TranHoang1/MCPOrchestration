@@ -1,0 +1,75 @@
+<mxGraphModel adaptiveColors="auto">
+  <root>
+    <mxCell id="0"/>
+    <mxCell id="1" parent="0"/>
+    <mxCell id="title" value="&lt;b&gt;MTO-28: API Sequence — Segmentation with BR Local-Only&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=13;" vertex="1" parent="1">
+      <mxGeometry x="150" y="10" width="480" height="30" as="geometry"/>
+    </mxCell>
+    <mxCell id="ll1" value="Pipeline" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=0;collapsible=0;recursiveResize=0;outlineConnect=0;size=40;fillColor=#e1f5fe;strokeColor=#0288d1;" vertex="1" parent="1">
+      <mxGeometry x="60" y="60" width="80" height="600" as="geometry"/>
+    </mxCell>
+    <mxCell id="ll2" value="Service&#xa;Impl" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=0;collapsible=0;recursiveResize=0;outlineConnect=0;size=40;fillColor=#e8f5e9;strokeColor=#388e3c;" vertex="1" parent="1">
+      <mxGeometry x="200" y="60" width="80" height="600" as="geometry"/>
+    </mxCell>
+    <mxCell id="ll3" value="Prompt&#xa;Builder" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=0;collapsible=0;recursiveResize=0;outlineConnect=0;size=40;fillColor=#fff3e0;strokeColor=#f57c00;" vertex="1" parent="1">
+      <mxGeometry x="340" y="60" width="80" height="600" as="geometry"/>
+    </mxCell>
+    <mxCell id="ll4" value="Cloud&#xa;AiService" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=0;collapsible=0;recursiveResize=0;outlineConnect=0;size=40;fillColor=#f3e5f5;strokeColor=#7b1fa2;" vertex="1" parent="1">
+      <mxGeometry x="480" y="60" width="80" height="600" as="geometry"/>
+    </mxCell>
+    <mxCell id="ll5" value="Local&#xa;AiService&#xa;(Ollama)" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=0;collapsible=0;recursiveResize=0;outlineConnect=0;size=40;fillColor=#fff3e0;strokeColor=#f57c00;" vertex="1" parent="1">
+      <mxGeometry x="620" y="60" width="80" height="600" as="geometry"/>
+    </mxCell>
+    <mxCell id="m1" value="segment(maskedText)" style="html=1;endSize=6;startSize=6;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="100" y="130" as="sourcePoint"/>
+        <mxPoint x="240" y="130" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="m2" value="buildPrompt(text)" style="html=1;endSize=6;startSize=6;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="240" y="170" as="sourcePoint"/>
+        <mxPoint x="380" y="170" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="m3" value="prompt" style="html=1;endSize=6;startSize=6;dashed=1;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="380" y="200" as="sourcePoint"/>
+        <mxPoint x="240" y="200" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="m4" value="classify(maskedText)" style="html=1;endSize=6;startSize=6;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="240" y="240" as="sourcePoint"/>
+        <mxPoint x="520" y="240" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="m5" value="JSON response" style="html=1;endSize=6;startSize=6;dashed=1;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="520" y="300" as="sourcePoint"/>
+        <mxPoint x="240" y="300" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="note1" value="[brLocalOnly=true&#xa;AND BR detected&#xa;AND cloudProvider]" style="shape=note;whiteSpace=wrap;html=1;size=14;fillColor=#fff9e6;strokeColor=#d6b656;fontSize=9;align=left;" vertex="1" parent="1">
+      <mxGeometry x="280" y="330" width="150" height="50" as="geometry"/>
+    </mxCell>
+    <mxCell id="m6" value="classify(brText)" style="html=1;endSize=6;startSize=6;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="240" y="400" as="sourcePoint"/>
+        <mxPoint x="660" y="400" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="m7" value="BR JSON (local)" style="html=1;endSize=6;startSize=6;dashed=1;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="660" y="450" as="sourcePoint"/>
+        <mxPoint x="240" y="450" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="m8" value="SegmentationResult" style="html=1;endSize=6;startSize=6;dashed=1;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="240" y="520" as="sourcePoint"/>
+        <mxPoint x="100" y="520" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+  </root>
+</mxGraphModel>

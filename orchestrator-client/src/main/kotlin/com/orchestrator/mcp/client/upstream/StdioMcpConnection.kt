@@ -28,6 +28,7 @@ class StdioMcpConnection(
     private val command: String,
     private val args: List<String> = emptyList(),
     private val env: Map<String, String> = emptyMap(),
+    private val cwd: String? = null,
     private val framingMode: McpFramingMode = McpFramingMode.NEWLINE_DELIMITED,
     private val requestTimeoutMs: Long = 30_000L
 ) : McpConnection {
@@ -47,6 +48,7 @@ class StdioMcpConnection(
         val processBuilder = ProcessBuilder(listOf(command) + args)
         processBuilder.environment().putAll(env)
         processBuilder.redirectErrorStream(false)
+        cwd?.let { processBuilder.directory(java.io.File(it)) }
 
         val p = processBuilder.start()
         process = p
@@ -93,7 +95,11 @@ class StdioMcpConnection(
     private suspend fun initializeHandshake() {
         val initParams = buildJsonObject {
             put("protocolVersion", "2024-11-05")
-            put("capabilities", buildJsonObject {})
+            put("capabilities", buildJsonObject {
+                putJsonObject("roots") {
+                    put("listChanged", false)
+                }
+            })
             put("clientInfo", buildJsonObject {
                 put("name", "MCPOrchestrator")
                 put("version", "1.0.0")
@@ -166,6 +172,15 @@ class StdioMcpConnection(
 
     private fun handleMessage(message: JsonObject) {
         val idElem = message["id"]
+        val method = message["method"]?.jsonPrimitive?.contentOrNull
+
+        // Server-initiated request (has both id and method)
+        if (idElem != null && method != null) {
+            handleServerRequest(idElem, method)
+            return
+        }
+
+        // Response to our request (has id, no method)
         if (idElem != null && idElem is JsonPrimitive) {
             val id = idElem.intOrNull
             if (id != null) {
@@ -183,8 +198,39 @@ class StdioMcpConnection(
                 }
             }
         } else {
-            val method = message["method"]?.jsonPrimitive?.contentOrNull
             if (method != null) logger.debug("Notification from '$command': $method")
+        }
+    }
+
+    private fun handleServerRequest(id: JsonElement, method: String) {
+        val response = when (method) {
+            "roots/list" -> buildRootsResponse(id)
+            else -> {
+                logger.debug("Unhandled server request from '$command': $method")
+                buildJsonObject {
+                    put("jsonrpc", "2.0")
+                    put("id", id)
+                    putJsonObject("result") {}
+                }
+            }
+        }
+        scope.launch { sendMessage(response) }
+    }
+
+    private fun buildRootsResponse(id: JsonElement): JsonObject {
+        val rootPath = cwd ?: System.getProperty("user.dir")
+        val rootUri = "file:///${rootPath.replace("\\", "/")}"
+        return buildJsonObject {
+            put("jsonrpc", "2.0")
+            put("id", id)
+            putJsonObject("result") {
+                putJsonArray("roots") {
+                    add(buildJsonObject {
+                        put("uri", rootUri)
+                        put("name", "workspace")
+                    })
+                }
+            }
         }
     }
 

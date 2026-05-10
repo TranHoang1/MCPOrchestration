@@ -1,0 +1,6 @@
+task_type,payload_json,priority
+jira_ticket_scan,"{""ticketKey"":""PROJ-123""}",NORMAL
+document_extract,"{""docId"":""doc-001"",""format"":""pdf""}",HIGH
+batch_index,"{""batchId"":""batch-2026-05-08"",""count"":50}",NORMAL
+user_upload,"{""fileId"":""file-abc"",""userId"":""user-1""}",HIGH
+periodic_cleanup,"{""olderThanDays"":30}",NORMAL

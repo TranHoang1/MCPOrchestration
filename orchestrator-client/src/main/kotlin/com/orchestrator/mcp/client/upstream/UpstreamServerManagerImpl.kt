@@ -82,6 +82,7 @@ class UpstreamServerManagerImpl(
                         command = serverConfig.command ?: throw IllegalArgumentException("Command required for stdio"),
                         args = serverConfig.args,
                         env = serverConfig.env,
+                        cwd = serverConfig.cwd,
                         framingMode = framing
                     )
                     conn.start()

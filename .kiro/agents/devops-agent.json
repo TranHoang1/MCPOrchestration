@@ -6,5 +6,13 @@
   "allowedTools": ["*"],
   "useLegacyMcpJson": true,
   "keyboardShortcut": "ctrl+shift+o",
-  "welcomeMessage": "🚀 DevOps agent sẵn sàng! Cung cấp Jira ticket key để tạo deployment guide."
+  "welcomeMessage": "🚀 DevOps agent sẵn sàng! Cung cấp Jira ticket key để tạo deployment guide.",
+  "hooks": {
+    "agentSpawn": [
+      {
+        "command": ".kiro/hooks/file-watcher.sh .",
+        "description": "Start file watcher for code indexing"
+      }
+    ]
+  }
 }

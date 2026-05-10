@@ -28,7 +28,7 @@ class KbApplication {
 
     private val logger = LoggerFactory.getLogger(KbApplication::class.java)
 
-    fun start(config: KbConfig, transport: String) {
+    fun start(config: KbConfig, transport: String, realStdout: java.io.PrintStream = System.out) {
         val koinApp = startKoin { modules(kbAppModule(config)) }
         val koin = koinApp.koin
 
@@ -43,7 +43,7 @@ class KbApplication {
         val mcpServer = serverFactory.create()
 
         when (transport) {
-            "stdio" -> startStdio(mcpServer)
+            "stdio" -> startStdio(mcpServer, realStdout)
             "http" -> startHttp(koin.getAll(), koin.get(), config.kb.server.port)
             else -> error("Unknown transport: $transport")
         }
@@ -72,18 +72,18 @@ class KbApplication {
         }
     }
 
-    private fun startStdio(mcpServer: io.modelcontextprotocol.kotlin.sdk.server.Server) {
+    private fun startStdio(mcpServer: io.modelcontextprotocol.kotlin.sdk.server.Server, realStdout: java.io.PrintStream) {
         runBlocking {
             val transport = StdioServerTransport(
                 inputStream = System.`in`.asSource().buffered(),
-                outputStream = System.out.asSink().buffered()
+                outputStream = realStdout.asSink().buffered()
             )
             logger.info("KB Server started (stdio transport)")
-            val session = mcpServer.createSession(transport)
+            mcpServer.createSession(transport)
 
-            session.onInitialized {
-                launch { resolveWorkspaceRoot(mcpServer, session.sessionId) }
-            }
+            // Block forever — stdio transport runs until stdin closes
+            val done = kotlinx.coroutines.CompletableDeferred<Unit>()
+            done.await()
         }
     }
 

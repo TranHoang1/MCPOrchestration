@@ -201,6 +201,10 @@ fun appModule(configPath: String? = null) = module {
     // Scanner Module (MTO-17)
     includes(scannerModule)
 
+    // Sync Tool Handlers (for HTTP mode builtin tool routing)
+    single { com.orchestrator.mcp.synctools.SyncToolHandler(get()) }
+    single { com.orchestrator.mcp.synctools.StatusToolHandler(get()) }
+
     // Crawler Module (MTO-18)
     includes(crawlerModule)
 

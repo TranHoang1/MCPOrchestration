@@ -7,6 +7,9 @@ import org.koin.dsl.module
 /**
  * Koin DI module for ProjectScanner components.
  * Register via `includes(scannerModule)` in AppModule.
+ *
+ * Uses McpPageFetcher (MCP upstream "atlassian") by default.
+ * Legacy PageFetcherImpl (direct REST) is available but deprecated.
  */
 val scannerModule = module {
 
@@ -16,9 +19,9 @@ val scannerModule = module {
 
     single { MetadataParser() }
 
-    single<PageFetcher> { PageFetcherImpl(get()) }
+    single<PageFetcher> { McpPageFetcher(get()) }
 
-    single<BatchUpserter> { BatchUpserterImpl(get()) }
+    single<BatchUpserter> { BatchUpserterImpl(get(), get()) }
 
     single<ProjectScanner> {
         ProjectScannerImpl(

@@ -36,6 +36,9 @@ import io.ktor.client.HttpClient
 import io.ktor.client.engine.cio.CIO
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.serialization.kotlinx.json.json
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.serialization.json.Json
 import org.koin.core.module.Module
 import org.koin.dsl.bind
@@ -104,6 +107,7 @@ fun kbStoreModule() = module {
 /** Audit: Service + Repository */
 fun kbAuditModule() = module {
     single<AuditEventRepository> { AuditEventRepositoryImpl(get()) }
+    single<CoroutineScope> { CoroutineScope(SupervisorJob() + Dispatchers.IO) }
     single<AuditService> { AuditServiceImpl(get(), get()) }
 }
 

@@ -31,17 +31,52 @@ Connect all servers to the orchestrator. Your agent only needs 2 tools: `find_to
 
 ## ✨ Features
 
-| | Feature | Description |
-|---|---------|-------------|
-| 🔍 | **Semantic Tool Discovery** | Find tools by natural language query using vector embeddings (Qdrant/pgvector + Ollama/OpenAI) |
-| 🔀 | **Multi-Server Aggregation** | Connect N upstream MCP servers, expose all tools through one endpoint |
-| ⚡ | **Dynamic Execution** | Route tool calls to the correct upstream server automatically |
-| 🏥 | **Health Monitoring** | Periodic ping (30s), auto-reconnect with exponential backoff |
-| 🌐 | **5 Bridge Clients** | Node.js, Python, Bash, PowerShell, CMD — pick your platform |
-| 📁 | **File Proxy** | Transparent file transfer for tools that accept file content |
-| 🔒 | **Tool Management** | Enable/disable tools per session, persistent auto-approve lists |
-| 📊 | **Agent Logging** | Structured execution logs for multi-agent workflows |
-| 🔄 | **Keyword Fallback** | TF-IDF keyword search when semantic match is below threshold |
+### 🔍 Semantic Tool Discovery
+
+Your agent doesn't need to know tool names. Just describe what you need in natural language — the orchestrator uses vector embeddings (pgvector + Ollama/OpenAI) to find the most relevant tools across ALL connected servers. Returns ranked results with confidence scores. Falls back to TF-IDF keyword search when semantic match is below threshold.
+
+```
+find_tools(query="get details of a Jira ticket by key")
+→ [{name: "jira_get_issue", score: 0.94, server: "atlassian"}]
+```
+
+### 🔀 Multi-Server Aggregation
+
+Connect 1 or 100 upstream MCP servers — stdio-based (local processes) or HTTP Streamable (remote). The orchestrator indexes all their tools into a unified searchable registry. Your agent sees one endpoint, not ten separate configs.
+
+### ⚡ Dynamic Execution Routing
+
+Call any tool by name. The orchestrator knows which upstream server owns it, forwards the request, handles timeouts (configurable per-tool), retries on transient failures, and returns the result. No manual routing logic needed.
+
+### 🏥 Health Monitoring & Auto-Reconnect
+
+Every connection is monitored with periodic pings (default 30s). If a server goes down, the orchestrator detects it within one ping cycle, marks it unavailable, and starts exponential backoff reconnection (1s → 2s → 4s → ... → max 15s). When it comes back, tools are re-indexed automatically.
+
+### 🌐 5 Bridge Clients — Pick Your Platform
+
+The orchestrator speaks HTTP Streamable transport. Your IDE speaks stdio. Bridge clients translate between them:
+
+| Client | Runtime | Install | Best For |
+|--------|---------|---------|----------|
+| **Node.js** | TypeScript | `npm ci && npm run build` | Full-featured reference implementation |
+| **Python** | asyncio + httpx | `pip install mcp-bridge` | Python-native environments, Jupyter |
+| **Bash** | curl + jq | Single `.sh` file | Linux/macOS, CI/CD, Docker |
+| **PowerShell** | PS 5.1+ / pwsh 7+ | Single `.ps1` file | Windows native, DevOps |
+| **CMD** | Windows Batch | Single `.cmd` file | Legacy Windows, restricted environments |
+
+All bridges include health check, auto-reconnect, and local utility tools.
+
+### 📁 Transparent File Proxy
+
+Some MCP tools accept file content as base64 parameters — expensive in tokens. The orchestrator's File Proxy detects these parameters, replaces them with file paths, and handles the transfer transparently. Your agent sends a path; the upstream tool receives the content. Saves 100% of token cost for large files.
+
+### 🔒 Session-Based Tool Management
+
+Disable noisy or dangerous tools for the current session without restarting anything. Add trusted tools to a persistent auto-approve list so your IDE stops asking for confirmation. Reset everything with one call when you're done experimenting.
+
+### 📊 Structured Agent Logging
+
+Built for multi-agent pipelines (SM → BA → SA → DEV → QA). Each agent writes structured log entries (ticket, agent name, step, status, message, artifacts) that can be queried later for debugging, auditing, or pipeline orchestration.
 
 ---
 

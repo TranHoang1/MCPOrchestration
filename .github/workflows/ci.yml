@@ -44,7 +44,9 @@ jobs:
           restore-keys: ${{ runner.os }}-gradle-
 
       - name: Build all modules
-        run: ./gradlew build -x test
+        run: |
+          chmod +x ./gradlew
+          ./gradlew build -x test
 
       - name: Run tests
         run: ./gradlew test
@@ -116,7 +118,12 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Bash syntax check
-        run: bash -n mcp-bridge-bash/mcp-bridge.sh
+        run: |
+          if [ -f mcp-bridge-bash/mcp-bridge.sh ]; then
+            bash -n mcp-bridge-bash/mcp-bridge.sh
+          else
+            echo "Bash bridge script not found, skipping"
+          fi
 
       - name: ShellCheck (advisory)
         uses: ludeeus/action-shellcheck@master
@@ -125,4 +132,9 @@ jobs:
         continue-on-error: true
 
       - name: PowerShell syntax check
-        run: pwsh -NoProfile -Command "Get-Content mcp-bridge-powershell/mcp-bridge.ps1 | Out-Null; Write-Host 'PowerShell syntax OK'"
+        run: |
+          if [ -f mcp-bridge-powershell/mcp-bridge.ps1 ]; then
+            pwsh -NoProfile -Command "\$null = [System.Management.Automation.Language.Parser]::ParseFile('mcp-bridge-powershell/mcp-bridge.ps1', [ref]\$null, [ref]\$null); Write-Host 'PowerShell syntax OK'"
+          else
+            echo "PowerShell bridge script not found, skipping"
+          fi

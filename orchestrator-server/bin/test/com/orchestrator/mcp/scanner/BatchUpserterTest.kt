@@ -2,6 +2,7 @@ package com.orchestrator.mcp.scanner
 
 import com.orchestrator.mcp.scanner.model.JiraTicketMetadata
 import com.orchestrator.mcp.sync.TicketCacheRepository
+import com.orchestrator.mcp.sync.TicketGraphRepository
 import com.orchestrator.mcp.sync.model.TicketCache
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.shouldBe
@@ -11,7 +12,8 @@ import kotlinx.datetime.Instant
 class BatchUpserterTest : DescribeSpec({
 
     val repository = mockk<TicketCacheRepository>()
-    val upserter = BatchUpserterImpl(repository)
+    val graphRepository = mockk<TicketGraphRepository>(relaxed = true)
+    val upserter = BatchUpserterImpl(repository, graphRepository)
 
     beforeEach { clearMocks(repository) }
 

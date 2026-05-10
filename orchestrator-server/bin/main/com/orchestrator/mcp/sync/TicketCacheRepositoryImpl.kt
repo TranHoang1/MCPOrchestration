@@ -42,7 +42,10 @@ class TicketCacheRepositoryImpl(
                             setTicketParams(stmt, ticket)
                             stmt.addBatch()
                         }
-                        stmt.executeBatch().sum()
+                        val results = stmt.executeBatch()
+                        // PostgreSQL returns SUCCESS_NO_INFO (-2) for ON CONFLICT upserts.
+                        // Count any non-failure result as success.
+                        results.count { it >= 0 || it == java.sql.Statement.SUCCESS_NO_INFO }
                     }
                     conn.commit()
                     log.debug("Batch upsert completed: {} tickets", count)

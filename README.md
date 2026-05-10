@@ -19,6 +19,8 @@
 
 MCP Orchestrator is a **smart gateway** that sits between your AI agent and the MCP ecosystem. You plug in servers. The orchestrator learns what they can do. Your agent asks questions in plain English — and gets answers from the right tool, on the right server, every time.
 
+**Massive token savings:** Instead of loading 80+ tool definitions into your agent's context (thousands of tokens per request), the orchestrator exposes only 2 tools (`find_tools` + `execute_dynamic_tool`). Your agent discovers what it needs on-demand — paying tokens only for the tools it actually uses, not the entire catalog.
+
 **One config. Unlimited tools. Zero memorization.**
 
 ---

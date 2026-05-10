@@ -383,34 +383,53 @@ Any MCP-compatible client works. Point it to the bridge client with `--url http:
 
 ## 🌐 Multi-Language Bridge Clients
 
-Choose the bridge client that fits your environment. All bridges provide the same functionality:
+Choose the bridge client that fits your environment. All bridges provide the same core functionality: health check (30s ping), auto-reconnect, and local utility tools.
 
-| Bridge | Language | Install | Best For |
-|--------|----------|---------|----------|
-| **Node.js** | TypeScript | `npm ci && npm run build` | Full-featured, reference implementation |
-| **Python** | Python 3.10+ | `pip install mcp-bridge` | Python-native environments |
-| **Bash** | Shell | Single file, no install | Linux/macOS, minimal footprint |
-| **PowerShell** | PS 5.1+ | Single file, no install | Windows native |
-| **CMD** | Batch | Single file, no install | Legacy Windows |
+| Bridge | Auto-Download | Install Method | Best For |
+|--------|:---:|---------|----------|
+| **Node.js** | ✅ `npx` | Zero install — auto-downloads on first run | Recommended for most users |
+| **Python** | ✅ `uvx` | Zero install — auto-downloads on first run | Python-native environments |
+| **Bash** | 📥 one-time | `curl` download (single .sh file) | Linux/macOS, CI/CD, Docker |
+| **PowerShell** | 📥 one-time | `Invoke-WebRequest` download (single .ps1 file) | Windows native, DevOps |
+| **CMD** | 📥 one-time | `curl` download (single .cmd file) | Legacy Windows |
 
-### Node.js Bridge (Recommended)
+---
+
+### Node.js Bridge (Recommended) — via npx
+
+**Zero install.** npx auto-downloads the package on first use:
 
 ```json
 {
-  "command": "node",
-  "args": ["/path/to/mcp-client-bridge/dist/index.js", "--url", "http://localhost:9180"]
+  "command": "npx",
+  "args": ["mcp-orchestrator-bridge", "--url", "http://localhost:9180"]
 }
 ```
 
-Build from source:
+Or install globally for faster startup:
 ```bash
-cd mcp-client-bridge
-npm ci
-npm run build
+npm install -g mcp-orchestrator-bridge
 ```
 
-### Python Bridge
+---
 
+### Python Bridge — via uvx
+
+**Zero install.** uvx auto-downloads from PyPI:
+
+```json
+{
+  "command": "uvx",
+  "args": ["mcp-orchestrator-bridge", "--url", "http://localhost:9180"]
+}
+```
+
+Or install with pip:
+```bash
+pip install mcp-orchestrator-bridge
+```
+
+Then use:
 ```json
 {
   "command": "python",
@@ -418,43 +437,64 @@ npm run build
 }
 ```
 
-Install:
+---
+
+### Bash Bridge — one-time download
+
+Download once (single file, 12KB):
 ```bash
-pip install mcp-bridge
-# or from source:
-cd mcp-bridge-python && pip install -e .
+curl -sL https://github.com/dnguyenminh/MCPOrchestration/releases/latest/download/mcp-bridge.sh \
+  -o ~/.local/bin/mcp-bridge.sh && chmod +x ~/.local/bin/mcp-bridge.sh
 ```
 
-### Bash Bridge
-
+MCP config:
 ```json
 {
   "command": "bash",
-  "args": ["/path/to/mcp-bridge-bash/mcp-bridge.sh", "--url", "http://localhost:9180"]
+  "args": ["~/.local/bin/mcp-bridge.sh", "--url", "http://localhost:9180"]
 }
 ```
 
 Requirements: `curl` + `jq` (pre-installed on most Linux/macOS systems).
 
-### PowerShell Bridge
+---
 
+### PowerShell Bridge — one-time download
+
+Download once (single file, 10KB):
+```powershell
+Invoke-WebRequest -Uri "https://github.com/dnguyenminh/MCPOrchestration/releases/latest/download/mcp-bridge.ps1" `
+  -OutFile "$HOME\mcp-bridge.ps1"
+```
+
+MCP config:
 ```json
 {
   "command": "pwsh",
-  "args": ["-NoProfile", "-File", "/path/to/mcp-bridge-powershell/mcp-bridge.ps1", "-Url", "http://localhost:9180"]
+  "args": ["-NoProfile", "-File", "~/mcp-bridge.ps1", "-Url", "http://localhost:9180"]
 }
 ```
 
-Works with both Windows PowerShell 5.1 and cross-platform PowerShell 7+.
+Works with Windows PowerShell 5.1 and cross-platform PowerShell 7+.
 
-### CMD Bridge (Windows)
+---
 
+### CMD Bridge (Windows) — one-time download
+
+Download once (single file, 8KB):
+```cmd
+curl -sL https://github.com/dnguyenminh/MCPOrchestration/releases/latest/download/mcp-bridge.cmd -o %USERPROFILE%\mcp-bridge.cmd
+```
+
+MCP config:
 ```json
 {
   "command": "cmd",
-  "args": ["/c", "C:\\path\\to\\mcp-bridge-cmd\\mcp-bridge.cmd", "--url", "http://localhost:9180"]
+  "args": ["/c", "%USERPROFILE%\\mcp-bridge.cmd", "--url", "http://localhost:9180"]
 }
 ```
+
+> ⚠️ Requires `jq.exe` on PATH for full functionality. Install: `winget install jqlang.jq`
 
 ---
 

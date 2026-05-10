@@ -36,40 +36,37 @@ MCP Orchestrator is a smart gateway that aggregates multiple upstream MCP server
 
 ### Server Config
 
+**Recommended (Node.js — auto-downloads via npx):**
 ```json
 {
-  "command": "node",
-  "args": [
-    "/path/to/MCPOrchestration/mcp-client-bridge/dist/index.js",
-    "--url",
-    "http://localhost:9180"
-  ]
+  "command": "npx",
+  "args": ["mcp-orchestrator-bridge", "--url", "http://localhost:9180"]
 }
 ```
 
 ### Alternative Configs
 
-**Python:**
+**Python (auto-downloads via uvx):**
 ```json
 {
-  "command": "python",
-  "args": ["-m", "mcp_bridge", "--url", "http://localhost:9180"]
+  "command": "uvx",
+  "args": ["mcp-orchestrator-bridge", "--url", "http://localhost:9180"]
 }
 ```
 
-**PowerShell:**
-```json
-{
-  "command": "pwsh",
-  "args": ["-NoProfile", "-File", "/path/to/mcp-bridge.ps1", "-Url", "http://localhost:9180"]
-}
-```
-
-**Bash:**
+**Bash (download once: `curl -sL .../mcp-bridge.sh -o ~/.local/bin/mcp-bridge.sh`):**
 ```json
 {
   "command": "bash",
-  "args": ["/path/to/mcp-bridge.sh", "--url", "http://localhost:9180"]
+  "args": ["~/.local/bin/mcp-bridge.sh", "--url", "http://localhost:9180"]
+}
+```
+
+**PowerShell (download once: `Invoke-WebRequest .../mcp-bridge.ps1 -OutFile ~/mcp-bridge.ps1`):**
+```json
+{
+  "command": "pwsh",
+  "args": ["-NoProfile", "-File", "~/mcp-bridge.ps1", "-Url", "http://localhost:9180"]
 }
 ```
 

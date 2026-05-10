@@ -1,0 +1,39 @@
+<mxGraphModel adaptiveColors="auto">
+  <root>
+    <mxCell id="0"/>
+    <mxCell id="1" parent="0"/>
+    <mxCell id="title" value="&lt;b&gt;State Diagram — Bridge Health Check&lt;/b&gt;" style="text;html=1;align=center;fontSize=14;" vertex="1" parent="1">
+      <mxGeometry x="200" y="10" width="350" height="30" as="geometry"/>
+    </mxCell>
+    <mxCell id="start" value="" style="ellipse;fillColor=#000000;strokeColor=#000000;" vertex="1" parent="1">
+      <mxGeometry x="60" y="100" width="30" height="30" as="geometry"/>
+    </mxCell>
+    <mxCell id="connected" value="&lt;b&gt;CONNECTED&lt;/b&gt;&#xa;&#xa;entry/ start ping timer&#xa;do/ send ping every interval&#xa;exit/ pause ping timer" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8f5e9;strokeColor=#388e3c;fontSize=11;align=left;spacingLeft=10;" vertex="1" parent="1">
+      <mxGeometry x="170" y="70" width="220" height="100" as="geometry"/>
+    </mxCell>
+    <mxCell id="disconnected" value="&lt;b&gt;DISCONNECTED&lt;/b&gt;&#xa;&#xa;entry/ log state change&#xa;do/ reject tool calls" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fce4ec;strokeColor=#c62828;fontSize=11;align=left;spacingLeft=10;" vertex="1" parent="1">
+      <mxGeometry x="500" y="70" width="220" height="100" as="geometry"/>
+    </mxCell>
+    <mxCell id="reconnecting" value="&lt;b&gt;RECONNECTING&lt;/b&gt;&#xa;&#xa;entry/ calculate backoff&#xa;do/ wait, attempt reconnect&#xa;exit/ reset attempt (if success)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff3e0;strokeColor=#f57c00;fontSize=11;align=left;spacingLeft=10;" vertex="1" parent="1">
+      <mxGeometry x="340" y="280" width="240" height="110" as="geometry"/>
+    </mxCell>
+    <mxCell id="e_start" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;" edge="1" source="start" target="connected" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e_ping_fail" value="ping fail" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;" edge="1" source="connected" target="disconnected" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e_auto_reconnect" value="auto" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;" edge="1" source="disconnected" target="reconnecting" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e_reconnect_success" value="reconnect success" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;" edge="1" source="reconnecting" target="connected" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e_reconnect_fail" value="reconnect fail&#xa;(wait backoff)" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;" edge="1" source="reconnecting" target="reconnecting" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e_ping_ok" value="ping OK" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;" edge="1" source="connected" target="connected" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+  </root>
+</mxGraphModel>

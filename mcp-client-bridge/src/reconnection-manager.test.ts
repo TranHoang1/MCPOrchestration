@@ -17,6 +17,8 @@ describe('ReconnectionManager', () => {
       baseReconnectDelayMs: 10,
       requestTimeoutMs: 30000,
       enableLocalStreamWrite: true,
+      pingIntervalMs: 30000,
+      pingTimeoutMs: 5000,
     };
     mockClient = new HttpStreamableClient(config) as jest.Mocked<HttpStreamableClient>;
   });

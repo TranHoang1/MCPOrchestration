@@ -1,0 +1,42 @@
+<mxGraphModel adaptiveColors="auto">
+  <root>
+    <mxCell id="0"/>
+    <mxCell id="1" parent="0"/>
+    <mxCell id="title" value="&lt;b&gt;Class Diagram — Health Check (Kotlin)&lt;/b&gt;" style="text;html=1;align=center;fontSize=14;" vertex="1" parent="1">
+      <mxGeometry x="200" y="10" width="350" height="30" as="geometry"/>
+    </mxCell>
+    <mxCell id="hcm_class" value="&lt;b&gt;HealthCheckManager&lt;/b&gt;&#xa;&#xa;- config: HealthCheckConfig&#xa;- httpClient: HttpStreamableClient&#xa;- reconnectionManager: ReconnectionManager&#xa;- state: AtomicReference&lt;BridgeState&gt;&#xa;- consecutiveFailures: AtomicInteger&#xa;- pingId: AtomicInteger&#xa;- healthCheckJob: Job?&#xa;&#xa;+ start(): Unit&#xa;+ stop(): Unit&#xa;- sendPing(): Boolean&#xa;- onPingSuccess(): Unit&#xa;- onPingFailure(): Unit&#xa;- healthCheckLoop(): Unit" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff3e0;strokeColor=#f57c00;fontSize=10;align=left;spacingLeft=8;verticalAlign=top;spacingTop=5;" vertex="1" parent="1">
+      <mxGeometry x="40" y="60" width="260" height="280" as="geometry"/>
+    </mxCell>
+    <mxCell id="config_class" value="&lt;b&gt;HealthCheckConfig&lt;/b&gt;&#xa;(data class)&#xa;&#xa;+ pingIntervalMs: Long = 30000&#xa;+ pingTimeoutMs: Long = 5000&#xa;+ baseReconnectDelayMs: Long = 1000&#xa;+ maxReconnectDelayMs: Long = 15000&#xa;+ failureThreshold: Int = 1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f3e5f5;strokeColor=#7b1fa2;fontSize=10;align=left;spacingLeft=8;verticalAlign=top;spacingTop=5;" vertex="1" parent="1">
+      <mxGeometry x="380" y="60" width="260" height="160" as="geometry"/>
+    </mxCell>
+    <mxCell id="state_enum" value="&lt;b&gt;BridgeState&lt;/b&gt;&#xa;(enum class)&#xa;&#xa;DISCONNECTED&#xa;CONNECTING&#xa;CONNECTED&#xa;RECONNECTING" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#e8f5e9;strokeColor=#388e3c;fontSize=10;align=left;spacingLeft=8;verticalAlign=top;spacingTop=5;" vertex="1" parent="1">
+      <mxGeometry x="380" y="260" width="180" height="140" as="geometry"/>
+    </mxCell>
+    <mxCell id="recon_class" value="&lt;b&gt;ReconnectionManager&lt;/b&gt;&#xa;(enhanced)&#xa;&#xa;- config: BridgeConfig&#xa;- client: HttpStreamableClient&#xa;- attempt: Int&#xa;- state: BridgeState&#xa;- onReconnectSuccess: (() -&gt; Unit)?&#xa;&#xa;+ connectWithRetry(): Boolean&#xa;+ reconnectLoop(): Unit&#xa;+ setOnReconnectSuccess(cb): Unit&#xa;- calculateBackoff(n): Long&#xa;- sleep(ms): Unit" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#e1f5fe;strokeColor=#0288d1;fontSize=10;align=left;spacingLeft=8;verticalAlign=top;spacingTop=5;" vertex="1" parent="1">
+      <mxGeometry x="40" y="400" width="260" height="240" as="geometry"/>
+    </mxCell>
+    <mxCell id="http_class" value="&lt;b&gt;HttpStreamableClient&lt;/b&gt;&#xa;&#xa;+ initialize(): Boolean&#xa;+ callTool(name, args): Response&#xa;+ resetSession(): Unit&#xa;+ close(): Unit&#xa;+ isConnected: Boolean" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#e1f5fe;strokeColor=#0288d1;fontSize=10;align=left;spacingLeft=8;verticalAlign=top;spacingTop=5;" vertex="1" parent="1">
+      <mxGeometry x="380" y="440" width="220" height="130" as="geometry"/>
+    </mxCell>
+    <mxCell id="e_hcm_config" value="uses" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=open;endSize=8;dashed=1;" edge="1" source="hcm_class" target="config_class" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e_hcm_state" value="uses" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=open;endSize=8;dashed=1;" edge="1" source="hcm_class" target="state_enum" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e_hcm_recon" value="delegates" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;" edge="1" source="hcm_class" target="recon_class" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e_hcm_http" value="sends ping" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;" edge="1" source="hcm_class" target="http_class" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e_recon_http" value="reconnects" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;" edge="1" source="recon_class" target="http_class" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e_recon_state" value="uses" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=open;endSize=8;dashed=1;" edge="1" source="recon_class" target="state_enum" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+  </root>
+</mxGraphModel>

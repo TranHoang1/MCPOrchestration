@@ -165,7 +165,7 @@ class McpServerFactory(
 
             CallToolResult(content = listOf(TextContent(text = responseJson)))
         } catch (e: McpOrchestratorException) {
-            errorResult(e.errorCode, e.message ?: "Unknown error")
+            errorResult(e.errorCode, e.message)
         }
     }
 
@@ -184,6 +184,11 @@ class McpServerFactory(
             val toolArguments = arguments["arguments"]
                 ?.let { it as? JsonObject }
 
+            // Route hidden/builtin tools directly (they have no upstream server)
+            if (HiddenToolRegistrar.isHiddenTool(toolName)) {
+                return HiddenToolRegistrar.executeHiddenTool(toolName, toolArguments)
+            }
+
             // Route through FileProxyService if this is a proxy-wrapped tool
             val response = if (fileProxyService?.isProxyTool(toolName) == true && toolArguments != null) {
                 fileProxyService.handleProxyCall(toolName, "", toolArguments, "stdio")
@@ -195,7 +200,7 @@ class McpServerFactory(
                 content = response.content.map { TextContent(text = it.text) }
             )
         } catch (e: McpOrchestratorException) {
-            errorResult(e.errorCode, e.message ?: "Unknown error")
+            errorResult(e.errorCode, e.message)
         }
     }
 

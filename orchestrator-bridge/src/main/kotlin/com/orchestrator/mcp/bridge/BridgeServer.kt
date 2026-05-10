@@ -23,6 +23,16 @@ class BridgeServer(private val config: BridgeConfig) {
     private val logger = LoggerFactory.getLogger(BridgeServer::class.java)
     private val httpClient = HttpStreamableClient(config)
     private val reconnectionManager = ReconnectionManager(config, httpClient)
+    private val healthCheckManager = HealthCheckManager(
+        HealthCheckConfig(
+            pingIntervalMs = config.pingIntervalMs,
+            pingTimeoutMs = config.pingTimeoutMs,
+            baseReconnectDelayMs = config.baseReconnectDelayMs,
+            maxReconnectDelayMs = config.maxReconnectDelayMs
+        ),
+        httpClient,
+        reconnectionManager
+    )
     private val promoter = BridgeToolPromoter(httpClient)
     private val localStreamWrite = LocalStreamWriteTool()
     private val localEmbedImages = LocalEmbedImagesTool()
@@ -37,6 +47,7 @@ class BridgeServer(private val config: BridgeConfig) {
 
     suspend fun stop() {
         logger.info("Bridge shutting down...")
+        healthCheckManager.stop()
         httpClient.close()
         scope?.cancel()
     }
@@ -45,6 +56,7 @@ class BridgeServer(private val config: BridgeConfig) {
         val result = reconnectionManager.connectWithRetry()
         if (result) {
             logger.info("Connected to orchestrator successfully")
+            scope?.let { healthCheckManager.start(it) }
         } else {
             logger.warn("Failed initial connection, will retry in background")
             scope?.launch { reconnectionManager.reconnectLoop() }

@@ -12,7 +12,9 @@ data class BridgeConfig(
     val maxReconnectDelayMs: Long = 15_000,
     val baseReconnectDelayMs: Long = 1_000,
     val requestTimeoutMs: Long = 30_000,
-    val enableLocalStreamWrite: Boolean = true
+    val enableLocalStreamWrite: Boolean = true,
+    val pingIntervalMs: Long = 30_000,
+    val pingTimeoutMs: Long = 5_000
 ) {
     companion object {
         private val logger = LoggerFactory.getLogger(BridgeConfig::class.java)
@@ -25,13 +27,17 @@ data class BridgeConfig(
             val url = parseUrl(args)
             val timeout = parseTimeout(args)
             val noReconnect = args.contains("--no-reconnect")
+            val pingInterval = parsePingInterval(args)
+            val pingTimeout = parsePingTimeout(args)
 
-            logger.info("Bridge config: url=$url, timeout=${timeout}ms, reconnect=${!noReconnect}")
+            logger.info("Bridge config: url=$url, timeout=${timeout}ms, reconnect=${!noReconnect}, pingInterval=${pingInterval}ms")
             return BridgeConfig(
                 orchestratorUrl = url,
                 reconnectEnabled = !noReconnect,
                 requestTimeoutMs = timeout,
-                enableLocalStreamWrite = !args.contains("--no-local-write")
+                enableLocalStreamWrite = !args.contains("--no-local-write"),
+                pingIntervalMs = pingInterval,
+                pingTimeoutMs = pingTimeout
             )
         }
 
@@ -49,6 +55,28 @@ data class BridgeConfig(
             }
             return System.getenv("BRIDGE_TIMEOUT")?.toLongOrNull()
                 ?: 30_000
+        }
+
+        private fun parsePingInterval(args: Array<String>): Long {
+            val idx = args.indexOf("--ping-interval")
+            if (idx >= 0 && idx + 1 < args.size) {
+                val v = args[idx + 1].toLongOrNull() ?: return 30_000
+                if (v == 0L || v >= 5000) return v
+            }
+            val env = System.getenv("BRIDGE_PING_INTERVAL")?.toLongOrNull()
+            if (env != null && (env == 0L || env >= 5000)) return env
+            return 30_000
+        }
+
+        private fun parsePingTimeout(args: Array<String>): Long {
+            val idx = args.indexOf("--ping-timeout")
+            if (idx >= 0 && idx + 1 < args.size) {
+                val v = args[idx + 1].toLongOrNull() ?: return 5_000
+                if (v >= 1000) return v
+            }
+            val env = System.getenv("BRIDGE_PING_TIMEOUT")?.toLongOrNull()
+            if (env != null && env >= 1000) return env
+            return 5_000
         }
     }
 }

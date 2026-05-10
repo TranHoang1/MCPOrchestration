@@ -1,0 +1,101 @@
+<mxGraphModel adaptiveColors="auto">
+  <root>
+    <mxCell id="0"/>
+    <mxCell id="1" parent="0"/>
+    <mxCell id="title" value="&lt;b&gt;Sequence — Ping Fail &amp;amp; Reconnect&lt;/b&gt;" style="text;html=1;align=center;fontSize=13;" vertex="1" parent="1">
+      <mxGeometry x="200" y="10" width="300" height="30" as="geometry"/>
+    </mxCell>
+    <mxCell id="ll_ide" value="IDE" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=0;collapsible=0;recursiveResize=0;outlineConnect=0;size=40;fillColor=#f5f5f5;strokeColor=#666666;" vertex="1" parent="1">
+      <mxGeometry x="50" y="50" width="80" height="550" as="geometry"/>
+    </mxCell>
+    <mxCell id="ll_bridge" value="Bridge Client" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=0;collapsible=0;recursiveResize=0;outlineConnect=0;size=40;fillColor=#e1f5fe;strokeColor=#0288d1;" vertex="1" parent="1">
+      <mxGeometry x="220" y="50" width="120" height="550" as="geometry"/>
+    </mxCell>
+    <mxCell id="ll_recon" value="Reconnection&#xa;Manager" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=0;collapsible=0;recursiveResize=0;outlineConnect=0;size=40;fillColor=#fff3e0;strokeColor=#f57c00;" vertex="1" parent="1">
+      <mxGeometry x="420" y="50" width="120" height="550" as="geometry"/>
+    </mxCell>
+    <mxCell id="ll_orch" value="Orchestrator" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=0;collapsible=0;recursiveResize=0;outlineConnect=0;size=40;fillColor=#e8f5e9;strokeColor=#388e3c;" vertex="1" parent="1">
+      <mxGeometry x="620" y="50" width="120" height="550" as="geometry"/>
+    </mxCell>
+    <mxCell id="m1" value="POST /mcp {ping}" style="html=1;endSize=6;startSize=6;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="280" y="130" as="sourcePoint"/>
+        <mxPoint x="680" y="130" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="m2" value="timeout (5s)" style="html=1;endSize=6;startSize=6;dashed=1;strokeColor=#c62828;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="680" y="170" as="sourcePoint"/>
+        <mxPoint x="280" y="170" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="m3" value="State: CONNECTED → DISCONNECTED" style="html=1;endSize=6;startSize=6;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="280" y="210" as="sourcePoint"/>
+        <mxPoint x="480" y="210" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="m4" value="tool call" style="html=1;endSize=6;startSize=6;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="90" y="250" as="sourcePoint"/>
+        <mxPoint x="280" y="250" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="m5" value="error: reconnecting" style="html=1;endSize=6;startSize=6;dashed=1;strokeColor=#c62828;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="280" y="280" as="sourcePoint"/>
+        <mxPoint x="90" y="280" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="m6" value="wait 1s (attempt 0)" style="html=1;endSize=6;startSize=6;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="480" y="320" as="sourcePoint"/>
+        <mxPoint x="480" y="350" as="targetPoint"/>
+        <Array as="points">
+          <mxPoint x="530" y="320"/>
+          <mxPoint x="530" y="350"/>
+        </Array>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="m7" value="initialize()" style="html=1;endSize=6;startSize=6;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="480" y="380" as="sourcePoint"/>
+        <mxPoint x="680" y="380" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="m8" value="fail" style="html=1;endSize=6;startSize=6;dashed=1;strokeColor=#c62828;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="680" y="410" as="sourcePoint"/>
+        <mxPoint x="480" y="410" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="m9" value="wait 2s (attempt 1)" style="html=1;endSize=6;startSize=6;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="480" y="440" as="sourcePoint"/>
+        <mxPoint x="480" y="470" as="targetPoint"/>
+        <Array as="points">
+          <mxPoint x="530" y="440"/>
+          <mxPoint x="530" y="470"/>
+        </Array>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="m10" value="initialize()" style="html=1;endSize=6;startSize=6;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="480" y="490" as="sourcePoint"/>
+        <mxPoint x="680" y="490" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="m11" value="success" style="html=1;endSize=6;startSize=6;dashed=1;strokeColor=#388e3c;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="680" y="520" as="sourcePoint"/>
+        <mxPoint x="480" y="520" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="m12" value="State: RECONNECTING → CONNECTED" style="html=1;endSize=6;startSize=6;strokeColor=#388e3c;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="480" y="550" as="sourcePoint"/>
+        <mxPoint x="280" y="550" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+  </root>
+</mxGraphModel>

@@ -12,17 +12,24 @@ import {
 import { BridgeConfig } from './bridge-config.js';
 import { HttpStreamableClient } from './http-streamable-client.js';
 import { ReconnectionManager } from './reconnection-manager.js';
+import { HealthCheckManager } from './health-check-manager.js';
 import { handleStreamWrite, StreamWriteArgs, setWorkspaceRoot } from './local-stream-write.js';
 import { handleEmbedImages, EmbedImagesArgs } from './local-embed-images.js';
 
 export class BridgeServer {
   private readonly httpClient: HttpStreamableClient;
   private readonly reconnectionManager: ReconnectionManager;
+  private readonly healthCheckManager: HealthCheckManager;
   private server: Server | null = null;
 
   constructor(private readonly config: BridgeConfig) {
     this.httpClient = new HttpStreamableClient(config);
     this.reconnectionManager = new ReconnectionManager(config, this.httpClient);
+    this.healthCheckManager = new HealthCheckManager(
+      { pingIntervalMs: config.pingIntervalMs, pingTimeoutMs: config.pingTimeoutMs },
+      this.httpClient,
+      this.reconnectionManager,
+    );
   }
 
   async start(): Promise<void> {
@@ -32,6 +39,7 @@ export class BridgeServer {
 
   async stop(): Promise<void> {
     console.error('[mcp-bridge] Shutting down...');
+    this.healthCheckManager.stop();
     this.httpClient.close();
     await this.server?.close();
   }
@@ -42,6 +50,8 @@ export class BridgeServer {
       console.error('[mcp-bridge] Failed initial connection, will retry in background');
       this.reconnectionManager.reconnectLoop().catch(() => {});
     }
+    // Always start health check — reports failures even when disconnected
+    this.healthCheckManager.start();
   }
 
   private async startStdioServer(): Promise<void> {
@@ -193,12 +203,13 @@ export class BridgeServer {
         description: 'Write content directly to a file on disk without buffering. ' +
           'Supports absolute and relative paths (relative resolved from workspace root). ' +
           "Modes: 'write' (overwrite/create), 'append' (add to end), 'create' (fail if file exists). " +
-          'Use append mode to build large files incrementally. Content is optional for create mode.',
+          "If file does not exist, it will be created automatically. " +
+          "If file already exists and no content is provided, no changes are made (no-op).",
         inputSchema: {
           type: 'object',
           properties: {
             file_path: { type: 'string', description: 'Path to the output file. Supports absolute or relative path (resolved from workspace root)' },
-            content: { type: 'string', description: "Text content to write. Optional when mode='create' (defaults to empty string)" },
+            content: { type: 'string', description: "Text content to write. Optional — if omitted or empty, creates an empty file (or no-op if file already exists)." },
             mode: { type: 'string', description: "write, append, or create. 'create' fails if file already exists. Default: 'write'" },
             encoding: { type: 'string', description: 'Character encoding (default: utf-8)' },
           },
@@ -208,13 +219,15 @@ export class BridgeServer {
 
       tools.push({
         name: 'embed_images',
-        description: 'Read a markdown file and replace all local image references with inline base64 data URIs. ' +
-          'Supports absolute and relative paths (relative resolved from workspace root). ' +
+        description: 'Read a markdown file and replace all local image references with inline base64 data URIs, ' +
+          'then write the result to output_path (or overwrite the original file if output_path is omitted). ' +
+          'Returns metadata only — no markdown content in response. Pure file I/O, no AI tokens consumed. ' +
           'Use before export_docx to include images in the document.',
         inputSchema: {
           type: 'object',
           properties: {
-            file_path: { type: 'string', description: 'Path to the markdown file. Supports absolute or relative path (resolved from workspace root)' },
+            file_path: { type: 'string', description: 'Path to the source markdown file. Supports absolute or relative path (resolved from workspace root)' },
+            output_path: { type: 'string', description: 'Optional. Path to save the embedded result. If omitted, the original file is overwritten in-place.' },
           },
           required: ['file_path'],
         },
@@ -293,12 +306,8 @@ export class BridgeServer {
   private handleLocalEmbedImages(args: Record<string, unknown>) {
     try {
       const result = handleEmbedImages(args as unknown as EmbedImagesArgs);
-      return { content: [{ type: 'text' as const, text: JSON.stringify({
-        markdown: result.markdown,
-        images_embedded: result.images_embedded,
-        images_failed: result.images_failed,
-        total_size_bytes: result.total_size_bytes,
-      }) }] };
+      // Return metadata only — no markdown content (saves tokens)
+      return { content: [{ type: 'text' as const, text: JSON.stringify(result) }] };
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : String(err);
       return { content: [{ type: 'text' as const, text: `embed_images failed: ${msg}` }], isError: true };

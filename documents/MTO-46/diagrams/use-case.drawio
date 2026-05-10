@@ -1,0 +1,72 @@
+<mxGraphModel adaptiveColors="auto">
+  <root>
+    <mxCell id="0"/>
+    <mxCell id="1" parent="0"/>
+    <mxCell id="title" value="&lt;b&gt;MTO-46: Health Check Use Cases&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;fontSize=14;" vertex="1" parent="1">
+      <mxGeometry x="300" y="10" width="400" height="30" as="geometry"/>
+    </mxCell>
+    <mxCell id="system" value="Bridge Client Health Check System" style="swimlane;startSize=30;fillColor=#e1f5fe;strokeColor=#0288d1;html=1;" vertex="1" parent="1">
+      <mxGeometry x="200" y="60" width="600" height="500" as="geometry"/>
+    </mxCell>
+    <mxCell id="uc1" value="UC-1: Periodic Ping" style="ellipse;whiteSpace=wrap;html=1;fillColor=#fff3e0;strokeColor=#f57c00;" vertex="1" parent="system">
+      <mxGeometry x="60" y="60" width="180" height="70" as="geometry"/>
+    </mxCell>
+    <mxCell id="uc2" value="UC-2: Auto-Reconnect&#xa;(Exponential Backoff)" style="ellipse;whiteSpace=wrap;html=1;fillColor=#fff3e0;strokeColor=#f57c00;" vertex="1" parent="system">
+      <mxGeometry x="60" y="160" width="180" height="70" as="geometry"/>
+    </mxCell>
+    <mxCell id="uc3" value="UC-3: Log State&#xa;Changes" style="ellipse;whiteSpace=wrap;html=1;fillColor=#fff3e0;strokeColor=#f57c00;" vertex="1" parent="system">
+      <mxGeometry x="60" y="260" width="180" height="70" as="geometry"/>
+    </mxCell>
+    <mxCell id="uc4" value="UC-4: Configure&#xa;Ping Interval" style="ellipse;whiteSpace=wrap;html=1;fillColor=#fff3e0;strokeColor=#f57c00;" vertex="1" parent="system">
+      <mxGeometry x="350" y="60" width="180" height="70" as="geometry"/>
+    </mxCell>
+    <mxCell id="uc5" value="UC-5: Handle Tool&#xa;Calls During Reconnect" style="ellipse;whiteSpace=wrap;html=1;fillColor=#fff3e0;strokeColor=#f57c00;" vertex="1" parent="system">
+      <mxGeometry x="350" y="160" width="180" height="70" as="geometry"/>
+    </mxCell>
+    <mxCell id="uc6" value="UC-6: Disable&#xa;Health Check" style="ellipse;whiteSpace=wrap;html=1;fillColor=#fff3e0;strokeColor=#f57c00;" vertex="1" parent="system">
+      <mxGeometry x="350" y="260" width="180" height="70" as="geometry"/>
+    </mxCell>
+    <mxCell id="uc7" value="UC-7: Cross-Client&#xa;Consistency" style="ellipse;whiteSpace=wrap;html=1;fillColor=#fff3e0;strokeColor=#f57c00;" vertex="1" parent="system">
+      <mxGeometry x="200" y="370" width="180" height="70" as="geometry"/>
+    </mxCell>
+    <mxCell id="actor1" value="Developer" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;" vertex="1" parent="1">
+      <mxGeometry x="60" y="200" width="40" height="60" as="geometry"/>
+    </mxCell>
+    <mxCell id="actor2" value="MCP&#xa;Orchestrator" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;" vertex="1" parent="1">
+      <mxGeometry x="900" y="200" width="40" height="60" as="geometry"/>
+    </mxCell>
+    <mxCell id="actor3" value="IDE" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;" vertex="1" parent="1">
+      <mxGeometry x="60" y="380" width="40" height="60" as="geometry"/>
+    </mxCell>
+    <mxCell id="ea1" style="html=1;endArrow=none;" edge="1" source="actor1" target="uc4" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="ea2" style="html=1;endArrow=none;" edge="1" source="actor1" target="uc6" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="ea3" style="html=1;endArrow=none;" edge="1" source="actor1" target="uc3" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="ea4" style="html=1;endArrow=none;" edge="1" source="actor2" target="uc1" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="ea5" style="html=1;endArrow=none;" edge="1" source="actor2" target="uc2" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="ea6" style="html=1;endArrow=none;" edge="1" source="actor3" target="uc5" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="ea7" style="html=1;endArrow=none;" edge="1" source="actor3" target="uc7" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="ext1" value="&lt;i&gt;&amp;lt;&amp;lt;include&amp;gt;&amp;gt;&lt;/i&gt;" style="html=1;dashed=1;endArrow=open;endSize=8;" edge="1" source="uc2" target="uc1" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="ext2" value="&lt;i&gt;&amp;lt;&amp;lt;include&amp;gt;&amp;gt;&lt;/i&gt;" style="html=1;dashed=1;endArrow=open;endSize=8;" edge="1" source="uc2" target="uc3" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="ext3" value="&lt;i&gt;&amp;lt;&amp;lt;extend&amp;gt;&amp;gt;&lt;/i&gt;" style="html=1;dashed=1;endArrow=open;endSize=8;" edge="1" source="uc6" target="uc4" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+  </root>
+</mxGraphModel>

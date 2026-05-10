@@ -23,6 +23,11 @@ object HiddenToolRegistrar {
     /** Tool names that should be hidden from tools/list */
     val hiddenToolNames = setOf("get_drawio_reference", "export_drawio")
 
+    /** Check if a tool is a hidden/builtin tool (no upstream server) */
+    fun isHiddenTool(toolName: String): Boolean {
+        return hiddenToolNames.contains(toolName)
+    }
+
     fun registerHiddenTools(toolRegistry: ToolRegistry) {
         registerDrawioReference(toolRegistry)
         registerDrawioExport(toolRegistry)

@@ -1,7 +1,7 @@
 orchestrator:
   server:
     port: 9180
-    transport: stdio
+    transport: http-streamable
 
   discovery:
     top_k: 5

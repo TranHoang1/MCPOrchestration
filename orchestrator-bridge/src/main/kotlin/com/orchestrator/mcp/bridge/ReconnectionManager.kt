@@ -15,7 +15,6 @@ class ReconnectionManager(
     private val logger = LoggerFactory.getLogger(ReconnectionManager::class.java)
     private var attempt = 0
     var state: BridgeState = BridgeState.DISCONNECTED
-        private set
 
     /**
      * Attempt initial connection with retry.

@@ -9,6 +9,8 @@ export interface BridgeConfig {
   baseReconnectDelayMs: number;
   requestTimeoutMs: number;
   enableLocalStreamWrite: boolean;
+  pingIntervalMs: number;
+  pingTimeoutMs: number;
 }
 
 export const BridgeConfig = {
@@ -24,6 +26,8 @@ export const BridgeConfig = {
       baseReconnectDelayMs: 1_000,
       requestTimeoutMs: parseTimeout(args),
       enableLocalStreamWrite: !args.includes('--no-local-write'),
+      pingIntervalMs: parsePingInterval(args),
+      pingTimeoutMs: parsePingTimeout(args),
     };
   },
 };
@@ -46,4 +50,32 @@ function parseTimeout(args: string[]): number {
     if (!isNaN(val)) return val;
   }
   return 30_000;
+}
+
+function parsePingInterval(args: string[]): number {
+  const idx = args.indexOf('--ping-interval');
+  if (idx >= 0 && idx + 1 < args.length) {
+    const val = parseInt(args[idx + 1], 10);
+    if (!isNaN(val) && (val === 0 || val >= 5000)) return val;
+  }
+  const envVal = process.env.BRIDGE_PING_INTERVAL;
+  if (envVal) {
+    const val = parseInt(envVal, 10);
+    if (!isNaN(val) && (val === 0 || val >= 5000)) return val;
+  }
+  return 30_000;
+}
+
+function parsePingTimeout(args: string[]): number {
+  const idx = args.indexOf('--ping-timeout');
+  if (idx >= 0 && idx + 1 < args.length) {
+    const val = parseInt(args[idx + 1], 10);
+    if (!isNaN(val) && val >= 1000) return val;
+  }
+  const envVal = process.env.BRIDGE_PING_TIMEOUT;
+  if (envVal) {
+    const val = parseInt(envVal, 10);
+    if (!isNaN(val) && val >= 1000) return val;
+  }
+  return 5_000;
 }

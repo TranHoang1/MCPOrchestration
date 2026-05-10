@@ -1,0 +1,42 @@
+<mxGraphModel adaptiveColors="auto">
+  <root>
+    <mxCell id="0"/>
+    <mxCell id="1" parent="0"/>
+    <mxCell id="title" value="&lt;b&gt;Component Diagram — Health Check&lt;/b&gt;" style="text;html=1;align=center;fontSize=14;" vertex="1" parent="1">
+      <mxGeometry x="200" y="10" width="350" height="30" as="geometry"/>
+    </mxCell>
+    <mxCell id="hcm" value="&lt;b&gt;HealthCheckManager&lt;/b&gt;&#xa;&#xa;+ start(): void&#xa;+ stop(): void&#xa;- sendPing(): boolean&#xa;- onPingSuccess(): void&#xa;- onPingFailure(): void" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff3e0;strokeColor=#f57c00;fontSize=10;align=left;spacingLeft=10;verticalAlign=top;spacingTop=5;" vertex="1" parent="1">
+      <mxGeometry x="60" y="60" width="200" height="140" as="geometry"/>
+    </mxCell>
+    <mxCell id="ps" value="&lt;b&gt;PingScheduler&lt;/b&gt;&#xa;&#xa;+ schedule(interval): void&#xa;+ cancel(): void&#xa;- onTick(): void" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#e1f5fe;strokeColor=#0288d1;fontSize=10;align=left;spacingLeft=10;verticalAlign=top;spacingTop=5;" vertex="1" parent="1">
+      <mxGeometry x="60" y="260" width="200" height="110" as="geometry"/>
+    </mxCell>
+    <mxCell id="sm" value="&lt;b&gt;StateManager&lt;/b&gt;&#xa;&#xa;+ getState(): BridgeState&#xa;+ transition(new, reason): void&#xa;- logTransition(): void" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#e1f5fe;strokeColor=#0288d1;fontSize=10;align=left;spacingLeft=10;verticalAlign=top;spacingTop=5;" vertex="1" parent="1">
+      <mxGeometry x="320" y="260" width="200" height="110" as="geometry"/>
+    </mxCell>
+    <mxCell id="rm" value="&lt;b&gt;ReconnectionManager&lt;/b&gt;&#xa;(enhanced)&#xa;&#xa;+ connectWithRetry(): boolean&#xa;+ reconnectLoop(): void&#xa;+ onHealthCheckFail(): void&#xa;- calculateBackoff(n): long" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#e1f5fe;strokeColor=#0288d1;fontSize=10;align=left;spacingLeft=10;verticalAlign=top;spacingTop=5;" vertex="1" parent="1">
+      <mxGeometry x="580" y="260" width="210" height="130" as="geometry"/>
+    </mxCell>
+    <mxCell id="hsc" value="&lt;b&gt;HealthCheckConfig&lt;/b&gt;&#xa;&#xa;+ pingIntervalMs: long&#xa;+ pingTimeoutMs: long&#xa;+ baseReconnectDelayMs: long&#xa;+ maxReconnectDelayMs: long&#xa;+ failureThreshold: int" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f3e5f5;strokeColor=#7b1fa2;fontSize=10;align=left;spacingLeft=10;verticalAlign=top;spacingTop=5;" vertex="1" parent="1">
+      <mxGeometry x="350" y="60" width="200" height="140" as="geometry"/>
+    </mxCell>
+    <mxCell id="bs" value="&lt;b&gt;BridgeState&lt;/b&gt;&#xa;(enum)&#xa;&#xa;CONNECTED&#xa;DISCONNECTED&#xa;RECONNECTING" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f3e5f5;strokeColor=#7b1fa2;fontSize=10;align=left;spacingLeft=10;verticalAlign=top;spacingTop=5;" vertex="1" parent="1">
+      <mxGeometry x="620" y="60" width="150" height="130" as="geometry"/>
+    </mxCell>
+    <mxCell id="e1" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;" edge="1" source="hcm" target="ps" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e2" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;" edge="1" source="hcm" target="sm" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e3" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;" edge="1" source="hcm" target="rm" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e4" value="uses" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=open;endSize=8;dashed=1;" edge="1" source="hcm" target="hsc" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e5" value="uses" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=open;endSize=8;dashed=1;" edge="1" source="sm" target="bs" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+  </root>
+</mxGraphModel>

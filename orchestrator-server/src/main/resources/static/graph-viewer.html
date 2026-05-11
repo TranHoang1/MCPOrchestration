@@ -296,6 +296,7 @@
     var detailsPinned = false;
 
     function init() {
+        if (!checkWebGLSupport()) return;
         graph = ForceGraph3D({ rendererConfig: { preserveDrawingBuffer: true } })(document.getElementById('graph-container'))
             .backgroundColor('#0d1117')
             .nodeColor(function(n) { return n.color; })
@@ -335,6 +336,22 @@
     function showOnboardingIfFirstVisit() {
         if (localStorage.getItem('graph-onboarding-dismissed')) return;
         document.getElementById('onboarding').classList.remove('hidden');
+    }
+
+    function checkWebGLSupport() {
+        try {
+            var canvas = document.createElement('canvas');
+            var gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+            if (!gl) {
+                document.getElementById('graph-container').innerHTML =
+                    '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--muted);text-align:center;padding:32px;">' +
+                    '<div><h2 style="color:var(--accent);">WebGL Not Available</h2>' +
+                    '<p>Your browser or device does not support WebGL, which is required for 3D graph rendering.</p>' +
+                    '<p style="margin-top:12px;">Please try:<br>• Using a modern desktop browser (Chrome, Firefox, Edge)<br>• Enabling hardware acceleration in browser settings</p></div></div>';
+                return false;
+            }
+            return true;
+        } catch (e) { return true; }
     }
 
     window.dismissOnboarding = function() {
@@ -392,6 +409,8 @@
     function getEdgeDash(link) { return getEdgeStyle(link).dash; }
 
     function createNodeLabel(node) {
+        // MTO-93: Skip labels on mobile for performance
+        if (window.innerWidth < 768) return null;
         var isEpic = node.type === 'Epic';
         var text = node.id;
         if (isEpic && node.label) {

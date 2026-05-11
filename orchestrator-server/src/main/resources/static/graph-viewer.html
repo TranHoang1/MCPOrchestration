@@ -173,6 +173,7 @@
     </select>
     <input id="search" placeholder="Search ticket...">
     <button id="filter-toggle" onclick="toggleFilter()">⚙ Filter</button>
+    <button onclick="exportPNG()" style="padding:6px 12px;border-radius:6px;border:1px solid var(--border);background:var(--surface);color:var(--text);font-size:0.85rem;cursor:pointer;">📷 Export</button>
 </div>
 <div id="filter-panel">
     <div class="filter-group">
@@ -215,7 +216,7 @@
     var detailsPinned = false;
 
     function init() {
-        graph = ForceGraph3D()(document.getElementById('graph-container'))
+        graph = ForceGraph3D({ rendererConfig: { preserveDrawingBuffer: true } })(document.getElementById('graph-container'))
             .backgroundColor('#0d1117')
             .nodeColor(function(n) { return n.color; })
             .nodeVal(function(n) { return n.size; })
@@ -614,6 +615,64 @@
         var worldX = minX + ((x - pad) / (w - 2 * pad)) * rangeX;
         var worldZ = minZ + ((y - pad) / (h - 2 * pad)) * rangeZ;
         graph.cameraPosition({ x: worldX, y: 0, z: worldZ + 200 }, { x: worldX, y: 0, z: worldZ }, 1000);
+    }
+
+    // ─── Export PNG (MTO-88) ───────────────────────────────────────────
+    window.exportPNG = function() {
+        if (!graph) return;
+        var renderer = graph.renderer();
+        // Force render one frame to ensure canvas is up-to-date
+        renderer.render(graph.scene(), graph.camera());
+        var dataUrl = renderer.domElement.toDataURL('image/png');
+
+        // Create composite canvas with legend overlay
+        var img = new Image();
+        img.onload = function() {
+            var canvas = document.createElement('canvas');
+            canvas.width = img.width;
+            canvas.height = img.height;
+            var ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0);
+
+            // Draw legend overlay
+            drawLegendOnCanvas(ctx, canvas.height);
+
+            // Download
+            var project = document.getElementById('project-select').value || 'graph';
+            var date = new Date().toISOString().slice(0, 10);
+            var filename = 'graph-' + project + '-' + date + '.png';
+            var link = document.createElement('a');
+            link.download = filename;
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        };
+        img.src = dataUrl;
+    };
+
+    function drawLegendOnCanvas(ctx, canvasHeight) {
+        var legendEl = document.getElementById('legend');
+        if (!legendEl) return;
+        var items = legendEl.querySelectorAll('.item');
+        if (items.length === 0) return;
+
+        var x = 16, y = canvasHeight - 20 - items.length * 18;
+        ctx.fillStyle = 'rgba(22,27,34,0.85)';
+        ctx.fillRect(x - 8, y - 8, 140, items.length * 18 + 16);
+        ctx.font = '12px Arial, sans-serif';
+
+        items.forEach(function(item) {
+            var dot = item.querySelector('.dot');
+            var text = item.textContent.trim();
+            if (dot) {
+                ctx.fillStyle = dot.style.background || '#888';
+                ctx.beginPath();
+                ctx.arc(x + 6, y + 6, 5, 0, Math.PI * 2);
+                ctx.fill();
+            }
+            ctx.fillStyle = '#c9d1d9';
+            ctx.fillText(text, x + 18, y + 10);
+            y += 18;
+        });
     }
 
     document.addEventListener('DOMContentLoaded', init);

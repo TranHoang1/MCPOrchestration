@@ -160,6 +160,38 @@
             font-size: 0.7rem;
             cursor: pointer;
         }
+        #onboarding {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(13,17,23,0.9);
+            z-index: 200;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        #onboarding.hidden { display: none; }
+        .onboarding-content {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 32px;
+            max-width: 400px;
+            text-align: center;
+        }
+        .onboarding-content h2 { margin-bottom: 8px; color: var(--accent); }
+        .onboarding-content p { color: var(--muted); margin-bottom: 16px; }
+        .onboarding-tips { text-align: left; margin-bottom: 20px; }
+        .onboarding-tips .tip { margin-bottom: 8px; font-size: 0.85rem; }
+        .onboarding-content button {
+            padding: 8px 24px;
+            border-radius: 6px;
+            border: none;
+            background: var(--accent);
+            color: #000;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
     </style>
 </head>
 <body>
@@ -197,6 +229,20 @@
     </div>
 </div>
 <div id="graph-container"></div>
+<div id="onboarding" class="hidden">
+    <div class="onboarding-content">
+        <h2>🎯 Graph Viewer</h2>
+        <p>Visualize your Jira project as an interactive 3D graph.</p>
+        <div class="onboarding-tips">
+            <div class="tip">🖱️ <strong>Click</strong> a node to see ticket details</div>
+            <div class="tip">🔄 <strong>Left-drag</strong> to rotate the graph</div>
+            <div class="tip">🔍 <strong>Scroll</strong> to zoom in/out</div>
+            <div class="tip">✋ <strong>Right-drag</strong> to pan</div>
+            <div class="tip">⚙️ Use <strong>Filter</strong> to show/hide by status or type</div>
+        </div>
+        <button onclick="dismissOnboarding()">Got it!</button>
+    </div>
+</div>
 <div id="details-panel" class="hidden"></div>
 <div id="legend"></div>
 <div id="minimap"><canvas id="minimap-canvas" width="180" height="140"></canvas></div>
@@ -239,7 +285,18 @@
         bindControls();
         loadProjects();
         initMinimap();
+        showOnboardingIfFirstVisit();
     }
+
+    function showOnboardingIfFirstVisit() {
+        if (localStorage.getItem('graph-onboarding-dismissed')) return;
+        document.getElementById('onboarding').classList.remove('hidden');
+    }
+
+    window.dismissOnboarding = function() {
+        document.getElementById('onboarding').classList.add('hidden');
+        localStorage.setItem('graph-onboarding-dismissed', 'true');
+    };
 
     function loadProjects() {
         fetch('/sync/projects')

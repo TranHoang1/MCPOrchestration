@@ -230,16 +230,16 @@
     <button onclick="this.parentElement.style.display='none'">✕ Dismiss</button>
 </div>
 <div id="controls">
-    <input id="project-select" list="project-list" placeholder="Type project key..." autocomplete="off">
+    <input id="project-select" list="project-list" placeholder="Type project key..." autocomplete="off" aria-label="Project key">
     <datalist id="project-list"></datalist>
-    <select id="view-select">
+    <select id="view-select" aria-label="Graph view mode">
         <option value="hierarchy">Hierarchy</option>
         <option value="dependency">Dependency</option>
         <option value="team">Team</option>
     </select>
-    <input id="search" placeholder="Search ticket...">
-    <button id="filter-toggle" onclick="toggleFilter()">⚙ Filter</button>
-    <button onclick="exportPNG()" style="padding:6px 12px;border-radius:6px;border:1px solid var(--border);background:var(--surface);color:var(--text);font-size:0.85rem;cursor:pointer;">📷 Export</button>
+    <input id="search" placeholder="Search ticket..." aria-label="Search tickets">
+    <button id="filter-toggle" onclick="toggleFilter()" aria-label="Toggle filters">⚙ Filter</button>
+    <button onclick="exportPNG()" style="padding:6px 12px;border-radius:6px;border:1px solid var(--border);background:var(--surface);color:var(--text);font-size:0.85rem;cursor:pointer;" aria-label="Export graph as PNG">📷 Export</button>
 </div>
 <div id="filter-panel">
     <div class="filter-group">
@@ -484,14 +484,16 @@
         if (!project) return;
 
         localStorage.setItem('graph-project', project);
+        showLoading(true);
 
         fetch('/sync/graph/' + project + '?view=' + view)
-            .then(function(r) { if (r.ok) return r.json(); throw new Error('Failed'); })
+            .then(function(r) { if (r.ok) return r.json(); throw new Error('HTTP ' + r.status); })
             .then(function(data) {
+                showLoading(false);
+                hideError();
                 graphData = data;
                 var links = data.edges.map(function(e) { return Object.assign({}, e); });
                 graph.graphData({ nodes: data.nodes, links: links });
-                // MTO-57: Cluster nodes by epic/parent - increase link distance for cross-group
                 graph.d3Force('link').distance(function(link) {
                     var src = link.source;
                     var tgt = link.target;
@@ -504,7 +506,42 @@
                 computeIsolatedNodes(data);
                 applyFilters();
             })
-            .catch(function(err) { console.error('Graph load failed:', err); });
+            .catch(function(err) {
+                showLoading(false);
+                showError('Failed to load graph: ' + err.message + '. Click to retry.', loadGraph);
+            });
+    }
+
+    // MTO-69: Loading state
+    function showLoading(show) {
+        var el = document.getElementById('loading-indicator');
+        if (!el) {
+            el = document.createElement('div');
+            el.id = 'loading-indicator';
+            el.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:150;color:var(--accent);font-size:1.2rem;';
+            el.textContent = '⏳ Loading graph...';
+            document.body.appendChild(el);
+        }
+        el.style.display = show ? 'block' : 'none';
+    }
+
+    // MTO-70: Error state with retry
+    function showError(msg, retryFn) {
+        var el = document.getElementById('error-banner');
+        if (!el) {
+            el = document.createElement('div');
+            el.id = 'error-banner';
+            el.style.cssText = 'position:fixed;top:60px;left:50%;transform:translateX(-50%);background:#f8514922;border:1px solid #f85149;color:#f85149;padding:10px 20px;border-radius:8px;z-index:150;cursor:pointer;font-size:0.85rem;';
+            document.body.appendChild(el);
+        }
+        el.textContent = msg;
+        el.style.display = 'block';
+        el.onclick = function() { hideError(); if (retryFn) retryFn(); };
+    }
+
+    function hideError() {
+        var el = document.getElementById('error-banner');
+        if (el) el.style.display = 'none';
     }
 
     function showDetails(node) {

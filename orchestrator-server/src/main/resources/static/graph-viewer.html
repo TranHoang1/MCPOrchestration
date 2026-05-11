@@ -220,6 +220,7 @@
             #minimap-toggle { display: none; }
             #legend { font-size: 0.7rem; padding: 8px; }
             #details-panel { width: 240px; top: 100px; }
+            #graph-container { touch-action: none; }
         }
     </style>
 </head>
@@ -313,7 +314,17 @@
             .d3AlphaDecay(0.02)
             .d3VelocityDecay(0.3)
             .warmupTicks(100)
-            .cooldownTicks(200);
+            .cooldownTicks(200)
+            .enableNavigationControls(true);
+
+        // Enable smooth damping for touch interactions
+        var controls = graph.controls();
+        if (controls) {
+            controls.enableDamping = true;
+            controls.dampingFactor = 0.1;
+            controls.rotateSpeed = 0.8;
+            controls.zoomSpeed = 1.2;
+        }
 
         bindControls();
         loadProjects();

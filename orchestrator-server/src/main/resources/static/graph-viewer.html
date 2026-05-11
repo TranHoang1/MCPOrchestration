@@ -96,6 +96,17 @@
         #details-panel h3 { margin-bottom: 8px; color: var(--accent); }
         #details-panel .field { margin-bottom: 6px; font-size: 0.85rem; }
         #details-panel .field .label { color: var(--muted); }
+        #details-panel .pin-btn {
+            float: right;
+            background: none;
+            border: 1px solid var(--border);
+            color: var(--muted);
+            border-radius: 4px;
+            padding: 2px 6px;
+            cursor: pointer;
+            font-size: 0.75rem;
+        }
+        #details-panel .pin-btn.pinned { color: var(--accent); border-color: var(--accent); }
         #legend {
             position: fixed;
             bottom: 16px;
@@ -201,6 +212,7 @@
     var activeFilters = { status: [], priority: [], type: [] };
     var hideIsolated = false;
     var isolatedNodeIds = new Set();
+    var detailsPinned = false;
 
     function init() {
         graph = ForceGraph3D()(document.getElementById('graph-container'))
@@ -217,6 +229,7 @@
             .linkDirectionalArrowRelPos(1)
             .onNodeClick(function(n) { showDetails(n); })
             .onNodeHover(function(n) { highlightConnected(n); })
+            .onBackgroundClick(function() { hideDetailsIfUnpinned(); })
             .d3AlphaDecay(0.02)
             .d3VelocityDecay(0.3)
             .warmupTicks(100)
@@ -335,13 +348,31 @@
     function showDetails(node) {
         var panel = document.getElementById('details-panel');
         panel.classList.remove('hidden');
+        var pinClass = detailsPinned ? 'pin-btn pinned' : 'pin-btn';
+        var pinLabel = detailsPinned ? '📌 Unpin' : '📌 Pin';
         panel.innerHTML =
+            '<button class="' + pinClass + '" onclick="togglePin()">' + pinLabel + '</button>' +
             '<h3>' + node.id + '</h3>' +
             '<div class="field"><span class="label">Summary:</span> ' + node.label + '</div>' +
             '<div class="field"><span class="label">Type:</span> ' + node.type + '</div>' +
             '<div class="field"><span class="label">Status:</span> ' + node.status + '</div>' +
             '<div class="field"><span class="label">Priority:</span> ' + (node.priority || 'N/A') + '</div>' +
             '<div class="field"><span class="label">Group:</span> ' + node.group + '</div>';
+    }
+
+    window.togglePin = function() {
+        detailsPinned = !detailsPinned;
+        var btn = document.querySelector('#details-panel .pin-btn');
+        if (btn) {
+            btn.className = detailsPinned ? 'pin-btn pinned' : 'pin-btn';
+            btn.textContent = detailsPinned ? '📌 Unpin' : '📌 Pin';
+        }
+    };
+
+    function hideDetailsIfUnpinned() {
+        if (!detailsPinned) {
+            document.getElementById('details-panel').classList.add('hidden');
+        }
     }
 
     function highlightConnected(node) {

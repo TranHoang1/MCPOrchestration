@@ -168,6 +168,18 @@ class TicketCacheRepositoryImpl(
         )
     }
 
+    override suspend fun listProjects(): List<String> = withContext(Dispatchers.IO) {
+        dataSource.connection.use { conn ->
+            val sql = "SELECT DISTINCT project_key FROM jira_ticket_cache ORDER BY project_key"
+            conn.prepareStatement(sql).use { stmt ->
+                val rs = stmt.executeQuery()
+                val projects = mutableListOf<String>()
+                while (rs.next()) projects.add(rs.getString("project_key"))
+                projects
+            }
+        }
+    }
+
     companion object {
         private val UPSERT_SQL = """
             INSERT INTO jira_ticket_cache 

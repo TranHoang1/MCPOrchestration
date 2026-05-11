@@ -89,7 +89,9 @@
 </head>
 <body>
 <div id="controls">
-    <input id="project-select" placeholder="Project key (e.g. MTO)" value="MTO">
+    <select id="project-select">
+        <option value="">Loading projects...</option>
+    </select>
     <select id="view-select">
         <option value="hierarchy">Hierarchy</option>
         <option value="dependency">Dependency</option>
@@ -131,7 +133,36 @@
             .cooldownTicks(200);
 
         bindControls();
-        loadGraph();
+        loadProjects();
+    }
+
+    function loadProjects() {
+        fetch('/sync/projects')
+            .then(function(r) { if (r.ok) return r.json(); throw new Error('Failed'); })
+            .then(function(projects) {
+                var select = document.getElementById('project-select');
+                select.innerHTML = '';
+                projects.forEach(function(p) {
+                    var opt = document.createElement('option');
+                    opt.value = p;
+                    opt.textContent = p;
+                    select.appendChild(opt);
+                });
+                // Restore last selected or default to first
+                var saved = localStorage.getItem('graph-project');
+                if (saved && projects.indexOf(saved) !== -1) {
+                    select.value = saved;
+                } else if (projects.length > 0) {
+                    select.value = projects[0];
+                }
+                loadGraph();
+            })
+            .catch(function(err) {
+                console.error('Failed to load projects:', err);
+                var select = document.getElementById('project-select');
+                select.innerHTML = '<option value="MTO">MTO</option>';
+                loadGraph();
+            });
     }
 
     // ─── Edge Styling (MTO-82) ─────────────────────────────────────────
@@ -186,9 +217,11 @@
     }
 
     function loadGraph() {
-        var project = document.getElementById('project-select').value.trim();
+        var project = document.getElementById('project-select').value;
         var view = document.getElementById('view-select').value;
         if (!project) return;
+
+        localStorage.setItem('graph-project', project);
 
         fetch('/sync/graph/' + project + '?view=' + view)
             .then(function(r) { if (r.ok) return r.json(); throw new Error('Failed'); })

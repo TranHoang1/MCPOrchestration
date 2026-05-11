@@ -125,6 +125,23 @@ suspend fun CoroutineScope.startHttpStreamableServer(
         httpLogger.info("Graph API registered: /sync/graph/*")
     }
 
+    // Projects list API (MTO-83)
+    val ticketCacheRepo = org.koin.java.KoinJavaComponent.getKoin()
+        .getOrNull<com.orchestrator.mcp.sync.TicketCacheRepository>()
+    if (ticketCacheRepo != null) {
+        server.createContext("/sync/projects") { exchange ->
+            try {
+                handleProjectsRequest(exchange, ticketCacheRepo)
+            } catch (e: Exception) {
+                val err = """{"error":"${e.message?.replace("\"", "'")}"}"""
+                exchange.responseHeaders.add("Content-Type", "application/json")
+                exchange.sendResponseHeaders(500, err.length.toLong())
+                exchange.responseBody.use { it.write(err.toByteArray()) }
+            }
+        }
+        httpLogger.info("Projects API registered: /sync/projects")
+    }
+
     // Admin API endpoints (MTO-39: User Management)
     val adminRoutes = org.koin.java.KoinJavaComponent.getKoin()
         .getOrNull<com.orchestrator.mcp.usermanagement.routes.AdminRoutes>()
@@ -187,6 +204,23 @@ private fun handleMcpRequest(
     exchange.responseHeaders.add(
         "Content-Type", "application/json"
     )
+    exchange.sendResponseHeaders(200, bytes.size.toLong())
+    exchange.responseBody.use { it.write(bytes) }
+}
+
+private fun handleProjectsRequest(
+    exchange: HttpExchange,
+    repo: com.orchestrator.mcp.sync.TicketCacheRepository
+) {
+    if (exchange.requestMethod != "GET") {
+        exchange.sendResponseHeaders(405, -1)
+        return
+    }
+    val projects = kotlinx.coroutines.runBlocking { repo.listProjects() }
+    val body = kotlinx.serialization.json.Json.encodeToString(projects)
+    exchange.responseHeaders.add("Content-Type", "application/json")
+    exchange.responseHeaders.add("Access-Control-Allow-Origin", "*")
+    val bytes = body.toByteArray()
     exchange.sendResponseHeaders(200, bytes.size.toLong())
     exchange.responseBody.use { it.write(bytes) }
 }

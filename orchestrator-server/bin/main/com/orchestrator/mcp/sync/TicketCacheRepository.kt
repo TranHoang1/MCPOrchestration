@@ -19,4 +19,6 @@ interface TicketCacheRepository {
     suspend fun markIngested(ticketKey: String)
 
     suspend fun findByHash(projectKey: String, hash: String): TicketCache?
+
+    suspend fun listProjects(): List<String>
 }

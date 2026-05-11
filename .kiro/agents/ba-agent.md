@@ -168,7 +168,8 @@ When given a Jira ticket key (e.g., PROJ-123), follow these steps strictly in or
 
 1. Create the BRD at `documents/{TICKET-KEY}/BRD.md` using the template from Step 1.
 2. Replace ALL placeholders `{...}` with actual data from the Jira tickets.
-3. Follow the template structure exactly — include all sections:
+3. **⛔ Date field MUST use today's actual date** — get from Jira ticket `created` field or system context. NEVER use a hardcoded or assumed date. Format: `YYYY-MM-DD`. If unsure, use the ticket's `created` date from Jira API response.
+4. Follow the template structure exactly — include all sections:
    - Document Information, Author Tracking, Revision History, Sign-Off
    - Introduction (Scope, Out of Scope, Preliminary Requirements)
    - Business Requirements (Process Map, User Stories List, Detailed Stories with Business Flow)
@@ -177,7 +178,7 @@ When given a Jira ticket key (e.g., PROJ-123), follow these steps strictly in or
    - Non-Functional Requirements
    - Related Tickets
    - Appendix (Glossary, Reference Documents)
-4. Use `stream_write_file` (MCP tool) for creating large documents: first call with `mode="write"` to create the file, then subsequent calls with `mode="append"` for each section. This writes directly to disk without buffering — critical for large BRD/FSD files. Fallback to `fsWrite`/`fsAppend` only if `stream_write_file` is unavailable.
+5. Use `stream_write_file` (MCP tool) for creating large documents: first call with `mode="write"` to create the file, then subsequent calls with `mode="append"` for each section. This writes directly to disk without buffering — critical for large BRD/FSD files. Fallback to `fsWrite`/`fsAppend` only if `stream_write_file` is unavailable.
 
 ### Step 7: Generate Diagrams
 

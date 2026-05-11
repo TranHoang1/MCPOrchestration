@@ -1,0 +1,70 @@
+<mxGraphModel adaptiveColors="auto">
+  <root>
+    <mxCell id="0"/>
+    <mxCell id="1" parent="0"/>
+    <mxCell id="title" value="&lt;b&gt;Architecture — MTO-81 Node Label System&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;fontSize=13;fontStyle=1;" vertex="1" parent="1">
+      <mxGeometry x="200" y="10" width="400" height="30" as="geometry"/>
+    </mxCell>
+    <!-- Browser container -->
+    <mxCell id="browser" value="Browser (graph-viewer.html)" style="swimlane;startSize=24;fillColor=#e1f5fe;strokeColor=#0288d1;html=1;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="40" y="60" width="720" height="340" as="geometry"/>
+    </mxCell>
+    <!-- App Init -->
+    <mxCell id="appinit" value="&lt;b&gt;App Init&lt;/b&gt;&#xa;loadGraph()&#xa;bindControls()" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=11;" vertex="1" parent="browser">
+      <mxGeometry x="20" y="40" width="140" height="70" as="geometry"/>
+    </mxCell>
+    <!-- 3d-force-graph -->
+    <mxCell id="forcegraph" value="&lt;b&gt;3d-force-graph&lt;/b&gt;&#xa;ForceGraph3D()&#xa;.nodeThreeObjectExtend&#xa;.nodeThreeObject" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8f5e9;strokeColor=#388e3c;fontSize=11;" vertex="1" parent="browser">
+      <mxGeometry x="20" y="140" width="180" height="80" as="geometry"/>
+    </mxCell>
+    <!-- LabelManager -->
+    <mxCell id="labelmgr" value="&lt;b&gt;LabelManager&lt;/b&gt; (NEW)&#xa;createLabel(node)&#xa;updateVisibility(cam)&#xa;dispose()" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff3e0;strokeColor=#f57c00;fontSize=11;fontStyle=0;" vertex="1" parent="browser">
+      <mxGeometry x="270" y="40" width="180" height="80" as="geometry"/>
+    </mxCell>
+    <!-- LabelConfig -->
+    <mxCell id="labelcfg" value="&lt;b&gt;LABEL_CONFIG&lt;/b&gt;&#xa;MAX_VISIBLE: 50&#xa;THRESHOLDS&#xa;FADE_SPEED" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f3e5f5;strokeColor=#7b1fa2;fontSize=11;" vertex="1" parent="browser">
+      <mxGeometry x="520" y="40" width="160" height="80" as="geometry"/>
+    </mxCell>
+    <!-- Three.js Scene -->
+    <mxCell id="scene" value="&lt;b&gt;Three.js Scene&lt;/b&gt;&#xa;Nodes (Sphere + Sprite)&#xa;Edges&#xa;Camera" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1f5fe;strokeColor=#0288d1;fontSize=11;" vertex="1" parent="browser">
+      <mxGeometry x="270" y="160" width="180" height="80" as="geometry"/>
+    </mxCell>
+    <!-- Canvas API -->
+    <mxCell id="canvas" value="&lt;b&gt;Canvas 2D API&lt;/b&gt;&#xa;Text rendering&#xa;256x128 textures" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=11;" vertex="1" parent="browser">
+      <mxGeometry x="520" y="160" width="160" height="80" as="geometry"/>
+    </mxCell>
+    <!-- WebGL -->
+    <mxCell id="webgl" value="&lt;b&gt;WebGL Renderer&lt;/b&gt;&#xa;GPU rendering&#xa;Sprite billboarding" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8f5e9;strokeColor=#388e3c;fontSize=11;" vertex="1" parent="browser">
+      <mxGeometry x="270" y="270" width="180" height="50" as="geometry"/>
+    </mxCell>
+    <!-- Edges -->
+    <mxCell id="ea1" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;" edge="1" source="appinit" target="forcegraph" parent="browser">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="ea2" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;" edge="1" source="appinit" target="labelmgr" parent="browser">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="ea3" value="reads" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=open;endSize=6;dashed=1;fontSize=10;" edge="1" source="labelmgr" target="labelcfg" parent="browser">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="ea4" value="creates sprites" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;fontSize=10;" edge="1" source="labelmgr" target="scene" parent="browser">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="ea5" value="creates textures" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;fontSize=10;" edge="1" source="labelmgr" target="canvas" parent="browser">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="ea6" value="callback" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;fontSize=10;" edge="1" source="forcegraph" target="labelmgr" parent="browser">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="ea7" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;" edge="1" source="scene" target="webgl" parent="browser">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <!-- Backend (external) -->
+    <mxCell id="backend" value="&lt;b&gt;Graph API&lt;/b&gt;&#xa;GET /sync/graph/{project}" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8f5e9;strokeColor=#388e3c;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="320" y="440" width="200" height="60" as="geometry"/>
+    </mxCell>
+    <mxCell id="eb1" value="fetch JSON" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;fontSize=10;" edge="1" source="browser" target="backend" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+  </root>
+</mxGraphModel>

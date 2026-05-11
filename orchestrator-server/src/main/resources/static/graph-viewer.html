@@ -4,7 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MCP Orchestrator — 3D Graph Viewer</title>
-    <script src="https://unpkg.com/3d-force-graph@1"></script>
+    <script src="https://unpkg.com/three@0.149.0/build/three.min.js"></script>
+    <script src="https://unpkg.com/three-spritetext@1.8.2/dist/three-spritetext.min.js"></script>
+    <script src="https://unpkg.com/3d-force-graph@1.73.3/dist/3d-force-graph.min.js"></script>
     <style>
         :root {
             --bg: #0d1117;
@@ -104,22 +106,25 @@
 (function() {
     'use strict';
 
-    let graph = null;
-    let graphData = { nodes: [], edges: [] };
+    var LABEL_MAX_CHARS = 30;
+    var graph = null;
+    var graphData = { nodes: [], edges: [] };
 
     function init() {
         graph = ForceGraph3D()(document.getElementById('graph-container'))
             .backgroundColor('#0d1117')
-            .nodeLabel(n => `${n.id}: ${n.label}`)
-            .nodeColor(n => n.color)
-            .nodeVal(n => n.size)
-            .linkColor(l => l.color)
-            .linkWidth(l => l.width)
-            .linkLabel(l => l.label)
+            .nodeColor(function(n) { return n.color; })
+            .nodeVal(function(n) { return n.size; })
+            .nodeLabel(function(n) { return n.id + ': ' + n.label; })
+            .nodeThreeObjectExtend(true)
+            .nodeThreeObject(function(n) { return createNodeLabel(n); })
+            .linkColor(function(l) { return l.color; })
+            .linkWidth(function(l) { return l.width; })
+            .linkLabel(function(l) { return l.label; })
             .linkDirectionalArrowLength(4)
             .linkDirectionalArrowRelPos(1)
-            .onNodeClick(n => showDetails(n))
-            .onNodeHover(n => highlightConnected(n))
+            .onNodeClick(function(n) { showDetails(n); })
+            .onNodeHover(function(n) { highlightConnected(n); })
             .d3AlphaDecay(0.02)
             .d3VelocityDecay(0.3)
             .warmupTicks(100)
@@ -129,69 +134,96 @@
         loadGraph();
     }
 
+    function createNodeLabel(node) {
+        var isEpic = node.type === 'Epic';
+        var text = node.id;
+        if (isEpic && node.label) {
+            var summary = node.label.length > LABEL_MAX_CHARS
+                ? node.label.substring(0, LABEL_MAX_CHARS) + '...'
+                : node.label;
+            text = node.id + '\n' + summary;
+        }
+
+        var sprite = new SpriteText(text);
+        sprite.color = '#ffffff';
+        sprite.textHeight = isEpic ? 3.5 : 2.5;
+        sprite.backgroundColor = 'rgba(0,0,0,0.6)';
+        sprite.padding = 1.5;
+        sprite.borderRadius = 3;
+        sprite.fontFace = 'Arial, sans-serif';
+        sprite.fontWeight = isEpic ? 'bold' : 'normal';
+        sprite.position.set(0, (node.size || 5) + 3, 0);
+        return sprite;
+    }
+
     function bindControls() {
         document.getElementById('view-select').onchange = loadGraph;
         document.getElementById('project-select').onchange = loadGraph;
-        document.getElementById('search').oninput = (e) => searchNode(e.target.value);
+        document.getElementById('search').onkeydown = function(e) {
+            if (e.key === 'Enter') searchNode(e.target.value);
+        };
     }
 
     function loadGraph() {
-        const project = document.getElementById('project-select').value.trim();
-        const view = document.getElementById('view-select').value;
+        var project = document.getElementById('project-select').value.trim();
+        var view = document.getElementById('view-select').value;
         if (!project) return;
 
-        fetch(`/sync/graph/${project}?view=${view}`)
-            .then(r => { if (r.ok) return r.json(); throw new Error('Failed'); })
-            .then(data => {
+        fetch('/sync/graph/' + project + '?view=' + view)
+            .then(function(r) { if (r.ok) return r.json(); throw new Error('Failed'); })
+            .then(function(data) {
                 graphData = data;
-                const links = data.edges.map(e => ({ ...e }));
+                var links = data.edges.map(function(e) { return Object.assign({}, e); });
                 graph.graphData({ nodes: data.nodes, links: links });
                 updateStats(data.metadata);
                 updateLegend(data.nodes);
             })
-            .catch(err => console.error('Graph load failed:', err));
+            .catch(function(err) { console.error('Graph load failed:', err); });
     }
 
     function showDetails(node) {
-        const panel = document.getElementById('details-panel');
+        var panel = document.getElementById('details-panel');
         panel.classList.remove('hidden');
-        panel.innerHTML = `
-            <h3>${node.id}</h3>
-            <div class="field"><span class="label">Summary:</span> ${node.label}</div>
-            <div class="field"><span class="label">Type:</span> ${node.type}</div>
-            <div class="field"><span class="label">Status:</span> ${node.status}</div>
-            <div class="field"><span class="label">Priority:</span> ${node.priority || 'N/A'}</div>
-            <div class="field"><span class="label">Group:</span> ${node.group}</div>
-        `;
+        panel.innerHTML =
+            '<h3>' + node.id + '</h3>' +
+            '<div class="field"><span class="label">Summary:</span> ' + node.label + '</div>' +
+            '<div class="field"><span class="label">Type:</span> ' + node.type + '</div>' +
+            '<div class="field"><span class="label">Status:</span> ' + node.status + '</div>' +
+            '<div class="field"><span class="label">Priority:</span> ' + (node.priority || 'N/A') + '</div>' +
+            '<div class="field"><span class="label">Group:</span> ' + node.group + '</div>';
     }
 
     function highlightConnected(node) {
         if (!node) {
-            graph.nodeColor(n => n.color);
-            graph.linkColor(l => l.color);
+            graph.nodeColor(function(n) { return n.color; });
+            graph.linkColor(function(l) { return l.color; });
             return;
         }
-        const connected = new Set();
-        graphData.edges.forEach(e => {
+        var connected = new Set();
+        graphData.edges.forEach(function(e) {
             if (e.source === node.id || e.source.id === node.id) connected.add(e.target.id || e.target);
             if (e.target === node.id || e.target.id === node.id) connected.add(e.source.id || e.source);
         });
         connected.add(node.id);
-
-        graph.nodeColor(n => connected.has(n.id) ? n.color : '#333333');
-        graph.linkColor(l => {
-            const src = l.source.id || l.source;
-            const tgt = l.target.id || l.target;
+        graph.nodeColor(function(n) { return connected.has(n.id) ? n.color : '#333333'; });
+        graph.linkColor(function(l) {
+            var src = l.source.id || l.source;
+            var tgt = l.target.id || l.target;
             return (src === node.id || tgt === node.id) ? '#ffffff' : '#222222';
         });
     }
 
     function searchNode(query) {
         if (!query) return;
-        const found = graphData.nodes.find(n =>
-            n.id.toLowerCase().includes(query.toLowerCase()) ||
-            n.label.toLowerCase().includes(query.toLowerCase())
-        );
+        var q = query.toLowerCase().trim();
+        // Exact ID match first
+        var found = graphData.nodes.find(function(n) { return n.id.toLowerCase() === q; });
+        // Then partial match on ID or label
+        if (!found) {
+            found = graphData.nodes.find(function(n) {
+                return n.id.toLowerCase().includes(q) || n.label.toLowerCase().includes(q);
+            });
+        }
         if (found) {
             graph.cameraPosition({ x: found.x, y: found.y, z: found.z + 200 }, found, 1000);
             showDetails(found);
@@ -200,18 +232,19 @@
 
     function updateStats(metadata) {
         document.getElementById('stats').textContent =
-            `Nodes: ${metadata.nodeCount} | Edges: ${metadata.edgeCount} | View: ${metadata.viewMode}`;
+            'Nodes: ' + metadata.nodeCount + ' | Edges: ' + metadata.edgeCount + ' | View: ' + metadata.viewMode;
     }
 
     function updateLegend(nodes) {
-        const groups = [...new Set(nodes.map(n => n.group))];
-        const colorMap = {};
-        nodes.forEach(n => { colorMap[n.group] = n.color; });
-
-        const legend = document.getElementById('legend');
-        legend.innerHTML = groups.map(g =>
-            `<div class="item"><div class="dot" style="background:${colorMap[g]}"></div>${g}</div>`
-        ).join('');
+        var groups = [];
+        var colorMap = {};
+        nodes.forEach(function(n) {
+            if (groups.indexOf(n.group) === -1) groups.push(n.group);
+            colorMap[n.group] = n.color;
+        });
+        document.getElementById('legend').innerHTML = groups.map(function(g) {
+            return '<div class="item"><div class="dot" style="background:' + colorMap[g] + '"></div>' + g + '</div>';
+        }).join('');
     }
 
     document.addEventListener('DOMContentLoaded', init);

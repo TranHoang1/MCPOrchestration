@@ -1,0 +1,62 @@
+<mxGraphModel adaptiveColors="auto">
+  <root>
+    <mxCell id="0"/>
+    <mxCell id="1" parent="0"/>
+    <mxCell id="title" value="&lt;b&gt;Component Diagram — LabelManager Internals&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;fontSize=13;fontStyle=1;" vertex="1" parent="1">
+      <mxGeometry x="180" y="10" width="400" height="30" as="geometry"/>
+    </mxCell>
+    <!-- LabelManager container -->
+    <mxCell id="lm" value="LabelManager" style="swimlane;startSize=24;fillColor=#fff3e0;strokeColor=#f57c00;html=1;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="60" y="60" width="640" height="300" as="geometry"/>
+    </mxCell>
+    <!-- Sub-components -->
+    <mxCell id="factory" value="&lt;b&gt;LabelFactory&lt;/b&gt;&#xa;_createCanvasTexture()&#xa;_createSprite()&#xa;_getLabelText()&#xa;_getFontSize()" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8f5e9;strokeColor=#388e3c;fontSize=11;" vertex="1" parent="lm">
+      <mxGeometry x="20" y="40" width="180" height="100" as="geometry"/>
+    </mxCell>
+    <mxCell id="visibility" value="&lt;b&gt;VisibilityController&lt;/b&gt;&#xa;updateVisibility(camera)&#xa;_calculateApparentSize()&#xa;_sortByPriority()&#xa;_lerpOpacity()" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1f5fe;strokeColor=#0288d1;fontSize=11;" vertex="1" parent="lm">
+      <mxGeometry x="240" y="40" width="180" height="100" as="geometry"/>
+    </mxCell>
+    <mxCell id="config" value="&lt;b&gt;LABEL_CONFIG&lt;/b&gt;&#xa;MAX_VISIBLE&#xa;THRESHOLDS{}&#xa;FADE_SPEED&#xa;CANVAS dimensions" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f3e5f5;strokeColor=#7b1fa2;fontSize=11;" vertex="1" parent="lm">
+      <mxGeometry x="460" y="40" width="160" height="100" as="geometry"/>
+    </mxCell>
+    <mxCell id="store" value="&lt;b&gt;Label Store&lt;/b&gt;&#xa;_labels: Array&lt;LabelEntry&gt;&#xa;{ node, sprite, targetOpacity,&#xa;  distance }" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=11;" vertex="1" parent="lm">
+      <mxGeometry x="130" y="180" width="220" height="80" as="geometry"/>
+    </mxCell>
+    <mxCell id="perf" value="&lt;b&gt;PerfMonitor&lt;/b&gt;&#xa;_checkFrameRate()&#xa;_degrade()" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fce4ec;strokeColor=#c62828;fontSize=11;" vertex="1" parent="lm">
+      <mxGeometry x="400" y="180" width="160" height="80" as="geometry"/>
+    </mxCell>
+    <!-- Internal edges -->
+    <mxCell id="ie1" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;" edge="1" source="factory" target="store" parent="lm">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="ie2" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;" edge="1" source="visibility" target="store" parent="lm">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="ie3" value="reads" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=open;endSize=6;dashed=1;fontSize=10;" edge="1" source="visibility" target="config" parent="lm">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="ie4" value="monitors" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=open;endSize=6;dashed=1;fontSize=10;" edge="1" source="perf" target="visibility" parent="lm">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <!-- External interfaces -->
+    <mxCell id="threejs" value="&lt;b&gt;Three.js&lt;/b&gt;&#xa;Sprite, SpriteMaterial&#xa;CanvasTexture, Vector3" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8f5e9;strokeColor=#388e3c;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="60" y="400" width="200" height="70" as="geometry"/>
+    </mxCell>
+    <mxCell id="canvasapi" value="&lt;b&gt;Canvas 2D API&lt;/b&gt;&#xa;getContext('2d')&#xa;fillText, measureText" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="320" y="400" width="200" height="70" as="geometry"/>
+    </mxCell>
+    <mxCell id="graphlib" value="&lt;b&gt;3d-force-graph&lt;/b&gt;&#xa;nodeThreeObject&#xa;onEngineTick" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1f5fe;strokeColor=#0288d1;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="580" y="400" width="160" height="70" as="geometry"/>
+    </mxCell>
+    <!-- External edges -->
+    <mxCell id="ee1" value="uses" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;fontSize=10;" edge="1" source="lm" target="threejs" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="ee2" value="uses" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;fontSize=10;" edge="1" source="lm" target="canvasapi" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="ee3" value="integrates" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;fontSize=10;" edge="1" source="lm" target="graphlib" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+  </root>
+</mxGraphModel>

@@ -1,0 +1,114 @@
+<mxGraphModel adaptiveColors="auto">
+  <root>
+    <mxCell id="0"/>
+    <mxCell id="1" parent="0"/>
+    <!-- Title -->
+    <mxCell id="title" value="&lt;b&gt;Business Flow — Node Label Rendering Pipeline&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;fontSize=13;fontStyle=1;" vertex="1" parent="1">
+      <mxGeometry x="250" y="10" width="400" height="30" as="geometry"/>
+    </mxCell>
+    <!-- Start -->
+    <mxCell id="start" value="" style="ellipse;fillColor=#388e3c;strokeColor=#388e3c;" vertex="1" parent="1">
+      <mxGeometry x="430" y="50" width="40" height="40" as="geometry"/>
+    </mxCell>
+    <!-- Step 1: Load Graph Data -->
+    <mxCell id="s1" value="Load Graph Data&#xa;from API" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1f5fe;strokeColor=#0288d1;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="370" y="120" width="160" height="70" as="geometry"/>
+    </mxCell>
+    <!-- Step 2: Determine Label Content -->
+    <mxCell id="s2" value="Determine Label&#xa;Content per Node" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1f5fe;strokeColor=#0288d1;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="370" y="230" width="160" height="70" as="geometry"/>
+    </mxCell>
+    <!-- Decision: Is Epic? -->
+    <mxCell id="d1" value="Is Epic?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff3e0;strokeColor=#f57c00;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="380" y="340" width="140" height="80" as="geometry"/>
+    </mxCell>
+    <!-- Epic Label -->
+    <mxCell id="s3a" value="Label = Key +&#xa;Summary (≤30 chars)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8f5e9;strokeColor=#388e3c;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="160" y="350" width="160" height="70" as="geometry"/>
+    </mxCell>
+    <!-- Non-Epic Label -->
+    <mxCell id="s3b" value="Label = Key only" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8f5e9;strokeColor=#388e3c;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="580" y="350" width="160" height="70" as="geometry"/>
+    </mxCell>
+    <!-- Step 4: Create Sprite -->
+    <mxCell id="s4" value="Create Text Sprite&#xa;(Billboard)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1f5fe;strokeColor=#0288d1;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="370" y="470" width="160" height="70" as="geometry"/>
+    </mxCell>
+    <!-- Step 5: Attach to Node -->
+    <mxCell id="s5" value="Attach Sprite&#xa;Above Node" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1f5fe;strokeColor=#0288d1;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="370" y="580" width="160" height="70" as="geometry"/>
+    </mxCell>
+    <!-- Step 6: Camera Change Loop -->
+    <mxCell id="s6" value="On Camera Change:&#xa;Calculate Apparent Size" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f3e5f5;strokeColor=#7b1fa2;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="370" y="690" width="160" height="70" as="geometry"/>
+    </mxCell>
+    <!-- Decision: Visible? -->
+    <mxCell id="d2" value="Apparent Size&#xa;≥ Threshold?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff3e0;strokeColor=#f57c00;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="380" y="800" width="140" height="80" as="geometry"/>
+    </mxCell>
+    <!-- Show Label -->
+    <mxCell id="s7a" value="Show Label&#xa;(Fade In)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8f5e9;strokeColor=#388e3c;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="160" y="810" width="160" height="70" as="geometry"/>
+    </mxCell>
+    <!-- Hide Label -->
+    <mxCell id="s7b" value="Hide Label&#xa;(Fade Out)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fce4ec;strokeColor=#c62828;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="580" y="810" width="160" height="70" as="geometry"/>
+    </mxCell>
+    <!-- End -->
+    <mxCell id="end" value="" style="ellipse;fillColor=#c62828;strokeColor=#c62828;" vertex="1" parent="1">
+      <mxGeometry x="430" y="930" width="40" height="40" as="geometry"/>
+    </mxCell>
+    <!-- Edges -->
+    <mxCell id="e1" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;" edge="1" source="start" target="s1" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e2" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;" edge="1" source="s1" target="s2" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e3" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;" edge="1" source="s2" target="d1" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e4" value="Yes" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;fontSize=10;" edge="1" source="d1" target="s3a" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e5" value="No" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;fontSize=10;" edge="1" source="d1" target="s3b" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e6" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;" edge="1" source="s3a" target="s4" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e7" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;" edge="1" source="s3b" target="s4" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e8" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;" edge="1" source="s4" target="s5" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e9" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;" edge="1" source="s5" target="s6" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e10" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;" edge="1" source="s6" target="d2" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e11" value="Yes" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;fontSize=10;" edge="1" source="d2" target="s7a" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e12" value="No" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;fontSize=10;" edge="1" source="d2" target="s7b" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e13" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;" edge="1" source="s7a" target="end" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e14" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;" edge="1" source="s7b" target="end" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <!-- Loop back from end to s6 -->
+    <mxCell id="e15" value="Next frame" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;dashed=1;fontSize=10;" edge="1" source="end" target="s6" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <Array as="points">
+          <mxPoint x="800" y="950"/>
+          <mxPoint x="800" y="725"/>
+        </Array>
+      </mxGeometry>
+    </mxCell>
+  </root>
+</mxGraphModel>

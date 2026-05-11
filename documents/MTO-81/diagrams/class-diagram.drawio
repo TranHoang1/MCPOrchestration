@@ -1,0 +1,42 @@
+<mxGraphModel adaptiveColors="auto">
+  <root>
+    <mxCell id="0"/>
+    <mxCell id="1" parent="0"/>
+    <mxCell id="title" value="&lt;b&gt;Class Diagram — LabelManager&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;fontSize=13;fontStyle=1;" vertex="1" parent="1">
+      <mxGeometry x="200" y="10" width="300" height="30" as="geometry"/>
+    </mxCell>
+    <!-- LabelManager class -->
+    <mxCell id="cls1" value="&lt;b&gt;LabelManager&lt;/b&gt;|─ _graph: ForceGraph3D&#xa;─ _labels: LabelEntry[]&#xa;─ _tempVec: THREE.Vector3&#xa;─ _maxVisible: number|+ constructor(graph)&#xa;+ createLabel(node): Sprite&#xa;+ updateVisibility(camera): void&#xa;+ dispose(): void&#xa;─ _getLabelText(node): string&#xa;─ _getFontSize(node): number&#xa;─ _createCanvasTexture(text, size, isEpic): Texture&#xa;─ _createSprite(texture, node): Sprite&#xa;─ _getThreshold(type): ThresholdConfig&#xa;─ _calculateApparentSize(node, cam): number" style="shape=mxgraph.uml25.class;html=1;align=left;spacingLeft=8;fontSize=10;fillColor=#e1f5fe;strokeColor=#0288d1;whiteSpace=wrap;" vertex="1" parent="1">
+      <mxGeometry x="60" y="60" width="300" height="280" as="geometry"/>
+    </mxCell>
+    <!-- LabelEntry interface -->
+    <mxCell id="cls2" value="&lt;b&gt;«interface» LabelEntry&lt;/b&gt;|+ node: GraphNode&#xa;+ sprite: THREE.Sprite&#xa;+ targetOpacity: number&#xa;+ distance: number" style="shape=mxgraph.uml25.class;html=1;align=left;spacingLeft=8;fontSize=10;fillColor=#e8f5e9;strokeColor=#388e3c;whiteSpace=wrap;" vertex="1" parent="1">
+      <mxGeometry x="440" y="60" width="220" height="120" as="geometry"/>
+    </mxCell>
+    <!-- ThresholdConfig -->
+    <mxCell id="cls3" value="&lt;b&gt;«interface» ThresholdConfig&lt;/b&gt;|+ show: number&#xa;+ hide: number&#xa;+ priority: number" style="shape=mxgraph.uml25.class;html=1;align=left;spacingLeft=8;fontSize=10;fillColor=#fff3e0;strokeColor=#f57c00;whiteSpace=wrap;" vertex="1" parent="1">
+      <mxGeometry x="440" y="220" width="220" height="100" as="geometry"/>
+    </mxCell>
+    <!-- LABEL_CONFIG -->
+    <mxCell id="cls4" value="&lt;b&gt;«const» LABEL_CONFIG&lt;/b&gt;|+ MAX_VISIBLE: 50&#xa;+ FADE_SPEED: 0.1&#xa;+ SCALE_FACTOR: 100&#xa;+ CANVAS_WIDTH: 256&#xa;+ EPIC_SUMMARY_MAX: 30&#xa;+ THRESHOLDS: Map&lt;string, ThresholdConfig&gt;" style="shape=mxgraph.uml25.class;html=1;align=left;spacingLeft=8;fontSize=10;fillColor=#f3e5f5;strokeColor=#7b1fa2;whiteSpace=wrap;" vertex="1" parent="1">
+      <mxGeometry x="440" y="360" width="280" height="140" as="geometry"/>
+    </mxCell>
+    <!-- GraphNode (external) -->
+    <mxCell id="cls5" value="&lt;b&gt;«external» GraphNode&lt;/b&gt;|+ id: string&#xa;+ label: string&#xa;+ type: string&#xa;+ size: number&#xa;+ color: string&#xa;+ x, y, z: number" style="shape=mxgraph.uml25.class;html=1;align=left;spacingLeft=8;fontSize=10;fillColor=#f5f5f5;strokeColor=#666666;whiteSpace=wrap;dashed=1;" vertex="1" parent="1">
+      <mxGeometry x="60" y="380" width="200" height="140" as="geometry"/>
+    </mxCell>
+    <!-- Relationships -->
+    <mxCell id="r1" value="manages *" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=diamond;endSize=10;endFill=1;fontSize=10;" edge="1" source="cls1" target="cls2" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="r2" value="uses" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=open;endSize=8;dashed=1;fontSize=10;" edge="1" source="cls1" target="cls3" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="r3" value="reads" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=open;endSize=8;dashed=1;fontSize=10;" edge="1" source="cls1" target="cls4" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="r4" value="references" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=open;endSize=8;dashed=1;fontSize=10;" edge="1" source="cls2" target="cls5" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+  </root>
+</mxGraphModel>

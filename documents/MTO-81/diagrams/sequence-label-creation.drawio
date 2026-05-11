@@ -1,0 +1,102 @@
+<mxGraphModel adaptiveColors="auto">
+  <root>
+    <mxCell id="0"/>
+    <mxCell id="1" parent="0"/>
+    <!-- Title -->
+    <mxCell id="title" value="&lt;b&gt;Sequence Diagram — Label Creation Flow&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;fontSize=13;fontStyle=1;" vertex="1" parent="1">
+      <mxGeometry x="200" y="10" width="400" height="30" as="geometry"/>
+    </mxCell>
+    <!-- Lifelines -->
+    <mxCell id="ll1" value="GraphViewer" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;size=40;fillColor=#e1f5fe;strokeColor=#0288d1;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="60" y="60" width="120" height="600" as="geometry"/>
+    </mxCell>
+    <mxCell id="ll2" value="LabelManager" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;size=40;fillColor=#e8f5e9;strokeColor=#388e3c;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="260" y="60" width="120" height="600" as="geometry"/>
+    </mxCell>
+    <mxCell id="ll3" value="CanvasFactory" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;size=40;fillColor=#fff3e0;strokeColor=#f57c00;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="460" y="60" width="120" height="600" as="geometry"/>
+    </mxCell>
+    <mxCell id="ll4" value="Three.js Scene" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;size=40;fillColor=#f3e5f5;strokeColor=#7b1fa2;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="660" y="60" width="120" height="600" as="geometry"/>
+    </mxCell>
+    <!-- Messages -->
+    <mxCell id="m1" value="1. loadGraph(data)" style="html=1;endSize=6;startSize=6;fontSize=10;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="120" y="130" as="sourcePoint"/>
+        <mxPoint x="320" y="130" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="m2" value="2. createLabels(nodes)" style="html=1;endSize=6;startSize=6;fontSize=10;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="120" y="170" as="sourcePoint"/>
+        <mxPoint x="320" y="170" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="m3" value="3. [loop] getLabelText(node)" style="html=1;endSize=6;startSize=6;fontSize=10;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="320" y="210" as="sourcePoint"/>
+        <mxPoint x="320" y="240" as="targetPoint"/>
+        <Array as="points">
+          <mxPoint x="370" y="210"/>
+          <mxPoint x="370" y="240"/>
+        </Array>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="m4" value="4. createCanvas(text, fontSize)" style="html=1;endSize=6;startSize=6;fontSize=10;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="320" y="270" as="sourcePoint"/>
+        <mxPoint x="520" y="270" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="m5" value="5. canvas (with text drawn)" style="html=1;endSize=6;startSize=6;dashed=1;fontSize=10;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="520" y="310" as="sourcePoint"/>
+        <mxPoint x="320" y="310" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="m6" value="6. createSprite(canvas)" style="html=1;endSize=6;startSize=6;fontSize=10;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="320" y="350" as="sourcePoint"/>
+        <mxPoint x="720" y="350" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="m7" value="7. sprite (positioned above node)" style="html=1;endSize=6;startSize=6;dashed=1;fontSize=10;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="720" y="390" as="sourcePoint"/>
+        <mxPoint x="320" y="390" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="m8" value="8. registerForVisibilityUpdates(sprite)" style="html=1;endSize=6;startSize=6;fontSize=10;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="320" y="430" as="sourcePoint"/>
+        <mxPoint x="320" y="460" as="targetPoint"/>
+        <Array as="points">
+          <mxPoint x="370" y="430"/>
+          <mxPoint x="370" y="460"/>
+        </Array>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="m9" value="9. labels ready" style="html=1;endSize=6;startSize=6;dashed=1;fontSize=10;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="320" y="500" as="sourcePoint"/>
+        <mxPoint x="120" y="500" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="m10" value="10. onFrame → updateVisibility(camera)" style="html=1;endSize=6;startSize=6;fontSize=10;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="120" y="540" as="sourcePoint"/>
+        <mxPoint x="320" y="540" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="m11" value="11. setOpacity(sprite, value)" style="html=1;endSize=6;startSize=6;fontSize=10;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="320" y="580" as="sourcePoint"/>
+        <mxPoint x="720" y="580" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <!-- Loop box -->
+    <mxCell id="loop" value="loop [each node]" style="shape=mxgraph.uml25.interaction;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#666666;fontSize=10;dashed=1;" vertex="1" parent="1">
+      <mxGeometry x="280" y="195" width="430" height="280" as="geometry"/>
+    </mxCell>
+  </root>
+</mxGraphModel>

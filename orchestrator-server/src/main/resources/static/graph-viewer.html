@@ -331,6 +331,7 @@
         loadProjects();
         initMinimap();
         showOnboardingIfFirstVisit();
+        startAutoRefresh();
     }
 
     function showOnboardingIfFirstVisit() {
@@ -542,6 +543,35 @@
     function hideError() {
         var el = document.getElementById('error-banner');
         if (el) el.style.display = 'none';
+    }
+
+    // MTO-61: Auto-refresh graph data (polling every 30s)
+    var autoRefreshInterval = null;
+    function startAutoRefresh() {
+        if (autoRefreshInterval) clearInterval(autoRefreshInterval);
+        autoRefreshInterval = setInterval(function() {
+            var project = document.getElementById('project-select').value.trim();
+            if (!project) return;
+            var view = document.getElementById('view-select').value;
+            fetch('/sync/graph/' + project + '?view=' + view)
+                .then(function(r) { if (r.ok) return r.json(); return null; })
+                .then(function(data) {
+                    if (!data) return;
+                    if (data.metadata.nodeCount !== graphData.metadata.nodeCount ||
+                        data.metadata.edgeCount !== graphData.metadata.edgeCount) {
+                        graphData = data;
+                        var links = data.edges.map(function(e) { return Object.assign({}, e); });
+                        graph.graphData({ nodes: data.nodes, links: links });
+                        updateStats(data.metadata);
+                        updateLegend(data.nodes);
+                        buildFilterChips(data.nodes);
+                        computeIsolatedNodes(data);
+                        applyFilters();
+                        console.info('[Auto-refresh] Graph updated: ' + data.metadata.nodeCount + ' nodes');
+                    }
+                })
+                .catch(function() {});
+        }, 30000);
     }
 
     function showDetails(node) {

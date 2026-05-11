@@ -4,7 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MCP Orchestrator — 3D Graph Viewer</title>
-    <script src="https://unpkg.com/3d-force-graph@1"></script>
+    <script src="https://unpkg.com/three@0.149.0/build/three.min.js"></script>
+    <script src="https://unpkg.com/three-spritetext@1.8.2/dist/three-spritetext.min.js"></script>
+    <script src="https://unpkg.com/3d-force-graph@1.73.3/dist/3d-force-graph.min.js"></script>
     <style>
         :root {
             --bg: #0d1117;
@@ -41,6 +43,42 @@
         }
         #controls input { width: 180px; }
         #graph-container { width: 100vw; height: 100vh; }
+        #filter-panel {
+            position: fixed;
+            top: 52px;
+            left: 16px;
+            z-index: 100;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 12px;
+            font-size: 0.8rem;
+            display: none;
+            max-width: 320px;
+        }
+        #filter-panel.open { display: block; }
+        #filter-panel .filter-group { margin-bottom: 8px; }
+        #filter-panel .filter-group-title { color: var(--muted); margin-bottom: 4px; font-weight: bold; }
+        #filter-panel .filter-chips { display: flex; flex-wrap: wrap; gap: 4px; }
+        #filter-panel .chip {
+            padding: 2px 8px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            cursor: pointer;
+            user-select: none;
+            font-size: 0.75rem;
+        }
+        #filter-panel .chip.active { background: var(--accent); color: #000; border-color: var(--accent); }
+        #filter-toggle {
+            padding: 6px 12px;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            background: var(--surface);
+            color: var(--text);
+            font-size: 0.85rem;
+            cursor: pointer;
+        }
+        #filter-toggle.has-filter { border-color: var(--accent); color: var(--accent); }
         #details-panel {
             position: fixed;
             top: 60px;
@@ -87,13 +125,36 @@
 </head>
 <body>
 <div id="controls">
-    <input id="project-select" placeholder="Project key (e.g. MTO)" value="MTO">
+    <input id="project-select" list="project-list" placeholder="Type project key..." autocomplete="off">
+    <datalist id="project-list"></datalist>
     <select id="view-select">
         <option value="hierarchy">Hierarchy</option>
         <option value="dependency">Dependency</option>
         <option value="team">Team</option>
     </select>
     <input id="search" placeholder="Search ticket...">
+    <button id="filter-toggle" onclick="toggleFilter()">⚙ Filter</button>
+</div>
+<div id="filter-panel">
+    <div class="filter-group">
+        <div class="filter-group-title">Status</div>
+        <div class="filter-chips" id="filter-status"></div>
+    </div>
+    <div class="filter-group">
+        <div class="filter-group-title">Priority</div>
+        <div class="filter-chips" id="filter-priority"></div>
+    </div>
+    <div class="filter-group">
+        <div class="filter-group-title">Type</div>
+        <div class="filter-chips" id="filter-type"></div>
+    </div>
+    <div class="filter-group" style="border-top:1px solid var(--border);padding-top:8px;">
+        <label style="cursor:pointer;display:flex;align-items:center;gap:6px;">
+            <input type="checkbox" id="hide-isolated" onchange="toggleIsolated()">
+            <span>Hide unlinked nodes</span>
+            <span id="isolated-count" style="background:var(--border);border-radius:10px;padding:1px 6px;font-size:0.7rem;"></span>
+        </label>
+    </div>
 </div>
 <div id="graph-container"></div>
 <div id="details-panel" class="hidden"></div>
@@ -104,324 +165,306 @@
 (function() {
     'use strict';
 
-    // ─── Label Configuration ───────────────────────────────────────────
-    const LABEL_CONFIG = {
-        MAX_VISIBLE: 50,
-        FADE_SPEED: 0.1,
-        SCALE_FACTOR: 100,
-        FONT_FAMILY: 'Arial, sans-serif',
-        FONT_COLOR: '#ffffff',
-        SHADOW_COLOR: '#000000',
-        SHADOW_BLUR: 3,
-        CANVAS_WIDTH: 256,
-        CANVAS_HEIGHT_EPIC: 128,
-        CANVAS_HEIGHT_NORMAL: 64,
-        EPIC_SUMMARY_MAX: 30,
-        POSITION_Y_OFFSET: 1.5,
-        THRESHOLDS: {
-            Epic:       { show: 0.8, hide: 0.6, priority: 1 },
-            Story:      { show: 1.2, hide: 1.0, priority: 2 },
-            Task:       { show: 1.2, hide: 1.0, priority: 3 },
-            Bug:        { show: 1.2, hide: 1.0, priority: 4 },
-            'Sub-task': { show: 1.5, hide: 1.3, priority: 5 }
-        },
-        DEFAULT_THRESHOLD: { show: 1.2, hide: 1.0, priority: 3 }
-    };
+    var LABEL_MAX_CHARS = 30;
+    var graph = null;
+    var graphData = { nodes: [], edges: [] };
+    var activeFilters = { status: [], priority: [], type: [] };
+    var hideIsolated = false;
+    var isolatedNodeIds = new Set();
 
-    // ─── LabelManager Class ────────────────────────────────────────────
-    class LabelManager {
-        constructor(graphInstance) {
-            this._graph = graphInstance;
-            this._labels = [];
-            this._tempVec = new THREE.Vector3();
-            this._enabled = true;
-        }
-
-        createLabel(node) {
-            try {
-                const text = this._getLabelText(node);
-                const isEpic = node.type === 'Epic';
-                const fontSize = this._getFontSize(node);
-                const texture = this._createCanvasTexture(text, fontSize, isEpic);
-                const sprite = this._createSprite(texture, node, isEpic);
-
-                this._labels.push({
-                    node: node,
-                    sprite: sprite,
-                    targetOpacity: 1.0,
-                    distance: 0
-                });
-
-                return sprite;
-            } catch (err) {
-                console.warn('Label creation failed for node:', node.id, err);
-                return null;
-            }
-        }
-
-        updateVisibility(camera) {
-            if (!this._enabled || !camera) return;
-
-            let visibleCount = 0;
-
-            // Calculate distances
-            for (const entry of this._labels) {
-                if (!entry.sprite.parent) continue;
-                entry.sprite.parent.getWorldPosition(this._tempVec);
-                entry.distance = camera.position.distanceTo(this._tempVec);
-            }
-
-            // Sort by priority then distance
-            const sorted = this._labels.slice().sort((a, b) => {
-                const pa = this._getThreshold(a.node.type).priority;
-                const pb = this._getThreshold(b.node.type).priority;
-                if (pa !== pb) return pa - pb;
-                return a.distance - b.distance;
-            });
-
-            for (const entry of sorted) {
-                if (!entry.sprite.parent) continue;
-                const apparent = (entry.node.size || 5) / entry.distance * LABEL_CONFIG.SCALE_FACTOR;
-                const threshold = this._getThreshold(entry.node.type);
-
-                if (apparent >= threshold.show && visibleCount < LABEL_CONFIG.MAX_VISIBLE) {
-                    entry.targetOpacity = 1.0;
-                    visibleCount++;
-                } else if (apparent < threshold.hide) {
-                    entry.targetOpacity = 0.0;
-                }
-
-                // Lerp opacity
-                const current = entry.sprite.material.opacity;
-                const next = current + (entry.targetOpacity - current) * LABEL_CONFIG.FADE_SPEED;
-                entry.sprite.material.opacity = next;
-                entry.sprite.visible = next > 0.01;
-            }
-        }
-
-        dispose() {
-            for (const entry of this._labels) {
-                if (entry.sprite.material.map) entry.sprite.material.map.dispose();
-                entry.sprite.material.dispose();
-            }
-            this._labels = [];
-        }
-
-        reset() {
-            this.dispose();
-        }
-
-        _getLabelText(node) {
-            if (node.type === 'Epic') {
-                const summary = (node.label || '').length > LABEL_CONFIG.EPIC_SUMMARY_MAX
-                    ? node.label.substring(0, LABEL_CONFIG.EPIC_SUMMARY_MAX) + '...'
-                    : node.label || '';
-                return node.id + '\n' + summary;
-            }
-            return node.id;
-        }
-
-        _getFontSize(node) {
-            const base = Math.max(14, Math.min(24, (node.size || 5) * 3));
-            return node.type === 'Epic' ? Math.round(base * 1.25) : base;
-        }
-
-        _createCanvasTexture(text, fontSize, isEpic) {
-            const canvas = document.createElement('canvas');
-            canvas.width = LABEL_CONFIG.CANVAS_WIDTH;
-            canvas.height = isEpic ? LABEL_CONFIG.CANVAS_HEIGHT_EPIC : LABEL_CONFIG.CANVAS_HEIGHT_NORMAL;
-
-            const ctx = canvas.getContext('2d');
-            ctx.font = 'bold ' + fontSize + 'px ' + LABEL_CONFIG.FONT_FAMILY;
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-            ctx.shadowColor = LABEL_CONFIG.SHADOW_COLOR;
-            ctx.shadowBlur = LABEL_CONFIG.SHADOW_BLUR;
-            ctx.fillStyle = LABEL_CONFIG.FONT_COLOR;
-
-            const lines = text.split('\n');
-            const lineHeight = fontSize * 1.3;
-            const startY = (canvas.height - lines.length * lineHeight) / 2 + fontSize / 2;
-
-            lines.forEach(function(line, i) {
-                ctx.fillText(line, canvas.width / 2, startY + i * lineHeight);
-            });
-
-            const texture = new THREE.CanvasTexture(canvas);
-            texture.needsUpdate = true;
-            return texture;
-        }
-
-        _createSprite(texture, node, isEpic) {
-            const material = new THREE.SpriteMaterial({
-                map: texture,
-                transparent: true,
-                opacity: 1.0,
-                depthTest: false,
-                sizeAttenuation: true
-            });
-
-            const sprite = new THREE.Sprite(material);
-            const aspect = LABEL_CONFIG.CANVAS_WIDTH / (isEpic ? LABEL_CONFIG.CANVAS_HEIGHT_EPIC : LABEL_CONFIG.CANVAS_HEIGHT_NORMAL);
-            const scale = (node.size || 5) * 0.8;
-            sprite.scale.set(scale * aspect, scale, 1);
-
-            const yOffset = (node.size || 5) * LABEL_CONFIG.POSITION_Y_OFFSET;
-            sprite.position.set(0, yOffset, 0);
-
-            return sprite;
-        }
-
-        _getThreshold(nodeType) {
-            return LABEL_CONFIG.THRESHOLDS[nodeType] || LABEL_CONFIG.DEFAULT_THRESHOLD;
-        }
-    }
-
-    // ─── Application State ─────────────────────────────────────────────
-    let graph = null;
-    let graphData = { nodes: [], edges: [] };
-    let labelManager = null;
-
-    // ─── Initialization ────────────────────────────────────────────────
     function init() {
         graph = ForceGraph3D()(document.getElementById('graph-container'))
             .backgroundColor('#0d1117')
-            .nodeLabel(n => `${n.id}: ${n.label}`)
-            .nodeColor(n => n.color)
-            .nodeVal(n => n.size)
+            .nodeColor(function(n) { return n.color; })
+            .nodeVal(function(n) { return n.size; })
+            .nodeLabel(function(n) { return n.id + ': ' + n.label; })
             .nodeThreeObjectExtend(true)
-            .nodeThreeObject(n => createNodeLabel(n))
-            .linkColor(l => l.color)
-            .linkWidth(l => l.width)
-            .linkLabel(l => l.label)
+            .nodeThreeObject(function(n) { return createNodeLabel(n); })
+            .linkColor(function(l) { return getEdgeColor(l); })
+            .linkWidth(function(l) { return getEdgeWidth(l); })
+            .linkLabel(function(l) { return l.label; })
             .linkDirectionalArrowLength(4)
             .linkDirectionalArrowRelPos(1)
-            .onNodeClick(n => showDetails(n))
-            .onNodeHover(n => highlightConnected(n))
-            .onEngineTick(() => onTick())
+            .onNodeClick(function(n) { showDetails(n); })
+            .onNodeHover(function(n) { highlightConnected(n); })
             .d3AlphaDecay(0.02)
             .d3VelocityDecay(0.3)
             .warmupTicks(100)
             .cooldownTicks(200);
 
-        labelManager = new LabelManager(graph);
-        applyUrlParams();
         bindControls();
-        loadGraph();
-        console.info('[Labels] LabelManager initialized');
+        loadProjects();
     }
 
-    function applyUrlParams() {
-        const params = new URLSearchParams(window.location.search);
-        if (params.get('labels') === 'off') {
-            labelManager._enabled = false;
-        }
-        const maxLabels = parseInt(params.get('maxLabels'), 10);
-        if (maxLabels > 0) {
-            LABEL_CONFIG.MAX_VISIBLE = maxLabels;
-        }
+    function loadProjects() {
+        fetch('/sync/projects')
+            .then(function(r) { if (r.ok) return r.json(); throw new Error('Failed'); })
+            .then(function(projects) {
+                var datalist = document.getElementById('project-list');
+                datalist.innerHTML = '';
+                projects.forEach(function(p) {
+                    var opt = document.createElement('option');
+                    opt.value = p;
+                    datalist.appendChild(opt);
+                });
+                // Restore last selected or default to first
+                var input = document.getElementById('project-select');
+                var saved = localStorage.getItem('graph-project');
+                if (saved && projects.indexOf(saved) !== -1) {
+                    input.value = saved;
+                } else if (projects.length > 0) {
+                    input.value = projects[0];
+                }
+                loadGraph();
+            })
+            .catch(function(err) {
+                console.error('Failed to load projects:', err);
+                document.getElementById('project-select').value = 'MTO';
+                loadGraph();
+            });
     }
+
+    // ─── Edge Styling (MTO-82) ─────────────────────────────────────────
+    var EDGE_STYLES = {
+        'parent-of':  { color: '#6e7681', width: 1.5, dash: null },
+        'child-of':   { color: '#6e7681', width: 1.5, dash: null },
+        'relates to': { color: '#58a6ff', width: 1.0, dash: [5, 5] },
+        'blocks':     { color: '#f85149', width: 2.0, dash: [2, 3] },
+        'blocked by': { color: '#f85149', width: 2.0, dash: [2, 3] },
+        'duplicates': { color: '#8b949e', width: 0.8, dash: [1, 4] },
+        'clones':     { color: '#8b949e', width: 0.8, dash: [1, 4] }
+    };
+    var DEFAULT_EDGE = { color: '#484f58', width: 1.0, dash: null };
+
+    function getEdgeStyle(link) {
+        var label = (link.label || '').toLowerCase();
+        return EDGE_STYLES[label] || DEFAULT_EDGE;
+    }
+
+    function getEdgeColor(link) { return getEdgeStyle(link).color; }
+    function getEdgeWidth(link) { return getEdgeStyle(link).width; }
+    function getEdgeDash(link) { return getEdgeStyle(link).dash; }
 
     function createNodeLabel(node) {
-        if (!labelManager || !labelManager._enabled) return null;
-        return labelManager.createLabel(node);
+        var isEpic = node.type === 'Epic';
+        var text = node.id;
+        if (isEpic && node.label) {
+            var summary = node.label.length > LABEL_MAX_CHARS
+                ? node.label.substring(0, LABEL_MAX_CHARS) + '...'
+                : node.label;
+            text = node.id + '\n' + summary;
+        }
+
+        var sprite = new SpriteText(text);
+        sprite.color = '#ffffff';
+        sprite.textHeight = isEpic ? 3.5 : 2.5;
+        sprite.backgroundColor = 'rgba(0,0,0,0.6)';
+        sprite.padding = 1.5;
+        sprite.borderRadius = 3;
+        sprite.fontFace = 'Arial, sans-serif';
+        sprite.fontWeight = isEpic ? 'bold' : 'normal';
+        sprite.position.set(0, (node.size || 5) + 3, 0);
+        return sprite;
     }
 
-    function onTick() {
-        if (!labelManager || !graph) return;
-        const camera = graph.camera();
-        labelManager.updateVisibility(camera);
-    }
-
-    // ─── Controls ──────────────────────────────────────────────────────
     function bindControls() {
         document.getElementById('view-select').onchange = loadGraph;
-        document.getElementById('project-select').onchange = loadGraph;
-        document.getElementById('search').oninput = (e) => searchNode(e.target.value);
+        var projectInput = document.getElementById('project-select');
+        projectInput.onchange = loadGraph;
+        projectInput.onkeydown = function(e) {
+            if (e.key === 'Enter') loadGraph();
+        };
+        document.getElementById('search').onkeydown = function(e) {
+            if (e.key === 'Enter') searchNode(e.target.value);
+        };
     }
 
-    // ─── Data Loading ──────────────────────────────────────────────────
     function loadGraph() {
-        const project = document.getElementById('project-select').value.trim();
-        const view = document.getElementById('view-select').value;
+        var project = document.getElementById('project-select').value.trim();
+        var view = document.getElementById('view-select').value;
         if (!project) return;
 
-        if (labelManager) labelManager.reset();
+        localStorage.setItem('graph-project', project);
 
-        fetch(`/sync/graph/${project}?view=${view}`)
-            .then(r => { if (r.ok) return r.json(); throw new Error('Failed'); })
-            .then(data => {
+        fetch('/sync/graph/' + project + '?view=' + view)
+            .then(function(r) { if (r.ok) return r.json(); throw new Error('Failed'); })
+            .then(function(data) {
                 graphData = data;
-                const links = data.edges.map(e => ({ ...e }));
+                var links = data.edges.map(function(e) { return Object.assign({}, e); });
                 graph.graphData({ nodes: data.nodes, links: links });
                 updateStats(data.metadata);
                 updateLegend(data.nodes);
+                buildFilterChips(data.nodes);
+                computeIsolatedNodes(data);
+                applyFilters();
             })
-            .catch(err => console.error('Graph load failed:', err));
+            .catch(function(err) { console.error('Graph load failed:', err); });
     }
 
-    // ─── UI Interactions ───────────────────────────────────────────────
     function showDetails(node) {
-        const panel = document.getElementById('details-panel');
+        var panel = document.getElementById('details-panel');
         panel.classList.remove('hidden');
-        panel.innerHTML = `
-            <h3>${node.id}</h3>
-            <div class="field"><span class="label">Summary:</span> ${node.label}</div>
-            <div class="field"><span class="label">Type:</span> ${node.type}</div>
-            <div class="field"><span class="label">Status:</span> ${node.status}</div>
-            <div class="field"><span class="label">Priority:</span> ${node.priority || 'N/A'}</div>
-            <div class="field"><span class="label">Group:</span> ${node.group}</div>
-        `;
+        panel.innerHTML =
+            '<h3>' + node.id + '</h3>' +
+            '<div class="field"><span class="label">Summary:</span> ' + node.label + '</div>' +
+            '<div class="field"><span class="label">Type:</span> ' + node.type + '</div>' +
+            '<div class="field"><span class="label">Status:</span> ' + node.status + '</div>' +
+            '<div class="field"><span class="label">Priority:</span> ' + (node.priority || 'N/A') + '</div>' +
+            '<div class="field"><span class="label">Group:</span> ' + node.group + '</div>';
     }
 
     function highlightConnected(node) {
         if (!node) {
-            graph.nodeColor(n => n.color);
-            graph.linkColor(l => l.color);
+            graph.nodeColor(function(n) { return n.color; });
+            graph.linkColor(function(l) { return l.color; });
             return;
         }
-        const connected = new Set();
-        graphData.edges.forEach(e => {
+        var connected = new Set();
+        graphData.edges.forEach(function(e) {
             if (e.source === node.id || e.source.id === node.id) connected.add(e.target.id || e.target);
             if (e.target === node.id || e.target.id === node.id) connected.add(e.source.id || e.source);
         });
         connected.add(node.id);
-
-        graph.nodeColor(n => connected.has(n.id) ? n.color : '#333333');
-        graph.linkColor(l => {
-            const src = l.source.id || l.source;
-            const tgt = l.target.id || l.target;
+        graph.nodeColor(function(n) { return connected.has(n.id) ? n.color : '#333333'; });
+        graph.linkColor(function(l) {
+            var src = l.source.id || l.source;
+            var tgt = l.target.id || l.target;
             return (src === node.id || tgt === node.id) ? '#ffffff' : '#222222';
         });
     }
 
     function searchNode(query) {
         if (!query) return;
-        const found = graphData.nodes.find(n =>
-            n.id.toLowerCase().includes(query.toLowerCase()) ||
-            n.label.toLowerCase().includes(query.toLowerCase())
-        );
+        var q = query.toLowerCase().trim();
+        // Exact ID match first
+        var found = graphData.nodes.find(function(n) { return n.id.toLowerCase() === q; });
+        // Then partial match on ID or label
+        if (!found) {
+            found = graphData.nodes.find(function(n) {
+                return n.id.toLowerCase().includes(q) || n.label.toLowerCase().includes(q);
+            });
+        }
         if (found) {
             graph.cameraPosition({ x: found.x, y: found.y, z: found.z + 200 }, found, 1000);
             showDetails(found);
         }
     }
 
-    // ─── Stats & Legend ─────────────────────────────────────────────────
     function updateStats(metadata) {
         document.getElementById('stats').textContent =
-            `Nodes: ${metadata.nodeCount} | Edges: ${metadata.edgeCount} | View: ${metadata.viewMode}`;
+            'Nodes: ' + metadata.nodeCount + ' | Edges: ' + metadata.edgeCount + ' | View: ' + metadata.viewMode;
     }
 
     function updateLegend(nodes) {
-        const groups = [...new Set(nodes.map(n => n.group))];
-        const colorMap = {};
-        nodes.forEach(n => { colorMap[n.group] = n.color; });
+        var groups = [];
+        var colorMap = {};
+        nodes.forEach(function(n) {
+            if (groups.indexOf(n.group) === -1) groups.push(n.group);
+            colorMap[n.group] = n.color;
+        });
+        var nodeHtml = groups.map(function(g) {
+            return '<div class="item"><div class="dot" style="background:' + colorMap[g] + '"></div>' + g + '</div>';
+        }).join('');
 
-        const legend = document.getElementById('legend');
-        legend.innerHTML = groups.map(g =>
-            `<div class="item"><div class="dot" style="background:${colorMap[g]}"></div>${g}</div>`
-        ).join('');
+        // Edge legend
+        var edgeLabels = [];
+        graphData.edges.forEach(function(e) {
+            if (edgeLabels.indexOf(e.label) === -1) edgeLabels.push(e.label);
+        });
+        var edgeHtml = '';
+        if (edgeLabels.length > 0) {
+            edgeHtml = '<div style="margin-top:8px;border-top:1px solid #30363d;padding-top:8px;font-size:0.75rem;color:#8b949e;">Edges:</div>';
+            edgeHtml += edgeLabels.map(function(label) {
+                var style = EDGE_STYLES[label] || DEFAULT_EDGE;
+                var lineStyle = style.dash ? 'dashed' : 'solid';
+                return '<div class="item"><div style="width:20px;height:0;border-top:2px ' + lineStyle + ' ' + style.color + '"></div>' + label + '</div>';
+            }).join('');
+        }
+        document.getElementById('legend').innerHTML = nodeHtml + edgeHtml;
+    }
+
+    // ─── Filters (MTO-84) ──────────────────────────────────────────────
+    window.toggleFilter = function() {
+        document.getElementById('filter-panel').classList.toggle('open');
+    };
+
+    window.toggleIsolated = function() {
+        hideIsolated = document.getElementById('hide-isolated').checked;
+        applyFilters();
+        updateFilterToggle();
+    };
+
+    function computeIsolatedNodes(data) {
+        var linked = new Set();
+        data.edges.forEach(function(e) {
+            linked.add(e.source.id || e.source);
+            linked.add(e.target.id || e.target);
+        });
+        isolatedNodeIds = new Set();
+        data.nodes.forEach(function(n) {
+            if (!linked.has(n.id)) isolatedNodeIds.add(n.id);
+        });
+        document.getElementById('isolated-count').textContent = isolatedNodeIds.size;
+    }
+
+    function buildFilterChips(nodes) {
+        buildChipGroup('filter-status', 'status', nodes.map(function(n) { return n.status; }));
+        buildChipGroup('filter-priority', 'priority', nodes.map(function(n) { return n.priority || 'None'; }));
+        buildChipGroup('filter-type', 'type', nodes.map(function(n) { return n.type; }));
+    }
+
+    function buildChipGroup(containerId, filterKey, values) {
+        var unique = [];
+        values.forEach(function(v) { if (unique.indexOf(v) === -1) unique.push(v); });
+        unique.sort();
+        var container = document.getElementById(containerId);
+        container.innerHTML = unique.map(function(v) {
+            var isActive = activeFilters[filterKey].indexOf(v) !== -1;
+            return '<span class="chip' + (isActive ? ' active' : '') + '" data-key="' + filterKey + '" data-value="' + v + '">' + v + '</span>';
+        }).join('');
+        container.onclick = function(e) {
+            var chip = e.target.closest('.chip');
+            if (!chip) return;
+            var key = chip.dataset.key;
+            var val = chip.dataset.value;
+            var idx = activeFilters[key].indexOf(val);
+            if (idx === -1) { activeFilters[key].push(val); }
+            else { activeFilters[key].splice(idx, 1); }
+            chip.classList.toggle('active');
+            applyFilters();
+            updateFilterToggle();
+        };
+    }
+
+    function applyFilters() {
+        var hasChipFilter = activeFilters.status.length > 0 || activeFilters.priority.length > 0 || activeFilters.type.length > 0;
+        if (!hasChipFilter && !hideIsolated) {
+            graph.nodeVisibility(function() { return true; });
+            graph.linkVisibility(function() { return true; });
+            return;
+        }
+        var visibleIds = new Set();
+        graphData.nodes.forEach(function(n) {
+            if (hideIsolated && isolatedNodeIds.has(n.id)) return;
+            var show = true;
+            if (activeFilters.status.length > 0 && activeFilters.status.indexOf(n.status) === -1) show = false;
+            if (activeFilters.priority.length > 0 && activeFilters.priority.indexOf(n.priority || 'None') === -1) show = false;
+            if (activeFilters.type.length > 0 && activeFilters.type.indexOf(n.type) === -1) show = false;
+            if (show) visibleIds.add(n.id);
+        });
+        graph.nodeVisibility(function(n) { return visibleIds.has(n.id); });
+        graph.linkVisibility(function(l) {
+            var src = l.source.id || l.source;
+            var tgt = l.target.id || l.target;
+            return visibleIds.has(src) && visibleIds.has(tgt);
+        });
+    }
+
+    function updateFilterToggle() {
+        var btn = document.getElementById('filter-toggle');
+        var hasFilter = activeFilters.status.length > 0 || activeFilters.priority.length > 0 || activeFilters.type.length > 0 || hideIsolated;
+        if (hasFilter) { btn.classList.add('has-filter'); }
+        else { btn.classList.remove('has-filter'); }
     }
 
     document.addEventListener('DOMContentLoaded', init);

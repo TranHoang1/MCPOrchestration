@@ -43,6 +43,42 @@
         }
         #controls input { width: 180px; }
         #graph-container { width: 100vw; height: 100vh; }
+        #filter-panel {
+            position: fixed;
+            top: 52px;
+            left: 16px;
+            z-index: 100;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 12px;
+            font-size: 0.8rem;
+            display: none;
+            max-width: 320px;
+        }
+        #filter-panel.open { display: block; }
+        #filter-panel .filter-group { margin-bottom: 8px; }
+        #filter-panel .filter-group-title { color: var(--muted); margin-bottom: 4px; font-weight: bold; }
+        #filter-panel .filter-chips { display: flex; flex-wrap: wrap; gap: 4px; }
+        #filter-panel .chip {
+            padding: 2px 8px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            cursor: pointer;
+            user-select: none;
+            font-size: 0.75rem;
+        }
+        #filter-panel .chip.active { background: var(--accent); color: #000; border-color: var(--accent); }
+        #filter-toggle {
+            padding: 6px 12px;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            background: var(--surface);
+            color: var(--text);
+            font-size: 0.85rem;
+            cursor: pointer;
+        }
+        #filter-toggle.has-filter { border-color: var(--accent); color: var(--accent); }
         #details-panel {
             position: fixed;
             top: 60px;
@@ -97,6 +133,21 @@
         <option value="team">Team</option>
     </select>
     <input id="search" placeholder="Search ticket...">
+    <button id="filter-toggle" onclick="toggleFilter()">⚙ Filter</button>
+</div>
+<div id="filter-panel">
+    <div class="filter-group">
+        <div class="filter-group-title">Status</div>
+        <div class="filter-chips" id="filter-status"></div>
+    </div>
+    <div class="filter-group">
+        <div class="filter-group-title">Priority</div>
+        <div class="filter-chips" id="filter-priority"></div>
+    </div>
+    <div class="filter-group">
+        <div class="filter-group-title">Type</div>
+        <div class="filter-chips" id="filter-type"></div>
+    </div>
 </div>
 <div id="graph-container"></div>
 <div id="details-panel" class="hidden"></div>
@@ -110,6 +161,7 @@
     var LABEL_MAX_CHARS = 30;
     var graph = null;
     var graphData = { nodes: [], edges: [] };
+    var activeFilters = { status: [], priority: [], type: [] };
 
     function init() {
         graph = ForceGraph3D()(document.getElementById('graph-container'))
@@ -233,6 +285,8 @@
                 graph.graphData({ nodes: data.nodes, links: links });
                 updateStats(data.metadata);
                 updateLegend(data.nodes);
+                buildFilterChips(data.nodes);
+                applyFilters();
             })
             .catch(function(err) { console.error('Graph load failed:', err); });
     }
@@ -317,6 +371,71 @@
             }).join('');
         }
         document.getElementById('legend').innerHTML = nodeHtml + edgeHtml;
+    }
+
+    // ─── Filters (MTO-84) ──────────────────────────────────────────────
+    window.toggleFilter = function() {
+        document.getElementById('filter-panel').classList.toggle('open');
+    };
+
+    function buildFilterChips(nodes) {
+        buildChipGroup('filter-status', 'status', nodes.map(function(n) { return n.status; }));
+        buildChipGroup('filter-priority', 'priority', nodes.map(function(n) { return n.priority || 'None'; }));
+        buildChipGroup('filter-type', 'type', nodes.map(function(n) { return n.type; }));
+    }
+
+    function buildChipGroup(containerId, filterKey, values) {
+        var unique = [];
+        values.forEach(function(v) { if (unique.indexOf(v) === -1) unique.push(v); });
+        unique.sort();
+        var container = document.getElementById(containerId);
+        container.innerHTML = unique.map(function(v) {
+            var isActive = activeFilters[filterKey].indexOf(v) !== -1;
+            return '<span class="chip' + (isActive ? ' active' : '') + '" data-key="' + filterKey + '" data-value="' + v + '">' + v + '</span>';
+        }).join('');
+        container.onclick = function(e) {
+            var chip = e.target.closest('.chip');
+            if (!chip) return;
+            var key = chip.dataset.key;
+            var val = chip.dataset.value;
+            var idx = activeFilters[key].indexOf(val);
+            if (idx === -1) { activeFilters[key].push(val); }
+            else { activeFilters[key].splice(idx, 1); }
+            chip.classList.toggle('active');
+            applyFilters();
+            updateFilterToggle();
+        };
+    }
+
+    function applyFilters() {
+        var hasFilter = activeFilters.status.length > 0 || activeFilters.priority.length > 0 || activeFilters.type.length > 0;
+        if (!hasFilter) {
+            // Show all
+            graph.nodeVisibility(function() { return true; });
+            graph.linkVisibility(function() { return true; });
+            return;
+        }
+        var visibleIds = new Set();
+        graphData.nodes.forEach(function(n) {
+            var show = true;
+            if (activeFilters.status.length > 0 && activeFilters.status.indexOf(n.status) === -1) show = false;
+            if (activeFilters.priority.length > 0 && activeFilters.priority.indexOf(n.priority || 'None') === -1) show = false;
+            if (activeFilters.type.length > 0 && activeFilters.type.indexOf(n.type) === -1) show = false;
+            if (show) visibleIds.add(n.id);
+        });
+        graph.nodeVisibility(function(n) { return visibleIds.has(n.id); });
+        graph.linkVisibility(function(l) {
+            var src = l.source.id || l.source;
+            var tgt = l.target.id || l.target;
+            return visibleIds.has(src) && visibleIds.has(tgt);
+        });
+    }
+
+    function updateFilterToggle() {
+        var btn = document.getElementById('filter-toggle');
+        var hasFilter = activeFilters.status.length > 0 || activeFilters.priority.length > 0 || activeFilters.type.length > 0;
+        if (hasFilter) { btn.classList.add('has-filter'); }
+        else { btn.classList.remove('has-filter'); }
     }
 
     document.addEventListener('DOMContentLoaded', init);

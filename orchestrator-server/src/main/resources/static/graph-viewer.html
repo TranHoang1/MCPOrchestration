@@ -148,6 +148,13 @@
         <div class="filter-group-title">Type</div>
         <div class="filter-chips" id="filter-type"></div>
     </div>
+    <div class="filter-group" style="border-top:1px solid var(--border);padding-top:8px;">
+        <label style="cursor:pointer;display:flex;align-items:center;gap:6px;">
+            <input type="checkbox" id="hide-isolated" onchange="toggleIsolated()">
+            <span>Hide unlinked nodes</span>
+            <span id="isolated-count" style="background:var(--border);border-radius:10px;padding:1px 6px;font-size:0.7rem;"></span>
+        </label>
+    </div>
 </div>
 <div id="graph-container"></div>
 <div id="details-panel" class="hidden"></div>
@@ -162,6 +169,8 @@
     var graph = null;
     var graphData = { nodes: [], edges: [] };
     var activeFilters = { status: [], priority: [], type: [] };
+    var hideIsolated = false;
+    var isolatedNodeIds = new Set();
 
     function init() {
         graph = ForceGraph3D()(document.getElementById('graph-container'))
@@ -286,6 +295,7 @@
                 updateStats(data.metadata);
                 updateLegend(data.nodes);
                 buildFilterChips(data.nodes);
+                computeIsolatedNodes(data);
                 applyFilters();
             })
             .catch(function(err) { console.error('Graph load failed:', err); });
@@ -378,6 +388,25 @@
         document.getElementById('filter-panel').classList.toggle('open');
     };
 
+    window.toggleIsolated = function() {
+        hideIsolated = document.getElementById('hide-isolated').checked;
+        applyFilters();
+        updateFilterToggle();
+    };
+
+    function computeIsolatedNodes(data) {
+        var linked = new Set();
+        data.edges.forEach(function(e) {
+            linked.add(e.source.id || e.source);
+            linked.add(e.target.id || e.target);
+        });
+        isolatedNodeIds = new Set();
+        data.nodes.forEach(function(n) {
+            if (!linked.has(n.id)) isolatedNodeIds.add(n.id);
+        });
+        document.getElementById('isolated-count').textContent = isolatedNodeIds.size;
+    }
+
     function buildFilterChips(nodes) {
         buildChipGroup('filter-status', 'status', nodes.map(function(n) { return n.status; }));
         buildChipGroup('filter-priority', 'priority', nodes.map(function(n) { return n.priority || 'None'; }));
@@ -408,15 +437,15 @@
     }
 
     function applyFilters() {
-        var hasFilter = activeFilters.status.length > 0 || activeFilters.priority.length > 0 || activeFilters.type.length > 0;
-        if (!hasFilter) {
-            // Show all
+        var hasChipFilter = activeFilters.status.length > 0 || activeFilters.priority.length > 0 || activeFilters.type.length > 0;
+        if (!hasChipFilter && !hideIsolated) {
             graph.nodeVisibility(function() { return true; });
             graph.linkVisibility(function() { return true; });
             return;
         }
         var visibleIds = new Set();
         graphData.nodes.forEach(function(n) {
+            if (hideIsolated && isolatedNodeIds.has(n.id)) return;
             var show = true;
             if (activeFilters.status.length > 0 && activeFilters.status.indexOf(n.status) === -1) show = false;
             if (activeFilters.priority.length > 0 && activeFilters.priority.indexOf(n.priority || 'None') === -1) show = false;
@@ -433,7 +462,7 @@
 
     function updateFilterToggle() {
         var btn = document.getElementById('filter-toggle');
-        var hasFilter = activeFilters.status.length > 0 || activeFilters.priority.length > 0 || activeFilters.type.length > 0;
+        var hasFilter = activeFilters.status.length > 0 || activeFilters.priority.length > 0 || activeFilters.type.length > 0 || hideIsolated;
         if (hasFilter) { btn.classList.add('has-filter'); }
         else { btn.classList.remove('has-filter'); }
     }

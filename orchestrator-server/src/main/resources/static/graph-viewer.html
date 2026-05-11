@@ -442,6 +442,40 @@
         document.getElementById('search').onkeydown = function(e) {
             if (e.key === 'Enter') searchNode(e.target.value);
         };
+        // Keyboard shortcuts (MTO-62)
+        document.addEventListener('keydown', function(e) {
+            if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT') return;
+            switch (e.key) {
+                case 'f': case 'F': toggleFilter(); break;
+                case 'e': case 'E': exportPNG(); break;
+                case 'm': case 'M': toggleMinimap(); break;
+                case 'r': case 'R': graph.cameraPosition({ x: 0, y: 0, z: 500 }, { x: 0, y: 0, z: 0 }, 1000); break;
+                case '/': e.preventDefault(); document.getElementById('search').focus(); break;
+                case 'Escape': hideDetailsIfUnpinned(); document.getElementById('filter-panel').classList.remove('open'); break;
+                case '?': toggleShortcutsHelp(); break;
+            }
+        });
+    }
+
+    var shortcutsVisible = false;
+    function toggleShortcutsHelp() {
+        shortcutsVisible = !shortcutsVisible;
+        var existing = document.getElementById('shortcuts-help');
+        if (existing) { existing.remove(); return; }
+        var div = document.createElement('div');
+        div.id = 'shortcuts-help';
+        div.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:24px;z-index:250;font-size:0.85rem;min-width:280px;';
+        div.innerHTML = '<h3 style="color:var(--accent);margin-bottom:12px;">⌨️ Keyboard Shortcuts</h3>' +
+            '<div style="display:grid;grid-template-columns:60px 1fr;gap:6px;">' +
+            '<kbd>F</kbd><span>Toggle filter panel</span>' +
+            '<kbd>E</kbd><span>Export PNG</span>' +
+            '<kbd>M</kbd><span>Toggle minimap</span>' +
+            '<kbd>R</kbd><span>Reset camera view</span>' +
+            '<kbd>/</kbd><span>Focus search</span>' +
+            '<kbd>Esc</kbd><span>Close panels</span>' +
+            '<kbd>?</kbd><span>Show this help</span>' +
+            '</div><p style="margin-top:12px;color:var(--muted);font-size:0.75rem;">Press any key to dismiss</p>';
+        document.body.appendChild(div);
     }
 
     function loadGraph() {
@@ -457,6 +491,13 @@
                 graphData = data;
                 var links = data.edges.map(function(e) { return Object.assign({}, e); });
                 graph.graphData({ nodes: data.nodes, links: links });
+                // MTO-57: Cluster nodes by epic/parent - increase link distance for cross-group
+                graph.d3Force('link').distance(function(link) {
+                    var src = link.source;
+                    var tgt = link.target;
+                    if (src.group === tgt.group) return 30;
+                    return 80;
+                });
                 updateStats(data.metadata);
                 updateLegend(data.nodes);
                 buildFilterChips(data.nodes);
@@ -471,6 +512,7 @@
         panel.classList.remove('hidden');
         var pinClass = detailsPinned ? 'pin-btn pinned' : 'pin-btn';
         var pinLabel = detailsPinned ? '📌 Unpin' : '📌 Pin';
+        var jiraUrl = 'https://jiraassist.atlassian.net/browse/' + node.id;
         panel.innerHTML =
             '<button class="' + pinClass + '" onclick="togglePin()">' + pinLabel + '</button>' +
             '<h3>' + node.id + '</h3>' +
@@ -478,7 +520,9 @@
             '<div class="field"><span class="label">Type:</span> ' + node.type + '</div>' +
             '<div class="field"><span class="label">Status:</span> ' + node.status + '</div>' +
             '<div class="field"><span class="label">Priority:</span> ' + (node.priority || 'N/A') + '</div>' +
-            '<div class="field"><span class="label">Group:</span> ' + node.group + '</div>';
+            '<div class="field"><span class="label">Assignee:</span> ' + (node.assignee || 'Unassigned') + '</div>' +
+            '<div class="field"><span class="label">Group:</span> ' + node.group + '</div>' +
+            '<div style="margin-top:12px;"><a href="' + jiraUrl + '" target="_blank" style="color:var(--accent);text-decoration:none;font-size:0.8rem;">🔗 Open in Jira →</a></div>';
     }
 
     window.togglePin = function() {

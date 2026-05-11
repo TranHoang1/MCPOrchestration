@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MCP Orchestrator — 3D Graph Viewer</title>
+    <script src="https://unpkg.com/3d-force-graph@1"></script>
+    <style>
+        :root {
+            --bg: #0d1117;
+            --surface: #161b22;
+            --border: #30363d;
+            --text: #c9d1d9;
+            --muted: #8b949e;
+            --accent: #58a6ff;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            overflow: hidden;
+        }
+        #controls {
+            position: fixed;
+            top: 16px;
+            left: 16px;
+            z-index: 100;
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        #controls select, #controls input {
+            padding: 6px 12px;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            background: var(--surface);
+            color: var(--text);
+            font-size: 0.85rem;
+        }
+        #controls input { width: 180px; }
+        #graph-container { width: 100vw; height: 100vh; }
+        #details-panel {
+            position: fixed;
+            top: 60px;
+            right: 16px;
+            width: 300px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 16px;
+            z-index: 100;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        #details-panel.hidden { display: none; }
+        #details-panel h3 { margin-bottom: 8px; color: var(--accent); }
+        #details-panel .field { margin-bottom: 6px; font-size: 0.85rem; }
+        #details-panel .field .label { color: var(--muted); }
+        #legend {
+            position: fixed;
+            bottom: 16px;
+            left: 16px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 12px;
+            z-index: 100;
+            font-size: 0.8rem;
+        }
+        #legend .item { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
+        #legend .dot { width: 12px; height: 12px; border-radius: 50%; }
+        #stats {
+            position: fixed;
+            bottom: 16px;
+            right: 16px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 8px 12px;
+            font-size: 0.8rem;
+            color: var(--muted);
+            z-index: 100;
+        }
+    </style>
+</head>
+<body>
+<div id="controls">
+    <input id="project-select" placeholder="Project key (e.g. MTO)" value="MTO">
+    <select id="view-select">
+        <option value="hierarchy">Hierarchy</option>
+        <option value="dependency">Dependency</option>
+        <option value="team">Team</option>
+    </select>
+    <input id="search" placeholder="Search ticket...">
+</div>
+<div id="graph-container"></div>
+<div id="details-panel" class="hidden"></div>
+<div id="legend"></div>
+<div id="stats">Nodes: 0 | Edges: 0</div>
+
+<script>
+(function() {
+    'use strict';
+
+    // ─── Label Configuration ───────────────────────────────────────────
+    const LABEL_CONFIG = {
+        MAX_VISIBLE: 50,
+        FADE_SPEED: 0.1,
+        SCALE_FACTOR: 100,
+        FONT_FAMILY: 'Arial, sans-serif',
+        FONT_COLOR: '#ffffff',
+        SHADOW_COLOR: '#000000',
+        SHADOW_BLUR: 3,
+        CANVAS_WIDTH: 256,
+        CANVAS_HEIGHT_EPIC: 128,
+        CANVAS_HEIGHT_NORMAL: 64,
+        EPIC_SUMMARY_MAX: 30,
+        POSITION_Y_OFFSET: 1.5,
+        THRESHOLDS: {
+            Epic:       { show: 0.8, hide: 0.6, priority: 1 },
+            Story:      { show: 1.2, hide: 1.0, priority: 2 },
+            Task:       { show: 1.2, hide: 1.0, priority: 3 },
+            Bug:        { show: 1.2, hide: 1.0, priority: 4 },
+            'Sub-task': { show: 1.5, hide: 1.3, priority: 5 }
+        },
+        DEFAULT_THRESHOLD: { show: 1.2, hide: 1.0, priority: 3 }
+    };
+
+    // ─── LabelManager Class ────────────────────────────────────────────
+    class LabelManager {
+        constructor(graphInstance) {
+            this._graph = graphInstance;
+            this._labels = [];
+            this._tempVec = new THREE.Vector3();
+            this._enabled = true;
+        }
+
+        createLabel(node) {
+            try {
+                const text = this._getLabelText(node);
+                const isEpic = node.type === 'Epic';
+                const fontSize = this._getFontSize(node);
+                const texture = this._createCanvasTexture(text, fontSize, isEpic);
+                const sprite = this._createSprite(texture, node, isEpic);
+
+                this._labels.push({
+                    node: node,
+                    sprite: sprite,
+                    targetOpacity: 1.0,
+                    distance: 0
+                });
+
+                return sprite;
+            } catch (err) {
+                console.warn('Label creation failed for node:', node.id, err);
+                return null;
+            }
+        }
+
+        updateVisibility(camera) {
+            if (!this._enabled || !camera) return;
+
+            let visibleCount = 0;
+
+            // Calculate distances
+            for (const entry of this._labels) {
+                if (!entry.sprite.parent) continue;
+                entry.sprite.parent.getWorldPosition(this._tempVec);
+                entry.distance = camera.position.distanceTo(this._tempVec);
+            }
+
+            // Sort by priority then distance
+            const sorted = this._labels.slice().sort((a, b) => {
+                const pa = this._getThreshold(a.node.type).priority;
+                const pb = this._getThreshold(b.node.type).priority;
+                if (pa !== pb) return pa - pb;
+                return a.distance - b.distance;
+            });
+
+            for (const entry of sorted) {
+                if (!entry.sprite.parent) continue;
+                const apparent = (entry.node.size || 5) / entry.distance * LABEL_CONFIG.SCALE_FACTOR;
+                const threshold = this._getThreshold(entry.node.type);
+
+                if (apparent >= threshold.show && visibleCount < LABEL_CONFIG.MAX_VISIBLE) {
+                    entry.targetOpacity = 1.0;
+                    visibleCount++;
+                } else if (apparent < threshold.hide) {
+                    entry.targetOpacity = 0.0;
+                }
+
+                // Lerp opacity
+                const current = entry.sprite.material.opacity;
+                const next = current + (entry.targetOpacity - current) * LABEL_CONFIG.FADE_SPEED;
+                entry.sprite.material.opacity = next;
+                entry.sprite.visible = next > 0.01;
+            }
+        }
+
+        dispose() {
+            for (const entry of this._labels) {
+                if (entry.sprite.material.map) entry.sprite.material.map.dispose();
+                entry.sprite.material.dispose();
+            }
+            this._labels = [];
+        }
+
+        reset() {
+            this.dispose();
+        }
+
+        _getLabelText(node) {
+            if (node.type === 'Epic') {
+                const summary = (node.label || '').length > LABEL_CONFIG.EPIC_SUMMARY_MAX
+                    ? node.label.substring(0, LABEL_CONFIG.EPIC_SUMMARY_MAX) + '...'
+                    : node.label || '';
+                return node.id + '\n' + summary;
+            }
+            return node.id;
+        }
+
+        _getFontSize(node) {
+            const base = Math.max(14, Math.min(24, (node.size || 5) * 3));
+            return node.type === 'Epic' ? Math.round(base * 1.25) : base;
+        }
+
+        _createCanvasTexture(text, fontSize, isEpic) {
+            const canvas = document.createElement('canvas');
+            canvas.width = LABEL_CONFIG.CANVAS_WIDTH;
+            canvas.height = isEpic ? LABEL_CONFIG.CANVAS_HEIGHT_EPIC : LABEL_CONFIG.CANVAS_HEIGHT_NORMAL;
+
+            const ctx = canvas.getContext('2d');
+            ctx.font = 'bold ' + fontSize + 'px ' + LABEL_CONFIG.FONT_FAMILY;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.shadowColor = LABEL_CONFIG.SHADOW_COLOR;
+            ctx.shadowBlur = LABEL_CONFIG.SHADOW_BLUR;
+            ctx.fillStyle = LABEL_CONFIG.FONT_COLOR;
+
+            const lines = text.split('\n');
+            const lineHeight = fontSize * 1.3;
+            const startY = (canvas.height - lines.length * lineHeight) / 2 + fontSize / 2;
+
+            lines.forEach(function(line, i) {
+                ctx.fillText(line, canvas.width / 2, startY + i * lineHeight);
+            });
+
+            const texture = new THREE.CanvasTexture(canvas);
+            texture.needsUpdate = true;
+            return texture;
+        }
+
+        _createSprite(texture, node, isEpic) {
+            const material = new THREE.SpriteMaterial({
+                map: texture,
+                transparent: true,
+                opacity: 1.0,
+                depthTest: false,
+                sizeAttenuation: true
+            });
+
+            const sprite = new THREE.Sprite(material);
+            const aspect = LABEL_CONFIG.CANVAS_WIDTH / (isEpic ? LABEL_CONFIG.CANVAS_HEIGHT_EPIC : LABEL_CONFIG.CANVAS_HEIGHT_NORMAL);
+            const scale = (node.size || 5) * 0.8;
+            sprite.scale.set(scale * aspect, scale, 1);
+
+            const yOffset = (node.size || 5) * LABEL_CONFIG.POSITION_Y_OFFSET;
+            sprite.position.set(0, yOffset, 0);
+
+            return sprite;
+        }
+
+        _getThreshold(nodeType) {
+            return LABEL_CONFIG.THRESHOLDS[nodeType] || LABEL_CONFIG.DEFAULT_THRESHOLD;
+        }
+    }
+
+    // ─── Application State ─────────────────────────────────────────────
+    let graph = null;
+    let graphData = { nodes: [], edges: [] };
+    let labelManager = null;
+
+    // ─── Initialization ────────────────────────────────────────────────
+    function init() {
+        graph = ForceGraph3D()(document.getElementById('graph-container'))
+            .backgroundColor('#0d1117')
+            .nodeLabel(n => `${n.id}: ${n.label}`)
+            .nodeColor(n => n.color)
+            .nodeVal(n => n.size)
+            .nodeThreeObjectExtend(true)
+            .nodeThreeObject(n => createNodeLabel(n))
+            .linkColor(l => l.color)
+            .linkWidth(l => l.width)
+            .linkLabel(l => l.label)
+            .linkDirectionalArrowLength(4)
+            .linkDirectionalArrowRelPos(1)
+            .onNodeClick(n => showDetails(n))
+            .onNodeHover(n => highlightConnected(n))
+            .onEngineTick(() => onTick())
+            .d3AlphaDecay(0.02)
+            .d3VelocityDecay(0.3)
+            .warmupTicks(100)
+            .cooldownTicks(200);
+
+        labelManager = new LabelManager(graph);
+        applyUrlParams();
+        bindControls();
+        loadGraph();
+        console.info('[Labels] LabelManager initialized');
+    }
+
+    function applyUrlParams() {
+        const params = new URLSearchParams(window.location.search);
+        if (params.get('labels') === 'off') {
+            labelManager._enabled = false;
+        }
+        const maxLabels = parseInt(params.get('maxLabels'), 10);
+        if (maxLabels > 0) {
+            LABEL_CONFIG.MAX_VISIBLE = maxLabels;
+        }
+    }
+
+    function createNodeLabel(node) {
+        if (!labelManager || !labelManager._enabled) return null;
+        return labelManager.createLabel(node);
+    }
+
+    function onTick() {
+        if (!labelManager || !graph) return;
+        const camera = graph.camera();
+        labelManager.updateVisibility(camera);
+    }
+
+    // ─── Controls ──────────────────────────────────────────────────────
+    function bindControls() {
+        document.getElementById('view-select').onchange = loadGraph;
+        document.getElementById('project-select').onchange = loadGraph;
+        document.getElementById('search').oninput = (e) => searchNode(e.target.value);
+    }
+
+    // ─── Data Loading ──────────────────────────────────────────────────
+    function loadGraph() {
+        const project = document.getElementById('project-select').value.trim();
+        const view = document.getElementById('view-select').value;
+        if (!project) return;
+
+        if (labelManager) labelManager.reset();
+
+        fetch(`/sync/graph/${project}?view=${view}`)
+            .then(r => { if (r.ok) return r.json(); throw new Error('Failed'); })
+            .then(data => {
+                graphData = data;
+                const links = data.edges.map(e => ({ ...e }));
+                graph.graphData({ nodes: data.nodes, links: links });
+                updateStats(data.metadata);
+                updateLegend(data.nodes);
+            })
+            .catch(err => console.error('Graph load failed:', err));
+    }
+
+    // ─── UI Interactions ───────────────────────────────────────────────
+    function showDetails(node) {
+        const panel = document.getElementById('details-panel');
+        panel.classList.remove('hidden');
+        panel.innerHTML = `
+            <h3>${node.id}</h3>
+            <div class="field"><span class="label">Summary:</span> ${node.label}</div>
+            <div class="field"><span class="label">Type:</span> ${node.type}</div>
+            <div class="field"><span class="label">Status:</span> ${node.status}</div>
+            <div class="field"><span class="label">Priority:</span> ${node.priority || 'N/A'}</div>
+            <div class="field"><span class="label">Group:</span> ${node.group}</div>
+        `;
+    }
+
+    function highlightConnected(node) {
+        if (!node) {
+            graph.nodeColor(n => n.color);
+            graph.linkColor(l => l.color);
+            return;
+        }
+        const connected = new Set();
+        graphData.edges.forEach(e => {
+            if (e.source === node.id || e.source.id === node.id) connected.add(e.target.id || e.target);
+            if (e.target === node.id || e.target.id === node.id) connected.add(e.source.id || e.source);
+        });
+        connected.add(node.id);
+
+        graph.nodeColor(n => connected.has(n.id) ? n.color : '#333333');
+        graph.linkColor(l => {
+            const src = l.source.id || l.source;
+            const tgt = l.target.id || l.target;
+            return (src === node.id || tgt === node.id) ? '#ffffff' : '#222222';
+        });
+    }
+
+    function searchNode(query) {
+        if (!query) return;
+        const found = graphData.nodes.find(n =>
+            n.id.toLowerCase().includes(query.toLowerCase()) ||
+            n.label.toLowerCase().includes(query.toLowerCase())
+        );
+        if (found) {
+            graph.cameraPosition({ x: found.x, y: found.y, z: found.z + 200 }, found, 1000);
+            showDetails(found);
+        }
+    }
+
+    // ─── Stats & Legend ─────────────────────────────────────────────────
+    function updateStats(metadata) {
+        document.getElementById('stats').textContent =
+            `Nodes: ${metadata.nodeCount} | Edges: ${metadata.edgeCount} | View: ${metadata.viewMode}`;
+    }
+
+    function updateLegend(nodes) {
+        const groups = [...new Set(nodes.map(n => n.group))];
+        const colorMap = {};
+        nodes.forEach(n => { colorMap[n.group] = n.color; });
+
+        const legend = document.getElementById('legend');
+        legend.innerHTML = groups.map(g =>
+            `<div class="item"><div class="dot" style="background:${colorMap[g]}"></div>${g}</div>`
+        ).join('');
+    }
+
+    document.addEventListener('DOMContentLoaded', init);
+})();
+</script>
+</body>
+</html>

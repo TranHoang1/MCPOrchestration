@@ -63,8 +63,9 @@ After discovery, log:
 
 ## Input Format
 
-User provides a Jira ticket key, optionally with a specific request and/or template:
+User provides EITHER a Jira ticket key OR a project key with action:
 
+**Ticket-level (single ticket):**
 ```
 COLLEX-64
 ```
@@ -84,16 +85,30 @@ COLLEX-64 tạo BRD template:documents/templates/BRD-CUSTOM.md
 COLLEX-64 tạo tài liệu đầy đủ template:documents/templates/MY-TEMPLATE.md
 ```
 
+**Project-level (all tickets in project):**
+```
+KSA workflow
+```
+```
+KSA status
+```
+```
+KSA tạo tài liệu đầy đủ
+```
+
 ### Input Parsing
 
-1. Extract ticket key: pattern `[A-Z]+-\d+`
+1. **Determine input type:**
+   - If input matches `[A-Z]+-\d+` → **Ticket-level** (single ticket workflow)
+   - If input matches `[A-Z]+` (no number) + action → **Project-level** (multi-ticket workflow)
+
 2. Extract action (optional):
    - No action → full pipeline (resume from current phase)
    - `status` → show current status only
    - `tạo BRD` / `tạo FSD` / `tạo TDD` / `tạo STP` → specific phase only
    - `tạo lại {doc}` → redo specific phase
    - `tạo tài liệu đầy đủ` → full document pipeline (BRD → FSD → TDD)
-   - `workflow` / `quy trình` → generate Jira workflow documentation for the ticket's issue type
+   - `workflow` / `quy trình` → project-level: list all tickets + status + propose next steps
 3. Extract template path (optional):
    - Look for `template:` prefix followed by a file path
    - Example: `template:documents/templates/BRD-CUSTOM.md`
@@ -104,6 +119,65 @@ COLLEX-64 tạo tài liệu đầy đủ template:documents/templates/MY-TEMPLAT
      - TDD → `documents/templates/TDD-TEMPLATE.md`
      - UG → `documents/templates/UG-TEMPLATE.md`
    - Template is passed to agent via prompt: `"Tạo {doc} cho {TICKET} dùng template:{path}"`
+
+### ⛔ jira.conf Management (MANDATORY for Project-level Input)
+
+**File location:** `jira.conf` (workspace root)
+
+**When SM receives a project-level input (e.g., `KSA workflow`):**
+
+1. **Read `jira.conf`** if it exists
+2. **Compare project key** from input vs `JIRA_PROJECT_PREFIX` in file:
+   - If file doesn't exist → create it with the new project key
+   - If project key matches → proceed normally
+   - If project key differs → **ASK USER before overwriting:**
+     ```
+     ⚠️ jira.conf hiện tại có JIRA_PROJECT_PREFIX=OLD_KEY.
+     Bạn muốn đổi sang KSA?
+     1. Đổi sang KSA (cập nhật jira.conf)
+     2. Giữ nguyên OLD_KEY (hủy lệnh hiện tại)
+     ```
+3. **Write/update `jira.conf`** (only after user confirms if key differs):
+   ```
+   # Jira Configuration
+   # Used by SM agent to identify project scope
+   
+   JIRA_PROJECT_PREFIX={PROJECT_KEY}
+   ```
+
+**jira.conf format rules:**
+- Only contains `JIRA_PROJECT_PREFIX` — no URLs, no tokens, no other config
+- Comment header explains purpose
+- SM is the ONLY agent responsible for creating/updating this file
+
+### Project-level Workflow
+
+**When input is project-level (e.g., `KSA workflow`):**
+
+1. **Manage jira.conf** (see above)
+2. **Query all project tickets** using discovered project tracker tools (query: project = "{KEY}" ORDER BY key ASC, limit 50)
+3. **For each ticket**, check `documents/{TICKET}/STATUS.json` or scan existing files
+4. **Report project overview:**
+   ```
+   📊 Project {KEY} — Tổng quan
+
+   | Ticket | Summary | Jira Status | Docs Status |
+   |--------|---------|-------------|-------------|
+   | KSA-1  | Epic... | To Do       | ❌ No docs  |
+   | KSA-2  | Core... | To Do       | ❌ No docs  |
+   | ...    | ...     | ...         | ...         |
+
+   📋 Tóm tắt:
+   - Tổng: {N} tickets
+   - Có tài liệu: {M} tickets
+   - Chưa có tài liệu: {N-M} tickets
+
+   Bạn muốn làm gì?
+   1. Tạo tài liệu cho ticket cụ thể (chọn ticket)
+   2. Tạo tài liệu đầy đủ cho tất cả tickets (batch)
+   3. Chỉ xem status
+   ```
+5. **Wait for user choice** before proceeding
 
 ### Interactive Guidance
 
@@ -914,8 +988,26 @@ If review found issues:
    )
    ```
 3. Verify outputs exist
-4. Update STATUS: `deployment.status = "done"`
-5. Report: "✅ Phase 7 done — DPG.md + RLN.md created."
+4. **Deploy** (nếu được yêu cầu): Invoke DevOps agent để deploy theo DPG
+5. **Sau khi deploy thành công + sanity pass — Merge & Tag (MANDATORY):**
+   ```
+   git checkout master
+   git pull origin master
+   git merge {TICKET} --no-ff -m "Merge {TICKET}: {summary}"
+   git push origin master
+   
+   // Tính version mới
+   // Lấy latest tag, bump minor (hoặc theo RLN version)
+   git tag -a v{VERSION} -m "{TICKET}: {summary}"
+   git push origin v{VERSION}
+   
+   // Cleanup branch
+   git branch -d {TICKET}
+   git push origin --delete {TICKET}
+   ```
+6. **Transition Jira: READY FOR PRODUCT → DONE** (transition name: "Complete")
+7. Update STATUS: `deployment.status = "done"`, `deployment.releasedVersion = "v{VERSION}"`
+8. Report: "✅ Phase 7 done — DPG.md + RLN.md created. Branch merged to master. Tagged v{VERSION}."
 
 ## Specific Action Handling
 
@@ -1201,6 +1293,47 @@ the discovered project tracker "update issue" tool (
 - Branch name = Jira ticket key: `{TICKET}` (ví dụ: `SCRUM-50`)
 - Commit message: `{TICKET}: {short description}`
 - Push code lên branch trước khi transition sang IN REVIEW
+- **⛔ Mỗi ticket = 1 branch riêng biệt** — KHÔNG commit nhiều tickets vào cùng 1 branch
+- **⛔ Merge vào master = 1 version mới + git tag** — Sau khi deploy thành công (Phase 7), SM PHẢI merge branch vào master và tạo version tag
+
+### Git Release Process (Post-Deployment — MANDATORY)
+
+**Sau khi Phase 7 deploy thành công + sanity pass, SM PHẢI thực hiện:**
+
+1. **Merge branch vào master:**
+   ```
+   git checkout master
+   git pull origin master
+   git merge {TICKET} --no-ff -m "Merge {TICKET}: {summary}"
+   git push origin master
+   ```
+2. **Tạo version tag trên master:**
+   - Đọc version hiện tại từ `documents/{TICKET}/RLN.md` (Release Notes header)
+   - Hoặc tính version mới: lấy latest tag (`git describe --tags --abbrev=0`), bump patch version
+   - Format tag: `v{MAJOR}.{MINOR}.{PATCH}` (ví dụ: `v1.2.0`)
+   ```
+   git tag -a v{VERSION} -m "{TICKET}: {summary}"
+   git push origin v{VERSION}
+   ```
+3. **Cleanup branch (optional):**
+   ```
+   git branch -d {TICKET}
+   git push origin --delete {TICKET}
+   ```
+4. **Update STATUS.json:** Thêm `"releasedVersion": "v{VERSION}"` vào deployment phase
+5. **Report:**
+   ```
+   ✅ Release complete:
+   - Branch {TICKET} merged to master
+   - Tagged: v{VERSION}
+   - Jira: DONE
+   ```
+
+**Version Numbering Rules:**
+- MAJOR: Breaking changes, major feature release
+- MINOR: New feature (mỗi ticket implement thường là minor bump)
+- PATCH: Bug fix, hotfix
+- Nếu không chắc → bump MINOR
 
 
 ## ⛔ Document Quality Gate — Post-Phase Verification (MANDATORY)

@@ -1,0 +1,64 @@
+<mxGraphModel adaptiveColors="auto">
+  <root>
+    <mxCell id="0"/>
+    <mxCell id="1" parent="0"/>
+    <!-- Title -->
+    <mxCell id="title" value="&lt;b&gt;Use Case Diagram — MTO-81: Node Label Display&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;fontSize=13;fontStyle=1;" vertex="1" parent="1">
+      <mxGeometry x="200" y="10" width="400" height="30" as="geometry"/>
+    </mxCell>
+    <!-- Actor: User -->
+    <mxCell id="actor1" value="Graph Viewer User" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="60" y="200" width="40" height="60" as="geometry"/>
+    </mxCell>
+    <!-- System boundary -->
+    <mxCell id="system" value="Graph Viewer — Label System" style="swimlane;startSize=24;fillColor=#e1f5fe;strokeColor=#0288d1;html=1;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="200" y="60" width="500" height="380" as="geometry"/>
+    </mxCell>
+    <!-- UC1: View Node Labels -->
+    <mxCell id="uc1" value="UC1: View Ticket Key&#xa;Labels on Nodes" style="ellipse;whiteSpace=wrap;html=1;fillColor=#e8f5e9;strokeColor=#388e3c;fontSize=11;" vertex="1" parent="system">
+      <mxGeometry x="40" y="50" width="180" height="70" as="geometry"/>
+    </mxCell>
+    <!-- UC2: View Epic Labels -->
+    <mxCell id="uc2" value="UC2: View Epic Key&#xa;+ Summary Labels" style="ellipse;whiteSpace=wrap;html=1;fillColor=#e8f5e9;strokeColor=#388e3c;fontSize=11;" vertex="1" parent="system">
+      <mxGeometry x="280" y="50" width="180" height="70" as="geometry"/>
+    </mxCell>
+    <!-- UC3: Auto-Hide Labels -->
+    <mxCell id="uc3" value="UC3: Auto-Hide Labels&#xa;on Zoom Out" style="ellipse;whiteSpace=wrap;html=1;fillColor=#fff3e0;strokeColor=#f57c00;fontSize=11;" vertex="1" parent="system">
+      <mxGeometry x="40" y="170" width="180" height="70" as="geometry"/>
+    </mxCell>
+    <!-- UC4: Anti-Overlap -->
+    <mxCell id="uc4" value="UC4: Prevent Label&#xa;Overlap" style="ellipse;whiteSpace=wrap;html=1;fillColor=#fff3e0;strokeColor=#f57c00;fontSize=11;" vertex="1" parent="system">
+      <mxGeometry x="280" y="170" width="180" height="70" as="geometry"/>
+    </mxCell>
+    <!-- UC5: Hover Tooltip (existing) -->
+    <mxCell id="uc5" value="UC5: Hover Tooltip&#xa;(Existing - Preserved)" style="ellipse;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=11;dashed=1;" vertex="1" parent="system">
+      <mxGeometry x="160" y="290" width="180" height="70" as="geometry"/>
+    </mxCell>
+    <!-- Edges: Actor to Use Cases -->
+    <mxCell id="e1" style="html=1;endArrow=none;endSize=6;" edge="1" source="actor1" target="uc1" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e2" style="html=1;endArrow=none;endSize=6;" edge="1" source="actor1" target="uc2" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e3" style="html=1;endArrow=none;endSize=6;" edge="1" source="actor1" target="uc3" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e4" style="html=1;endArrow=none;endSize=6;" edge="1" source="actor1" target="uc4" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e5" style="html=1;dashed=1;endArrow=none;endSize=6;" edge="1" source="actor1" target="uc5" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <!-- Include relationships -->
+    <mxCell id="e6" value="&lt;i&gt;«includes»&lt;/i&gt;" style="html=1;dashed=1;endArrow=open;endSize=8;fontSize=10;" edge="1" source="uc1" target="uc3" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e7" value="&lt;i&gt;«extends»&lt;/i&gt;" style="html=1;dashed=1;endArrow=open;endSize=8;fontSize=10;" edge="1" source="uc2" target="uc1" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e8" value="&lt;i&gt;«includes»&lt;/i&gt;" style="html=1;dashed=1;endArrow=open;endSize=8;fontSize=10;" edge="1" source="uc3" target="uc4" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+  </root>
+</mxGraphModel>

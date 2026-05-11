@@ -1,0 +1,47 @@
+<mxGraphModel adaptiveColors="auto">
+  <root>
+    <mxCell id="0"/>
+    <mxCell id="1" parent="0"/>
+    <!-- Title -->
+    <mxCell id="title" value="&lt;b&gt;System Context — MTO-81 Node Label Display&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;fontSize=13;fontStyle=1;" vertex="1" parent="1">
+      <mxGeometry x="200" y="10" width="400" height="30" as="geometry"/>
+    </mxCell>
+    <!-- User -->
+    <mxCell id="user" value="&lt;b&gt;Graph Viewer User&lt;/b&gt;&#xa;(Browser)" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="60" y="220" width="40" height="60" as="geometry"/>
+    </mxCell>
+    <!-- Graph Viewer Frontend -->
+    <mxCell id="frontend" value="&lt;b&gt;Graph Viewer&lt;/b&gt;&#xa;(graph-viewer.html)&#xa;&#xa;• 3d-force-graph&#xa;• Three.js Sprites&#xa;• LabelManager (NEW)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1f5fe;strokeColor=#0288d1;fontSize=11;align=center;" vertex="1" parent="1">
+      <mxGeometry x="280" y="180" width="220" height="120" as="geometry"/>
+    </mxCell>
+    <!-- Backend API -->
+    <mxCell id="backend" value="&lt;b&gt;Graph API&lt;/b&gt;&#xa;(orchestrator-server)&#xa;&#xa;GET /sync/graph/{project}" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8f5e9;strokeColor=#388e3c;fontSize=11;align=center;" vertex="1" parent="1">
+      <mxGeometry x="600" y="200" width="200" height="80" as="geometry"/>
+    </mxCell>
+    <!-- Database -->
+    <mxCell id="db" value="&lt;b&gt;PostgreSQL&lt;/b&gt;&#xa;ticket_cache&#xa;ticket_graph" style="shape=cylinder3;whiteSpace=wrap;html=1;fillColor=#f3e5f5;strokeColor=#7b1fa2;fontSize=11;size=10;" vertex="1" parent="1">
+      <mxGeometry x="640" y="360" width="120" height="80" as="geometry"/>
+    </mxCell>
+    <!-- 3d-force-graph lib -->
+    <mxCell id="lib" value="&lt;b&gt;3d-force-graph&lt;/b&gt;&#xa;(CDN Library)&#xa;&#xa;nodeThreeObject API" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=11;dashed=1;align=center;" vertex="1" parent="1">
+      <mxGeometry x="280" y="380" width="220" height="80" as="geometry"/>
+    </mxCell>
+    <!-- Edges -->
+    <mxCell id="e1" value="Interacts" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;fontSize=10;" edge="1" source="user" target="frontend" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e2" value="Fetch graph data&#xa;(JSON)" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;fontSize=10;" edge="1" source="frontend" target="backend" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e3" value="Query" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;fontSize=10;" edge="1" source="backend" target="db" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e4" value="Uses API" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;fontSize=10;" edge="1" source="frontend" target="lib" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <!-- Note -->
+    <mxCell id="note" value="&lt;i&gt;NEW: LabelManager creates Three.js Sprites&#xa;using nodeThreeObject extension point.&#xa;No backend changes needed.&lt;/i&gt;" style="shape=note;whiteSpace=wrap;html=1;fillColor=#fff3e0;strokeColor=#f57c00;fontSize=10;align=left;spacingLeft=8;" vertex="1" parent="1">
+      <mxGeometry x="60" y="380" width="200" height="80" as="geometry"/>
+    </mxCell>
+  </root>
+</mxGraphModel>

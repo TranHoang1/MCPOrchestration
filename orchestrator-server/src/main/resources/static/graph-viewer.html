@@ -118,8 +118,8 @@
             .nodeLabel(function(n) { return n.id + ': ' + n.label; })
             .nodeThreeObjectExtend(true)
             .nodeThreeObject(function(n) { return createNodeLabel(n); })
-            .linkColor(function(l) { return l.color; })
-            .linkWidth(function(l) { return l.width; })
+            .linkColor(function(l) { return getEdgeColor(l); })
+            .linkWidth(function(l) { return getEdgeWidth(l); })
             .linkLabel(function(l) { return l.label; })
             .linkDirectionalArrowLength(4)
             .linkDirectionalArrowRelPos(1)
@@ -133,6 +133,27 @@
         bindControls();
         loadGraph();
     }
+
+    // ─── Edge Styling (MTO-82) ─────────────────────────────────────────
+    var EDGE_STYLES = {
+        'parent-of':  { color: '#6e7681', width: 1.5, dash: null },
+        'child-of':   { color: '#6e7681', width: 1.5, dash: null },
+        'relates to': { color: '#58a6ff', width: 1.0, dash: [5, 5] },
+        'blocks':     { color: '#f85149', width: 2.0, dash: [2, 3] },
+        'blocked by': { color: '#f85149', width: 2.0, dash: [2, 3] },
+        'duplicates': { color: '#8b949e', width: 0.8, dash: [1, 4] },
+        'clones':     { color: '#8b949e', width: 0.8, dash: [1, 4] }
+    };
+    var DEFAULT_EDGE = { color: '#484f58', width: 1.0, dash: null };
+
+    function getEdgeStyle(link) {
+        var label = (link.label || '').toLowerCase();
+        return EDGE_STYLES[label] || DEFAULT_EDGE;
+    }
+
+    function getEdgeColor(link) { return getEdgeStyle(link).color; }
+    function getEdgeWidth(link) { return getEdgeStyle(link).width; }
+    function getEdgeDash(link) { return getEdgeStyle(link).dash; }
 
     function createNodeLabel(node) {
         var isEpic = node.type === 'Epic';
@@ -242,9 +263,25 @@
             if (groups.indexOf(n.group) === -1) groups.push(n.group);
             colorMap[n.group] = n.color;
         });
-        document.getElementById('legend').innerHTML = groups.map(function(g) {
+        var nodeHtml = groups.map(function(g) {
             return '<div class="item"><div class="dot" style="background:' + colorMap[g] + '"></div>' + g + '</div>';
         }).join('');
+
+        // Edge legend
+        var edgeLabels = [];
+        graphData.edges.forEach(function(e) {
+            if (edgeLabels.indexOf(e.label) === -1) edgeLabels.push(e.label);
+        });
+        var edgeHtml = '';
+        if (edgeLabels.length > 0) {
+            edgeHtml = '<div style="margin-top:8px;border-top:1px solid #30363d;padding-top:8px;font-size:0.75rem;color:#8b949e;">Edges:</div>';
+            edgeHtml += edgeLabels.map(function(label) {
+                var style = EDGE_STYLES[label] || DEFAULT_EDGE;
+                var lineStyle = style.dash ? 'dashed' : 'solid';
+                return '<div class="item"><div style="width:20px;height:0;border-top:2px ' + lineStyle + ' ' + style.color + '"></div>' + label + '</div>';
+            }).join('');
+        }
+        document.getElementById('legend').innerHTML = nodeHtml + edgeHtml;
     }
 
     document.addEventListener('DOMContentLoaded', init);

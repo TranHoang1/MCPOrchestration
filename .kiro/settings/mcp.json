@@ -30,7 +30,9 @@
         "resume_learning",
         "press_key",
         "list_console_messages",
-        "get_console_message"
+        "get_console_message",
+        "list_network_requests",
+        "new_page"
       ]
     },
     "orchestrator": {

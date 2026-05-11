@@ -96,6 +96,17 @@
         #details-panel h3 { margin-bottom: 8px; color: var(--accent); }
         #details-panel .field { margin-bottom: 6px; font-size: 0.85rem; }
         #details-panel .field .label { color: var(--muted); }
+        #details-panel .pin-btn {
+            float: right;
+            background: none;
+            border: 1px solid var(--border);
+            color: var(--muted);
+            border-radius: 4px;
+            padding: 2px 6px;
+            cursor: pointer;
+            font-size: 0.75rem;
+        }
+        #details-panel .pin-btn.pinned { color: var(--accent); border-color: var(--accent); }
         #legend {
             position: fixed;
             bottom: 16px;
@@ -120,6 +131,34 @@
             font-size: 0.8rem;
             color: var(--muted);
             z-index: 100;
+        }
+        #minimap {
+            position: fixed;
+            bottom: 50px;
+            right: 16px;
+            width: 180px;
+            height: 140px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            z-index: 100;
+            cursor: crosshair;
+            overflow: hidden;
+        }
+        #minimap.hidden { display: none; }
+        #minimap canvas { width: 100%; height: 100%; }
+        #minimap-toggle {
+            position: fixed;
+            bottom: 50px;
+            right: 200px;
+            z-index: 100;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--muted);
+            padding: 4px 8px;
+            font-size: 0.7rem;
+            cursor: pointer;
         }
     </style>
 </head>
@@ -159,6 +198,8 @@
 <div id="graph-container"></div>
 <div id="details-panel" class="hidden"></div>
 <div id="legend"></div>
+<div id="minimap"><canvas id="minimap-canvas" width="180" height="140"></canvas></div>
+<button id="minimap-toggle" onclick="toggleMinimap()">⊞ Map</button>
 <div id="stats">Nodes: 0 | Edges: 0</div>
 
 <script>
@@ -171,6 +212,7 @@
     var activeFilters = { status: [], priority: [], type: [] };
     var hideIsolated = false;
     var isolatedNodeIds = new Set();
+    var detailsPinned = false;
 
     function init() {
         graph = ForceGraph3D()(document.getElementById('graph-container'))
@@ -187,6 +229,7 @@
             .linkDirectionalArrowRelPos(1)
             .onNodeClick(function(n) { showDetails(n); })
             .onNodeHover(function(n) { highlightConnected(n); })
+            .onBackgroundClick(function() { hideDetailsIfUnpinned(); })
             .d3AlphaDecay(0.02)
             .d3VelocityDecay(0.3)
             .warmupTicks(100)
@@ -194,6 +237,7 @@
 
         bindControls();
         loadProjects();
+        initMinimap();
     }
 
     function loadProjects() {
@@ -304,13 +348,31 @@
     function showDetails(node) {
         var panel = document.getElementById('details-panel');
         panel.classList.remove('hidden');
+        var pinClass = detailsPinned ? 'pin-btn pinned' : 'pin-btn';
+        var pinLabel = detailsPinned ? '📌 Unpin' : '📌 Pin';
         panel.innerHTML =
+            '<button class="' + pinClass + '" onclick="togglePin()">' + pinLabel + '</button>' +
             '<h3>' + node.id + '</h3>' +
             '<div class="field"><span class="label">Summary:</span> ' + node.label + '</div>' +
             '<div class="field"><span class="label">Type:</span> ' + node.type + '</div>' +
             '<div class="field"><span class="label">Status:</span> ' + node.status + '</div>' +
             '<div class="field"><span class="label">Priority:</span> ' + (node.priority || 'N/A') + '</div>' +
             '<div class="field"><span class="label">Group:</span> ' + node.group + '</div>';
+    }
+
+    window.togglePin = function() {
+        detailsPinned = !detailsPinned;
+        var btn = document.querySelector('#details-panel .pin-btn');
+        if (btn) {
+            btn.className = detailsPinned ? 'pin-btn pinned' : 'pin-btn';
+            btn.textContent = detailsPinned ? '📌 Unpin' : '📌 Pin';
+        }
+    };
+
+    function hideDetailsIfUnpinned() {
+        if (!detailsPinned) {
+            document.getElementById('details-panel').classList.add('hidden');
+        }
     }
 
     function highlightConnected(node) {
@@ -465,6 +527,93 @@
         var hasFilter = activeFilters.status.length > 0 || activeFilters.priority.length > 0 || activeFilters.type.length > 0 || hideIsolated;
         if (hasFilter) { btn.classList.add('has-filter'); }
         else { btn.classList.remove('has-filter'); }
+    }
+
+    // ─── Minimap (MTO-86) ──────────────────────────────────────────────
+    var minimapCanvas = null;
+    var minimapCtx = null;
+    var minimapVisible = true;
+
+    window.toggleMinimap = function() {
+        minimapVisible = !minimapVisible;
+        document.getElementById('minimap').classList.toggle('hidden', !minimapVisible);
+    };
+
+    function initMinimap() {
+        minimapCanvas = document.getElementById('minimap-canvas');
+        minimapCtx = minimapCanvas.getContext('2d');
+        minimapCanvas.parentElement.onclick = function(e) {
+            handleMinimapClick(e);
+        };
+        setInterval(renderMinimap, 500);
+    }
+
+    function renderMinimap() {
+        if (!minimapCtx || !graphData.nodes || graphData.nodes.length === 0) return;
+        var w = minimapCanvas.width;
+        var h = minimapCanvas.height;
+        minimapCtx.clearRect(0, 0, w, h);
+
+        // Compute bounds
+        var minX = Infinity, maxX = -Infinity, minZ = Infinity, maxZ = -Infinity;
+        graphData.nodes.forEach(function(n) {
+            if (n.x == null) return;
+            if (n.x < minX) minX = n.x;
+            if (n.x > maxX) maxX = n.x;
+            if (n.z < minZ) minZ = n.z;
+            if (n.z > maxZ) maxZ = n.z;
+        });
+        var rangeX = (maxX - minX) || 1;
+        var rangeZ = (maxZ - minZ) || 1;
+        var pad = 10;
+
+        // Draw nodes
+        graphData.nodes.forEach(function(n) {
+            if (n.x == null) return;
+            var px = pad + ((n.x - minX) / rangeX) * (w - 2 * pad);
+            var pz = pad + ((n.z - minZ) / rangeZ) * (h - 2 * pad);
+            minimapCtx.fillStyle = n.color || '#4CAF50';
+            minimapCtx.beginPath();
+            minimapCtx.arc(px, pz, 2.5, 0, Math.PI * 2);
+            minimapCtx.fill();
+        });
+
+        // Draw camera position indicator
+        if (graph) {
+            var cam = graph.camera();
+            if (cam) {
+                var cx = pad + ((cam.position.x - minX) / rangeX) * (w - 2 * pad);
+                var cz = pad + ((cam.position.z - minZ) / rangeZ) * (h - 2 * pad);
+                minimapCtx.strokeStyle = '#58a6ff';
+                minimapCtx.lineWidth = 1.5;
+                minimapCtx.strokeRect(cx - 15, cz - 12, 30, 24);
+            }
+        }
+    }
+
+    function handleMinimapClick(e) {
+        if (!graphData.nodes || graphData.nodes.length === 0) return;
+        var rect = minimapCanvas.getBoundingClientRect();
+        var x = e.clientX - rect.left;
+        var y = e.clientY - rect.top;
+        var w = minimapCanvas.width;
+        var h = minimapCanvas.height;
+        var pad = 10;
+
+        var minX = Infinity, maxX = -Infinity, minZ = Infinity, maxZ = -Infinity;
+        graphData.nodes.forEach(function(n) {
+            if (n.x == null) return;
+            if (n.x < minX) minX = n.x;
+            if (n.x > maxX) maxX = n.x;
+            if (n.z < minZ) minZ = n.z;
+            if (n.z > maxZ) maxZ = n.z;
+        });
+        var rangeX = (maxX - minX) || 1;
+        var rangeZ = (maxZ - minZ) || 1;
+
+        var worldX = minX + ((x - pad) / (w - 2 * pad)) * rangeX;
+        var worldZ = minZ + ((y - pad) / (h - 2 * pad)) * rangeZ;
+        graph.cameraPosition({ x: worldX, y: 0, z: worldZ + 200 }, { x: worldX, y: 0, z: worldZ }, 1000);
     }
 
     document.addEventListener('DOMContentLoaded', init);

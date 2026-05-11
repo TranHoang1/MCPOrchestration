@@ -89,7 +89,8 @@
 </head>
 <body>
 <div id="controls">
-    <input id="project-select" placeholder="Project key (e.g. MTO)" value="MTO">
+    <input id="project-select" list="project-list" placeholder="Type project key..." autocomplete="off">
+    <datalist id="project-list"></datalist>
     <select id="view-select">
         <option value="hierarchy">Hierarchy</option>
         <option value="dependency">Dependency</option>
@@ -131,7 +132,35 @@
             .cooldownTicks(200);
 
         bindControls();
-        loadGraph();
+        loadProjects();
+    }
+
+    function loadProjects() {
+        fetch('/sync/projects')
+            .then(function(r) { if (r.ok) return r.json(); throw new Error('Failed'); })
+            .then(function(projects) {
+                var datalist = document.getElementById('project-list');
+                datalist.innerHTML = '';
+                projects.forEach(function(p) {
+                    var opt = document.createElement('option');
+                    opt.value = p;
+                    datalist.appendChild(opt);
+                });
+                // Restore last selected or default to first
+                var input = document.getElementById('project-select');
+                var saved = localStorage.getItem('graph-project');
+                if (saved && projects.indexOf(saved) !== -1) {
+                    input.value = saved;
+                } else if (projects.length > 0) {
+                    input.value = projects[0];
+                }
+                loadGraph();
+            })
+            .catch(function(err) {
+                console.error('Failed to load projects:', err);
+                document.getElementById('project-select').value = 'MTO';
+                loadGraph();
+            });
     }
 
     // ─── Edge Styling (MTO-82) ─────────────────────────────────────────
@@ -179,7 +208,11 @@
 
     function bindControls() {
         document.getElementById('view-select').onchange = loadGraph;
-        document.getElementById('project-select').onchange = loadGraph;
+        var projectInput = document.getElementById('project-select');
+        projectInput.onchange = loadGraph;
+        projectInput.onkeydown = function(e) {
+            if (e.key === 'Enter') loadGraph();
+        };
         document.getElementById('search').onkeydown = function(e) {
             if (e.key === 'Enter') searchNode(e.target.value);
         };
@@ -189,6 +222,8 @@
         var project = document.getElementById('project-select').value.trim();
         var view = document.getElementById('view-select').value;
         if (!project) return;
+
+        localStorage.setItem('graph-project', project);
 
         fetch('/sync/graph/' + project + '?view=' + view)
             .then(function(r) { if (r.ok) return r.json(); throw new Error('Failed'); })

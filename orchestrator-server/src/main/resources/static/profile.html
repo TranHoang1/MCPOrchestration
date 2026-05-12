@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MCP Orchestrator — Profile</title>
+    <script src="/static/nav-bar.js"></script>
+    <style>
+        :root {
+            --bg: #1a1a2e;
+            --surface: #16213e;
+            --card: #0f3460;
+            --accent: #e94560;
+            --success: #4caf50;
+            --warning: #ff9800;
+            --text: #eaeaea;
+            --muted: #8892b0;
+            --radius: 8px;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+        }
+        .page { max-width: 900px; margin: 0 auto; padding: 24px; }
+        .top-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 24px;
+        }
+        .top-bar h1 { font-size: 1.4rem; }
+        .btn {
+            padding: 8px 16px;
+            border-radius: var(--radius);
+            border: none;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+        .btn:hover { opacity: 0.85; }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .btn-accent { background: var(--accent); color: #fff; }
+        .btn-success { background: var(--success); color: #fff; }
+        .btn-muted { background: var(--card); color: var(--text); border: 1px solid var(--muted); }
+        .btn-danger { background: #c62828; color: #fff; }
+        .btn-sm { padding: 6px 12px; font-size: 0.8rem; }
+        .section {
+            background: var(--surface);
+            border-radius: var(--radius);
+            padding: 24px;
+            margin-bottom: 20px;
+        }
+        .section h2 {
+            font-size: 1.1rem;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .info-grid {
+            display: grid;
+            grid-template-columns: 120px 1fr;
+            gap: 8px 16px;
+            font-size: 0.9rem;
+        }
+        .info-grid dt { color: var(--muted); }
+        .info-grid dd { font-weight: 500; }
+        .token-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-top: 12px;
+        }
+        .token-row input[type="number"] {
+            width: 80px;
+            padding: 8px;
+            border-radius: var(--radius);
+            border: 1px solid var(--card);
+            background: var(--bg);
+            color: var(--text);
+            font-size: 0.9rem;
+        }
+        .token-display {
+            margin-top: 12px;
+            padding: 12px;
+            background: var(--bg);
+            border-radius: var(--radius);
+            font-family: monospace;
+            font-size: 0.8rem;
+            word-break: break-all;
+            display: none;
+            position: relative;
+        }
+        .token-display.visible { display: block; }
+        .token-display .copy-btn {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+        }
+        .token-status {
+            font-size: 0.85rem;
+            color: var(--muted);
+            margin-top: 8px;
+        }
+        .server-card {
+            background: var(--bg);
+            border-radius: var(--radius);
+            padding: 16px;
+            margin-bottom: 12px;
+            border-left: 4px solid var(--muted);
+        }
+        .server-card.complete { border-left-color: var(--success); }
+        .server-card.partial { border-left-color: var(--warning); }
+        .server-card.none { border-left-color: var(--accent); }
+        .server-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+        }
+        .server-header h3 { font-size: 0.95rem; }
+        .badge {
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        .badge-complete { background: rgba(76, 175, 80, 0.2); color: var(--success); }
+        .badge-partial { background: rgba(255, 152, 0, 0.2); color: var(--warning); }
+        .badge-none { background: rgba(233, 69, 96, 0.2); color: var(--accent); }
+        .server-form {
+            margin-top: 12px;
+            display: none;
+            padding-top: 12px;
+            border-top: 1px solid var(--card);
+        }
+        .server-form.expanded { display: block; }
+        .field-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 10px;
+        }
+        .field-row label {
+            min-width: 120px;
+            font-size: 0.85rem;
+            color: var(--muted);
+        }
+        .field-row input {
+            flex: 1;
+            padding: 8px 12px;
+            border-radius: var(--radius);
+            border: 1px solid var(--card);
+            background: var(--bg);
+            color: var(--text);
+            font-size: 0.9rem;
+        }
+        .field-row input:focus { outline: none; border-color: var(--accent); }
+        .server-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+        }
+        .alert {
+            padding: 10px 14px;
+            border-radius: var(--radius);
+            font-size: 0.85rem;
+            margin-bottom: 16px;
+            display: none;
+        }
+        .alert-success { background: rgba(76, 175, 80, 0.15); border: 1px solid var(--success); color: var(--success); }
+        .alert-error { background: rgba(233, 69, 96, 0.15); border: 1px solid var(--accent); color: var(--accent); }
+        .alert.visible { display: block; }
+    </style>
+</head>
+<body>
+<div class="page">
+    <div class="top-bar">
+        <h1>👤 Profile</h1>
+        <button class="btn btn-muted" id="btn-logout">Logout</button>
+    </div>
+
+    <div class="alert alert-success" id="alert-success" role="status" aria-live="polite"></div>
+    <div class="alert alert-error" id="alert-error" role="alert" aria-live="polite"></div>
+
+    <!-- User Info Section -->
+    <section class="section" id="section-user">
+        <h2>👤 User Information</h2>
+        <dl class="info-grid">
+            <dt>Name</dt><dd id="user-name">—</dd>
+            <dt>Email</dt><dd id="user-email">—</dd>
+            <dt>Role</dt><dd id="user-role">—</dd>
+        </dl>
+    </section>
+
+    <!-- Bridge Token Section -->
+    <section class="section" id="section-token">
+        <h2>🔑 Bridge Token</h2>
+        <p class="token-status" id="token-status">No active bridge token</p>
+        <div class="token-row">
+            <label for="expiry-days" style="font-size:0.85rem;color:var(--muted)">Expiry (days):</label>
+            <input type="number" id="expiry-days" min="1" max="365" value="30" aria-label="Token expiry in days">
+            <button class="btn btn-success btn-sm" id="btn-generate">Generate Token</button>
+        </div>
+        <div class="token-display" id="token-display" aria-live="polite">
+            <span id="token-value"></span>
+            <button class="btn btn-muted btn-sm copy-btn" id="btn-copy" aria-label="Copy token">📋 Copy</button>
+        </div>
+    </section>
+
+    <!-- Credentials Section -->
+    <section class="section" id="section-credentials">
+        <h2>🔐 Server Credentials</h2>
+        <div id="servers-list"></div>
+    </section>
+</div>
+
+<script>
+(function() {
+    'use strict';
+
+    let authToken = null;
+    let tokenHideTimer = null;
+
+    function init() {
+        authToken = localStorage.getItem('auth_token');
+        if (!authToken) { redirectToLogin(); return; }
+        loadUserInfo();
+        loadServers();
+        bindEvents();
+    }
+
+    function redirectToLogin() {
+        window.location.href = '/static/login.html';
+    }
+
+    function getHeaders() {
+        return { 'Authorization': 'Bearer ' + authToken, 'Content-Type': 'application/json' };
+    }
+
+    function authFetch(url, opts) {
+        opts = opts || {};
+        opts.headers = Object.assign(getHeaders(), opts.headers || {});
+        return fetch(url, opts).then(r => {
+            if (r.status === 401) { localStorage.removeItem('auth_token'); redirectToLogin(); }
+            return r;
+        });
+    }
+
+    function loadUserInfo() {
+        const stored = localStorage.getItem('user_info');
+        if (stored) {
+            const user = JSON.parse(stored);
+            renderUserInfo(user);
+            return;
+        }
+        decodeTokenInfo();
+    }
+
+    function decodeTokenInfo() {
+        try {
+            const payload = JSON.parse(atob(authToken.split('.')[1]));
+            renderUserInfo({
+                name: payload.name || payload.sub || '—',
+                email: payload.email || '—',
+                role: (payload.roles && payload.roles[0]) || '—'
+            });
+        } catch (e) {
+            renderUserInfo({ name: '—', email: '—', role: '—' });
+        }
+    }
+
+    function renderUserInfo(user) {
+        document.getElementById('user-name').textContent = user.name || user.username || '—';
+        document.getElementById('user-email').textContent = user.email || '—';
+        document.getElementById('user-role').textContent = user.role || '—';
+    }
+
+    function loadServers() {
+        authFetch('/api/credentials/servers')
+            .then(r => { if (r.ok) return r.json(); throw new Error('Failed to load servers'); })
+            .then(data => renderServers(data.servers || data || []))
+            .catch(err => showError(err.message));
+    }
+
+    function renderServers(servers) {
+        const container = document.getElementById('servers-list');
+        container.innerHTML = '';
+        if (!servers || servers.length === 0) {
+            container.innerHTML = '<p style="color:var(--muted);font-size:0.9rem">No servers configured.</p>';
+            return;
+        }
+        servers.forEach(raw => {
+            const server = normalizeServer(raw);
+            container.appendChild(createServerCard(server));
+        });
+    }
+
+    function normalizeServer(raw) {
+        const name = raw.name || raw.server_name || 'unknown';
+        let status = 'none';
+        if (raw.status) { status = raw.status; }
+        else if (raw.is_complete) { status = 'complete'; }
+        else if (raw.filled_fields > 0) { status = 'partial'; }
+        return { name, status };
+    }
+
+    function createServerCard(server) {
+        const card = document.createElement('div');
+        const statusClass = getStatusClass(server.status);
+        card.className = 'server-card ' + statusClass;
+        card.innerHTML = buildServerCardHtml(server, statusClass);
+        bindServerCardEvents(card, server);
+        return card;
+    }
+
+    function getStatusClass(status) {
+        if (status === 'complete') return 'complete';
+        if (status === 'partial') return 'partial';
+        return 'none';
+    }
+
+    function buildServerCardHtml(server, statusClass) {
+        const badgeClass = 'badge-' + statusClass;
+        const badgeLabel = statusClass === 'complete' ? '✅ Complete'
+            : statusClass === 'partial' ? '⚠️ Partial' : '❌ None';
+        return `
+            <div class="server-header" role="button" tabindex="0" aria-expanded="false"
+                 aria-label="Toggle ${server.name} credentials form">
+                <h3>${server.name}</h3>
+                <span class="badge ${badgeClass}">${badgeLabel}</span>
+            </div>
+            <div class="server-form" id="form-${server.name}">
+                <div class="fields-container"></div>
+                <div class="server-actions">
+                    <button class="btn btn-success btn-sm btn-save">Save</button>
+                    <button class="btn btn-danger btn-sm btn-clear">Clear All</button>
+                </div>
+            </div>`;
+    }
+
+    function bindServerCardEvents(card, server) {
+        const header = card.querySelector('.server-header');
+        const form = card.querySelector('.server-form');
+        header.addEventListener('click', () => toggleServerForm(form, header, server));
+        header.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                toggleServerForm(form, header, server);
+            }
+        });
+        card.querySelector('.btn-save').addEventListener('click', () => saveCredentials(server.name, card));
+        card.querySelector('.btn-clear').addEventListener('click', () => clearCredentials(server.name));
+    }
+
+    function toggleServerForm(form, header, server) {
+        const expanded = form.classList.toggle('expanded');
+        header.setAttribute('aria-expanded', expanded);
+        if (expanded) loadServerFields(server.name, form);
+    }
+
+    function loadServerFields(serverName, form) {
+        const container = form.querySelector('.fields-container');
+        container.innerHTML = '<p style="color:var(--muted);font-size:0.85rem">Loading...</p>';
+        authFetch('/api/credentials/' + serverName)
+            .then(r => { if (r.ok) return r.json(); throw new Error('Failed'); })
+            .then(data => renderFields(container, data.fields || data))
+            .catch(() => { container.innerHTML = '<p style="color:var(--accent)">Failed to load fields</p>'; });
+    }
+
+    function renderFields(container, fields) {
+        container.innerHTML = '';
+        if (!fields || fields.length === 0) {
+            container.innerHTML = '<p style="color:var(--muted);font-size:0.85rem">No fields defined.</p>';
+            return;
+        }
+        fields.forEach(field => {
+            const row = document.createElement('div');
+            row.className = 'field-row';
+            const inputType = field.field_type === 'password' ? 'password' : 'text';
+            row.innerHTML = `
+                <label for="cred-${field.field_key}">${field.field_label || field.field_key}</label>
+                <input type="${inputType}" id="cred-${field.field_key}"
+                       data-key="${field.field_key}"
+                       value="${field.masked_value || ''}"
+                       placeholder="${field.required ? 'Required' : 'Optional'}">`;
+            container.appendChild(row);
+        });
+    }
+
+    function saveCredentials(serverName, card) {
+        const inputs = card.querySelectorAll('.fields-container input');
+        const credentials = {};
+        inputs.forEach(input => {
+            if (input.value) credentials[input.dataset.key] = input.value;
+        });
+        authFetch('/api/credentials/' + serverName, {
+            method: 'PUT',
+            body: JSON.stringify({ credentials })
+        })
+        .then(r => { if (r.ok) return r.json(); throw new Error('Save failed'); })
+        .then(() => { showSuccess('Credentials saved for ' + serverName); loadServers(); })
+        .catch(err => showError(err.message));
+    }
+
+    function clearCredentials(serverName) {
+        if (!confirm('Clear all credentials for ' + serverName + '? This cannot be undone.')) return;
+        authFetch('/api/credentials/' + serverName, { method: 'DELETE' })
+            .then(r => { if (r.ok) return r.json(); throw new Error('Clear failed'); })
+            .then(() => { showSuccess('Credentials cleared for ' + serverName); loadServers(); })
+            .catch(err => showError(err.message));
+    }
+
+    function bindEvents() {
+        document.getElementById('btn-logout').addEventListener('click', handleLogout);
+        document.getElementById('btn-generate').addEventListener('click', generateToken);
+        document.getElementById('btn-copy').addEventListener('click', copyToken);
+    }
+
+    function handleLogout() {
+        localStorage.removeItem('auth_token');
+        localStorage.removeItem('token_expires');
+        localStorage.removeItem('user_info');
+        redirectToLogin();
+    }
+
+    function generateToken() {
+        const days = parseInt(document.getElementById('expiry-days').value) || 30;
+        const clamped = Math.min(365, Math.max(1, days));
+        document.getElementById('btn-generate').disabled = true;
+
+        authFetch('/api/auth/bridge-token', {
+            method: 'POST',
+            body: JSON.stringify({ expiry_days: clamped })
+        })
+        .then(r => { if (r.ok) return r.json(); throw new Error('Token generation failed'); })
+        .then(data => {
+            displayToken(data.bridge_token, data.expires_at);
+            document.getElementById('token-status').textContent =
+                'Token active — expires ' + new Date(data.expires_at).toLocaleDateString();
+        })
+        .catch(err => showError(err.message))
+        .finally(() => { document.getElementById('btn-generate').disabled = false; });
+    }
+
+    function displayToken(token, expiresAt) {
+        const display = document.getElementById('token-display');
+        document.getElementById('token-value').textContent = token;
+        display.classList.add('visible');
+        if (tokenHideTimer) clearTimeout(tokenHideTimer);
+        tokenHideTimer = setTimeout(() => { display.classList.remove('visible'); }, 60000);
+    }
+
+    function copyToken() {
+        const token = document.getElementById('token-value').textContent;
+        navigator.clipboard.writeText(token).then(() => {
+            document.getElementById('btn-copy').textContent = '✅ Copied';
+            setTimeout(() => { document.getElementById('btn-copy').textContent = '📋 Copy'; }, 2000);
+        });
+    }
+
+    function showSuccess(msg) {
+        const el = document.getElementById('alert-success');
+        el.textContent = msg;
+        el.classList.add('visible');
+        setTimeout(() => el.classList.remove('visible'), 4000);
+    }
+
+    function showError(msg) {
+        const el = document.getElementById('alert-error');
+        el.textContent = msg;
+        el.classList.add('visible');
+        setTimeout(() => el.classList.remove('visible'), 5000);
+    }
+
+    document.addEventListener('DOMContentLoaded', init);
+})();
+</script>
+</body>
+</html>

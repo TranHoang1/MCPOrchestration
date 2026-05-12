@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MCP Orchestrator — Credential Schemas</title>
+    <script src="/static/nav-bar.js"></script>
+    <style>
+        :root {
+            --bg: #1a1a2e;
+            --surface: #16213e;
+            --card: #0f3460;
+            --accent: #e94560;
+            --success: #4caf50;
+            --warning: #ff9800;
+            --text: #eaeaea;
+            --muted: #8892b0;
+            --radius: 8px;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+        }
+        .page { max-width: 900px; margin: 0 auto; padding: 24px; }
+        .top-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        .top-bar h1 { font-size: 1.4rem; }
+        .top-bar-actions { display: flex; gap: 8px; align-items: center; }
+        .btn {
+            padding: 8px 16px;
+            border-radius: var(--radius);
+            border: none;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+        .btn:hover { opacity: 0.85; }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .btn-accent { background: var(--accent); color: #fff; }
+        .btn-success { background: var(--success); color: #fff; }
+        .btn-muted { background: var(--card); color: var(--text); border: 1px solid var(--muted); }
+        .btn-danger { background: #c62828; color: #fff; }
+        .btn-sm { padding: 6px 12px; font-size: 0.8rem; }
+        select {
+            padding: 8px 16px;
+            border-radius: var(--radius);
+            border: 1px solid var(--card);
+            background: var(--surface);
+            color: var(--text);
+            font-size: 0.9rem;
+            min-width: 200px;
+        }
+        select:focus { outline: none; border-color: var(--accent); }
+        .section {
+            background: var(--surface);
+            border-radius: var(--radius);
+            padding: 24px;
+            margin-bottom: 20px;
+        }
+        .section h2 {
+            font-size: 1.1rem;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .field-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+        .field-table th {
+            text-align: left;
+            padding: 10px 12px;
+            background: var(--card);
+            color: var(--muted);
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .field-table td {
+            padding: 10px 12px;
+            border-bottom: 1px solid var(--card);
+            vertical-align: middle;
+        }
+        .field-table tr:last-child td { border-bottom: none; }
+        .field-table input, .field-table select {
+            padding: 6px 10px;
+            border-radius: 4px;
+            border: 1px solid var(--card);
+            background: var(--bg);
+            color: var(--text);
+            font-size: 0.85rem;
+            width: 100%;
+        }
+        .field-table input:focus, .field-table select:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+        .field-table .cb-cell { text-align: center; width: 80px; }
+        .field-table .cb-cell input { width: auto; }
+        .field-table .action-cell { width: 60px; text-align: center; }
+        .btn-icon {
+            background: none;
+            border: none;
+            color: var(--accent);
+            cursor: pointer;
+            font-size: 1.1rem;
+            padding: 4px;
+        }
+        .btn-icon:hover { opacity: 0.7; }
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: var(--muted);
+            font-size: 0.9rem;
+        }
+        .alert {
+            padding: 10px 14px;
+            border-radius: var(--radius);
+            font-size: 0.85rem;
+            margin-bottom: 16px;
+            display: none;
+        }
+        .alert-success { background: rgba(76, 175, 80, 0.15); border: 1px solid var(--success); color: var(--success); }
+        .alert-error { background: rgba(233, 69, 96, 0.15); border: 1px solid var(--accent); color: var(--accent); }
+        .alert.visible { display: block; }
+        .schema-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 16px;
+            justify-content: flex-end;
+        }
+    </style>
+</head>
+<body>
+<div class="page">
+    <div class="top-bar">
+        <h1>⚙️ Credential Schemas</h1>
+        <div class="top-bar-actions">
+            <select id="server-select" aria-label="Select server">
+                <option value="">— Select server —</option>
+            </select>
+            <button class="btn btn-muted btn-sm" id="btn-back" aria-label="Back to profile">← Profile</button>
+        </div>
+    </div>
+
+    <div class="alert alert-success" id="alert-success" role="status" aria-live="polite"></div>
+    <div class="alert alert-error" id="alert-error" role="alert" aria-live="polite"></div>
+
+    <section class="section" id="schema-section">
+        <h2>📋 Schema Fields</h2>
+        <div id="fields-container">
+            <div class="empty-state">Select a server to manage its credential schema.</div>
+        </div>
+        <div class="schema-actions" id="schema-actions" style="display:none">
+            <button class="btn btn-muted btn-sm" id="btn-add-field">+ Add Field</button>
+            <button class="btn btn-success" id="btn-save-schema">Save Schema</button>
+        </div>
+    </section>
+</div>
+
+<script>
+(function() {
+    'use strict';
+
+    let authToken = null;
+    let currentServer = null;
+    let fields = [];
+
+    function init() {
+        authToken = localStorage.getItem('auth_token');
+        if (!authToken) { window.location.href = '/static/login.html'; return; }
+        loadServers();
+        bindEvents();
+    }
+
+    function getHeaders() {
+        return { 'Authorization': 'Bearer ' + authToken, 'Content-Type': 'application/json' };
+    }
+
+    function authFetch(url, opts) {
+        opts = opts || {};
+        opts.headers = Object.assign(getHeaders(), opts.headers || {});
+        return fetch(url, opts).then(r => {
+            if (r.status === 401) { localStorage.removeItem('auth_token'); window.location.href = '/static/login.html'; }
+            return r;
+        });
+    }
+
+    function loadServers() {
+        authFetch('/api/admin/credential-schemas')
+            .then(r => { if (r.ok) return r.json(); throw new Error('Failed to load schemas'); })
+            .then(data => populateServerSelect(data))
+            .catch(err => showError(err.message));
+    }
+
+    function populateServerSelect(schemas) {
+        const select = document.getElementById('server-select');
+        select.innerHTML = '<option value="">— Select server —</option>';
+        const servers = Array.isArray(schemas) ? schemas : schemas.schemas || schemas.servers || [];
+        servers.forEach(s => {
+            const name = typeof s === 'string' ? s : s.server_name || s.name;
+            const opt = document.createElement('option');
+            opt.value = name;
+            opt.textContent = name;
+            select.appendChild(opt);
+        });
+    }
+
+    function loadSchema(serverName) {
+        currentServer = serverName;
+        authFetch('/api/admin/credential-schemas/' + serverName)
+            .then(r => { if (r.ok) return r.json(); throw new Error('Failed to load schema'); })
+            .then(data => {
+                fields = data.fields || data || [];
+                renderFieldTable();
+                document.getElementById('schema-actions').style.display = 'flex';
+            })
+            .catch(err => showError(err.message));
+    }
+
+    function renderFieldTable() {
+        const container = document.getElementById('fields-container');
+        if (fields.length === 0) {
+            container.innerHTML = '<div class="empty-state">No fields defined. Click "Add Field" to start.</div>';
+            return;
+        }
+        container.innerHTML = buildTableHtml();
+        bindFieldEvents();
+    }
+
+    function buildTableHtml() {
+        let html = `<table class="field-table" role="grid">
+            <thead><tr>
+                <th>Key</th><th>Label</th><th>Type</th>
+                <th class="cb-cell">Required</th><th class="action-cell">Del</th>
+            </tr></thead><tbody>`;
+        fields.forEach((f, i) => {
+            html += buildFieldRow(f, i);
+        });
+        html += '</tbody></table>';
+        return html;
+    }
+
+    function buildFieldRow(field, index) {
+        const types = ['text', 'password', 'url', 'email', 'number'];
+        const typeOpts = types.map(t =>
+            `<option value="${t}" ${field.field_type === t ? 'selected' : ''}>${t}</option>`
+        ).join('');
+        const checked = field.required ? 'checked' : '';
+        return `<tr data-index="${index}">
+            <td><input type="text" value="${field.field_key || ''}" data-col="field_key"
+                       aria-label="Field key" ${field._existing ? 'readonly' : ''}></td>
+            <td><input type="text" value="${field.field_label || ''}" data-col="field_label"
+                       aria-label="Field label"></td>
+            <td><select data-col="field_type" aria-label="Field type">${typeOpts}</select></td>
+            <td class="cb-cell"><input type="checkbox" ${checked} data-col="required"
+                       aria-label="Required field"></td>
+            <td class="action-cell">
+                <button class="btn-icon btn-delete" data-index="${index}"
+                        aria-label="Delete field ${field.field_key}" title="Delete">🗑️</button>
+            </td>
+        </tr>`;
+    }
+
+    function bindFieldEvents() {
+        document.querySelectorAll('.btn-delete').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const idx = parseInt(e.currentTarget.dataset.index);
+                handleDeleteField(idx);
+            });
+        });
+        document.querySelectorAll('.field-table input[data-col="field_label"]').forEach(input => {
+            input.addEventListener('input', (e) => {
+                const row = e.target.closest('tr');
+                const keyInput = row.querySelector('input[data-col="field_key"]');
+                if (!keyInput.readOnly) {
+                    keyInput.value = slugify(e.target.value);
+                }
+            });
+        });
+    }
+
+    function slugify(text) {
+        return text.toLowerCase()
+            .replace(/[^a-z0-9]+/g, '_')
+            .replace(/^_|_$/g, '');
+    }
+
+    function handleDeleteField(index) {
+        const field = fields[index];
+        const msg = 'Delete field "' + (field.field_key || 'new') + '"? This may affect users who have stored credentials.';
+        if (!confirm(msg)) return;
+
+        if (field._existing && currentServer) {
+            authFetch('/api/admin/credential-schemas/' + currentServer + '/' + field.field_key + '?confirm=true', {
+                method: 'DELETE'
+            })
+            .then(r => { if (!r.ok) throw new Error('Delete failed'); })
+            .then(() => { fields.splice(index, 1); renderFieldTable(); showSuccess('Field deleted'); })
+            .catch(err => showError(err.message));
+        } else {
+            fields.splice(index, 1);
+            renderFieldTable();
+        }
+    }
+
+    function addField() {
+        fields.push({ field_key: '', field_label: '', field_type: 'text', required: false, _existing: false });
+        renderFieldTable();
+        const lastRow = document.querySelector('.field-table tbody tr:last-child input[data-col="field_label"]');
+        if (lastRow) lastRow.focus();
+    }
+
+    function saveSchema() {
+        readFieldsFromDom();
+        const invalid = fields.find(f => !f.field_key || !f.field_label);
+        if (invalid) { showError('All fields must have a key and label.'); return; }
+
+        const payload = fields.map(f => ({
+            field_key: f.field_key,
+            field_label: f.field_label,
+            field_type: f.field_type,
+            required: f.required
+        }));
+
+        authFetch('/api/admin/credential-schemas/' + currentServer, {
+            method: 'PUT',
+            body: JSON.stringify({ fields: payload })
+        })
+        .then(r => { if (r.ok) return r.json(); throw new Error('Save failed'); })
+        .then(() => {
+            showSuccess('Schema saved for ' + currentServer);
+            loadSchema(currentServer);
+        })
+        .catch(err => showError(err.message));
+    }
+
+    function readFieldsFromDom() {
+        const rows = document.querySelectorAll('.field-table tbody tr');
+        fields = [];
+        rows.forEach(row => {
+            fields.push({
+                field_key: row.querySelector('input[data-col="field_key"]').value.trim(),
+                field_label: row.querySelector('input[data-col="field_label"]').value.trim(),
+                field_type: row.querySelector('select[data-col="field_type"]').value,
+                required: row.querySelector('input[data-col="required"]').checked,
+                _existing: row.querySelector('input[data-col="field_key"]').readOnly
+            });
+        });
+    }
+
+    function bindEvents() {
+        document.getElementById('server-select').addEventListener('change', (e) => {
+            if (e.target.value) loadSchema(e.target.value);
+            else resetView();
+        });
+        document.getElementById('btn-add-field').addEventListener('click', addField);
+        document.getElementById('btn-save-schema').addEventListener('click', saveSchema);
+        document.getElementById('btn-back').addEventListener('click', () => {
+            window.location.href = '/static/profile.html';
+        });
+    }
+
+    function resetView() {
+        currentServer = null;
+        fields = [];
+        document.getElementById('fields-container').innerHTML =
+            '<div class="empty-state">Select a server to manage its credential schema.</div>';
+        document.getElementById('schema-actions').style.display = 'none';
+    }
+
+    function showSuccess(msg) {
+        const el = document.getElementById('alert-success');
+        el.textContent = msg; el.classList.add('visible');
+        setTimeout(() => el.classList.remove('visible'), 4000);
+    }
+
+    function showError(msg) {
+        const el = document.getElementById('alert-error');
+        el.textContent = msg; el.classList.add('visible');
+        setTimeout(() => el.classList.remove('visible'), 5000);
+    }
+
+    document.addEventListener('DOMContentLoaded', init);
+})();
+</script>
+</body>
+</html>

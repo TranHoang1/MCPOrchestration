@@ -1,0 +1,45 @@
+<mxfile>
+  <diagram name="Class Diagram" id="tdd-1">
+    <mxGraphModel>
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+        <mxCell id="t1" value="TDD — Class &amp; Deployment Diagram" style="text;fontSize=16;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="20" y="10" width="400" height="30" as="geometry"/>
+        </mxCell>
+        <!-- nav-bar.js module -->
+        <mxCell id="c1" value="&lt;b&gt;nav-bar.js&lt;/b&gt;&#xa;─────────────&#xa;+ NAV_LINKS: Array&#xa;─────────────&#xa;+ getAuthState(): AuthState&#xa;+ getCurrentPath(): string&#xa;+ createNavBar(): void&#xa;+ buildNavHtml(state, path): string&#xa;+ injectStyles(): void&#xa;+ bindLogout(): void" style="text;align=left;verticalAlign=top;fillColor=#dae8fc;strokeColor=#6c8ebf;rounded=1;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="40" y="60" width="240" height="180" as="geometry"/>
+        </mxCell>
+        <!-- AuthMigration class -->
+        <mxCell id="c2" value="&lt;b&gt;AuthMigration&lt;/b&gt;&#xa;─────────────&#xa;- dataSource: DataSource&#xa;─────────────&#xa;+ migrate(): void&#xa;- migrateUsersTable(conn)&#xa;- createBridgeTokensTable(conn)&#xa;- seedDefaultAdminIfEmpty(conn)&#xa;- seedAdminPasswordIfInvalid(conn)" style="text;align=left;verticalAlign=top;fillColor=#e1d5e7;strokeColor=#9673a6;rounded=1;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="340" y="60" width="260" height="180" as="geometry"/>
+        </mxCell>
+        <!-- BCrypt -->
+        <mxCell id="c3" value="&lt;b&gt;BCrypt&lt;/b&gt;&#xa;(at.favre.lib)" style="rounded=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="660" y="100" width="120" height="50" as="geometry"/>
+        </mxCell>
+        <mxCell id="ce1" value="uses" style="dashed=1;" edge="1" source="c2" target="c3" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <!-- Deployment -->
+        <mxCell id="d0" value="Deployment" style="text;fontSize=14;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="280" width="120" height="24" as="geometry"/>
+        </mxCell>
+        <mxCell id="d1" value="JAR&#xa;(mcp-orchestrator-all.jar)" style="shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.lambda;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="40" y="320" width="60" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="d2" value="static/nav-bar.js&#xa;static/login.html&#xa;static/profile.html&#xa;static/graph-viewer.html&#xa;static/sync-dashboard.html&#xa;static/admin-schemas.html" style="text;align=left;fillColor=#f5f5f5;strokeColor=#666666;rounded=1;" vertex="1" parent="1">
+          <mxGeometry x="140" y="310" width="200" height="100" as="geometry"/>
+        </mxCell>
+        <mxCell id="d3" value="PostgreSQL&#xa;─────────&#xa;users table&#xa;(seeded on first start)" style="shape=cylinder3;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="400" y="310" width="160" height="80" as="geometry"/>
+        </mxCell>
+        <mxCell id="d4" value="Environment&#xa;─────────&#xa;ADMIN_EMAIL&#xa;ADMIN_PASSWORD&#xa;ADMIN_NAME" style="rounded=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="620" y="310" width="140" height="80" as="geometry"/>
+        </mxCell>
+        <mxCell id="de1" value="serves" edge="1" source="d1" target="d2" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="de2" value="seeds" edge="1" source="d1" target="d3" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="de3" value="reads" style="dashed=1;" edge="1" source="d1" target="d4" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

@@ -1,0 +1,41 @@
+<mxfile>
+  <diagram name="User Journey" id="brd-1">
+    <mxGraphModel>
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+        <mxCell id="t1" value="User Journey — Navigation &amp; First Deploy" style="text;fontSize=16;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="20" y="10" width="500" height="30" as="geometry"/>
+        </mxCell>
+        <!-- Deploy Flow -->
+        <mxCell id="d1" value="DevOps deploys&#xa;server (first time)" style="ellipse;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="1">
+          <mxGeometry x="40" y="60" width="160" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="d2" value="Server auto-creates&#xa;admin user" style="rounded=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="260" y="60" width="160" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="d3" value="Admin logs in with&#xa;default credentials" style="rounded=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="480" y="60" width="160" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="de1" edge="1" source="d1" target="d2" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="de2" edge="1" source="d2" target="d3" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <!-- Nav Flow -->
+        <mxCell id="n1" value="User on&#xa;Profile page" style="ellipse;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="40" y="180" width="140" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="n2" value="Clicks 'Graph'&#xa;in nav bar" style="rounded=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="240" y="180" width="140" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="n3" value="Graph Viewer&#xa;loads with nav" style="rounded=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="440" y="180" width="140" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="n4" value="Clicks 'Admin'&#xa;(admin only)" style="rounded=1;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="640" y="180" width="140" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="ne1" edge="1" source="n1" target="n2" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="ne2" edge="1" source="n2" target="n3" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="ne3" edge="1" source="n3" target="n4" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

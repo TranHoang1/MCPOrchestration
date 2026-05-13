@@ -1,0 +1,55 @@
+<mxfile>
+  <diagram name="System Context" id="fsd-1">
+    <mxGraphModel>
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+        <mxCell id="t1" value="FSD — System Context &amp; UI Layout" style="text;fontSize=16;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="20" y="10" width="400" height="30" as="geometry"/>
+        </mxCell>
+        <!-- Nav Bar Wireframe -->
+        <mxCell id="w1" value="" style="rounded=1;fillColor=#16213e;strokeColor=#30363d;" vertex="1" parent="1">
+          <mxGeometry x="40" y="60" width="700" height="48" as="geometry"/>
+        </mxCell>
+        <mxCell id="w2" value="🔮 MCP Orchestrator" style="text;fontColor=#eaeaea;fontStyle=1;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="60" y="72" width="160" height="24" as="geometry"/>
+        </mxCell>
+        <mxCell id="w3" value="📊 Graph" style="text;fontColor=#8892b0;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="230" y="72" width="70" height="24" as="geometry"/>
+        </mxCell>
+        <mxCell id="w4" value="🔄 Sync" style="text;fontColor=#8892b0;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="310" y="72" width="60" height="24" as="geometry"/>
+        </mxCell>
+        <mxCell id="w5" value="👤 Profile" style="text;fontColor=#e94560;fontSize=11;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="380" y="72" width="70" height="24" as="geometry"/>
+        </mxCell>
+        <mxCell id="w6" value="⚙️ Admin" style="text;fontColor=#8892b0;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="460" y="72" width="70" height="24" as="geometry"/>
+        </mxCell>
+        <mxCell id="w7" value="Admin User  [Logout]" style="text;fontColor=#8892b0;fontSize=11;align=right;" vertex="1" parent="1">
+          <mxGeometry x="560" y="72" width="160" height="24" as="geometry"/>
+        </mxCell>
+        <!-- Page Content Area -->
+        <mxCell id="p1" value="Page Content&#xa;(padding-top: 48px)" style="rounded=1;fillColor=#1a1a2e;strokeColor=#30363d;fontColor=#8892b0;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="120" width="700" height="200" as="geometry"/>
+        </mxCell>
+        <!-- Integration Points -->
+        <mxCell id="i1" value="nav-bar.js" style="rounded=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="60" y="380" width="120" height="50" as="geometry"/>
+        </mxCell>
+        <mxCell id="i2" value="localStorage&#xa;(auth_token)" style="shape=cylinder3;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="240" y="380" width="120" height="50" as="geometry"/>
+        </mxCell>
+        <mxCell id="i3" value="JWT Payload&#xa;{name, roles}" style="rounded=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="420" y="380" width="120" height="50" as="geometry"/>
+        </mxCell>
+        <mxCell id="i4" value="/login redirect&#xa;(if no token)" style="rounded=1;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="600" y="380" width="120" height="50" as="geometry"/>
+        </mxCell>
+        <mxCell id="ie1" value="reads" edge="1" source="i1" target="i2" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="ie2" value="decodes" edge="1" source="i2" target="i3" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="ie3" value="if null" edge="1" source="i2" target="i4" parent="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

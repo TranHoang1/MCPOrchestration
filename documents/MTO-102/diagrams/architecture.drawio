@@ -1,0 +1,175 @@
+<mxfile>
+  <diagram name="Component Diagram" id="comp-1">
+    <mxGraphModel>
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+        <!-- Browser -->
+        <mxCell id="2" value="Browser" style="shape=mxgraph.aws4.client;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="40" y="120" width="80" height="80" as="geometry"/>
+        </mxCell>
+        <!-- nav-bar.js -->
+        <mxCell id="3" value="nav-bar.js&#xa;(Shared Nav)" style="rounded=1;whiteSpace=wrap;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="200" y="80" width="140" height="60" as="geometry"/>
+        </mxCell>
+        <!-- localStorage -->
+        <mxCell id="4" value="localStorage&#xa;(auth_token)" style="shape=cylinder3;whiteSpace=wrap;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="200" y="180" width="140" height="60" as="geometry"/>
+        </mxCell>
+        <!-- HTML Pages -->
+        <mxCell id="5" value="HTML Pages&#xa;(Profile, Graph,&#xa;Sync, Admin)" style="rounded=1;whiteSpace=wrap;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="420" y="80" width="140" height="60" as="geometry"/>
+        </mxCell>
+        <!-- Orchestrator Server -->
+        <mxCell id="6" value="Orchestrator Server&#xa;(AuthMigration)" style="rounded=1;whiteSpace=wrap;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="1">
+          <mxGeometry x="420" y="180" width="160" height="60" as="geometry"/>
+        </mxCell>
+        <!-- PostgreSQL -->
+        <mxCell id="7" value="PostgreSQL&#xa;(users table)" style="shape=cylinder3;whiteSpace=wrap;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="640" y="180" width="120" height="60" as="geometry"/>
+        </mxCell>
+        <!-- Edges -->
+        <mxCell id="e1" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="2" target="3" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e2" value="read/write token" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="3" target="4" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e3" value="inject into" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="3" target="5" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e4" value="seedDefaultAdmin" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="6" target="7" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram name="Sequence - Nav Bar Load" id="seq-1">
+    <mxGraphModel>
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+        <!-- Actors -->
+        <mxCell id="a1" value="Browser" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="80" y="20" width="80" height="320" as="geometry"/>
+        </mxCell>
+        <mxCell id="a2" value="nav-bar.js" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="240" y="20" width="80" height="320" as="geometry"/>
+        </mxCell>
+        <mxCell id="a3" value="localStorage" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="400" y="20" width="80" height="320" as="geometry"/>
+        </mxCell>
+        <mxCell id="a4" value="DOM" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="560" y="20" width="80" height="320" as="geometry"/>
+        </mxCell>
+        <!-- Messages -->
+        <mxCell id="m1" value="1. DOMContentLoaded" style="edgeStyle=orthogonalEdgeStyle;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="120" y="80" as="sourcePoint"/>
+            <mxPoint x="280" y="80" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m2" value="2. getItem('auth_token')" style="edgeStyle=orthogonalEdgeStyle;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="280" y="110" as="sourcePoint"/>
+            <mxPoint x="440" y="110" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m3" value="3. JWT token" style="edgeStyle=orthogonalEdgeStyle;dashed=1;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="440" y="140" as="sourcePoint"/>
+            <mxPoint x="280" y="140" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m4" value="4. decode JWT → roles, name" style="edgeStyle=orthogonalEdgeStyle;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="280" y="170" as="sourcePoint"/>
+            <mxPoint x="280" y="190" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m5" value="5. prepend(&lt;nav&gt;)" style="edgeStyle=orthogonalEdgeStyle;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="280" y="210" as="sourcePoint"/>
+            <mxPoint x="600" y="210" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m6" value="6. inject &lt;style&gt;" style="edgeStyle=orthogonalEdgeStyle;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="280" y="240" as="sourcePoint"/>
+            <mxPoint x="600" y="240" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m7" value="7. Nav bar visible" style="edgeStyle=orthogonalEdgeStyle;dashed=1;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="600" y="270" as="sourcePoint"/>
+            <mxPoint x="120" y="270" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram name="Sequence - Admin Seeding" id="seq-2">
+    <mxGraphModel>
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+        <!-- Actors -->
+        <mxCell id="a1" value="Server Startup" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="60" y="20" width="100" height="300" as="geometry"/>
+        </mxCell>
+        <mxCell id="a2" value="AuthMigration" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="240" y="20" width="100" height="300" as="geometry"/>
+        </mxCell>
+        <mxCell id="a3" value="PostgreSQL" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="420" y="20" width="100" height="300" as="geometry"/>
+        </mxCell>
+        <mxCell id="a4" value="BCrypt" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="600" y="20" width="80" height="300" as="geometry"/>
+        </mxCell>
+        <!-- Messages -->
+        <mxCell id="m1" value="1. migrate()" style="" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="110" y="80" as="sourcePoint"/>
+            <mxPoint x="290" y="80" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m2" value="2. SELECT COUNT(*) FROM users" style="" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="290" y="110" as="sourcePoint"/>
+            <mxPoint x="470" y="110" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m3" value="3. count=0" style="dashed=1;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="470" y="140" as="sourcePoint"/>
+            <mxPoint x="290" y="140" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m4" value="4. hashToString(password)" style="" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="290" y="170" as="sourcePoint"/>
+            <mxPoint x="640" y="170" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m5" value="5. bcrypt hash" style="dashed=1;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="640" y="200" as="sourcePoint"/>
+            <mxPoint x="290" y="200" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m6" value="6. INSERT INTO users (...)" style="" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="290" y="230" as="sourcePoint"/>
+            <mxPoint x="470" y="230" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m7" value="7. OK" style="dashed=1;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="470" y="260" as="sourcePoint"/>
+            <mxPoint x="290" y="260" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

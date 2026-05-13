@@ -77,6 +77,7 @@ class HttpStreamableClient(private val config: BridgeConfig) {
     private suspend fun sendRawRequest(body: String, includeSession: Boolean): HttpResponse {
         return httpClient.post("${config.orchestratorUrl}/mcp") {
             contentType(ContentType.Application.Json)
+            config.token?.let { header("Authorization", "Bearer $it") }
             if (includeSession && sessionId != null) {
                 header("Mcp-Session-Id", sessionId)
             }

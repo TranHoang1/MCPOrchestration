@@ -86,6 +86,8 @@ class HttpStreamableClient:
         self._ensure_client()
         assert self._client is not None
         headers: dict[str, str] = {"Content-Type": "application/json"}
+        if self._config.token:
+            headers["Authorization"] = f"Bearer {self._config.token}"
         if include_session and self._session_id:
             headers["Mcp-Session-Id"] = self._session_id
         url = f"{self._config.orchestrator_url}/mcp"

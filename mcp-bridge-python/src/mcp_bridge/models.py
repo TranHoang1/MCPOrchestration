@@ -21,3 +21,4 @@ class BridgeConfig:
     max_reconnect_delay_ms: int = 15_000
     enable_local_tools: bool = True
     reconnect_enabled: bool = True
+    token: str | None = None

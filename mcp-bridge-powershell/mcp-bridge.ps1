@@ -17,6 +17,7 @@
 #>
 param(
     [string]$Url = $env:ORCHESTRATOR_URL,
+    [string]$Token = $env:MCP_BRIDGE_TOKEN,
     [int]$Timeout = 30,
     [int]$PingInterval = 30,
     [int]$PingTimeout = 5,
@@ -50,6 +51,7 @@ function Set-BridgeState {
 function Invoke-OrchestratorPost {
     param([string]$Body, [int]$TimeoutOverride = $Timeout)
     $headers = @{ "Content-Type" = "application/json" }
+    if ($Token) { $headers["Authorization"] = "Bearer $Token" }
     if ($script:SessionId) { $headers["Mcp-Session-Id"] = $script:SessionId }
     try {
         $response = Invoke-WebRequest -Uri "$Url/mcp" -Method POST -Body $Body `

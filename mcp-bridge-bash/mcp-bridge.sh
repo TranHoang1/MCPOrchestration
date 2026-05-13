@@ -28,6 +28,7 @@ parse_args() {
     while [[ $# -gt 0 ]]; do
         case "$1" in
             --url) ORCHESTRATOR_URL="$2"; shift 2 ;;
+            --token) BRIDGE_TOKEN="$2"; shift 2 ;;
             --timeout) TIMEOUT="$2"; shift 2 ;;
             --ping-interval) PING_INTERVAL="$2"; shift 2 ;;
             --ping-timeout) PING_TIMEOUT="$2"; shift 2 ;;
@@ -37,6 +38,8 @@ parse_args() {
             *) echo "[mcp-bridge] Unknown arg: $1" >&2; shift ;;
         esac
     done
+    # Env fallback for token
+    BRIDGE_TOKEN="${BRIDGE_TOKEN:-${MCP_BRIDGE_TOKEN:-}}"
 }
 
 usage() {
@@ -74,6 +77,7 @@ http_post() {
     local session_id
     session_id=$(cat "$SESSION_FILE" 2>/dev/null || echo "")
     local -a headers=(-H "Content-Type: application/json")
+    [[ -n "$BRIDGE_TOKEN" ]] && headers+=(-H "Authorization: Bearer $BRIDGE_TOKEN")
     [[ -n "$session_id" ]] && headers+=(-H "Mcp-Session-Id: $session_id")
 
     curl -s -m "$timeout_override" -X POST "${headers[@]}" \

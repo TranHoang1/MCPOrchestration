@@ -18,11 +18,13 @@ if "%ORCHESTRATOR_URL%"=="" set "ORCHESTRATOR_URL=http://localhost:8080"
 if "%BRIDGE_TIMEOUT%"=="" set "BRIDGE_TIMEOUT=30"
 if "%BRIDGE_PING_INTERVAL%"=="" set "BRIDGE_PING_INTERVAL=30"
 if "%BRIDGE_PING_TIMEOUT%"=="" set "BRIDGE_PING_TIMEOUT=5"
+if "%MCP_BRIDGE_TOKEN%"=="" set "MCP_BRIDGE_TOKEN="
 
 :: Parse arguments
 :parse_args
 if "%~1"=="" goto :args_done
 if "%~1"=="--url" (set "ORCHESTRATOR_URL=%~2" & shift & shift & goto :parse_args)
+if "%~1"=="--token" (set "MCP_BRIDGE_TOKEN=%~2" & shift & shift & goto :parse_args)
 if "%~1"=="--timeout" (set "BRIDGE_TIMEOUT=%~2" & shift & shift & goto :parse_args)
 if "%~1"=="--ping-interval" (set "BRIDGE_PING_INTERVAL=%~2" & shift & shift & goto :parse_args)
 if "%~1"=="--help" (goto :usage)
@@ -32,6 +34,15 @@ goto :parse_args
 
 echo [mcp-bridge] MCP Bridge Client (CMD) v%VERSION% starting... >&2
 echo [mcp-bridge] Connecting to orchestrator at: %ORCHESTRATOR_URL% >&2
+
+:: Build auth header if token provided
+set "AUTH_HEADER="
+if not "%MCP_BRIDGE_TOKEN%"=="" (
+    set "AUTH_HEADER=-H "Authorization: Bearer %MCP_BRIDGE_TOKEN%""
+    echo [mcp-bridge] Using JWT authentication >&2
+) else (
+    echo [mcp-bridge] Warning: No token provided >&2
+)
 
 :: === Initial Connection ===
 call :initialize_session
@@ -165,7 +176,7 @@ goto :eof
 :handle_tool_call_proxy
 set "proxy_id=%~1"
 set "proxy_line=%~2"
-curl -s -m %BRIDGE_TIMEOUT% -X POST -H "Content-Type: application/json" -d "!proxy_line!" "%ORCHESTRATOR_URL%/mcp" 2>nul
+curl -s -m %BRIDGE_TIMEOUT% -X POST -H "Content-Type: application/json" %AUTH_HEADER% -d "!proxy_line!" "%ORCHESTRATOR_URL%/mcp" 2>nul
 goto :eof
 
 :proxy_to_orchestrator
@@ -173,7 +184,7 @@ set "po_id=%~1"
 set "po_name=%~2"
 set "po_args=%~3"
 set "po_body={\"jsonrpc\":\"2.0\",\"id\":99,\"method\":\"tools/call\",\"params\":{\"name\":\"!po_name!\",\"arguments\":!po_args!}}"
-for /f "delims=" %%r in ('curl -s -m %BRIDGE_TIMEOUT% -X POST -H "Content-Type: application/json" -d "!po_body!" "%ORCHESTRATOR_URL%/mcp" 2^>nul') do set "po_response=%%r"
+for /f "delims=" %%r in ('curl -s -m %BRIDGE_TIMEOUT% -X POST -H "Content-Type: application/json" %AUTH_HEADER% -d "!po_body!" "%ORCHESTRATOR_URL%/mcp" 2^>nul') do set "po_response=%%r"
 if "!po_response!"=="" (
     call :json_error !po_id! -1 "No response from orchestrator"
 ) else (
@@ -185,7 +196,7 @@ goto :eof
 :: === HTTP ===
 :initialize_session
 set "init_body={\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"initialize\",\"params\":{\"protocolVersion\":\"2025-03-26\",\"capabilities\":{},\"clientInfo\":{\"name\":\"mcp-bridge-cmd\",\"version\":\"1.0.0\"}}}"
-for /f "delims=" %%r in ('curl -s -m %BRIDGE_TIMEOUT% -X POST -H "Content-Type: application/json" -d "!init_body!" "%ORCHESTRATOR_URL%/mcp" 2^>nul') do set "init_response=%%r"
+for /f "delims=" %%r in ('curl -s -m %BRIDGE_TIMEOUT% -X POST -H "Content-Type: application/json" %AUTH_HEADER% -d "!init_body!" "%ORCHESTRATOR_URL%/mcp" 2^>nul') do set "init_response=%%r"
 if "!init_response!"=="" exit /b 1
 echo !init_response! | findstr /c:"result" >nul
 if !errorlevel! equ 0 (

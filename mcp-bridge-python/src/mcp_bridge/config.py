@@ -11,6 +11,7 @@ def parse_config() -> BridgeConfig:
     parser.add_argument("--timeout", type=int, default=None, help="Request timeout (ms)")
     parser.add_argument("--ping-interval", type=int, default=None, help="Ping interval (ms, 0=disabled)")
     parser.add_argument("--ping-timeout", type=int, default=None, help="Ping timeout (ms)")
+    parser.add_argument("--token", default=None, help="JWT bridge token")
     parser.add_argument("--no-reconnect", action="store_true", help="Disable auto-reconnect")
     parser.add_argument("--no-local-tools", action="store_true", help="Disable local tools")
     args = parser.parse_args()
@@ -23,6 +24,7 @@ def parse_config() -> BridgeConfig:
     ping_timeout = args.ping_timeout if args.ping_timeout is not None else int(
         os.environ.get("BRIDGE_PING_TIMEOUT", "5000")
     )
+    token = args.token or os.environ.get("MCP_BRIDGE_TOKEN")
 
     return BridgeConfig(
         orchestrator_url=url,
@@ -31,4 +33,5 @@ def parse_config() -> BridgeConfig:
         ping_timeout_ms=ping_timeout,
         reconnect_enabled=not args.no_reconnect,
         enable_local_tools=not args.no_local_tools,
+        token=token,
     )

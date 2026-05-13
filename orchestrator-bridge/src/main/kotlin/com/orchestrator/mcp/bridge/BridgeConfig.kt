@@ -14,7 +14,8 @@ data class BridgeConfig(
     val requestTimeoutMs: Long = 30_000,
     val enableLocalStreamWrite: Boolean = true,
     val pingIntervalMs: Long = 30_000,
-    val pingTimeoutMs: Long = 5_000
+    val pingTimeoutMs: Long = 5_000,
+    val token: String? = null
 ) {
     companion object {
         private val logger = LoggerFactory.getLogger(BridgeConfig::class.java)
@@ -29,16 +30,28 @@ data class BridgeConfig(
             val noReconnect = args.contains("--no-reconnect")
             val pingInterval = parsePingInterval(args)
             val pingTimeout = parsePingTimeout(args)
+            val token = parseToken(args)
 
-            logger.info("Bridge config: url=$url, timeout=${timeout}ms, reconnect=${!noReconnect}, pingInterval=${pingInterval}ms")
+            if (token != null) {
+                logger.info("Bridge config: url=$url, auth=JWT")
+            } else {
+                logger.warn("Bridge config: url=$url, auth=NONE")
+            }
             return BridgeConfig(
                 orchestratorUrl = url,
                 reconnectEnabled = !noReconnect,
                 requestTimeoutMs = timeout,
                 enableLocalStreamWrite = !args.contains("--no-local-write"),
                 pingIntervalMs = pingInterval,
-                pingTimeoutMs = pingTimeout
+                pingTimeoutMs = pingTimeout,
+                token = token
             )
+        }
+
+        private fun parseToken(args: Array<String>): String? {
+            val idx = args.indexOf("--token")
+            if (idx >= 0 && idx + 1 < args.size) return args[idx + 1]
+            return System.getenv("MCP_BRIDGE_TOKEN")
         }
 
         private fun parseUrl(args: Array<String>): String {

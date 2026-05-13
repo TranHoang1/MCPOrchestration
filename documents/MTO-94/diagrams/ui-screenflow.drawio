@@ -1,0 +1,122 @@
+<mxGraphModel dx="1422" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
+  <root>
+    <mxCell id="0" />
+    <mxCell id="1" parent="0" />
+    <!-- Title -->
+    <mxCell id="2" value="UI Screenflow — MTO-94 User Journeys" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=16;fontStyle=1;" vertex="1" parent="1">
+      <mxGeometry x="350" y="10" width="380" height="30" as="geometry" />
+    </mxCell>
+    <!-- Journey 1: Login → Profile → Generate Token -->
+    <mxCell id="3" value="Journey 1: Generate Bridge Token" style="text;html=1;align=left;fontSize=12;fontStyle=5;fillColor=#e1d5e7;strokeColor=#9673a6;rounded=1;" vertex="1" parent="1">
+      <mxGeometry x="40" y="50" width="250" height="25" as="geometry" />
+    </mxCell>
+    <mxCell id="10" value="Login Page&#xa;Enter credentials" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="40" y="90" width="140" height="50" as="geometry" />
+    </mxCell>
+    <mxCell id="11" value="Profile Page&#xa;View user info" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="240" y="90" width="140" height="50" as="geometry" />
+    </mxCell>
+    <mxCell id="12" value="Set expiry days&#xa;Click Generate" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="440" y="90" width="140" height="50" as="geometry" />
+    </mxCell>
+    <mxCell id="13" value="Token displayed&#xa;Click Copy" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="640" y="90" width="140" height="50" as="geometry" />
+    </mxCell>
+    <mxCell id="14" value="Configure Bridge&#xa;Paste token" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=11;dashed=1;" vertex="1" parent="1">
+      <mxGeometry x="840" y="90" width="140" height="50" as="geometry" />
+    </mxCell>
+    <mxCell id="20" style="edgeStyle=orthogonalEdgeStyle;rounded=1;" edge="1" source="10" target="11" parent="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="21" style="edgeStyle=orthogonalEdgeStyle;rounded=1;" edge="1" source="11" target="12" parent="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="22" style="edgeStyle=orthogonalEdgeStyle;rounded=1;" edge="1" source="12" target="13" parent="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="23" style="edgeStyle=orthogonalEdgeStyle;rounded=1;dashed=1;" edge="1" source="13" target="14" parent="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <!-- Journey 2: Login → Profile → Fill Credentials → Save -->
+    <mxCell id="4" value="Journey 2: Save Server Credentials" style="text;html=1;align=left;fontSize=12;fontStyle=5;fillColor=#e1d5e7;strokeColor=#9673a6;rounded=1;" vertex="1" parent="1">
+      <mxGeometry x="40" y="180" width="260" height="25" as="geometry" />
+    </mxCell>
+    <mxCell id="30" value="Login Page&#xa;Enter credentials" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="40" y="220" width="140" height="50" as="geometry" />
+    </mxCell>
+    <mxCell id="31" value="Profile Page&#xa;Scroll to Credentials" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="240" y="220" width="140" height="50" as="geometry" />
+    </mxCell>
+    <mxCell id="32" value="Expand server card&#xa;Fill fields" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="440" y="220" width="140" height="50" as="geometry" />
+    </mxCell>
+    <mxCell id="33" value="Click Save&#xa;Success toast" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="640" y="220" width="140" height="50" as="geometry" />
+    </mxCell>
+    <mxCell id="40" style="edgeStyle=orthogonalEdgeStyle;rounded=1;" edge="1" source="30" target="31" parent="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="41" style="edgeStyle=orthogonalEdgeStyle;rounded=1;" edge="1" source="31" target="32" parent="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="42" style="edgeStyle=orthogonalEdgeStyle;rounded=1;" edge="1" source="32" target="33" parent="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <!-- Journey 3: Admin → Schemas -->
+    <mxCell id="5" value="Journey 3: Admin Manage Credential Schemas" style="text;html=1;align=left;fontSize=12;fontStyle=5;fillColor=#e1d5e7;strokeColor=#9673a6;rounded=1;" vertex="1" parent="1">
+      <mxGeometry x="40" y="310" width="320" height="25" as="geometry" />
+    </mxCell>
+    <mxCell id="50" value="Login Page&#xa;Admin credentials" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="40" y="350" width="140" height="50" as="geometry" />
+    </mxCell>
+    <mxCell id="51" value="Profile Page&#xa;See admin badge" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="240" y="350" width="140" height="50" as="geometry" />
+    </mxCell>
+    <mxCell id="52" value="Admin Schemas&#xa;Select server" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="440" y="350" width="140" height="50" as="geometry" />
+    </mxCell>
+    <mxCell id="53" value="Add/Edit fields&#xa;Set required/type" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="640" y="350" width="140" height="50" as="geometry" />
+    </mxCell>
+    <mxCell id="54" value="Save schema&#xa;Success toast" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="840" y="350" width="140" height="50" as="geometry" />
+    </mxCell>
+    <mxCell id="60" style="edgeStyle=orthogonalEdgeStyle;rounded=1;" edge="1" source="50" target="51" parent="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="61" style="edgeStyle=orthogonalEdgeStyle;rounded=1;" edge="1" source="51" target="52" parent="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="62" style="edgeStyle=orthogonalEdgeStyle;rounded=1;" edge="1" source="52" target="53" parent="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="63" style="edgeStyle=orthogonalEdgeStyle;rounded=1;" edge="1" source="53" target="54" parent="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <!-- Journey 4: SSO Login -->
+    <mxCell id="6" value="Journey 4: SSO Login" style="text;html=1;align=left;fontSize=12;fontStyle=5;fillColor=#e1d5e7;strokeColor=#9673a6;rounded=1;" vertex="1" parent="1">
+      <mxGeometry x="40" y="440" width="180" height="25" as="geometry" />
+    </mxCell>
+    <mxCell id="70" value="Login Page&#xa;Click SSO button" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="40" y="480" width="140" height="50" as="geometry" />
+    </mxCell>
+    <mxCell id="71" value="SSO IdP&#xa;Authenticate" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=11;dashed=1;" vertex="1" parent="1">
+      <mxGeometry x="240" y="480" width="140" height="50" as="geometry" />
+    </mxCell>
+    <mxCell id="72" value="Callback&#xa;Token issued" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="440" y="480" width="140" height="50" as="geometry" />
+    </mxCell>
+    <mxCell id="73" value="Profile Page&#xa;Logged in" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="640" y="480" width="140" height="50" as="geometry" />
+    </mxCell>
+    <mxCell id="80" style="edgeStyle=orthogonalEdgeStyle;rounded=1;" edge="1" source="70" target="71" parent="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="81" style="edgeStyle=orthogonalEdgeStyle;rounded=1;" edge="1" source="71" target="72" parent="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="82" style="edgeStyle=orthogonalEdgeStyle;rounded=1;" edge="1" source="72" target="73" parent="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+  </root>
+</mxGraphModel>

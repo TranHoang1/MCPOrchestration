@@ -152,6 +152,49 @@ suspend fun CoroutineScope.startHttpStreamableServer(
         httpLogger.info("Admin API registered: /admin/*")
     }
 
+    // Auth API endpoints (MTO-95: JWT Auth)
+    val authRouteHandler = org.koin.java.KoinJavaComponent.getKoin()
+        .getOrNull<com.orchestrator.mcp.auth.AuthRouteHandler>()
+    if (authRouteHandler != null) {
+        server.createContext("/api/auth") { exchange: HttpExchange ->
+            authRouteHandler.handle(exchange)
+        }
+        httpLogger.info("Auth API registered: /api/auth/*")
+    }
+
+    // SSO API endpoints (MTO-101: SSO Integration)
+    val ssoRoutes = org.koin.java.KoinJavaComponent.getKoin()
+        .getOrNull<com.orchestrator.mcp.auth.sso.SsoRoutes>()
+    if (ssoRoutes != null) {
+        server.createContext("/api/auth/sso") { exchange: HttpExchange ->
+            ssoRoutes.handlePublic(exchange)
+        }
+        server.createContext("/api/admin/sso/config") { exchange: HttpExchange ->
+            ssoRoutes.handleAdmin(exchange)
+        }
+        httpLogger.info("SSO API registered: /api/auth/sso/*, /api/admin/sso/config")
+    }
+
+    // User Credential API endpoints (MTO-94: User credentials)
+    val userCredentialRoutes = org.koin.java.KoinJavaComponent.getKoin()
+        .getOrNull<com.orchestrator.mcp.credentials.UserCredentialRoutes>()
+    if (userCredentialRoutes != null) {
+        server.createContext("/api/credentials") { exchange: HttpExchange ->
+            userCredentialRoutes.handle(exchange)
+        }
+        httpLogger.info("User Credential API registered: /api/credentials/*")
+    }
+
+    // Credential Schema API endpoints (MTO-96: Admin CRUD)
+    val credentialSchemaRoutes = org.koin.java.KoinJavaComponent.getKoin()
+        .getOrNull<com.orchestrator.mcp.credentials.CredentialSchemaRoutes>()
+    if (credentialSchemaRoutes != null) {
+        server.createContext("/api/admin/credential-schemas") { exchange: HttpExchange ->
+            credentialSchemaRoutes.handle(exchange)
+        }
+        httpLogger.info("Credential Schema API registered: /api/admin/credential-schemas/*")
+    }
+
     // Static file serving (graph-viewer.html, sync-dashboard.html)
     server.createContext("/static") { exchange ->
         handleStaticFile(exchange)
@@ -163,6 +206,16 @@ suspend fun CoroutineScope.startHttpStreamableServer(
     // Convenience alias: /sync → static/sync-dashboard.html
     server.createContext("/sync/dashboard") { exchange ->
         serveResource(exchange, "static/sync-dashboard.html")
+    }
+    // Convenience aliases for auth UI pages (MTO-94)
+    server.createContext("/login") { exchange ->
+        serveResource(exchange, "static/login.html")
+    }
+    server.createContext("/profile") { exchange ->
+        serveResource(exchange, "static/profile.html")
+    }
+    server.createContext("/admin/schemas") { exchange ->
+        serveResource(exchange, "static/admin-schemas.html")
     }
 
     server.start()
@@ -194,10 +247,15 @@ private fun handleMcpRequest(
         return
     }
 
+    // Extract headers for auth context propagation
+    val headers = exchange.requestHeaders.entries.associate { (k, v) ->
+        k to (v.firstOrNull() ?: "")
+    }
+
     // Run suspend function in blocking context
     // (each request has its own thread from pool)
     val response = runBlocking {
-        router.handle(body)
+        router.handle(body, headers)
     }
 
     val bytes = response.toByteArray(Charsets.UTF_8)
@@ -295,7 +353,7 @@ private fun serveResource(exchange: HttpExchange, resourcePath: String) {
         return
     }
 
-    val bytes = stream.use { it.readBytes() }
+    val bytes = stream.use { it.readAllBytes() }
     val contentType = when {
         resourcePath.endsWith(".html") -> "text/html; charset=utf-8"
         resourcePath.endsWith(".js") -> "application/javascript"
@@ -405,9 +463,36 @@ private fun runUserManagementStartup() {
         val permissionService = org.koin.java.KoinJavaComponent.getKoin()
             .get<com.orchestrator.mcp.usermanagement.service.PermissionService>()
         kotlinx.coroutines.runBlocking { permissionService.seedIfEmpty() }
-
-        httpLogger.info("User Management startup complete")
     } catch (e: Exception) {
-        httpLogger.warn("User Management startup failed (non-critical): ${e.message}")
+        httpLogger.warn("User Management migration failed (non-critical): ${e.message}")
     }
+
+    // Auth module migration (MTO-95) — independent try-catch
+    try {
+        val authMigration = org.koin.java.KoinJavaComponent.getKoin()
+            .getOrNull<com.orchestrator.mcp.auth.AuthMigration>()
+        authMigration?.migrate()
+    } catch (e: Exception) {
+        httpLogger.warn("Auth migration failed: ${e.message}")
+    }
+
+    // SSO module migration (MTO-101) — independent try-catch
+    try {
+        val ssoMigration = org.koin.java.KoinJavaComponent.getKoin()
+            .getOrNull<com.orchestrator.mcp.auth.sso.SsoMigration>()
+        ssoMigration?.migrate()
+    } catch (e: Exception) {
+        httpLogger.warn("SSO migration failed: ${e.message}")
+    }
+
+    // Credential module migration (MTO-96) — independent try-catch
+    try {
+        val credentialMigration = org.koin.java.KoinJavaComponent.getKoin()
+            .getOrNull<com.orchestrator.mcp.credentials.CredentialMigration>()
+        credentialMigration?.migrate()
+    } catch (e: Exception) {
+        httpLogger.warn("Credential migration failed: ${e.message}")
+    }
+
+    httpLogger.info("User Management startup complete")
 }

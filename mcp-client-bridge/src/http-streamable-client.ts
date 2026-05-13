@@ -113,11 +113,18 @@ export class HttpStreamableClient {
     );
 
     try {
+      const headers: Record<string, string> = {
+        'Content-Type': 'application/json',
+      };
+      if (this.config.token) {
+        headers['Authorization'] = `Bearer ${this.config.token}`;
+      }
+
       const res = await fetch(
         `${this.config.orchestratorUrl}/mcp`,
         {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers,
           body,
           signal: controller.signal,
         },

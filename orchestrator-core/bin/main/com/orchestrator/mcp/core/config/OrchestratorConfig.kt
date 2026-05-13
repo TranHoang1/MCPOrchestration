@@ -27,7 +27,8 @@ data class OrchestratorSettings(
     @SerialName("upstream_servers")
     val upstreamServers: List<UpstreamServerConfig> = emptyList(),
     @SerialName("file-proxy")
-    val fileProxy: FileProxyConfig = FileProxyConfig()
+    val fileProxy: FileProxyConfig = FileProxyConfig(),
+    val pool: PoolManagerConfig = PoolManagerConfig()
 )
 
 @Serializable

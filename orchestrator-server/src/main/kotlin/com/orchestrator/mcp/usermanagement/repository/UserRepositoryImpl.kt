@@ -131,14 +131,18 @@ class UserRepositoryImpl(
         }
     }
 
-    private fun mapRowToUser(rs: java.sql.ResultSet): User = User.fromRow(
-        id = rs.getObject("id", UUID::class.java),
-        email = rs.getString("email"),
-        role = rs.getString("role"),
-        displayName = rs.getString("display_name"),
-        active = rs.getBoolean("active"),
-        createdBy = rs.getObject("created_by") as? UUID,
-        createdAt = rs.getString("created_at"),
-        updatedAt = rs.getString("updated_at")
-    )
+    private fun mapRowToUser(rs: java.sql.ResultSet): User {
+        val id = rs.getString("id") ?: ""
+        val createdBy = rs.getString("created_by")
+        return User(
+            id = id,
+            email = rs.getString("email") ?: "",
+            role = UserRole.fromString(rs.getString("role") ?: "developer"),
+            displayName = rs.getString("display_name") ?: "",
+            active = rs.getBoolean("active"),
+            createdBy = createdBy,
+            createdAt = rs.getString("created_at") ?: "",
+            updatedAt = rs.getString("updated_at") ?: ""
+        )
+    }
 }

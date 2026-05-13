@@ -1,0 +1,8 @@
+test_case_id,expiry_days,expected_http_code,expected_error_code,description
+TC-002,30,200,,Default 30-day bridge token
+TC-102,7,200,,Custom 7-day expiry
+TC-403,0,400,,Below minimum (0 days)
+TC-403,1,200,,Minimum valid (1 day)
+TC-403,90,200,,Maximum valid (90 days)
+TC-403,91,400,,Above maximum (91 days)
+TC-006,,401,TOKEN_EXPIRED,Expired session token

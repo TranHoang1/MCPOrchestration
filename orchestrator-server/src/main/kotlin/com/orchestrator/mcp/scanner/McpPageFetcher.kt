@@ -84,7 +84,7 @@ class McpPageFetcher(
         // Use startAt + issues.size + 1 so ProjectScannerImpl fetches next page.
         // If page is NOT full, this is the last page → total = startAt + issues.size.
         val total = when {
-            rawTotal > 0 -> rawTotal
+            rawTotal >= 0 -> rawTotal
             issues.size >= maxResults -> startAt + issues.size + 1
             else -> startAt + issues.size
         }

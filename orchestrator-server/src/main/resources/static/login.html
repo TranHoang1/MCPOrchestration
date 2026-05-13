@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MCP Orchestrator — Login</title>
+    <style>
+        :root {
+            --bg: #1a1a2e;
+            --surface: #16213e;
+            --card: #0f3460;
+            --accent: #e94560;
+            --success: #4caf50;
+            --warning: #ff9800;
+            --text: #eaeaea;
+            --muted: #8892b0;
+            --radius: 8px;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .login-container {
+            width: 100%;
+            max-width: 420px;
+            padding: 24px;
+        }
+        .login-card {
+            background: var(--surface);
+            border-radius: var(--radius);
+            padding: 40px 32px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+        .login-header {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+        .login-header h1 {
+            font-size: 1.5rem;
+            margin-bottom: 8px;
+        }
+        .login-header p {
+            color: var(--muted);
+            font-size: 0.9rem;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            font-size: 0.85rem;
+            color: var(--muted);
+            margin-bottom: 6px;
+        }
+        .input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+        .input-wrapper input {
+            width: 100%;
+            padding: 12px 16px;
+            border-radius: var(--radius);
+            border: 1px solid var(--card);
+            background: var(--bg);
+            color: var(--text);
+            font-size: 0.95rem;
+            transition: border-color 0.2s;
+        }
+        .input-wrapper input:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+        .toggle-password {
+            position: absolute;
+            right: 12px;
+            background: none;
+            border: none;
+            color: var(--muted);
+            cursor: pointer;
+            font-size: 0.85rem;
+            padding: 4px;
+        }
+        .toggle-password:hover { color: var(--text); }
+        .btn {
+            width: 100%;
+            padding: 12px;
+            border-radius: var(--radius);
+            border: none;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: opacity 0.2s, transform 0.1s;
+        }
+        .btn:active { transform: scale(0.98); }
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .btn-primary {
+            background: var(--accent);
+            color: #fff;
+            margin-bottom: 12px;
+        }
+        .btn-primary:hover:not(:disabled) { opacity: 0.9; }
+        .btn-sso {
+            background: var(--card);
+            color: var(--text);
+            border: 1px solid var(--muted);
+        }
+        .btn-sso:hover:not(:disabled) { background: var(--surface); }
+        .divider {
+            display: flex;
+            align-items: center;
+            margin: 20px 0;
+            color: var(--muted);
+            font-size: 0.8rem;
+        }
+        .divider::before, .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--card);
+        }
+        .divider span { padding: 0 12px; }
+        .alert {
+            padding: 12px 16px;
+            border-radius: var(--radius);
+            font-size: 0.85rem;
+            margin-bottom: 20px;
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+        .alert-error {
+            background: rgba(233, 69, 96, 0.15);
+            border: 1px solid var(--accent);
+            color: var(--accent);
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .sso-section { display: none; }
+        .sso-section.visible { display: block; }
+    </style>
+</head>
+<body>
+<div class="login-container">
+    <div class="login-card">
+        <div class="login-header">
+            <h1>🔐 MCP Orchestrator</h1>
+            <p>Sign in to continue</p>
+        </div>
+
+        <div class="alert alert-error" id="error-alert" role="alert" aria-live="polite"></div>
+
+        <form id="login-form" novalidate>
+            <div class="form-group">
+                <label for="username">Username</label>
+                <div class="input-wrapper">
+                    <input type="text" id="username" name="username"
+                           autocomplete="username" autofocus
+                           placeholder="Enter username" required
+                           aria-required="true">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password</label>
+                <div class="input-wrapper">
+                    <input type="password" id="password" name="password"
+                           autocomplete="current-password"
+                           placeholder="Enter password" required
+                           aria-required="true">
+                    <button type="button" class="toggle-password"
+                            id="toggle-pw" aria-label="Toggle password visibility">
+                        Show
+                    </button>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary" id="btn-login" disabled>
+                Sign In
+            </button>
+        </form>
+
+        <div class="sso-section" id="sso-section">
+            <div class="divider"><span>or</span></div>
+            <button type="button" class="btn btn-sso" id="btn-sso">
+                🔑 Sign in with SSO
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+(function() {
+    'use strict';
+
+    const els = {
+        form: document.getElementById('login-form'),
+        username: document.getElementById('username'),
+        password: document.getElementById('password'),
+        togglePw: document.getElementById('toggle-pw'),
+        btnLogin: document.getElementById('btn-login'),
+        btnSso: document.getElementById('btn-sso'),
+        ssoSection: document.getElementById('sso-section'),
+        errorAlert: document.getElementById('error-alert')
+    };
+
+    let dismissTimer = null;
+
+    function init() {
+        checkExistingToken();
+        checkSsoAvailability();
+        bindEvents();
+    }
+
+    function checkExistingToken() {
+        const token = localStorage.getItem('auth_token');
+        if (token) {
+            window.location.href = '/static/profile.html';
+        }
+    }
+
+    function checkSsoAvailability() {
+        fetch('/api/admin/sso/config')
+            .then(r => { if (r.ok) return r.json(); throw new Error(); })
+            .then(data => {
+                if (data && data.enabled) {
+                    els.ssoSection.classList.add('visible');
+                }
+            })
+            .catch(() => {});
+    }
+
+    function bindEvents() {
+        els.username.addEventListener('input', updateButtonState);
+        els.password.addEventListener('input', updateButtonState);
+        els.togglePw.addEventListener('click', togglePasswordVisibility);
+        els.form.addEventListener('submit', handleLogin);
+        els.btnSso.addEventListener('click', handleSsoLogin);
+    }
+
+    function updateButtonState() {
+        const filled = els.username.value.trim() && els.password.value;
+        els.btnLogin.disabled = !filled;
+    }
+
+    function togglePasswordVisibility() {
+        const isPassword = els.password.type === 'password';
+        els.password.type = isPassword ? 'text' : 'password';
+        els.togglePw.textContent = isPassword ? 'Hide' : 'Show';
+    }
+
+    function handleLogin(e) {
+        e.preventDefault();
+        hideError();
+        els.btnLogin.disabled = true;
+        els.btnLogin.textContent = 'Signing in...';
+
+        const body = JSON.stringify({
+            username: els.username.value.trim(),
+            password: els.password.value
+        });
+
+        fetch('/api/auth/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: body
+        })
+        .then(r => r.json().then(data => ({ ok: r.ok, data })))
+        .then(({ ok, data }) => {
+            if (!ok) throw new Error(data.message || data.error || 'Login failed');
+            localStorage.setItem('auth_token', data.token);
+            if (data.expires_at) {
+                localStorage.setItem('token_expires', data.expires_at);
+            }
+            if (data.user) {
+                localStorage.setItem('user_info', JSON.stringify(data.user));
+            }
+            window.location.href = '/static/profile.html';
+        })
+        .catch(err => {
+            showError(err.message);
+            els.btnLogin.disabled = false;
+            els.btnLogin.textContent = 'Sign In';
+            els.password.value = '';
+            els.password.focus();
+        });
+    }
+
+    function handleSsoLogin() {
+        window.location.href = '/api/auth/sso/authorize';
+    }
+
+    function showError(message) {
+        els.errorAlert.textContent = message;
+        els.errorAlert.style.display = 'block';
+        if (dismissTimer) clearTimeout(dismissTimer);
+        dismissTimer = setTimeout(hideError, 5000);
+    }
+
+    function hideError() {
+        els.errorAlert.style.display = 'none';
+        if (dismissTimer) { clearTimeout(dismissTimer); dismissTimer = null; }
+    }
+
+    document.addEventListener('DOMContentLoaded', init);
+})();
+</script>
+</body>
+</html>

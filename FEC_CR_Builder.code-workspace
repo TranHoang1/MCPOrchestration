@@ -1,0 +1,14 @@
+{
+	"folders": [
+		{
+			"path": "../../kiro/FEC_CR_Builder"
+		},
+		{
+			"path": "."
+		},
+		{
+			"path": "../../nodejs/lowcode--devtools-mcp"
+		}
+	],
+	"settings": {}
+}

@@ -1,0 +1,69 @@
+<mxfile host="draw.io">
+  <diagram name="TDD - ER Diagram" id="tdd-er">
+    <mxGraphModel dx="1200" dy="700" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1100" pageHeight="650">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+
+        <!-- users -->
+        <mxCell id="u_h" value="users (modified)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#1565C0;fontColor=#FFFFFF;fontSize=11;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="40" width="240" height="25" as="geometry"/>
+        </mxCell>
+        <mxCell id="u_b" value="&lt;div style='text-align:left;font-size:10px;line-height:1.4;padding:3px'&gt;&lt;b&gt;PK&lt;/b&gt; id : TEXT&lt;br&gt;email : TEXT (UK)&lt;br&gt;name : TEXT&lt;br&gt;role : TEXT&lt;br&gt;password_hash : TEXT &lt;font color='red'&gt;[NEW]&lt;/font&gt;&lt;br&gt;auth_mode : TEXT &lt;font color='red'&gt;[NEW]&lt;/font&gt;&lt;br&gt;active : BOOLEAN &lt;font color='red'&gt;[NEW]&lt;/font&gt;&lt;br&gt;failed_login_attempts : INT &lt;font color='red'&gt;[NEW]&lt;/font&gt;&lt;br&gt;locked_until : TEXT &lt;font color='red'&gt;[NEW]&lt;/font&gt;&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#E3F2FD;strokeColor=#1565C0;verticalAlign=top;align=left;overflow=fill;" vertex="1" parent="1">
+          <mxGeometry x="40" y="65" width="240" height="155" as="geometry"/>
+        </mxCell>
+
+        <!-- credential_schemas -->
+        <mxCell id="cs_h" value="credential_schemas [NEW]" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#2E7D32;fontColor=#FFFFFF;fontSize=11;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="380" y="40" width="240" height="25" as="geometry"/>
+        </mxCell>
+        <mxCell id="cs_b" value="&lt;div style='text-align:left;font-size:10px;line-height:1.4;padding:3px'&gt;&lt;b&gt;PK&lt;/b&gt; id : TEXT&lt;br&gt;&lt;b&gt;FK&lt;/b&gt; server_name : TEXT&lt;br&gt;field_key : TEXT&lt;br&gt;field_label : TEXT&lt;br&gt;field_type : TEXT&lt;br&gt;field_required : BOOLEAN&lt;br&gt;display_order : INT&lt;br&gt;&lt;i&gt;UK(server_name, field_key)&lt;/i&gt;&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#E8F5E9;strokeColor=#2E7D32;verticalAlign=top;align=left;overflow=fill;" vertex="1" parent="1">
+          <mxGeometry x="380" y="65" width="240" height="140" as="geometry"/>
+        </mxCell>
+
+        <!-- user_credentials -->
+        <mxCell id="uc_h" value="user_credentials [NEW]" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#E65100;fontColor=#FFFFFF;fontSize=11;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="290" width="240" height="25" as="geometry"/>
+        </mxCell>
+        <mxCell id="uc_b" value="&lt;div style='text-align:left;font-size:10px;line-height:1.4;padding:3px'&gt;&lt;b&gt;PK&lt;/b&gt; id : TEXT&lt;br&gt;&lt;b&gt;FK&lt;/b&gt; user_id : TEXT&lt;br&gt;&lt;b&gt;FK&lt;/b&gt; server_name : TEXT&lt;br&gt;credentials_encrypted : TEXT&lt;br&gt;&lt;i&gt;UK(user_id, server_name)&lt;/i&gt;&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFF3E0;strokeColor=#E65100;verticalAlign=top;align=left;overflow=fill;" vertex="1" parent="1">
+          <mxGeometry x="40" y="315" width="240" height="100" as="geometry"/>
+        </mxCell>
+
+        <!-- bridge_tokens -->
+        <mxCell id="bt_h" value="bridge_tokens [NEW]" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#6A1B9A;fontColor=#FFFFFF;fontSize=11;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="380" y="290" width="240" height="25" as="geometry"/>
+        </mxCell>
+        <mxCell id="bt_b" value="&lt;div style='text-align:left;font-size:10px;line-height:1.4;padding:3px'&gt;&lt;b&gt;PK&lt;/b&gt; id : TEXT&lt;br&gt;&lt;b&gt;FK&lt;/b&gt; user_id : TEXT&lt;br&gt;token_hash : TEXT&lt;br&gt;expires_at : TEXT&lt;br&gt;revoked : BOOLEAN&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F3E5F5;strokeColor=#6A1B9A;verticalAlign=top;align=left;overflow=fill;" vertex="1" parent="1">
+          <mxGeometry x="380" y="315" width="240" height="95" as="geometry"/>
+        </mxCell>
+
+        <!-- mcp_servers -->
+        <mxCell id="ms_h" value="mcp_servers (existing)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#37474F;fontColor=#FFFFFF;fontSize=11;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="730" y="40" width="220" height="25" as="geometry"/>
+        </mxCell>
+        <mxCell id="ms_b" value="&lt;div style='text-align:left;font-size:10px;line-height:1.4;padding:3px'&gt;&lt;b&gt;PK&lt;/b&gt; id : TEXT&lt;br&gt;name : TEXT (UK)&lt;br&gt;command : TEXT&lt;br&gt;args : TEXT&lt;br&gt;transport : TEXT&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ECEFF1;strokeColor=#37474F;verticalAlign=top;align=left;overflow=fill;" vertex="1" parent="1">
+          <mxGeometry x="730" y="65" width="220" height="95" as="geometry"/>
+        </mxCell>
+
+        <!-- sso_config -->
+        <mxCell id="sc_h" value="sso_config [NEW]" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#00695C;fontColor=#FFFFFF;fontSize=11;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="730" y="290" width="220" height="25" as="geometry"/>
+        </mxCell>
+        <mxCell id="sc_b" value="&lt;div style='text-align:left;font-size:10px;line-height:1.4;padding:3px'&gt;&lt;b&gt;PK&lt;/b&gt; id : TEXT (singleton)&lt;br&gt;sso_enabled : BOOLEAN&lt;br&gt;issuer_url : TEXT&lt;br&gt;client_id : TEXT&lt;br&gt;client_secret_encrypted : TEXT&lt;br&gt;claims_mapping : TEXT (JSON)&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#E0F2F1;strokeColor=#00695C;verticalAlign=top;align=left;overflow=fill;" vertex="1" parent="1">
+          <mxGeometry x="730" y="315" width="220" height="115" as="geometry"/>
+        </mxCell>
+
+        <!-- Relationships -->
+        <mxCell id="r1" value="1:N" style="endArrow=ERmany;startArrow=ERone;endFill=0;startFill=0;html=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;fontSize=10;labelBackgroundColor=#FFF;" edge="1" source="u_b" target="uc_h" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="r2" value="1:N" style="endArrow=ERmany;startArrow=ERone;endFill=0;startFill=0;html=1;exitX=1;exitY=0.8;entryX=0;entryY=0.4;fontSize=10;labelBackgroundColor=#FFF;" edge="1" source="u_b" target="bt_b" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="r3" value="1:N" style="endArrow=ERmany;startArrow=ERone;endFill=0;startFill=0;html=1;exitX=0;exitY=0.5;entryX=1;entryY=0.5;fontSize=10;labelBackgroundColor=#FFF;" edge="1" source="ms_b" target="cs_b" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

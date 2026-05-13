@@ -2,15 +2,18 @@ import { BridgeConfig } from './bridge-config';
 
 describe('BridgeConfig', () => {
   const originalEnv = process.env;
+  const originalExit = process.exit;
 
   beforeEach(() => {
     process.env = { ...originalEnv };
     delete process.env.ORCHESTRATOR_URL;
     delete process.env.BRIDGE_TIMEOUT;
+    delete process.env.MCP_BRIDGE_TOKEN;
   });
 
   afterAll(() => {
     process.env = originalEnv;
+    process.exit = originalExit;
   });
 
   it('should use --url flag when provided', () => {
@@ -57,5 +60,49 @@ describe('BridgeConfig', () => {
   it('should disable local stream write with --no-local-write', () => {
     const config = BridgeConfig.load(['--no-local-write']);
     expect(config.enableLocalStreamWrite).toBe(false);
+  });
+
+  describe('token parsing', () => {
+    const validToken = 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyMSJ9.dGVzdHNpZ25hdHVyZQ';
+
+    it('should parse --token from CLI args', () => {
+      const config = BridgeConfig.load(['--token', validToken]);
+      expect(config.token).toBe(validToken);
+    });
+
+    it('should use MCP_BRIDGE_TOKEN env as fallback', () => {
+      process.env.MCP_BRIDGE_TOKEN = validToken;
+      const config = BridgeConfig.load([]);
+      expect(config.token).toBe(validToken);
+    });
+
+    it('should prefer --token CLI over env var', () => {
+      process.env.MCP_BRIDGE_TOKEN = 'envtoken.payload.sig';
+      const config = BridgeConfig.load(['--token', validToken]);
+      expect(config.token).toBe(validToken);
+    });
+
+    it('should default token to null when not provided', () => {
+      const config = BridgeConfig.load([]);
+      expect(config.token).toBeNull();
+    });
+
+    it('should exit with code 1 for invalid token format (not 3 parts)', () => {
+      const mockExit = jest.fn() as unknown as typeof process.exit;
+      process.exit = mockExit;
+      try {
+        BridgeConfig.load(['--token', 'invalid-no-dots']);
+      } catch { /* exit mock */ }
+      expect(mockExit).toHaveBeenCalledWith(1);
+    });
+
+    it('should exit with code 1 for token with invalid base64url chars', () => {
+      const mockExit = jest.fn() as unknown as typeof process.exit;
+      process.exit = mockExit;
+      try {
+        BridgeConfig.load(['--token', 'abc.def!.ghi']);
+      } catch { /* exit mock */ }
+      expect(mockExit).toHaveBeenCalledWith(1);
+    });
   });
 });

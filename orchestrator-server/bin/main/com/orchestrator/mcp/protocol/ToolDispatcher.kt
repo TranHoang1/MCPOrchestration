@@ -11,7 +11,8 @@ import kotlinx.serialization.json.JsonObject
 interface ToolDispatcher {
     suspend fun callTool(
         name: String,
-        arguments: JsonObject?
+        arguments: JsonObject?,
+        headers: Map<String, String> = emptyMap()
     ): CallToolResult
 
     fun listTools(): JsonElement

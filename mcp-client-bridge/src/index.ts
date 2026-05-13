@@ -11,6 +11,11 @@ import { BridgeConfig } from './bridge-config.js';
 async function main(): Promise<void> {
   const config = BridgeConfig.load(process.argv.slice(2));
   console.error(`[mcp-bridge] Connecting to orchestrator at: ${config.orchestratorUrl}`);
+  if (config.token) {
+    console.error('[mcp-bridge] Using JWT authentication');
+  } else {
+    console.error('[mcp-bridge] Warning: No token provided. Running without authentication.');
+  }
 
   const bridge = new BridgeServer(config);
 

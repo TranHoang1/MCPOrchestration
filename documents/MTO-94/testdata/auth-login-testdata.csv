@@ -1,0 +1,18 @@
+test_case_id,username,password,expected_http_code,expected_error_code,expected_message,description
+TC-001,john.doe,SecurePass123,200,,,Valid login — happy path
+TC-200,john.doe,WrongPass,401,INVALID_CREDENTIALS,Invalid username or password,Wrong password
+TC-201,nonexistent,anypass,401,INVALID_CREDENTIALS,Invalid username or password,Non-existent user
+TC-202,disabled.user,correct,403,ACCOUNT_DISABLED,Account is disabled. Contact administrator,Disabled account
+TC-101,locked.user,correct,423,ACCOUNT_LOCKED,Account locked. Try again in 15 minutes,Locked account
+TC-100,sso.user,any,400,,Redirect to IdP,SSO-mode user attempts local login
+TC-400,,pass,400,,Username cannot be empty,Empty username
+TC-401,aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa,pass,400,,Username exceeds max length,101-char username
+TC-402,john.doe,1234567,400,,Password too short,7-char password (below min 8)
+TC-408,john doe,pass,400,,Invalid username format,Username with space
+TC-409,' OR 1=1 --,pass,401,INVALID_CREDENTIALS,,SQL injection attempt
+TC-610,locktest,wrong1,401,INVALID_CREDENTIALS,,Failed attempt 1 of 5
+TC-610,locktest,wrong2,401,INVALID_CREDENTIALS,,Failed attempt 2 of 5
+TC-610,locktest,wrong3,401,INVALID_CREDENTIALS,,Failed attempt 3 of 5
+TC-610,locktest,wrong4,401,INVALID_CREDENTIALS,,Failed attempt 4 of 5
+TC-610,locktest,wrong5,401,INVALID_CREDENTIALS,,Failed attempt 5 — triggers lock
+TC-610,locktest,correct,423,ACCOUNT_LOCKED,,Correct password but account now locked

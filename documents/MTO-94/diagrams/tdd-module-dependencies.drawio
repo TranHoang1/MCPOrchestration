@@ -1,0 +1,38 @@
+<mxfile host="draw.io">
+  <diagram name="TDD - Module Dependencies" id="tdd-deps">
+    <mxGraphModel dx="800" dy="400" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="800" pageHeight="350">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+        <mxCell id="server" value="orchestrator-server" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8F5E9;strokeColor=#2E7D32;fontSize=11;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="140" width="160" height="50" as="geometry"/>
+        </mxCell>
+        <mxCell id="core" value="orchestrator-core" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E3F2FD;strokeColor=#1565C0;fontSize=11;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="320" y="40" width="160" height="50" as="geometry"/>
+        </mxCell>
+        <mxCell id="client" value="orchestrator-client" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF3E0;strokeColor=#F57C00;fontSize=11;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="320" y="240" width="160" height="50" as="geometry"/>
+        </mxCell>
+        <mxCell id="bridge_m" value="orchestrator-bridge" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F3E5F5;strokeColor=#7B1FA2;fontSize=11;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="600" y="140" width="160" height="50" as="geometry"/>
+        </mxCell>
+        <mxCell id="d1" style="endArrow=block;endFill=1;html=1;exitX=1;exitY=0.25;entryX=0;entryY=0.5;" edge="1" source="server" target="core" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="d2" style="endArrow=block;endFill=1;html=1;exitX=1;exitY=0.75;entryX=0;entryY=0.5;" edge="1" source="server" target="client" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="d3" style="endArrow=block;endFill=1;html=1;exitX=0;exitY=0.5;entryX=1;entryY=0.5;" edge="1" source="bridge_m" target="core" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="d4" value="NEW: CredentialResolver → Pool" style="endArrow=block;endFill=1;html=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;strokeColor=#C62828;strokeWidth=2;dashed=1;fontSize=9;" edge="1" source="server" target="client" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="120" y="265"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

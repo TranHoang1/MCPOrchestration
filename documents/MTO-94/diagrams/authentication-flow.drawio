@@ -1,0 +1,51 @@
+<mxfile>
+  <diagram name="Authentication Flow">
+    <mxGraphModel dx="1422" dy="762" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <!-- Start -->
+        <mxCell id="2" value="" style="ellipse;fillColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="360" y="40" width="30" height="30" as="geometry" />
+        </mxCell>
+        <!-- Decision: Auth Mode -->
+        <mxCell id="3" value="Auth Mode?" style="rhombus;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="310" y="100" width="130" height="80" as="geometry" />
+        </mxCell>
+        <!-- Local Auth -->
+        <mxCell id="4" value="Validate&#xa;Username/Password" style="rounded=1;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="140" y="220" width="160" height="60" as="geometry" />
+        </mxCell>
+        <!-- SSO Auth -->
+        <mxCell id="5" value="Redirect to IdP&#xa;OAuth2/OIDC" style="rounded=1;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="450" y="220" width="160" height="60" as="geometry" />
+        </mxCell>
+        <!-- Decision: Valid? -->
+        <mxCell id="6" value="Valid?" style="rhombus;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="170" y="320" width="100" height="80" as="geometry" />
+        </mxCell>
+        <!-- Issue JWT -->
+        <mxCell id="7" value="Issue JWT&#xa;Session Token" style="rounded=1;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="310" y="440" width="130" height="60" as="geometry" />
+        </mxCell>
+        <!-- Error -->
+        <mxCell id="8" value="Return 401&#xa;Error" style="rounded=1;whiteSpace=wrap;fillColor=#f8cecc;" vertex="1" parent="1">
+          <mxGeometry x="40" y="440" width="100" height="60" as="geometry" />
+        </mxCell>
+        <!-- End -->
+        <mxCell id="9" value="" style="ellipse;fillColor=#000000;strokeColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="360" y="540" width="30" height="30" as="geometry" />
+        </mxCell>
+        <!-- Edges -->
+        <mxCell id="e1" edge="1" source="2" target="3" parent="1" />
+        <mxCell id="e2" value="local" edge="1" source="3" target="4" parent="1" />
+        <mxCell id="e3" value="sso" edge="1" source="3" target="5" parent="1" />
+        <mxCell id="e4" edge="1" source="4" target="6" parent="1" />
+        <mxCell id="e5" value="yes" edge="1" source="6" target="7" parent="1" />
+        <mxCell id="e6" value="no" edge="1" source="6" target="8" parent="1" />
+        <mxCell id="e7" edge="1" source="5" target="7" parent="1" />
+        <mxCell id="e8" edge="1" source="7" target="9" parent="1" />
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

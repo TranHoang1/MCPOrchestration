@@ -52,6 +52,12 @@ dependencies {
     implementation(libs.postgresql)
     implementation(libs.hikaricp)
 
+    // JWT Authentication (MTO-95)
+    implementation("com.auth0:java-jwt:4.4.0")
+
+    // Password Hashing (MTO-95)
+    implementation("at.favre.lib:bcrypt:0.10.2")
+
     // Document Processing (MTO-19: Attachment text extraction)
     implementation("org.apache.pdfbox:pdfbox:3.0.4")
     implementation("org.apache.poi:poi-ooxml:5.3.0")

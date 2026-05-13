@@ -1,0 +1,147 @@
+<mxfile host="draw.io">
+  <diagram name="Sequence - Tool Execution with Per-User Credentials" id="seq1">
+    <mxGraphModel dx="1600" dy="1000" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1000">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+        <!-- Participants (lifelines) -->
+        <mxCell id="p1" value="IDE&#xa;(Kiro/VS Code)" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=0;collapsible=0;recursiveResize=0;outlineConnect=0;fillColor=#dae8fc;strokeColor=#6c8ebf;size=40;" vertex="1" parent="1">
+          <mxGeometry x="80" y="40" width="100" height="900" as="geometry"/>
+        </mxCell>
+        <mxCell id="p2" value="MCP Bridge" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=0;collapsible=0;recursiveResize=0;outlineConnect=0;fillColor=#dae8fc;strokeColor=#6c8ebf;size=40;" vertex="1" parent="1">
+          <mxGeometry x="260" y="40" width="100" height="900" as="geometry"/>
+        </mxCell>
+        <mxCell id="p3" value="Orchestrator&#xa;Server" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=0;collapsible=0;recursiveResize=0;outlineConnect=0;fillColor=#d5e8d4;strokeColor=#82b366;size=40;" vertex="1" parent="1">
+          <mxGeometry x="440" y="40" width="100" height="900" as="geometry"/>
+        </mxCell>
+        <mxCell id="p4" value="JWT Auth&#xa;Middleware" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=0;collapsible=0;recursiveResize=0;outlineConnect=0;fillColor=#fff3e0;strokeColor=#f57c00;size=40;" vertex="1" parent="1">
+          <mxGeometry x="620" y="40" width="100" height="900" as="geometry"/>
+        </mxCell>
+        <mxCell id="p5" value="Credential&#xa;Resolver" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=0;collapsible=0;recursiveResize=0;outlineConnect=0;fillColor=#f3e5f5;strokeColor=#7b1fa2;size=40;" vertex="1" parent="1">
+          <mxGeometry x="800" y="40" width="100" height="900" as="geometry"/>
+        </mxCell>
+        <mxCell id="p6" value="Process Pool&#xa;Manager" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=0;collapsible=0;recursiveResize=0;outlineConnect=0;fillColor=#e8f5e9;strokeColor=#388e3c;size=40;" vertex="1" parent="1">
+          <mxGeometry x="980" y="40" width="100" height="900" as="geometry"/>
+        </mxCell>
+        <mxCell id="p7" value="Upstream&#xa;MCP Server" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=0;collapsible=0;recursiveResize=0;outlineConnect=0;fillColor=#fce4ec;strokeColor=#c62828;size=40;" vertex="1" parent="1">
+          <mxGeometry x="1160" y="40" width="100" height="900" as="geometry"/>
+        </mxCell>
+        <!-- Messages -->
+        <mxCell id="m1" value="execute_tool(tool_name, args)" style="html=1;verticalAlign=bottom;endArrow=block;edgeStyle=elbowEdgeStyle;elbow=horizontal;curved=0;rounded=0;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="130" y="120" as="sourcePoint"/>
+            <mxPoint x="310" y="120" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m2" value="POST /mcp [Authorization: Bearer &lt;jwt&gt;]" style="html=1;verticalAlign=bottom;endArrow=block;edgeStyle=elbowEdgeStyle;elbow=horizontal;curved=0;rounded=0;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="310" y="160" as="sourcePoint"/>
+            <mxPoint x="490" y="160" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m3" value="Validate JWT" style="html=1;verticalAlign=bottom;endArrow=block;edgeStyle=elbowEdgeStyle;elbow=horizontal;curved=0;rounded=0;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="490" y="200" as="sourcePoint"/>
+            <mxPoint x="670" y="200" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m4" value="User identity (user_id, email, roles)" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;edgeStyle=elbowEdgeStyle;elbow=horizontal;curved=0;rounded=0;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="670" y="240" as="sourcePoint"/>
+            <mxPoint x="490" y="240" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m5" value="Resolve credentials for user + server" style="html=1;verticalAlign=bottom;endArrow=block;edgeStyle=elbowEdgeStyle;elbow=horizontal;curved=0;rounded=0;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="490" y="290" as="sourcePoint"/>
+            <mxPoint x="850" y="290" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m6" value="Decrypt user credentials (AES-256-GCM)" style="html=1;verticalAlign=bottom;endArrow=block;edgeStyle=elbowEdgeStyle;elbow=horizontal;curved=0;rounded=0;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="850" y="330" as="sourcePoint"/>
+            <mxPoint x="870" y="360" as="targetPoint"/>
+            <Array as="points">
+              <mxPoint x="900" y="330"/>
+              <mxPoint x="900" y="360"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m7" value="Replace {placeholders} in server config" style="html=1;verticalAlign=bottom;endArrow=block;edgeStyle=elbowEdgeStyle;elbow=horizontal;curved=0;rounded=0;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="850" y="380" as="sourcePoint"/>
+            <mxPoint x="870" y="410" as="targetPoint"/>
+            <Array as="points">
+              <mxPoint x="900" y="380"/>
+              <mxPoint x="900" y="410"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m8" value="Resolved config + pool_key" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;edgeStyle=elbowEdgeStyle;elbow=horizontal;curved=0;rounded=0;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="850" y="440" as="sourcePoint"/>
+            <mxPoint x="490" y="440" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m9" value="Acquire process (pool_key)" style="html=1;verticalAlign=bottom;endArrow=block;edgeStyle=elbowEdgeStyle;elbow=horizontal;curved=0;rounded=0;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="490" y="490" as="sourcePoint"/>
+            <mxPoint x="1030" y="490" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+        <!-- Alt frame: Warm -->
+        <mxCell id="alt1" value="alt [Warm process available]" style="shape=umlFrame;whiteSpace=wrap;html=1;width=200;height=20;fillColor=#f5f5f5;strokeColor=#666666;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="460" y="520" width="780" height="80" as="geometry"/>
+        </mxCell>
+        <mxCell id="m10" value="Existing process (&lt; 100ms)" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;edgeStyle=elbowEdgeStyle;elbow=horizontal;curved=0;rounded=0;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1030" y="560" as="sourcePoint"/>
+            <mxPoint x="490" y="560" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+        <!-- Alt frame: Cold -->
+        <mxCell id="alt2" value="alt [Cold start needed]" style="shape=umlFrame;whiteSpace=wrap;html=1;width=180;height=20;fillColor=#f5f5f5;strokeColor=#666666;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="460" y="610" width="780" height="100" as="geometry"/>
+        </mxCell>
+        <mxCell id="m11" value="Spawn new process with resolved credentials" style="html=1;verticalAlign=bottom;endArrow=block;edgeStyle=elbowEdgeStyle;elbow=horizontal;curved=0;rounded=0;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1030" y="650" as="sourcePoint"/>
+            <mxPoint x="1210" y="650" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m12" value="Process ready (&lt; 5s)" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;edgeStyle=elbowEdgeStyle;elbow=horizontal;curved=0;rounded=0;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1210" y="680" as="sourcePoint"/>
+            <mxPoint x="1030" y="680" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+        <!-- Execute tool -->
+        <mxCell id="m13" value="Execute tool" style="html=1;verticalAlign=bottom;endArrow=block;edgeStyle=elbowEdgeStyle;elbow=horizontal;curved=0;rounded=0;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="490" y="740" as="sourcePoint"/>
+            <mxPoint x="1210" y="740" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m14" value="Tool result" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;edgeStyle=elbowEdgeStyle;elbow=horizontal;curved=0;rounded=0;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1210" y="780" as="sourcePoint"/>
+            <mxPoint x="490" y="780" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+        <!-- Return to bridge -->
+        <mxCell id="m15" value="MCP response" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;edgeStyle=elbowEdgeStyle;elbow=horizontal;curved=0;rounded=0;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="490" y="820" as="sourcePoint"/>
+            <mxPoint x="310" y="820" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m16" value="Tool result" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;edgeStyle=elbowEdgeStyle;elbow=horizontal;curved=0;rounded=0;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="310" y="860" as="sourcePoint"/>
+            <mxPoint x="130" y="860" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

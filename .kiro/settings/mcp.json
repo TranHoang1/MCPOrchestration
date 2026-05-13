@@ -32,16 +32,24 @@
         "list_console_messages",
         "get_console_message",
         "list_network_requests",
-        "new_page"
+        "new_page",
+        "fill_form",
+        "get_network_request",
+        "get_network_request",
+        "emulate",
+        "select_page"
       ]
     },
     "orchestrator": {
-      "command": "npx",
+      "command": "node",
       "args": [
-        "mcp-orchestrator-bridge",
+        "C:/projects/kotlin/MCPOrchestration/mcp-client-bridge/dist/index.js",
         "--url",
         "http://localhost:9180"
       ],
+      "env": {
+        "MCP_BRIDGE_TOKEN": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJtY3Atb3JjaGVzdHJhdG9yIiwic3ViIjoiYWRtaW4tMDAxIiwiZW1haWwiOiJhZG1pbkBjb21wYW55LmNvbSIsInJvbGVzIjpbInN5c3RlbV9vd25lciJdLCJ0eXBlIjoiYnJpZGdlIiwianRpIjoiNDk1MzkxZTEtYTk2MC00NTYzLWJkZjktZjA0NjVhNGQyYzkzIiwiaWF0IjoxNzc4NjIzMTU5LCJleHAiOjE3ODEyMTUxNTl9.g-257t7Cb9Os1fmvksXMqoUy95GgjgepOgFo5UWGw48"
+      },
       "disabled": false,
       "autoApprove": [
         "find_tools",

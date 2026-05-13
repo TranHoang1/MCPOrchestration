@@ -38,7 +38,7 @@ val userManagementModule = module {
     // Services
     single<TokenEncryptionService> {
         val config = get<UserManagementConfig>()
-        TokenEncryptionServiceImpl(config.encryptionKeyEnv)
+        TokenEncryptionServiceImpl(config.encryptionKeyEnv, get())
     }
     single<UserService> { UserServiceImpl(get(), get()) }
     single<PermissionService> { PermissionServiceImpl(get(), get(), get()) }

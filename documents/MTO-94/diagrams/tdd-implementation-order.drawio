@@ -1,0 +1,61 @@
+<mxfile host="draw.io">
+  <diagram name="TDD - Implementation Order" id="tdd-impl">
+    <mxGraphModel dx="900" dy="400" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="350">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+        <mxCell id="title" value="Implementation Order (Story Dependencies)" style="text;html=1;fontSize=13;fontStyle=1;align=center;" vertex="1" parent="1">
+          <mxGeometry x="200" y="10" width="350" height="25" as="geometry"/>
+        </mxCell>
+        <!-- Stories -->
+        <mxCell id="s95" value="MTO-95&#xa;JWT Auth" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E3F2FD;strokeColor=#1565C0;fontSize=10;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="140" width="100" height="50" as="geometry"/>
+        </mxCell>
+        <mxCell id="s96" value="MTO-96&#xa;Credential Schema" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8F5E9;strokeColor=#2E7D32;fontSize=10;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="220" y="80" width="120" height="50" as="geometry"/>
+        </mxCell>
+        <mxCell id="s97" value="MTO-97&#xa;User Credentials" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF3E0;strokeColor=#F57C00;fontSize=10;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="400" y="80" width="120" height="50" as="geometry"/>
+        </mxCell>
+        <mxCell id="s98" value="MTO-98&#xa;Credential Resolver" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FCE4EC;strokeColor=#C62828;fontSize=10;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="580" y="80" width="120" height="50" as="geometry"/>
+        </mxCell>
+        <mxCell id="s99" value="MTO-99&#xa;Process Pool" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8F5E9;strokeColor=#388E3C;fontSize=10;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="720" y="80" width="100" height="50" as="geometry"/>
+        </mxCell>
+        <mxCell id="s100" value="MTO-100&#xa;Bridge Token" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F3E5F5;strokeColor=#7B1FA2;fontSize=10;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="220" y="200" width="120" height="50" as="geometry"/>
+        </mxCell>
+        <mxCell id="s101" value="MTO-101&#xa;SSO" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F3E5F5;strokeColor=#7B1FA2;fontSize=10;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="220" y="280" width="120" height="50" as="geometry"/>
+        </mxCell>
+        <!-- Arrows -->
+        <mxCell id="d1" style="endArrow=block;endFill=1;html=1;exitX=1;exitY=0.25;entryX=0;entryY=0.5;" edge="1" source="s95" target="s96" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="d2" style="endArrow=block;endFill=1;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" source="s96" target="s97" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="d3" style="endArrow=block;endFill=1;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" source="s97" target="s98" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="d4" style="endArrow=block;endFill=1;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" source="s98" target="s99" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="d5" style="endArrow=block;endFill=1;html=1;exitX=1;exitY=0.75;entryX=0;entryY=0.5;" edge="1" source="s95" target="s100" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="d6" style="endArrow=block;endFill=1;html=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" source="s100" target="s101" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <!-- Labels -->
+        <mxCell id="lbl1" value="Critical Path →" style="text;html=1;fontSize=9;fontStyle=2;fontColor=#C62828;" vertex="1" parent="1">
+          <mxGeometry x="350" y="55" width="100" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="lbl2" value="Parallel ↓" style="text;html=1;fontSize=9;fontStyle=2;fontColor=#7B1FA2;" vertex="1" parent="1">
+          <mxGeometry x="150" y="210" width="60" height="20" as="geometry"/>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

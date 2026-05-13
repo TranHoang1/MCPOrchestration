@@ -1,0 +1,15 @@
+test_case_id,pool_state,max_instances,max_total,idle_timeout_ms,slow_threshold_ms,expected_behavior,expected_latency_ms,description
+TC-007,idle_process_exists,5,20,60000,5000,Warm acquire,<100,Warm process available
+TC-008,no_idle_below_max,5,20,60000,5000,Cold start,<5000,New process spawned
+TC-107,all_busy_at_max,2,20,60000,5000,Queue then serve,~500,Wait for release
+TC-211,all_busy_total_max,5,2,60000,5000,503 after timeout,,Pool exhausted
+TC-110,3_processes_2_idle,5,20,1000,5000,Scale down to 1,,Idle processes terminated
+TC-311,1_process_slow,5,20,60000,1000,Scale up to 2,,Slow response triggers scale-up
+TC-312,config_validation,0,20,60000,5000,Validation error,,maxInstancesPerServer below min
+TC-312,config_validation,21,20,60000,5000,Validation error,,maxInstancesPerServer above max
+TC-414,config_validation,5,0,60000,5000,Validation error,,maxTotalInstances below min
+TC-414,config_validation,5,101,60000,5000,Validation error,,maxTotalInstances above max
+TC-407,config_validation,5,20,29999,5000,Validation error,,idleTimeoutMs below min
+TC-412,config_validation,5,20,60000,999,Validation error,,slowResponseThresholdMs below min
+TC-612,process_crash,5,20,60000,5000,Auto-restart,,Process killed externally
+TC-613,all_busy_total_max,5,2,60000,5000,Queue 30s then 503,,Graceful degradation

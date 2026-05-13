@@ -3,6 +3,21 @@ orchestrator:
     port: 9180
     transport: http-streamable
 
+  auth:
+    jwt:
+      secret: ${JWT_SECRET:-dev-only-insecure-secret-key-change-in-production-32b}
+      algorithm: HS256
+      sessionExpiryHours: 4
+      bridgeTokenExpiryDays: 30
+      maxBridgeTokenDays: 365
+      issuer: mcp-orchestrator
+    lockout:
+      maxAttempts: 5
+      lockoutMinutes: 15
+    deprecated:
+      allowEmailHeader: true
+      emailHeaderName: X-User-Email
+
   discovery:
     top_k: 5
     similarity_threshold: 0.7

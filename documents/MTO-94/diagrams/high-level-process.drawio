@@ -1,0 +1,171 @@
+<mxfile host="draw.io">
+  <diagram name="High Level Process Map" id="hlp1">
+    <mxGraphModel dx="1422" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1200" pageHeight="820">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+
+        <!-- Phase 1 Background -->
+        <mxCell id="bg1" value="Phase 1: Authentication" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#999999;fontSize=13;fontStyle=1;verticalAlign=top;align=left;spacingLeft=10;spacingTop=5;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="20" y="10" width="1160" height="180" as="geometry"/>
+        </mxCell>
+
+        <!-- Phase 1 Nodes -->
+        <mxCell id="n1" value="User Login via&#xa;Admin Portal" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1f5fe;strokeColor=#0288d1;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="60" y="70" width="150" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="n2" value="Auth&#xa;Mode?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff3e0;strokeColor=#f57c00;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="280" y="70" width="100" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="n3" value="Validate&#xa;Username / Password" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8f5e9;strokeColor=#388e3c;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="450" y="40" width="160" height="50" as="geometry"/>
+        </mxCell>
+        <mxCell id="n4" value="OAuth2 / OIDC&#xa;SSO Flow" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8f5e9;strokeColor=#388e3c;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="450" y="120" width="160" height="50" as="geometry"/>
+        </mxCell>
+        <mxCell id="n5" value="Issue JWT&#xa;Session Token" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1f5fe;strokeColor=#0288d1;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="690" y="70" width="150" height="60" as="geometry"/>
+        </mxCell>
+
+        <!-- Phase 1 Edges -->
+        <mxCell id="e1" style="endArrow=block;endFill=1;rounded=1;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" source="n1" target="n2" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e2" value="Local" style="endArrow=block;endFill=1;rounded=1;html=1;exitX=1;exitY=0.25;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" source="n2" target="n3" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e3" value="SSO" style="endArrow=block;endFill=1;rounded=1;html=1;exitX=1;exitY=0.75;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" source="n2" target="n4" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e4" style="endArrow=block;endFill=1;rounded=1;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.25;entryDx=0;entryDy=0;" edge="1" source="n3" target="n5" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e5" style="endArrow=block;endFill=1;rounded=1;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.75;entryDx=0;entryDy=0;" edge="1" source="n4" target="n5" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Phase 2 Background -->
+        <mxCell id="bg2" value="Phase 2: User Configuration (Profile Page)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#999999;fontSize=13;fontStyle=1;verticalAlign=top;align=left;spacingLeft=10;spacingTop=5;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="20" y="220" width="1160" height="180" as="geometry"/>
+        </mxCell>
+
+        <!-- Phase 2 Nodes -->
+        <mxCell id="n6" value="Navigate to&#xa;Profile Page" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1f5fe;strokeColor=#0288d1;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="60" y="280" width="140" height="55" as="geometry"/>
+        </mxCell>
+        <mxCell id="n7" value="Generate Bridge Token&#xa;(JWT up to 365 days)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f3e5f5;strokeColor=#7b1fa2;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="280" y="255" width="170" height="50" as="geometry"/>
+        </mxCell>
+        <mxCell id="n8" value="Fill Credentials for&#xa;Upstream Servers" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f3e5f5;strokeColor=#7b1fa2;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="280" y="330" width="170" height="50" as="geometry"/>
+        </mxCell>
+        <mxCell id="n9" value="Configure Bridge&#xa;--token &lt;jwt&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1f5fe;strokeColor=#0288d1;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="530" y="255" width="150" height="50" as="geometry"/>
+        </mxCell>
+        <mxCell id="n10" value="Credentials Encrypted&#xa;&amp; Stored (AES-256-GCM)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1f5fe;strokeColor=#0288d1;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="530" y="330" width="180" height="50" as="geometry"/>
+        </mxCell>
+        <mxCell id="ready" value="✅ Ready" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#c8e6c9;strokeColor=#2e7d32;fontSize=13;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="800" y="285" width="100" height="50" as="geometry"/>
+        </mxCell>
+
+        <!-- Phase 2 Edges -->
+        <mxCell id="e6" style="endArrow=block;endFill=1;rounded=1;html=1;exitX=1;exitY=0.25;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" source="n6" target="n7" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e7" style="endArrow=block;endFill=1;rounded=1;html=1;exitX=1;exitY=0.75;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" source="n6" target="n8" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e8" style="endArrow=block;endFill=1;rounded=1;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" source="n7" target="n9" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e9" style="endArrow=block;endFill=1;rounded=1;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" source="n8" target="n10" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e10" style="endArrow=block;endFill=1;rounded=1;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.25;entryDx=0;entryDy=0;" edge="1" source="n9" target="ready" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e11" style="endArrow=block;endFill=1;rounded=1;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.75;entryDx=0;entryDy=0;" edge="1" source="n10" target="ready" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Phase 3 Background -->
+        <mxCell id="bg3" value="Phase 3: Runtime — Tool Execution Pipeline" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#999999;fontSize=13;fontStyle=1;verticalAlign=top;align=left;spacingLeft=10;spacingTop=5;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="20" y="430" width="1160" height="370" as="geometry"/>
+        </mxCell>
+
+        <!-- Phase 3 Nodes - Row 1 -->
+        <mxCell id="n11" value="IDE Invokes Tool&#xa;via Bridge" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff3e0;strokeColor=#f57c00;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="50" y="490" width="140" height="55" as="geometry"/>
+        </mxCell>
+        <mxCell id="n12" value="Bridge Sends&#xa;POST /mcp&#xa;+ Bearer JWT" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff3e0;strokeColor=#f57c00;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="240" y="490" width="140" height="55" as="geometry"/>
+        </mxCell>
+        <mxCell id="n13" value="Orchestrator&#xa;Validates JWT&#xa;→ User Identity" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff3e0;strokeColor=#f57c00;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="430" y="490" width="150" height="55" as="geometry"/>
+        </mxCell>
+        <mxCell id="n14" value="Credential Resolver:&#xa;Decrypt + Resolve&#xa;{placeholders}" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fce4ec;strokeColor=#c62828;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="630" y="490" width="160" height="55" as="geometry"/>
+        </mxCell>
+        <mxCell id="n15" value="Compute&#xa;Pool Key&#xa;(SHA-256)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fce4ec;strokeColor=#c62828;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="840" y="490" width="120" height="55" as="geometry"/>
+        </mxCell>
+
+        <!-- Phase 3 Nodes - Row 2 -->
+        <mxCell id="n16" value="Process Pool Manager:&#xa;Acquire Process&#xa;(warm &lt;100ms / cold &lt;5s)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8f5e9;strokeColor=#388e3c;fontSize=11;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="300" y="600" width="210" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="n17" value="Execute Tool on&#xa;Upstream MCP Server" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8f5e9;strokeColor=#388e3c;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="580" y="600" width="180" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="n18" value="Return Result&#xa;→ Bridge → IDE" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1f5fe;strokeColor=#0288d1;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="580" y="710" width="180" height="55" as="geometry"/>
+        </mxCell>
+
+        <!-- Phase 3 Edges - Row 1 -->
+        <mxCell id="e12" style="endArrow=block;endFill=1;rounded=1;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" source="n11" target="n12" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e13" style="endArrow=block;endFill=1;rounded=1;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" source="n12" target="n13" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e14" style="endArrow=block;endFill=1;rounded=1;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" source="n13" target="n14" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e15" style="endArrow=block;endFill=1;rounded=1;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" source="n14" target="n15" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Phase 3 Edges - Row 1 to Row 2 -->
+        <mxCell id="e16" style="endArrow=block;endFill=1;rounded=1;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" source="n15" target="n16" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="900" y="570"/>
+              <mxPoint x="405" y="570"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e17" style="endArrow=block;endFill=1;rounded=1;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" source="n16" target="n17" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e18" style="endArrow=block;endFill=1;rounded=1;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" source="n17" target="n18" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Cross-phase connectors -->
+        <mxCell id="cp1" style="endArrow=block;endFill=1;rounded=1;html=1;strokeColor=#0288d1;strokeWidth=2;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" source="n5" target="n6" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="cp2" style="endArrow=block;endFill=1;rounded=1;html=1;strokeColor=#2e7d32;strokeWidth=2;dashed=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" source="ready" target="n11" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="850" y="450"/>
+              <mxPoint x="120" y="450"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

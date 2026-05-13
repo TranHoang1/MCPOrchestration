@@ -1,0 +1,97 @@
+<mxfile host="draw.io">
+  <diagram name="TDD - Tool Execution Sequence" id="tdd-seq">
+    <mxGraphModel dx="1400" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1300" pageHeight="750">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+        <!-- Simplified sequence as labeled flow -->
+        <mxCell id="title" value="Tool Execution Sequence (with Per-User Credentials)" style="text;html=1;fontSize=14;fontStyle=1;align=center;" vertex="1" parent="1">
+          <mxGeometry x="300" y="10" width="400" height="25" as="geometry"/>
+        </mxCell>
+
+        <!-- Participants -->
+        <mxCell id="p1" value="IDE" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E3F2FD;strokeColor=#1565C0;fontSize=10;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="50" width="80" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="p2" value="Bridge" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#BBDEFB;strokeColor=#1565C0;fontSize=10;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="200" y="50" width="80" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="p3" value="Auth&#xa;Middleware" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF3E0;strokeColor=#F57C00;fontSize=10;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="370" y="50" width="90" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="p4" value="Execution&#xa;Dispatcher" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF3E0;strokeColor=#F57C00;fontSize=10;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="540" y="50" width="90" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="p5" value="Credential&#xa;Resolver" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FCE4EC;strokeColor=#C62828;fontSize=10;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="710" y="50" width="90" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="p6" value="Process&#xa;Pool" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8F5E9;strokeColor=#388E3C;fontSize=10;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="880" y="50" width="80" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="p7" value="Upstream&#xa;Server" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFCDD2;strokeColor=#C62828;fontSize=10;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="1040" y="50" width="80" height="30" as="geometry"/>
+        </mxCell>
+
+        <!-- Lifelines -->
+        <mxCell id="l1" style="endArrow=none;dashed=1;html=1;strokeColor=#BDBDBD;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="80" y="80" as="sourcePoint"/><mxPoint x="80" y="700" as="targetPoint"/></mxGeometry>
+        </mxCell>
+        <mxCell id="l2" style="endArrow=none;dashed=1;html=1;strokeColor=#BDBDBD;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="240" y="80" as="sourcePoint"/><mxPoint x="240" y="700" as="targetPoint"/></mxGeometry>
+        </mxCell>
+        <mxCell id="l3" style="endArrow=none;dashed=1;html=1;strokeColor=#BDBDBD;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="415" y="80" as="sourcePoint"/><mxPoint x="415" y="700" as="targetPoint"/></mxGeometry>
+        </mxCell>
+        <mxCell id="l4" style="endArrow=none;dashed=1;html=1;strokeColor=#BDBDBD;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="585" y="80" as="sourcePoint"/><mxPoint x="585" y="700" as="targetPoint"/></mxGeometry>
+        </mxCell>
+        <mxCell id="l5" style="endArrow=none;dashed=1;html=1;strokeColor=#BDBDBD;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="755" y="80" as="sourcePoint"/><mxPoint x="755" y="700" as="targetPoint"/></mxGeometry>
+        </mxCell>
+        <mxCell id="l6" style="endArrow=none;dashed=1;html=1;strokeColor=#BDBDBD;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="920" y="80" as="sourcePoint"/><mxPoint x="920" y="700" as="targetPoint"/></mxGeometry>
+        </mxCell>
+        <mxCell id="l7" style="endArrow=none;dashed=1;html=1;strokeColor=#BDBDBD;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="1080" y="80" as="sourcePoint"/><mxPoint x="1080" y="700" as="targetPoint"/></mxGeometry>
+        </mxCell>
+
+        <!-- Messages -->
+        <mxCell id="m1" value="1. tools/call" style="endArrow=block;endFill=1;html=1;fontSize=9;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="80" y="120" as="sourcePoint"/><mxPoint x="240" y="120" as="targetPoint"/></mxGeometry>
+        </mxCell>
+        <mxCell id="m2" value="2. POST /mcp + Bearer JWT" style="endArrow=block;endFill=1;html=1;fontSize=9;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="240" y="170" as="sourcePoint"/><mxPoint x="415" y="170" as="targetPoint"/></mxGeometry>
+        </mxCell>
+        <mxCell id="m3" value="3. Validate JWT → UserContext" style="endArrow=block;endFill=1;html=1;fontSize=9;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="415" y="220" as="sourcePoint"/><mxPoint x="585" y="220" as="targetPoint"/></mxGeometry>
+        </mxCell>
+        <mxCell id="m4" value="4. resolve(userId, serverName)" style="endArrow=block;endFill=1;html=1;fontSize=9;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="585" y="280" as="sourcePoint"/><mxPoint x="755" y="280" as="targetPoint"/></mxGeometry>
+        </mxCell>
+        <mxCell id="m5" value="5. Decrypt + Replace {placeholders}" style="endArrow=block;endFill=1;html=1;fontSize=9;strokeColor=#C62828;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="755" y="330" as="sourcePoint"/><mxPoint x="790" y="360" as="targetPoint"/>
+            <Array as="points"><mxPoint x="800" y="330"/><mxPoint x="800" y="360"/></Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m6" value="6. ResolvedConfig + poolKey" style="endArrow=open;dashed=1;html=1;fontSize=9;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="755" y="400" as="sourcePoint"/><mxPoint x="585" y="400" as="targetPoint"/></mxGeometry>
+        </mxCell>
+        <mxCell id="m7" value="7. acquire(poolKey)" style="endArrow=block;endFill=1;html=1;fontSize=9;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="585" y="450" as="sourcePoint"/><mxPoint x="920" y="450" as="targetPoint"/></mxGeometry>
+        </mxCell>
+        <mxCell id="m8" value="8. PooledConnection" style="endArrow=open;dashed=1;html=1;fontSize=9;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="920" y="500" as="sourcePoint"/><mxPoint x="585" y="500" as="targetPoint"/></mxGeometry>
+        </mxCell>
+        <mxCell id="m9" value="9. tools/call (JSON-RPC)" style="endArrow=block;endFill=1;html=1;fontSize=9;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="585" y="550" as="sourcePoint"/><mxPoint x="1080" y="550" as="targetPoint"/></mxGeometry>
+        </mxCell>
+        <mxCell id="m10" value="10. Result" style="endArrow=open;dashed=1;html=1;fontSize=9;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="1080" y="600" as="sourcePoint"/><mxPoint x="585" y="600" as="targetPoint"/></mxGeometry>
+        </mxCell>
+        <mxCell id="m11" value="11. MCP response" style="endArrow=open;dashed=1;html=1;fontSize=9;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="415" y="650" as="sourcePoint"/><mxPoint x="80" y="650" as="targetPoint"/></mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

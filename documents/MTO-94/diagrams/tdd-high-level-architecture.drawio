@@ -1,0 +1,124 @@
+<mxfile host="draw.io">
+  <diagram name="TDD - High-Level Architecture" id="tdd-arch">
+    <mxGraphModel dx="1400" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1200" pageHeight="700">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+
+        <!-- IDE -->
+        <mxCell id="ide" value="IDE (Kiro / VS Code)&#xa;MCP Client" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E3F2FD;strokeColor=#1565C0;fontSize=11;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="280" width="140" height="60" as="geometry"/>
+        </mxCell>
+
+        <!-- Bridge -->
+        <mxCell id="bridge" value="orchestrator-bridge&#xa;(BridgeServer)&#xa;stdio ↔ HTTP" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#BBDEFB;strokeColor=#1565C0;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="240" y="270" width="150" height="70" as="geometry"/>
+        </mxCell>
+
+        <!-- Server box -->
+        <mxCell id="server_bg" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8F5E9;strokeColor=#2E7D32;strokeWidth=2;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="440" y="40" width="380" height="560" as="geometry"/>
+        </mxCell>
+        <mxCell id="server_title" value="orchestrator-server" style="text;html=1;fontSize=12;fontStyle=1;fontColor=#2E7D32;" vertex="1" parent="1">
+          <mxGeometry x="560" y="50" width="150" height="20" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="auth" value="AuthMiddleware&#xa;(JWT Validation)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF3E0;strokeColor=#F57C00;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="470" y="80" width="140" height="50" as="geometry"/>
+        </mxCell>
+        <mxCell id="exec" value="ToolExecution&#xa;Dispatcher" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF3E0;strokeColor=#F57C00;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="470" y="160" width="140" height="50" as="geometry"/>
+        </mxCell>
+        <mxCell id="resolver" value="Credential&#xa;Resolver" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FCE4EC;strokeColor=#C62828;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="470" y="240" width="140" height="50" as="geometry"/>
+        </mxCell>
+        <mxCell id="auth_routes" value="Auth Routes&#xa;/api/auth/*" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF3E0;strokeColor=#F57C00;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="650" y="80" width="140" height="50" as="geometry"/>
+        </mxCell>
+        <mxCell id="cred_routes" value="Credential Routes&#xa;/api/credentials/*" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FCE4EC;strokeColor=#C62828;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="650" y="160" width="140" height="50" as="geometry"/>
+        </mxCell>
+        <mxCell id="admin_routes" value="Admin Routes&#xa;/api/admin/*" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8F5E9;strokeColor=#388E3C;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="650" y="240" width="140" height="50" as="geometry"/>
+        </mxCell>
+        <mxCell id="sso" value="SSO Service&#xa;OAuth2/OIDC" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F3E5F5;strokeColor=#7B1FA2;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="650" y="320" width="140" height="50" as="geometry"/>
+        </mxCell>
+
+        <!-- Client box -->
+        <mxCell id="client_bg" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF8E1;strokeColor=#F9A825;strokeWidth=2;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="440" y="400" width="380" height="180" as="geometry"/>
+        </mxCell>
+        <mxCell id="client_title" value="orchestrator-client" style="text;html=1;fontSize=12;fontStyle=1;fontColor=#F9A825;" vertex="1" parent="1">
+          <mxGeometry x="560" y="410" width="150" height="20" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="pool" value="ProcessPoolManager" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF3E0;strokeColor=#F57C00;fontSize=10;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="470" y="440" width="150" height="45" as="geometry"/>
+        </mxCell>
+        <mxCell id="scaler" value="PoolScaler" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF3E0;strokeColor=#F57C00;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="470" y="510" width="150" height="45" as="geometry"/>
+        </mxCell>
+        <mxCell id="upstream_mgr" value="UpstreamServer&#xa;Manager" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF3E0;strokeColor=#F57C00;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="660" y="440" width="130" height="45" as="geometry"/>
+        </mxCell>
+
+        <!-- External systems -->
+        <mxCell id="db" value="PostgreSQL&#xa;(users, credentials,&#xa;schemas, tokens)" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;size=10;fillColor=#FFF9C4;strokeColor=#F9A825;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="900" y="150" width="140" height="100" as="geometry"/>
+        </mxCell>
+        <mxCell id="upstream" value="Upstream MCP Servers&#xa;(Jira, GitHub, etc.)&#xa;Process Pool" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFCDD2;strokeColor=#C62828;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="900" y="420" width="160" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="idp" value="Identity Provider&#xa;(Azure AD / Okta)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E1D5E7;strokeColor=#9673A6;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="900" y="310" width="150" height="50" as="geometry"/>
+        </mxCell>
+
+        <!-- Edges -->
+        <mxCell id="e1" style="endArrow=block;endFill=1;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" source="ide" target="bridge" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e1l" value="stdio" style="edgeLabel;html=1;fontSize=9;" vertex="1" connectable="0" parent="e1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e2" style="endArrow=block;endFill=1;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" source="bridge" target="auth" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="420" y="305"/>
+              <mxPoint x="420" y="105"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e2l" value="HTTP + JWT" style="edgeLabel;html=1;fontSize=9;" vertex="1" connectable="0" parent="e2">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e3" style="endArrow=block;endFill=1;html=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" source="auth" target="exec" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e4" style="endArrow=block;endFill=1;html=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" source="exec" target="resolver" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e5" style="endArrow=block;endFill=1;html=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" source="resolver" target="pool" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="540" y="320"/>
+              <mxPoint x="540" y="440"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e6" style="endArrow=block;endFill=1;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" source="pool" target="upstream_mgr" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e7" style="endArrow=block;endFill=1;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" source="upstream_mgr" target="upstream" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e8" style="endArrow=block;endFill=1;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" source="admin_routes" target="db" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e9" style="endArrow=block;endFill=1;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" source="sso" target="idp" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

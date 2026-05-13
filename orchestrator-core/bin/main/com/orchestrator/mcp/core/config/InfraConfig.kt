@@ -83,3 +83,19 @@ data class FileProxyConfig(
     @SerialName("cleanup_interval_seconds")
     val cleanupIntervalSeconds: Int = 300
 )
+
+@Serializable
+data class PoolManagerConfig(
+    @SerialName("max_instances_per_server")
+    val maxInstancesPerServer: Int = 5,
+    @SerialName("max_total_instances")
+    val maxTotalInstances: Int = 50,
+    @SerialName("idle_timeout_ms")
+    val idleTimeoutMs: Long = 300_000L,
+    @SerialName("slow_response_threshold_ms")
+    val slowResponseThresholdMs: Long = 10_000L,
+    @SerialName("health_check_interval_ms")
+    val healthCheckIntervalMs: Long = 30_000L,
+    @SerialName("scale_check_interval_ms")
+    val scaleCheckIntervalMs: Long = 15_000L
+)

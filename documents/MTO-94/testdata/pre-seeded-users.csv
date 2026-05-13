@@ -1,0 +1,9 @@
+id,email,name,role,active,password_hash,auth_mode,failed_login_attempts,locked_until,description
+admin-001,admin@company.com,Admin User,system_owner,true,$2b$12$LJ3m4sMKfRzlTBhPQOqYxOKGHCzW1234567890abcdef,local,0,,System owner — actor for admin tests
+dev-001,john.doe@company.com,John Doe,developer,true,$2b$12$abcdefghijklmnopqrstuuABCDEFGHIJKLMNOPQRSTUV,local,0,,Standard developer — primary test user
+dev-002,jane.smith@company.com,Jane Smith,developer,true,$2b$12$xyzxyzxyzxyzxyzxyzxyzuXYZXYZXYZXYZXYZXYZXYZ,local,0,,Second developer — credential isolation tests
+dev-003,bob.wilson@company.com,Bob Wilson,developer,true,$2b$12$bobhashbobhashbobhashbobhashbobhashbobhash,local,0,,Third developer — concurrent tests
+viewer-001,viewer@company.com,View Only,viewer,true,$2b$12$viewerhashviewerhashviewerhashviewerhash,local,0,,Read-only user — permission tests
+disabled-001,disabled@company.com,Disabled User,developer,false,$2b$12$disabledhashdisabledhash,local,0,,Disabled account — TC-202
+sso-001,sso.user@company.com,SSO User,developer,true,,sso,0,,SSO-mode user — TC-100
+locked-001,locked@company.com,Locked User,developer,true,$2b$12$lockedhashlocked,local,6,2026-07-06T15:00:00Z,Locked account — TC-101

@@ -13,6 +13,7 @@ describe('HealthCheckManager', () => {
   let manager: HealthCheckManager;
 
   beforeEach(() => {
+    jest.spyOn(console, 'error').mockImplementation(() => {});
     config = { pingIntervalMs: 30000, pingTimeoutMs: 5000 };
 
     httpClient = {

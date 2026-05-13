@@ -22,9 +22,7 @@ data class KbEmbeddingConfig(
 data class KbVectorDbConfig(
     val provider: String = "pgvector",
     @SerialName("collection_name")
-    val collectionName: String = "kb_entries",
-    val host: String = "localhost",
-    val port: Int = 6333
+    val collectionName: String = "kb_entries"
 )
 
 @Serializable

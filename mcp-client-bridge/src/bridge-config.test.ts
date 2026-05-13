@@ -5,6 +5,7 @@ describe('BridgeConfig', () => {
   const originalExit = process.exit;
 
   beforeEach(() => {
+    jest.spyOn(console, 'error').mockImplementation(() => {});
     process.env = { ...originalEnv };
     delete process.env.ORCHESTRATOR_URL;
     delete process.env.BRIDGE_TIMEOUT;

@@ -10,6 +10,7 @@ describe('ReconnectionManager', () => {
   let mockClient: jest.Mocked<HttpStreamableClient>;
 
   beforeEach(() => {
+    jest.spyOn(console, 'error').mockImplementation(() => {});
     config = {
       orchestratorUrl: 'http://localhost:8080',
       reconnectEnabled: true,

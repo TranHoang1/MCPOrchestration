@@ -75,6 +75,7 @@ jobs:
           npm run build
 
       - name: Publish to npm
+        continue-on-error: true
         run: |
           cd mcp-client-bridge
           npm publish --access public

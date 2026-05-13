@@ -1,0 +1,76 @@
+<mxfile host="app.diagrams.net" modified="2026-05-14T00:00:00.000Z" agent="SA Agent" version="21.0.0" type="device">
+  <diagram id="arch-config" name="Architecture - Config Pipeline">
+    <mxGraphModel dx="1200" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1100" pageHeight="850" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <!-- Main container -->
+        <mxCell id="2" value="KB-Server Startup" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=14;fontStyle=1;verticalAlign=top;spacingTop=5;arcSize=8;" vertex="1" parent="1">
+          <mxGeometry x="50" y="50" width="900" height="400" as="geometry" />
+        </mxCell>
+        <!-- KbConfigLoader -->
+        <mxCell id="3" value="&lt;b&gt;KbConfigLoader&lt;/b&gt;&lt;br&gt;(enhanced)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="100" y="130" width="180" height="70" as="geometry" />
+        </mxCell>
+        <!-- KbEnvVarResolver -->
+        <mxCell id="4" value="&lt;b&gt;KbEnvVarResolver&lt;/b&gt;&lt;br&gt;(NEW)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="380" y="130" width="180" height="70" as="geometry" />
+        </mxCell>
+        <!-- KbConfigValidator -->
+        <mxCell id="5" value="&lt;b&gt;KbConfigValidator&lt;/b&gt;&lt;br&gt;(NEW)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="660" y="130" width="180" height="70" as="geometry" />
+        </mxCell>
+        <!-- YAML File -->
+        <mxCell id="6" value="&lt;b&gt;YAML File&lt;/b&gt;&lt;br&gt;(File I/O)" style="shape=document;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="130" y="300" width="140" height="80" as="geometry" />
+        </mxCell>
+        <!-- KbConfig (validated) -->
+        <mxCell id="7" value="&lt;b&gt;KbConfig&lt;/b&gt;&lt;br&gt;(validated)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="660" y="300" width="180" height="70" as="geometry" />
+        </mxCell>
+        <!-- Arrow: Loader -> Resolver -->
+        <mxCell id="8" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" source="3" target="4" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <!-- Arrow: Resolver -> Validator -->
+        <mxCell id="9" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" source="4" target="5" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <!-- Arrow: Loader -> YAML -->
+        <mxCell id="10" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" source="3" target="6" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <!-- Arrow: Validator -> KbConfig -->
+        <mxCell id="11" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" source="5" target="7" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <!-- Pipeline labels -->
+        <mxCell id="12" value="1. Read" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=10;fontStyle=2;" vertex="1" parent="1">
+          <mxGeometry x="160" y="220" width="50" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="13" value="2. Resolve ${VAR}" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=10;fontStyle=2;" vertex="1" parent="1">
+          <mxGeometry x="290" y="145" width="90" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="14" value="3. Validate" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=10;fontStyle=2;" vertex="1" parent="1">
+          <mxGeometry x="570" y="145" width="70" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="15" value="4. Return" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=10;fontStyle=2;" vertex="1" parent="1">
+          <mxGeometry x="760" y="230" width="60" height="30" as="geometry" />
+        </mxCell>
+        <!-- Legend -->
+        <mxCell id="16" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="100" y="430" width="20" height="15" as="geometry" />
+        </mxCell>
+        <mxCell id="17" value="NEW component" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="125" y="427" width="90" height="25" as="geometry" />
+        </mxCell>
+        <mxCell id="18" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="230" y="430" width="20" height="15" as="geometry" />
+        </mxCell>
+        <mxCell id="19" value="ENHANCED component" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="255" y="427" width="120" height="25" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

@@ -1,0 +1,125 @@
+<mxfile host="app.diagrams.net" modified="2026-05-14T00:00:00.000Z" agent="draw.io" version="21.0.0">
+  <diagram name="State - Config Loading" id="state-config-1">
+    <mxGraphModel dx="1200" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1100" pageHeight="700" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <!-- Title -->
+        <mxCell id="title" value="State Diagram — Config Loading States" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=16;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="350" y="20" width="400" height="30" as="geometry" />
+        </mxCell>
+        <!-- Initial state -->
+        <mxCell id="init" value="" style="ellipse;html=1;shape=doubleCircle;whiteSpace=wrap;aspect=fixed;fillColor=#000000;strokeColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="80" y="300" width="30" height="30" as="geometry" />
+        </mxCell>
+        <!-- State: Resolving Path -->
+        <mxCell id="s1" value="&lt;b&gt;Resolving Path&lt;/b&gt;&lt;br&gt;&lt;br&gt;entry / findConfigFile()&lt;br&gt;do / check explicit, default paths" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;align=left;spacingLeft=10;verticalAlign=top;spacingTop=5;" vertex="1" parent="1">
+          <mxGeometry x="160" y="270" width="200" height="90" as="geometry" />
+        </mxCell>
+        <!-- State: Reading File -->
+        <mxCell id="s2" value="&lt;b&gt;Reading File&lt;/b&gt;&lt;br&gt;&lt;br&gt;entry / readFileContent()&lt;br&gt;do / load raw YAML string" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;align=left;spacingLeft=10;verticalAlign=top;spacingTop=5;" vertex="1" parent="1">
+          <mxGeometry x="420" y="270" width="200" height="90" as="geometry" />
+        </mxCell>
+        <!-- State: Resolving Env Vars -->
+        <mxCell id="s3" value="&lt;b&gt;Resolving Env Vars&lt;/b&gt;&lt;br&gt;&lt;br&gt;entry / KbEnvVarResolver.resolve()&lt;br&gt;do / regex replace ${VAR}" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=11;align=left;spacingLeft=10;verticalAlign=top;spacingTop=5;" vertex="1" parent="1">
+          <mxGeometry x="420" y="430" width="220" height="90" as="geometry" />
+        </mxCell>
+        <!-- State: Deserializing -->
+        <mxCell id="s4" value="&lt;b&gt;Deserializing&lt;/b&gt;&lt;br&gt;&lt;br&gt;entry / Yaml.decodeFromString()&lt;br&gt;do / kaml parse (strictMode=false)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;align=left;spacingLeft=10;verticalAlign=top;spacingTop=5;" vertex="1" parent="1">
+          <mxGeometry x="700" y="430" width="220" height="90" as="geometry" />
+        </mxCell>
+        <!-- State: Validating -->
+        <mxCell id="s5" value="&lt;b&gt;Validating&lt;/b&gt;&lt;br&gt;&lt;br&gt;entry / KbConfigValidator.validate()&lt;br&gt;do / check critical + warnings" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=11;align=left;spacingLeft=10;verticalAlign=top;spacingTop=5;" vertex="1" parent="1">
+          <mxGeometry x="700" y="270" width="220" height="90" as="geometry" />
+        </mxCell>
+        <!-- Final state: Config Ready -->
+        <mxCell id="final-ok" value="&lt;b&gt;Config Ready&lt;/b&gt;" style="ellipse;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="980" y="290" width="100" height="50" as="geometry" />
+        </mxCell>
+        <!-- Final state: Using Defaults -->
+        <mxCell id="final-defaults" value="&lt;b&gt;Using Defaults&lt;/b&gt;" style="ellipse;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="160" y="120" width="120" height="50" as="geometry" />
+        </mxCell>
+        <!-- Final state: Startup Failed -->
+        <mxCell id="final-fail" value="&lt;b&gt;Startup Failed&lt;/b&gt;" style="ellipse;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="980" y="120" width="100" height="50" as="geometry" />
+        </mxCell>
+        <!-- Transitions -->
+        <!-- init -> s1 -->
+        <mxCell id="t0" style="edgeStyle=orthogonalEdgeStyle;rounded=1;" edge="1" source="init" target="s1" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="t0-label" value="startup" style="edgeLabel;html=1;fontSize=10;" vertex="1" connectable="0" parent="t0">
+          <mxGeometry relative="1" as="geometry"><mxPoint as="offset" /></mxGeometry>
+        </mxCell>
+        <!-- s1 -> s2: file found -->
+        <mxCell id="t1" style="edgeStyle=orthogonalEdgeStyle;rounded=1;" edge="1" source="s1" target="s2" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="t1-label" value="file found" style="edgeLabel;html=1;fontSize=10;" vertex="1" connectable="0" parent="t1">
+          <mxGeometry relative="1" as="geometry"><mxPoint as="offset" /></mxGeometry>
+        </mxCell>
+        <!-- s1 -> final-defaults: file not found -->
+        <mxCell id="t1b" style="edgeStyle=orthogonalEdgeStyle;rounded=1;dashed=1;" edge="1" source="s1" target="final-defaults" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="t1b-label" value="file not found" style="edgeLabel;html=1;fontSize=10;" vertex="1" connectable="0" parent="t1b">
+          <mxGeometry relative="1" as="geometry"><mxPoint as="offset" /></mxGeometry>
+        </mxCell>
+        <!-- s2 -> s3: content read -->
+        <mxCell id="t2" style="edgeStyle=orthogonalEdgeStyle;rounded=1;" edge="1" source="s2" target="s3" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="t2-label" value="content read OK" style="edgeLabel;html=1;fontSize=10;" vertex="1" connectable="0" parent="t2">
+          <mxGeometry relative="1" as="geometry"><mxPoint as="offset" /></mxGeometry>
+        </mxCell>
+        <!-- s2 -> final-defaults: IOException -->
+        <mxCell id="t2b" style="edgeStyle=orthogonalEdgeStyle;rounded=1;dashed=1;" edge="1" source="s2" target="final-defaults" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points"><mxPoint x="520" y="145" /></Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="t2b-label" value="IOException" style="edgeLabel;html=1;fontSize=10;" vertex="1" connectable="0" parent="t2b">
+          <mxGeometry relative="1" as="geometry"><mxPoint as="offset" /></mxGeometry>
+        </mxCell>
+        <!-- s3 -> s4: resolved -->
+        <mxCell id="t3" style="edgeStyle=orthogonalEdgeStyle;rounded=1;" edge="1" source="s3" target="s4" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="t3-label" value="resolved" style="edgeLabel;html=1;fontSize=10;" vertex="1" connectable="0" parent="t3">
+          <mxGeometry relative="1" as="geometry"><mxPoint as="offset" /></mxGeometry>
+        </mxCell>
+        <!-- s4 -> s5: parsed OK -->
+        <mxCell id="t4" style="edgeStyle=orthogonalEdgeStyle;rounded=1;" edge="1" source="s4" target="s5" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="t4-label" value="parsed OK" style="edgeLabel;html=1;fontSize=10;" vertex="1" connectable="0" parent="t4">
+          <mxGeometry relative="1" as="geometry"><mxPoint as="offset" /></mxGeometry>
+        </mxCell>
+        <!-- s4 -> final-defaults: parse error -->
+        <mxCell id="t4b" style="edgeStyle=orthogonalEdgeStyle;rounded=1;dashed=1;" edge="1" source="s4" target="final-defaults" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points"><mxPoint x="810" y="145" /><mxPoint x="280" y="145" /></Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="t4b-label" value="parse error" style="edgeLabel;html=1;fontSize=10;" vertex="1" connectable="0" parent="t4b">
+          <mxGeometry relative="1" as="geometry"><mxPoint as="offset" /></mxGeometry>
+        </mxCell>
+        <!-- s5 -> final-ok: valid -->
+        <mxCell id="t5" style="edgeStyle=orthogonalEdgeStyle;rounded=1;" edge="1" source="s5" target="final-ok" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="t5-label" value="valid (may have warnings)" style="edgeLabel;html=1;fontSize=10;" vertex="1" connectable="0" parent="t5">
+          <mxGeometry relative="1" as="geometry"><mxPoint as="offset" /></mxGeometry>
+        </mxCell>
+        <!-- s5 -> final-fail: critical error -->
+        <mxCell id="t5b" style="edgeStyle=orthogonalEdgeStyle;rounded=1;dashed=1;strokeColor=#b85450;" edge="1" source="s5" target="final-fail" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="t5b-label" value="critical (db.url empty)" style="edgeLabel;html=1;fontSize=10;fontColor=#b85450;" vertex="1" connectable="0" parent="t5b">
+          <mxGeometry relative="1" as="geometry"><mxPoint as="offset" /></mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

@@ -1,0 +1,94 @@
+<mxfile host="app.diagrams.net" modified="2026-05-14T00:00:00.000Z" agent="SA Agent" version="21.0.0" type="device">
+  <diagram id="class-config" name="Class - Config Classes">
+    <mxGraphModel dx="1200" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1100" pageHeight="850" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <!-- KbConfigLoader -->
+        <mxCell id="2" value="&lt;b&gt;«object»&lt;/b&gt;&lt;br&gt;&lt;b&gt;KbConfigLoader&lt;/b&gt;" style="swimlane;fontStyle=0;align=center;html=1;fillColor=#fff2cc;strokeColor=#d6b656;startSize=50;" vertex="1" parent="1">
+          <mxGeometry x="80" y="50" width="250" height="130" as="geometry" />
+        </mxCell>
+        <mxCell id="3" value="- yaml: Yaml&lt;br&gt;- logger: Logger&lt;hr&gt;+ load(configPath: String?): KbConfig&lt;br&gt;- resolveConfigFile(path: String?): File?" style="text;html=1;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" vertex="1" parent="2">
+          <mxGeometry y="50" width="250" height="80" as="geometry" />
+        </mxCell>
+        <!-- KbEnvVarResolver -->
+        <mxCell id="4" value="&lt;b&gt;«object» NEW&lt;/b&gt;&lt;br&gt;&lt;b&gt;KbEnvVarResolver&lt;/b&gt;" style="swimlane;fontStyle=0;align=center;html=1;fillColor=#d5e8d4;strokeColor=#82b366;startSize=50;" vertex="1" parent="1">
+          <mxGeometry x="420" y="50" width="280" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="5" value="- ENV_VAR_PATTERN: Regex&lt;br&gt;- logger: Logger&lt;hr&gt;+ resolve(content: String): String" style="text;html=1;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" vertex="1" parent="4">
+          <mxGeometry y="50" width="280" height="60" as="geometry" />
+        </mxCell>
+        <!-- KbConfigValidator -->
+        <mxCell id="6" value="&lt;b&gt;«object» NEW&lt;/b&gt;&lt;br&gt;&lt;b&gt;KbConfigValidator&lt;/b&gt;" style="swimlane;fontStyle=0;align=center;html=1;fillColor=#d5e8d4;strokeColor=#82b366;startSize=50;" vertex="1" parent="1">
+          <mxGeometry x="780" y="50" width="280" height="130" as="geometry" />
+        </mxCell>
+        <mxCell id="7" value="- KNOWN_DEFAULT_KEYS: Set&lt;String&gt;&lt;br&gt;- logger: Logger&lt;hr&gt;+ validate(config: KbConfig): KbConfig&lt;br&gt;- validateCritical(config: KbConfig)&lt;br&gt;- checkSecurityWarnings(config: KbConfig)" style="text;html=1;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" vertex="1" parent="6">
+          <mxGeometry y="50" width="280" height="80" as="geometry" />
+        </mxCell>
+        <!-- KbConfig -->
+        <mxCell id="8" value="&lt;b&gt;«data class»&lt;/b&gt;&lt;br&gt;&lt;b&gt;KbConfig&lt;/b&gt;" style="swimlane;fontStyle=0;align=center;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;startSize=40;" vertex="1" parent="1">
+          <mxGeometry x="420" y="280" width="200" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="9" value="+ kb: KbServerConfig" style="text;html=1;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" vertex="1" parent="8">
+          <mxGeometry y="40" width="200" height="40" as="geometry" />
+        </mxCell>
+        <!-- KbVectorDbConfig -->
+        <mxCell id="10" value="&lt;b&gt;«data class» MODIFIED&lt;/b&gt;&lt;br&gt;&lt;b&gt;KbVectorDbConfig&lt;/b&gt;" style="swimlane;fontStyle=0;align=center;html=1;fillColor=#fff2cc;strokeColor=#d6b656;startSize=50;" vertex="1" parent="1">
+          <mxGeometry x="80" y="420" width="250" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="11" value="+ provider: String = &quot;pgvector&quot;&lt;br&gt;+ collectionName: String = &quot;kb_entries&quot;" style="text;html=1;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" vertex="1" parent="10">
+          <mxGeometry y="50" width="250" height="50" as="geometry" />
+        </mxCell>
+        <!-- KbDatabaseConfig -->
+        <mxCell id="12" value="&lt;b&gt;«data class»&lt;/b&gt;&lt;br&gt;&lt;b&gt;KbDatabaseConfig&lt;/b&gt;" style="swimlane;fontStyle=0;align=center;html=1;fillColor=#f5f5f5;strokeColor=#666666;startSize=40;" vertex="1" parent="1">
+          <mxGeometry x="420" y="420" width="250" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="13" value="+ url: String&lt;br&gt;+ schema: String = &quot;public&quot;&lt;br&gt;+ username: String = &quot;postgres&quot;&lt;br&gt;+ password: String = &quot;postgres&quot;" style="text;html=1;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" vertex="1" parent="12">
+          <mxGeometry y="40" width="250" height="70" as="geometry" />
+        </mxCell>
+        <!-- KbSecurityConfig -->
+        <mxCell id="14" value="&lt;b&gt;«data class»&lt;/b&gt;&lt;br&gt;&lt;b&gt;KbSecurityConfig&lt;/b&gt;" style="swimlane;fontStyle=0;align=center;html=1;fillColor=#f5f5f5;strokeColor=#666666;startSize=40;" vertex="1" parent="1">
+          <mxGeometry x="750" y="420" width="280" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="15" value="+ encryptionKey: String&lt;br&gt;+ brEncryptionKey: String&lt;br&gt;+ defaultRole: String = &quot;developer&quot;" style="text;html=1;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" vertex="1" parent="14">
+          <mxGeometry y="40" width="280" height="70" as="geometry" />
+        </mxCell>
+        <!-- Relationships -->
+        <!-- Loader uses Resolver -->
+        <mxCell id="16" value="uses" style="edgeStyle=orthogonalEdgeStyle;rounded=0;dashed=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" source="2" target="4" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <!-- Loader uses Validator -->
+        <mxCell id="17" value="uses" style="edgeStyle=orthogonalEdgeStyle;rounded=0;dashed=1;exitX=1;exitY=0.3;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" source="4" target="6" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <!-- Validator validates KbConfig -->
+        <mxCell id="18" value="validates" style="edgeStyle=orthogonalEdgeStyle;rounded=0;dashed=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" edge="1" source="6" target="8" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <!-- KbConfig contains KbVectorDbConfig -->
+        <mxCell id="19" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;endArrow=diamond;endFill=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" source="8" target="10" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="520" y="390" />
+              <mxPoint x="205" y="390" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <!-- KbConfig contains KbDatabaseConfig -->
+        <mxCell id="20" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;endArrow=diamond;endFill=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" source="8" target="12" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <!-- KbConfig contains KbSecurityConfig -->
+        <mxCell id="21" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;endArrow=diamond;endFill=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" source="8" target="14" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="520" y="390" />
+              <mxPoint x="890" y="390" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

@@ -7,33 +7,33 @@ import java.io.File
 
 /**
  * Loads KB server configuration from YAML file.
- * Falls back to defaults if no config file is specified or found.
+ * Pipeline: read → resolve env vars → deserialize → validate.
  */
 object KbConfigLoader {
 
     private val logger = LoggerFactory.getLogger(KbConfigLoader::class.java)
 
     private val yaml = Yaml(
-        configuration = YamlConfiguration(
-            strictMode = false
-        )
+        configuration = YamlConfiguration(strictMode = false)
     )
 
     fun load(configPath: String?): KbConfig {
         val file = resolveConfigFile(configPath)
         if (file == null) {
             logger.info("No config file found, using defaults")
-            return KbConfig()
+            return KbConfigValidator.validate(KbConfig())
         }
 
-        return try {
-            logger.info("Loading config from: ${file.absolutePath}")
-            val content = file.readText()
-            yaml.decodeFromString(KbConfig.serializer(), content)
+        val config = try {
+            logger.info("Loading config from: {}", file.absolutePath)
+            val rawContent = file.readText()
+            val resolvedContent = KbEnvVarResolver.resolve(rawContent)
+            yaml.decodeFromString(KbConfig.serializer(), resolvedContent)
         } catch (e: Exception) {
-            logger.error("Failed to load config: ${e.message}, using defaults")
+            logger.error("Failed to load config: {}, using defaults", e.message)
             KbConfig()
         }
+        return KbConfigValidator.validate(config)
     }
 
     private fun resolveConfigFile(configPath: String?): File? {

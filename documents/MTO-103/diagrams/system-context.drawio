@@ -1,0 +1,59 @@
+<mxfile host="app.diagrams.net" modified="2026-05-14T00:00:00.000Z" agent="draw.io" version="21.0.0">
+  <diagram name="System Context" id="system-context-1">
+    <mxGraphModel dx="1200" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1100" pageHeight="850" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <!-- Title -->
+        <mxCell id="title" value="System Context — KB-Server Config Subsystem" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=16;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="300" y="20" width="500" height="30" as="geometry" />
+        </mxCell>
+        <!-- KB-Server Config Subsystem (center) -->
+        <mxCell id="kb-config" value="&lt;b&gt;KB-Server&lt;br&gt;Config Subsystem&lt;/b&gt;&lt;br&gt;&lt;br&gt;KbConfigLoader&lt;br&gt;KbEnvVarResolver&lt;br&gt;KbConfigValidator" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;verticalAlign=middle;arcSize=10;" vertex="1" parent="1">
+          <mxGeometry x="400" y="280" width="200" height="140" as="geometry" />
+        </mxCell>
+        <!-- File System -->
+        <mxCell id="filesystem" value="&lt;b&gt;File System&lt;/b&gt;&lt;br&gt;&lt;br&gt;kb-server.yml&lt;br&gt;(YAML config)" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="100" y="180" width="150" height="100" as="geometry" />
+        </mxCell>
+        <!-- Operating System -->
+        <mxCell id="os" value="&lt;b&gt;Operating System&lt;/b&gt;&lt;br&gt;&lt;br&gt;Environment Variables&lt;br&gt;(DB_PASSWORD, etc.)" style="shape=hexagon;perimeter=hexagonPerimeter2;whiteSpace=wrap;html=1;fixedSize=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=11;size=20;" vertex="1" parent="1">
+          <mxGeometry x="100" y="380" width="200" height="100" as="geometry" />
+        </mxCell>
+        <!-- Application Runtime / Koin DI -->
+        <mxCell id="app-runtime" value="&lt;b&gt;Application Runtime&lt;/b&gt;&lt;br&gt;&lt;br&gt;Koin DI Container&lt;br&gt;(consumes KbConfig)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="720" y="200" width="180" height="100" as="geometry" />
+        </mxCell>
+        <!-- Logger -->
+        <mxCell id="logger" value="&lt;b&gt;Logger&lt;/b&gt;&lt;br&gt;&lt;br&gt;SLF4J / Logback&lt;br&gt;(validation warnings)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="720" y="380" width="180" height="100" as="geometry" />
+        </mxCell>
+        <!-- Arrows -->
+        <mxCell id="edge1" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.3;entryDx=0;entryDy=0;" edge="1" source="filesystem" target="kb-config" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge1-label" value="Reads YAML" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=10;" vertex="1" connectable="0" parent="edge1">
+          <mxGeometry x="-0.2" relative="1" as="geometry"><mxPoint as="offset" /></mxGeometry>
+        </mxCell>
+        <mxCell id="edge2" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.7;entryDx=0;entryDy=0;" edge="1" source="os" target="kb-config" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge2-label" value="System.getenv()" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=10;" vertex="1" connectable="0" parent="edge2">
+          <mxGeometry x="-0.2" relative="1" as="geometry"><mxPoint as="offset" /></mxGeometry>
+        </mxCell>
+        <mxCell id="edge3" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;exitX=1;exitY=0.3;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" source="kb-config" target="app-runtime" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge3-label" value="Provides KbConfig" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=10;" vertex="1" connectable="0" parent="edge3">
+          <mxGeometry x="-0.2" relative="1" as="geometry"><mxPoint as="offset" /></mxGeometry>
+        </mxCell>
+        <mxCell id="edge4" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;exitX=1;exitY=0.7;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" source="kb-config" target="logger" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge4-label" value="Logs warnings" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=10;" vertex="1" connectable="0" parent="edge4">
+          <mxGeometry x="-0.2" relative="1" as="geometry"><mxPoint as="offset" /></mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

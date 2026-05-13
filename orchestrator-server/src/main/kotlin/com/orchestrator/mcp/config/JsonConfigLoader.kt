@@ -47,8 +47,13 @@ object JsonConfigLoader {
                 .resolveEnvVars(content)
             val root = json.parseToJsonElement(resolved)
                 .jsonObject
+            // Try upstream_servers format first, then mcpServers format
             val servers = findServersArray(root)
-            servers.map { parseServerEntry(it.jsonObject) }
+            if (servers.isNotEmpty()) {
+                servers.map { parseServerEntry(it.jsonObject) }
+            } else {
+                parseMcpServersFormat(content)
+            }
         } catch (e: Exception) {
             logger.error(
                 "Failed to parse JSON config: ${e.message}"

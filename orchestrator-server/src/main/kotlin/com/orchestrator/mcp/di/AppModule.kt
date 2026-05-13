@@ -43,6 +43,8 @@ import com.orchestrator.mcp.graph.di.graphModule
 import com.orchestrator.mcp.ocr.di.ocrModule
 import com.orchestrator.mcp.scanner.di.scannerModule
 import com.orchestrator.mcp.segmentation.di.segmentationModule
+import com.orchestrator.mcp.auth.di.authModule
+import com.orchestrator.mcp.credentials.di.credentialModule
 import com.orchestrator.mcp.sync.*
 import org.koin.dsl.module
 import org.koin.core.qualifier.named
@@ -132,6 +134,22 @@ fun appModule(configPath: String? = null) = module {
     single<UpstreamServerManager> { UpstreamServerManagerImpl(get(), get()) }
     single { HealthMonitor(get(), get()) }
 
+    // Process Pool Manager (MTO-99)
+    single<com.orchestrator.mcp.client.pool.ProcessPoolManager> {
+        val poolCfg = get<OrchestratorConfig>().orchestrator.pool
+        com.orchestrator.mcp.client.pool.ProcessPoolManagerImpl(
+            com.orchestrator.mcp.client.pool.model.PoolConfig(
+                maxInstancesPerServer = poolCfg.maxInstancesPerServer,
+                maxTotalInstances = poolCfg.maxTotalInstances,
+                idleTimeoutMs = poolCfg.idleTimeoutMs,
+                slowResponseThresholdMs = poolCfg.slowResponseThresholdMs,
+                healthCheckIntervalMs = poolCfg.healthCheckIntervalMs,
+                scaleCheckIntervalMs = poolCfg.scaleCheckIntervalMs
+            )
+        )
+    }
+    single { com.orchestrator.mcp.client.pool.PoolMetricsCollector(get()) }
+
     // Discovery
     single { KeywordSearchEngine(get()) }
     single<ToolDiscoveryService> {
@@ -151,14 +169,21 @@ fun appModule(configPath: String? = null) = module {
     // Execution
     single<ToolExecutionDispatcher> {
         val config = get<OrchestratorConfig>()
-        ToolExecutionDispatcherImpl(get(), get(), get(), config.orchestrator.session, config)
+        ToolExecutionDispatcherImpl(
+            toolRegistry = get(),
+            serverManager = get(),
+            toolManagementService = get(),
+            sessionConfig = config.orchestrator.session,
+            config = config,
+            credentialResolver = get()
+        )
     }
 
     // Agent Logging
     single { com.orchestrator.mcp.logging.AgentLogService(get()) }
 
     // MCP Server Factory
-    single { McpServerFactory(get(), get(), get(), get<OrchestratorConfig>().orchestrator.session, get(), get()) }
+    single { McpServerFactory(get(), get(), get(), get<OrchestratorConfig>().orchestrator.session, get(), get(), getOrNull()) }
 
     // File Proxy — shared session ID for all proxy components
     single<UUID>(named("fileProxySessionId")) { UUID.randomUUID() }
@@ -243,4 +268,10 @@ fun appModule(configPath: String? = null) = module {
 
     // User Management & Document Approval Module (MTO-39)
     includes(com.orchestrator.mcp.usermanagement.di.userManagementModule)
+
+    // Auth Module (MTO-95: JWT Auth Middleware + Login API + Bridge Token)
+    includes(authModule)
+
+    // Credential Module (MTO-96: Credential Schema CRUD)
+    includes(credentialModule)
 }

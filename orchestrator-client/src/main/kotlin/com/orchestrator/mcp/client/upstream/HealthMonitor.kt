@@ -51,7 +51,7 @@ class HealthMonitor(
                             try {
                                 connection.sendRequest("ping", null)
                                 info.lastHealthCheck = Clock.System.now()
-                                logger.debug("Health check OK: $name")
+                                logger.trace("Health check OK: $name")
                             } catch (e: Exception) {
                                 logger.warn("Health check failed for $name: ${e.message}")
                                 info.status = ServerState.DISCONNECTED

@@ -28,7 +28,8 @@ class McpServerFactory(
     private val toolManagementService: com.orchestrator.mcp.management.ToolManagementService,
     private val sessionConfig: com.orchestrator.mcp.core.config.SessionConfig,
     private val agentLogService: com.orchestrator.mcp.logging.AgentLogService? = null,
-    private val fileProxyService: FileProxyService? = null
+    private val fileProxyService: FileProxyService? = null,
+    private val authMiddleware: com.orchestrator.mcp.auth.AuthMiddleware? = null
 ) {
     private val logger = LoggerFactory.getLogger(McpServerFactory::class.java)
     private val json = Json {
@@ -70,13 +71,14 @@ class McpServerFactory(
         return object : ToolDispatcher {
             override suspend fun callTool(
                 name: String,
-                arguments: JsonObject?
+                arguments: JsonObject?,
+                headers: Map<String, String>
             ): CallToolResult {
                 logger.info("Dispatcher.callTool: $name")
                 val result = when (name) {
                     "find_tools" -> handleFindTools(arguments)
                     "execute_dynamic_tool" ->
-                        handleExecuteDynamicTool(arguments)
+                        handleExecuteDynamicTool(arguments, headers)
                     "toggle_tool" -> handleToggleTool(arguments)
                     "reset_tools" -> handleResetTools(arguments)
                     "manage_auto_approve" ->
@@ -172,6 +174,13 @@ class McpServerFactory(
     private suspend fun handleExecuteDynamicTool(
         arguments: JsonObject?
     ): CallToolResult {
+        return handleExecuteDynamicTool(arguments, emptyMap())
+    }
+
+    private suspend fun handleExecuteDynamicTool(
+        arguments: JsonObject?,
+        headers: Map<String, String>
+    ): CallToolResult {
         return try {
             val toolName = arguments?.get("tool_name")
                 ?.let { it as? kotlinx.serialization.json.JsonPrimitive }
@@ -189,11 +198,21 @@ class McpServerFactory(
                 return HiddenToolRegistrar.executeHiddenTool(toolName, toolArguments)
             }
 
+            // Resolve user context from JWT token for credential injection
+            val userContext = try {
+                if (headers.isNotEmpty() && authMiddleware != null) {
+                    authMiddleware.authenticate(headers)
+                } else null
+            } catch (e: Exception) {
+                logger.debug("No user context from headers: {}", e.message)
+                null
+            }
+
             // Route through FileProxyService if this is a proxy-wrapped tool
             val response = if (fileProxyService?.isProxyTool(toolName) == true && toolArguments != null) {
                 fileProxyService.handleProxyCall(toolName, "", toolArguments, "stdio")
             } else {
-                executionDispatcher.execute(toolName, toolArguments)
+                executionDispatcher.execute(toolName, toolArguments, userContext)
             }
 
             CallToolResult(

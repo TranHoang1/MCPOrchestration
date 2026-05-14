@@ -1,34 +1,23 @@
 plugins {
     alias(libs.plugins.kotlinJvm)
     alias(libs.plugins.kotlinSerialization)
-    alias(libs.plugins.shadow)
-    application
-}
-
-application {
-    mainClass.set("com.orchestrator.mcp.kb.KbMainKt")
 }
 
 dependencies {
-    // Shared project modules
-    implementation(project(":orchestrator-core"))
+    // Project dependencies
     implementation(project(":orchestrator-client"))
-    implementation(project(":sync-pipeline"))
-
-    // MCP SDK
-    implementation(libs.mcp.sdk.server)
-    implementation(libs.kotlinx.io.core)
-
-    // Ktor Client (for LLM API calls, Jira API)
-    implementation(libs.ktor.client.core)
-    implementation(libs.ktor.client.cio)
-    implementation(libs.ktor.client.content.negotiation)
-    implementation(libs.ktor.serialization.kotlinx.json)
 
     // KotlinX
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.kotlinx.datetime)
+
+    // Ktor Client (for Jira API)
+    implementation(libs.ktor.client.core)
+    implementation(libs.ktor.client.cio)
+    implementation(libs.ktor.client.content.negotiation)
+    implementation(libs.ktor.client.logging)
+    implementation(libs.ktor.serialization.kotlinx.json)
 
     // DI
     implementation(libs.koin.core)
@@ -37,24 +26,21 @@ dependencies {
     implementation(libs.postgresql)
     implementation(libs.hikaricp)
 
+    // LangChain4j (AI/LLM)
+    implementation("dev.langchain4j:langchain4j-core:1.0.0-beta1")
+    implementation("dev.langchain4j:langchain4j-ollama:1.0.0-beta1")
+    implementation("dev.langchain4j:langchain4j-open-ai:1.0.0-beta1")
+
     // Logging
     implementation(libs.logback.classic)
-
-    // YAML
-    implementation(libs.kaml)
 
     // Testing
     testImplementation(libs.junit.jupiter)
     testImplementation(libs.kotest.runner.junit5)
     testImplementation(libs.kotest.assertions.core)
+    testImplementation(libs.kotest.property)
     testImplementation(libs.mockk)
     testImplementation(libs.kotlinx.coroutines.test)
+    testImplementation(libs.ktor.client.mock)
     testImplementation(libs.koin.test)
-}
-
-tasks.shadowJar {
-    archiveBaseName.set("kb-server")
-    archiveClassifier.set("all")
-    archiveVersion.set("")
-    mergeServiceFiles()
 }

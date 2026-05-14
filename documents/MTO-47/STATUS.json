@@ -1,0 +1,49 @@
+{
+  "ticket": "MTO-47",
+  "currentPhase": "test_planning",
+  "phases": {
+    "requirements": {
+      "status": "done",
+      "file": "BRD.md",
+      "version": 1,
+      "completedAt": "2026-05-14T10:00:00Z"
+    },
+    "specification": {
+      "status": "done",
+      "file": "FSD.md",
+      "version": 1,
+      "completedAt": "2026-05-14T12:00:00Z"
+    },
+    "design": {
+      "status": "done",
+      "file": "TDD.md",
+      "version": 1,
+      "completedAt": "2026-05-14T14:00:00Z"
+    },
+    "feedback_loop": {
+      "status": "done",
+      "iterations": 0,
+      "maxIterations": 5
+    },
+    "test_planning": {
+      "status": "done",
+      "file": "STP.md",
+      "file2": "STC.md",
+      "version": 1,
+      "review": "approved_with_conditions",
+      "reviewConditions": ["Missing draw.io diagrams (test-coverage, test-execution-flow)", "Test data CSV files not yet created"],
+      "startedAt": "2026-05-14T15:00:00Z",
+      "completedAt": "2026-05-14T16:00:00Z"
+    },
+    "implementation": {
+      "status": "not_started"
+    },
+    "testing": {
+      "status": "not_started"
+    },
+    "deployment": {
+      "status": "not_started"
+    }
+  },
+  "lastUpdated": "2026-05-14T16:00:00Z"
+}

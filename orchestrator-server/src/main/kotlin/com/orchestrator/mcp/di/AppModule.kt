@@ -46,6 +46,13 @@ import com.orchestrator.mcp.segmentation.di.segmentationModule
 import com.orchestrator.mcp.auth.di.authModule
 import com.orchestrator.mcp.credentials.di.credentialModule
 import com.orchestrator.mcp.sync.*
+import com.orchestrator.mcp.sync.pipeline.SyncOrchestrator
+import com.orchestrator.mcp.sync.pipeline.config.SyncPipelineConfig
+import com.orchestrator.mcp.sync.pipeline.crawl.SyncJiraClient
+import com.orchestrator.mcp.sync.pipeline.di.syncPipelineModule
+import com.orchestrator.mcp.synctools.SyncJiraClientAdapter
+import com.orchestrator.mcp.jira.JiraRestClient
+import com.orchestrator.mcp.jira.di.jiraModule
 import org.koin.dsl.module
 import org.koin.core.qualifier.named
 import java.util.UUID
@@ -226,9 +233,28 @@ fun appModule(configPath: String? = null) = module {
     // Scanner Module (MTO-17)
     includes(scannerModule)
 
+    // Jira Client Module (MTO-16)
+    includes(jiraModule)
+
     // Sync Tool Handlers (for HTTP mode builtin tool routing)
     single { com.orchestrator.mcp.synctools.SyncToolHandler(get()) }
     single { com.orchestrator.mcp.synctools.StatusToolHandler(get()) }
+
+    // Sync Pipeline Module (MTO-47)
+    single<SyncJiraClient> { SyncJiraClientAdapter(get()) }
+    single<SyncPipelineConfig> {
+        val config = get<OrchestratorConfig>()
+        val jiraCfg = getOrNull<com.orchestrator.mcp.jira.config.JiraClientConfig>()
+        SyncPipelineConfig(
+            jira = com.orchestrator.mcp.sync.pipeline.config.JiraConfig(
+                baseUrl = jiraCfg?.baseUrl ?: "",
+                email = jiraCfg?.email ?: "",
+                apiToken = jiraCfg?.apiToken ?: "",
+                rateLimit = jiraCfg?.rateLimit ?: 10
+            )
+        )
+    }
+    includes(syncPipelineModule)
 
     // Crawler Module (MTO-18)
     includes(crawlerModule)

@@ -2,15 +2,18 @@ package com.orchestrator.mcp.kb.queue.handler
 
 import com.orchestrator.mcp.kb.queue.TaskHandler
 import com.orchestrator.mcp.kb.queue.model.QueueTask
+import com.orchestrator.mcp.sync.pipeline.SyncOrchestrator
+import com.orchestrator.mcp.sync.pipeline.model.SyncOptions
 import kotlinx.serialization.json.jsonPrimitive
 import org.slf4j.LoggerFactory
 
 /**
  * Handles "sync" tasks from the queue.
- * Fetches tickets from Jira and ingests them into KB.
- * Phase 3: basic implementation — full Jira crawling in Phase 4.
+ * Delegates to SyncOrchestrator for unified multi-dimensional indexing.
  */
-class SyncTaskHandler : TaskHandler {
+class SyncTaskHandler(
+    private val syncOrchestrator: SyncOrchestrator
+) : TaskHandler {
 
     private val logger = LoggerFactory.getLogger(javaClass)
 
@@ -23,12 +26,15 @@ class SyncTaskHandler : TaskHandler {
 
         logger.info("Sync task started for project={} fullSync={}", projectKey, fullSync)
 
-        // Phase 3: Log sync intent. Full Jira API crawling in Phase 4.
-        // This handler will be expanded to:
-        // 1. Call Jira REST API to list tickets
-        // 2. For each ticket, create an "ingest" sub-task
-        // 3. Track progress in sync_status table
-
-        logger.info("Sync task completed for project={} (Phase 3 stub)", projectKey)
+        try {
+            val result = syncOrchestrator.sync(projectKey, SyncOptions(fullSync = fullSync))
+            logger.info(
+                "Sync completed for project={}: {} tickets processed, {} entries created",
+                projectKey, result.processedTickets, result.entriesCreated.values.sum()
+            )
+        } catch (e: Exception) {
+            logger.error("Sync failed for project={}: {}", projectKey, e.message, e)
+            throw e
+        }
     }
 }

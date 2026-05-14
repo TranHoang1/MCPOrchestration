@@ -8,7 +8,7 @@
 | Property | Value |
 |----------|-------|
 | **Project Name** | MCPOrchestration (MTO) |
-| **Type** | Multi-module Gradle application (5 modules) |
+| **Type** | Multi-module Gradle application (6 modules) |
 | **Language** | Kotlin 2.3.20 |
 | **Platform** | JVM 21 |
 | **Framework** | Ktor 3.4.0 (server + client) |
@@ -30,7 +30,8 @@ mcp-orchestrator (root)
 ├── orchestrator-client      # Upstream MCP connections, embedding, vector DB clients
 ├── orchestrator-server      # Main server: MCP protocol, Jira sync, KB store, graph, dashboard
 ├── orchestrator-bridge      # Bridge process: connects IDE to orchestrator via HTTP Streamable
-└── kb-server                # Standalone Knowledge Base server (MCP tools: kb_ingest, kb_search)
+├── kb-server                # Standalone Knowledge Base server (MCP tools: kb_ingest, kb_search)
+└── sync-pipeline            # Shared sync pipeline: multi-dimensional Jira indexing (MTO-47)
 ```
 
 | Module | Language | Purpose | Platform | Fat JAR |
@@ -40,6 +41,7 @@ mcp-orchestrator (root)
 | **orchestrator-server** | Kotlin | Main MCP orchestrator server — tool discovery, execution, Jira sync, KB store, graph API, dashboard | JVM 21 | `mcp-orchestrator-all.jar` |
 | **orchestrator-bridge** | Kotlin | Bridge between IDE (Kiro/VS Code) and orchestrator — file transfer, tool promotion, health checks | JVM 21 | `orchestrator-bridge-all.jar` |
 | **kb-server** | Kotlin | Standalone KB server — ingest, search, PII masking, content segmentation, graph viewer | JVM 21 | `kb-server-all.jar` |
+| **sync-pipeline** | Kotlin | Shared sync pipeline — multi-dimensional Jira indexing, dimension strategy, AI feature detection | JVM 21 | — (library) |
 
 ### Inter-Module Dependencies
 
@@ -49,6 +51,7 @@ orchestrator-server ──depends──> orchestrator-client
 orchestrator-bridge ──depends──> orchestrator-core (implied via config)
 kb-server ──depends──> orchestrator-core
 kb-server ──depends──> orchestrator-client
+sync-pipeline ──depends──> orchestrator-client
 ```
 
 ## 3. Tech Stack
@@ -243,6 +246,42 @@ com.orchestrator.mcp.kb/
     ├── GraphRoutes.kt
     ├── model/
     └── views/
+```
+
+### 4.6 sync-pipeline
+
+Shared library for multi-dimensional Jira indexing (MTO-47).
+
+```
+com.orchestrator.mcp.sync.pipeline/
+├── SyncOrchestrator.kt                # Interface — main entry point
+├── model/
+│   ├── CrawledTicket.kt               # Full ticket data after Jira fetch
+│   ├── CrawledComment.kt              # Comment data
+│   ├── CrawledLink.kt                 # Issue link data
+│   ├── CrawledAttachment.kt           # Attachment metadata
+│   ├── JiraUser.kt                    # User identity
+│   ├── IndexEntry.kt                  # Universal indexed record
+│   ├── SourceRef.kt                   # Provenance tracking
+│   ├── DimensionConfig.kt             # Dimension configuration
+│   ├── SyncOptions.kt                 # Sync options
+│   ├── SyncResult.kt                  # Sync result
+│   ├── SyncProgress.kt               # Progress tracking
+│   └── SyncStatus.kt                 # Status enum
+├── dimension/
+│   └── IndexDimension.kt             # Strategy interface for dimensions
+├── storage/
+│   ├── IndexWriter.kt                # Interface — write index entries
+│   └── VectorIndexWriter.kt          # Interface — vector operations
+├── state/
+│   └── SyncStateTracker.kt           # Interface — state machine
+├── ai/
+│   ├── AiAnalysisService.kt          # Interface — AI analysis
+│   ├── FeatureGroup.kt               # Feature group model
+│   └── TicketSummary.kt              # Ticket summary for AI
+└── config/
+    ├── SyncPipelineConfig.kt          # Top-level config
+    └── SyncSubConfigs.kt              # Sub-configurations (AI, embedding, vector, etc.)
 ```
 
 ## 5. UI Pages (Web Frontend)

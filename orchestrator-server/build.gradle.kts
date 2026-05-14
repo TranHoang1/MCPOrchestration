@@ -14,6 +14,7 @@ dependencies {
     // Project dependencies
     implementation(project(":orchestrator-core"))
     implementation(project(":orchestrator-client"))
+    implementation(project(":sync-pipeline"))
 
     // MCP SDK
     implementation(libs.mcp.sdk.server)

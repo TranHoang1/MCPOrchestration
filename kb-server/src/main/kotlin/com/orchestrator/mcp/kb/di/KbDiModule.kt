@@ -29,8 +29,12 @@ import com.orchestrator.mcp.kb.store.repository.PiiMappingRepository
 import com.orchestrator.mcp.kb.store.repository.PiiMappingRepositoryImpl
 import com.orchestrator.mcp.kb.store.vector.KbVectorClient
 import com.orchestrator.mcp.kb.store.vector.PgKbVectorClient
+import com.orchestrator.mcp.kb.sync.KbSyncJiraClient
 import com.orchestrator.mcp.client.embedding.EmbeddingService
 import com.orchestrator.mcp.client.embedding.OllamaEmbeddingService
+import com.orchestrator.mcp.sync.pipeline.config.SyncPipelineConfig
+import com.orchestrator.mcp.sync.pipeline.crawl.SyncJiraClient
+import com.orchestrator.mcp.sync.pipeline.di.syncPipelineModule
 import com.zaxxer.hikari.HikariDataSource
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.cio.CIO
@@ -51,6 +55,7 @@ import org.koin.dsl.module
 fun kbAppModule(config: KbConfig): List<Module> = listOf(
     kbConfigModule(config),
     kbInfraModule(),
+    kbSyncPipelineModule(config),
     kbStoreModule(),
     kbAuditModule(),
     kbMaskingModule(),
@@ -58,7 +63,8 @@ fun kbAppModule(config: KbConfig): List<Module> = listOf(
     kbGraphModule,
     kbNetworkModule,
     kbHandlersModule(),
-    kbProtocolModule()
+    kbProtocolModule(),
+    syncPipelineModule
 )
 
 /** Configuration bindings */
@@ -122,10 +128,33 @@ fun kbQueueModule() = module {
     single<QueueTaskRepository> { QueueTaskRepositoryImpl(get()) }
     single<QueueService> { QueueServiceImpl(get(), get()) }
     single { IngestTaskHandler(get(), get(), get(), get(), get()) } bind TaskHandler::class
-    single { SyncTaskHandler() } bind TaskHandler::class
+    single { SyncTaskHandler(get()) } bind TaskHandler::class
     single { QueueWorker(get(), get(), get(), getAll()) }
     single { QueueWatchdog(get(), get(), get()) }
     single { CrashRecoveryService(get(), get(), get()) }
+}
+
+/** Sync Pipeline: SyncJiraClient + SyncPipelineConfig for sync-pipeline module */
+fun kbSyncPipelineModule(config: KbConfig) = module {
+    single<SyncJiraClient> { KbSyncJiraClient(get(), get()) }
+    single<com.orchestrator.mcp.client.vectordb.VectorDbClient> {
+        com.orchestrator.mcp.client.vectordb.PgVectorDbClient(get())
+    }
+    single<SyncPipelineConfig> {
+        val jiraBaseUrl = System.getenv("JIRA_BASE_URL") ?: ""
+        val jiraEmail = System.getenv("JIRA_EMAIL") ?: ""
+        val jiraToken = System.getenv("JIRA_API_TOKEN") ?: ""
+        SyncPipelineConfig(
+            jira = com.orchestrator.mcp.sync.pipeline.config.JiraConfig(
+                baseUrl = jiraBaseUrl,
+                email = jiraEmail,
+                apiToken = jiraToken
+            ),
+            pipeline = com.orchestrator.mcp.sync.pipeline.config.PipelineConfig(
+                batchSize = config.kb.sync.batchSize
+            )
+        )
+    }
 }
 
 /** Tool handler bindings with real implementations */

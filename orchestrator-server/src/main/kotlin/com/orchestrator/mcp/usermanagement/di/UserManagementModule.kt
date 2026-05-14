@@ -49,10 +49,10 @@ val userManagementModule = module {
     // Background Jobs
     single { ApprovalJiraSyncJob(get(), get(), get()) }
 
-    // Auth Middleware
+    // Auth Middleware — uses JwtAuthService for proper signature validation (MTO-109)
     single {
         val config = get<UserManagementConfig>()
-        AdminAuthMiddleware(get(), config.adminHeaderName)
+        AdminAuthMiddleware(get(), get(), config.adminHeaderName)
     }
 
     // Routes

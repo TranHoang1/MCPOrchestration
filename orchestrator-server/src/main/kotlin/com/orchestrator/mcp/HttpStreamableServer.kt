@@ -11,6 +11,11 @@ import com.orchestrator.mcp.registry.ToolIndexer
 import com.orchestrator.mcp.registry.ToolRegistry
 import com.orchestrator.mcp.client.upstream.HealthMonitor
 import com.orchestrator.mcp.client.upstream.UpstreamServerManager
+import com.orchestrator.mcp.server.addCorsHeaders
+import com.orchestrator.mcp.server.addSecurityHeaders
+import com.orchestrator.mcp.server.authenticatedContext
+import com.orchestrator.mcp.server.authenticatedPageContext
+import com.orchestrator.mcp.server.handleCorsPreflightIfNeeded
 import com.sun.net.httpserver.HttpServer
 import com.sun.net.httpserver.HttpExchange
 import kotlinx.coroutines.CoroutineScope
@@ -97,6 +102,23 @@ suspend fun CoroutineScope.startHttpStreamableServer(
     server.executor = executor
 
     server.createContext("/mcp") { exchange ->
+        if (handleCorsPreflightIfNeeded(exchange)) return@createContext
+        val headers = exchange.requestHeaders.entries.associate { (k, v) ->
+            k to (v.firstOrNull() ?: "")
+        }
+        val authMiddleware = org.koin.java.KoinJavaComponent.getKoin()
+            .get<com.orchestrator.mcp.auth.AuthMiddleware>()
+        val userCtx = try {
+            runBlocking { authMiddleware.authenticate(headers) }
+        } catch (e: com.orchestrator.mcp.auth.model.AuthException) {
+            val err = """{"error":"${e.errorCode}","message":"Authentication required"}"""
+            val bytes = err.toByteArray(Charsets.UTF_8)
+            exchange.responseHeaders.add("Content-Type", "application/json")
+            addSecurityHeaders(exchange)
+            exchange.sendResponseHeaders(e.httpStatus, bytes.size.toLong())
+            exchange.responseBody.use { it.write(bytes) }
+            return@createContext
+        }
         handleMcpRequest(exchange, router)
     }
 
@@ -106,40 +128,27 @@ suspend fun CoroutineScope.startHttpStreamableServer(
         exchange.responseBody.use { it.write(response.toByteArray()) }
     }
 
-    // Graph API endpoints (MTO-22)
+    // Graph API endpoints (MTO-22) — protected by auth (MTO-109)
     val graphService = org.koin.java.KoinJavaComponent.getKoin()
         .getOrNull<com.orchestrator.mcp.graph.GraphService>()
+    val authMiddleware = org.koin.java.KoinJavaComponent.getKoin()
+        .get<com.orchestrator.mcp.auth.AuthMiddleware>()
 
     if (graphService != null) {
-        server.createContext("/sync/graph") { exchange ->
-            try {
-                handleGraphRequest(exchange, graphService)
-            } catch (e: Exception) {
-                httpLogger.error("Graph request failed: ${e.message}", e)
-                val err = """{"error":"${e.message?.replace("\"", "'")}"}"""
-                exchange.responseHeaders.add("Content-Type", "application/json")
-                exchange.sendResponseHeaders(500, err.length.toLong())
-                exchange.responseBody.use { it.write(err.toByteArray()) }
-            }
+        authenticatedContext(server, "/sync/graph", authMiddleware) { exchange, _ ->
+            handleGraphRequest(exchange, graphService)
         }
-        httpLogger.info("Graph API registered: /sync/graph/*")
+        httpLogger.info("Graph API registered: /sync/graph/* (authenticated)")
     }
 
-    // Projects list API (MTO-83)
+    // Projects list API (MTO-83) — protected by auth (MTO-109)
     val ticketCacheRepo = org.koin.java.KoinJavaComponent.getKoin()
         .getOrNull<com.orchestrator.mcp.sync.TicketCacheRepository>()
     if (ticketCacheRepo != null) {
-        server.createContext("/sync/projects") { exchange ->
-            try {
-                handleProjectsRequest(exchange, ticketCacheRepo)
-            } catch (e: Exception) {
-                val err = """{"error":"${e.message?.replace("\"", "'")}"}"""
-                exchange.responseHeaders.add("Content-Type", "application/json")
-                exchange.sendResponseHeaders(500, err.length.toLong())
-                exchange.responseBody.use { it.write(err.toByteArray()) }
-            }
+        authenticatedContext(server, "/sync/projects", authMiddleware) { exchange, _ ->
+            handleProjectsRequest(exchange, ticketCacheRepo)
         }
-        httpLogger.info("Projects API registered: /sync/projects")
+        httpLogger.info("Projects API registered: /sync/projects (authenticated)")
     }
 
     // Admin API endpoints (MTO-39: User Management)
@@ -199,19 +208,18 @@ suspend fun CoroutineScope.startHttpStreamableServer(
     server.createContext("/static") { exchange ->
         handleStaticFile(exchange)
     }
-    // Convenience alias: /sync/graph-viewer → static/graph-viewer.html
-    server.createContext("/sync/graph-viewer") { exchange ->
+    // Protected pages — redirect to /login if no auth (MTO-109)
+    authenticatedPageContext(server, "/sync/graph-viewer", authMiddleware) { exchange, _ ->
         serveResource(exchange, "static/graph-viewer.html")
     }
-    // Convenience alias: /sync → static/sync-dashboard.html
-    server.createContext("/sync/dashboard") { exchange ->
+    authenticatedPageContext(server, "/sync/dashboard", authMiddleware) { exchange, _ ->
         serveResource(exchange, "static/sync-dashboard.html")
     }
     // Convenience aliases for auth UI pages (MTO-94)
     server.createContext("/login") { exchange ->
         serveResource(exchange, "static/login.html")
     }
-    server.createContext("/profile") { exchange ->
+    authenticatedPageContext(server, "/profile", authMiddleware) { exchange, _ ->
         serveResource(exchange, "static/profile.html")
     }
     server.createContext("/admin/schemas") { exchange ->
@@ -266,6 +274,8 @@ private fun handleMcpRequest(
     exchange.responseHeaders.add(
         "Content-Type", "application/json"
     )
+    addSecurityHeaders(exchange)
+    addCorsHeaders(exchange)
     exchange.sendResponseHeaders(200, bytes.size.toLong())
     exchange.responseBody.use { it.write(bytes) }
 }
@@ -281,7 +291,8 @@ private fun handleProjectsRequest(
     val projects = kotlinx.coroutines.runBlocking { repo.listProjects() }
     val body = kotlinx.serialization.json.Json.encodeToString(projects)
     exchange.responseHeaders.add("Content-Type", "application/json")
-    exchange.responseHeaders.add("Access-Control-Allow-Origin", "*")
+    addCorsHeaders(exchange)
+    addSecurityHeaders(exchange)
     val bytes = body.toByteArray()
     exchange.sendResponseHeaders(200, bytes.size.toLong())
     exchange.responseBody.use { it.write(bytes) }
@@ -336,7 +347,8 @@ private fun handleGraphRequest(
     )
     val bytes = body.toByteArray(Charsets.UTF_8)
     exchange.responseHeaders.add("Content-Type", "application/json")
-    exchange.responseHeaders.add("Access-Control-Allow-Origin", "*")
+    addCorsHeaders(exchange)
+    addSecurityHeaders(exchange)
     exchange.sendResponseHeaders(200, bytes.size.toLong())
     exchange.responseBody.use { it.write(bytes) }
 }
@@ -368,7 +380,8 @@ private fun serveResource(exchange: HttpExchange, resourcePath: String) {
     }
 
     exchange.responseHeaders.add("Content-Type", contentType)
-    exchange.responseHeaders.add("Access-Control-Allow-Origin", "*")
+    addCorsHeaders(exchange)
+    addSecurityHeaders(exchange)
     exchange.sendResponseHeaders(200, bytes.size.toLong())
     exchange.responseBody.use { it.write(bytes) }
 }

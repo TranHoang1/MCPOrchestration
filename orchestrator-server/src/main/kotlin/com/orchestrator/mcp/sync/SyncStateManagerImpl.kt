@@ -31,7 +31,7 @@ class SyncStateManagerImpl(
     override suspend fun markRunning(projectKey: String) =
         withContext(Dispatchers.IO) {
             validateProjectKey(projectKey)
-            val allowed = listOf("IDLE", "PAUSED", "FAILED")
+            val allowed = listOf("IDLE", "PAUSED", "FAILED", "COMPLETED")
             val rows = transitionStatus(projectKey, "RUNNING", allowed)
             if (rows == 0) throwInvalidTransition(projectKey, "RUNNING")
             log.info("Sync state transition: project={} -> RUNNING", projectKey)

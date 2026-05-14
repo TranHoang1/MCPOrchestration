@@ -12,7 +12,7 @@ interface SyncStateManager {
     /** Get existing sync state or create new with IDLE status. Thread-safe via UPSERT. */
     suspend fun getOrCreate(projectKey: String): SyncState
 
-    /** Transition to RUNNING. Allowed from: IDLE, PAUSED, FAILED. */
+    /** Transition to RUNNING. Allowed from: IDLE, PAUSED, FAILED, COMPLETED. */
     suspend fun markRunning(projectKey: String)
 
     /** Transition to PAUSED. Allowed from: RUNNING only. */

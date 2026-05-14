@@ -79,9 +79,9 @@ class ProjectScannerImpl(
             runningScans[projectKey] = job
 
             try {
+                syncStateManager.markRunning(projectKey)
                 val firstPage = pageFetcher.fetchPage(jql, startOffset, options.pageSize)
                 val totalIssues = firstPage.total
-                syncStateManager.markRunning(projectKey)
                 syncStateManager.updateProgress(projectKey, startOffset, 0)
 
                 processPage(firstPage.issues, projectKey, startOffset, syncedCount, skippedCount)

@@ -222,7 +222,8 @@
         authFetch(basePath + '/api/credentials')
             .then(r => r.ok ? r.json() : null)
             .then(data => {
-                const hasJira = data && data.some && data.some(c => c.server_name === 'atlassian');
+                const servers = (data && data.servers) || [];
+                const hasJira = servers.some(c => c.server_name === 'atlassian' && c.is_complete);
                 const btn = document.getElementById('btn-start');
                 const warning = document.getElementById('cred-warning');
                 if (!hasJira) {

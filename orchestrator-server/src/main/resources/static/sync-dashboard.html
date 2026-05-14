@@ -149,6 +149,10 @@
         <button id="btn-stop">⏹ Stop</button>
     </header>
 
+    <section class="credential-warning" id="cred-warning" style="display:none; background:#2d1b1b; border:1px solid #e74c3c; border-radius:8px; padding:12px 16px; margin:0 0 16px; color:#e74c3c; font-size:14px;">
+        ⚠️ Jira credentials not configured. <a href="" id="cred-link" style="color:#3498db; text-decoration:underline;">Configure in Profile → Server Credentials</a> before syncing.
+    </section>
+
     <section class="progress-section">
         <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
         <span class="progress-text" id="progress-text">No active sync</span>
@@ -206,10 +210,35 @@
     const state = { ws: null, pollInterval: null };
 
     function init() {
+        document.getElementById('cred-link').href = basePath + '/profile';
+        checkJiraCredentials();
         connectWebSocket();
         bindButtons();
         pollStatus();
         state.pollInterval = setInterval(pollStatus, 10000);
+    }
+
+    function checkJiraCredentials() {
+        authFetch(basePath + '/api/credentials')
+            .then(r => r.ok ? r.json() : null)
+            .then(data => {
+                const hasJira = data && data.some && data.some(c => c.server_name === 'atlassian');
+                const btn = document.getElementById('btn-start');
+                const warning = document.getElementById('cred-warning');
+                if (!hasJira) {
+                    btn.disabled = true;
+                    btn.style.opacity = '0.5';
+                    btn.style.cursor = 'not-allowed';
+                    btn.title = 'Configure Jira credentials first';
+                    warning.style.display = 'block';
+                } else {
+                    btn.disabled = false;
+                    btn.style.opacity = '1';
+                    btn.style.cursor = 'pointer';
+                    warning.style.display = 'none';
+                }
+            })
+            .catch(() => {});
     }
 
     function connectWebSocket() {

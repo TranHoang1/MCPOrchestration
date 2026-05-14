@@ -208,18 +208,19 @@ suspend fun CoroutineScope.startHttpStreamableServer(
     server.createContext("/static") { exchange ->
         handleStaticFile(exchange)
     }
-    // Protected pages — redirect to /login if no auth (MTO-109)
-    authenticatedPageContext(server, "/sync/graph-viewer", authMiddleware) { exchange, _ ->
+    // HTML pages served public — auth enforced by API endpoints they call (MTO-109)
+    // JS in each page checks token validity; if API returns 401 → redirects to /login
+    server.createContext("/sync/graph-viewer") { exchange ->
         serveResource(exchange, "static/graph-viewer.html")
     }
-    authenticatedPageContext(server, "/sync/dashboard", authMiddleware) { exchange, _ ->
+    server.createContext("/sync/dashboard") { exchange ->
         serveResource(exchange, "static/sync-dashboard.html")
     }
     // Convenience aliases for auth UI pages (MTO-94)
     server.createContext("/login") { exchange ->
         serveResource(exchange, "static/login.html")
     }
-    authenticatedPageContext(server, "/profile", authMiddleware) { exchange, _ ->
+    server.createContext("/profile") { exchange ->
         serveResource(exchange, "static/profile.html")
     }
     server.createContext("/admin/schemas") { exchange ->

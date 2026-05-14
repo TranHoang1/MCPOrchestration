@@ -228,9 +228,23 @@
 
     function checkExistingToken() {
         const token = localStorage.getItem('auth_token');
-        if (token) {
-            window.location.href = basePath + '/profile';
-        }
+        if (!token) return;
+        // Verify token is still valid before redirecting (prevents loop with expired tokens)
+        fetch(basePath + '/api/auth/refresh', {
+            method: 'POST',
+            headers: { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' }
+        }).then(r => {
+            if (r.ok) {
+                window.location.href = basePath + '/profile';
+            } else {
+                // Token expired or invalid — clear it
+                localStorage.removeItem('auth_token');
+                localStorage.removeItem('user_info');
+            }
+        }).catch(() => {
+            localStorage.removeItem('auth_token');
+            localStorage.removeItem('user_info');
+        });
     }
 
     function checkSsoAvailability() {

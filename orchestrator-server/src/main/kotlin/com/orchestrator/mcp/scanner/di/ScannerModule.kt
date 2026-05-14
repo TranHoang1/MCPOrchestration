@@ -19,7 +19,7 @@ val scannerModule = module {
 
     single { MetadataParser() }
 
-    single<PageFetcher> { McpPageFetcher(get()) }
+    single<PageFetcher> { McpPageFetcher(get(), getOrNull()) }
 
     single<BatchUpserter> { BatchUpserterImpl(get(), get()) }
 

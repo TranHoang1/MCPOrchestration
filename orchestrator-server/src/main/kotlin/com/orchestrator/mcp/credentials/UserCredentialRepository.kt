@@ -20,4 +20,7 @@ interface UserCredentialRepository {
 
     /** Count filled fields for a user+server (requires decryption externally). */
     suspend fun exists(userId: String, serverName: String): Boolean
+
+    /** Get first available encrypted credentials for a server (any user). For system sync. */
+    suspend fun getFirstEncryptedForServer(serverName: String): String?
 }

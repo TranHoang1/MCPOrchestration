@@ -17,6 +17,7 @@ import org.slf4j.LoggerFactory
  */
 class McpPageFetcher(
     private val serverManager: UpstreamServerManager,
+    private val credentialResolver: com.orchestrator.mcp.credentials.CredentialResolver? = null,
     private val serverName: String = ATLASSIAN_SERVER
 ) : PageFetcher {
 
@@ -46,6 +47,29 @@ class McpPageFetcher(
                 put("limit", maxResults)
                 put("start_at", startAt)
             }
+            // Inject _meta.credentials for multi-user upstream (MTO-111)
+            val meta = resolveCredentialsMeta()
+            if (meta != null) put("_meta", meta)
+        }
+    }
+
+    private fun resolveCredentialsMeta(): JsonObject? {
+        if (credentialResolver == null) return null
+        return try {
+            // Use first admin user's credentials for sync operations
+            val credentials = kotlinx.coroutines.runBlocking {
+                credentialResolver.getFirstAvailableCredentials(serverName)
+            } ?: return null
+            if (credentials.isEmpty()) return null
+            logger.debug("Injecting sync credentials for server={}", serverName)
+            buildJsonObject {
+                putJsonObject("credentials") {
+                    credentials.forEach { (key, value) -> put(key, value) }
+                }
+            }
+        } catch (e: Exception) {
+            logger.warn("Failed to resolve sync credentials: {}", e.message)
+            null
         }
     }
 

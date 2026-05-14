@@ -119,4 +119,9 @@ class UserCredentialServiceImpl(
             return if (value.length <= 4) "****" else "****${value.takeLast(4)}"
         }
     }
+
+    override suspend fun getFirstAvailableForServer(serverName: String): Map<String, String>? {
+        val encrypted = credentialRepo.getFirstEncryptedForServer(serverName) ?: return null
+        return decryptCredentials(serverName, encrypted)
+    }
 }

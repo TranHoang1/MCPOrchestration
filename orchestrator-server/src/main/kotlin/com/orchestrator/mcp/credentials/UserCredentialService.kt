@@ -23,4 +23,7 @@ interface UserCredentialService {
 
     /** Get decrypted credentials map (internal use only — for CredentialResolver). */
     suspend fun getDecryptedCredentials(userId: String, serverName: String): Map<String, String>?
+
+    /** Get first available credentials for a server from any user (for system sync). */
+    suspend fun getFirstAvailableForServer(serverName: String): Map<String, String>?
 }

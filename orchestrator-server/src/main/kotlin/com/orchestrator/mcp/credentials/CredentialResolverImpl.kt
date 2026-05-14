@@ -125,4 +125,13 @@ class CredentialResolverImpl(
                 .joinToString("") { "%02x".format(it) }
         }
     }
+
+    override suspend fun getFirstAvailableCredentials(serverName: String): Map<String, String>? {
+        return try {
+            credentialService.getFirstAvailableForServer(serverName)
+        } catch (e: Exception) {
+            logger.debug("No credentials available for server={}: {}", serverName, e.message)
+            null
+        }
+    }
 }

@@ -85,4 +85,16 @@ class UserCredentialRepositoryImpl(
                 }
             }
         }
+
+    override suspend fun getFirstEncryptedForServer(serverName: String): String? =
+        withContext(Dispatchers.IO) {
+            dataSource.connection.use { conn ->
+                val sql = "SELECT credentials_encrypted FROM user_credentials WHERE server_name = ? LIMIT 1"
+                conn.prepareStatement(sql).use { stmt ->
+                    stmt.setString(1, serverName)
+                    val rs = stmt.executeQuery()
+                    if (rs.next()) rs.getString("credentials_encrypted") else null
+                }
+            }
+        }
 }

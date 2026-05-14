@@ -36,4 +36,11 @@ interface CredentialResolver {
      * @return Map of field_key to plaintext value, or null if none stored
      */
     suspend fun getDecryptedCredentials(userId: String, serverName: String): Map<String, String>?
+
+    /**
+     * Get first available credentials for a server (any user who has them configured).
+     * Used by system-level operations (sync) that don't have a specific user context.
+     * @return Map of field_key to plaintext value, or null if no user has credentials
+     */
+    suspend fun getFirstAvailableCredentials(serverName: String): Map<String, String>?
 }

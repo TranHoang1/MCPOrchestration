@@ -90,14 +90,15 @@ class SyncStateManagerImpl(
             require(synced >= 0) { "Synced count must be non-negative" }
             val sql = """
                 UPDATE jira_sync_state 
-                SET last_offset = ?, synced_issues = ?, updated_at = NOW()
+                SET last_offset = ?, synced_issues = ?, total_issues = ?, updated_at = NOW()
                 WHERE project_key = ? AND status = 'RUNNING'
             """.trimIndent()
             val rows = dataSource.connection.use { conn ->
                 conn.prepareStatement(sql).use { stmt ->
                     stmt.setInt(1, offset)
                     stmt.setInt(2, synced)
-                    stmt.setString(3, projectKey)
+                    stmt.setInt(3, synced) // total = synced (actual count from DB)
+                    stmt.setString(4, projectKey)
                     stmt.executeUpdate()
                 }
             }

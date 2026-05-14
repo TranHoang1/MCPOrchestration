@@ -17,6 +17,7 @@ import org.slf4j.LoggerFactory
  */
 interface BatchUpserter {
     suspend fun upsertBatch(tickets: List<JiraTicketMetadata>): Int
+    suspend fun countByProject(projectKey: String): Int
 }
 
 class BatchUpserterImpl(
@@ -34,6 +35,10 @@ class BatchUpserterImpl(
         buildGraphEdges(tickets)
         logger.debug("Upserted {} tickets for project {}", count, tickets.first().projectKey)
         return count
+    }
+
+    override suspend fun countByProject(projectKey: String): Int {
+        return ticketCacheRepository.countByProject(projectKey)
     }
 
     private suspend fun buildGraphEdges(tickets: List<JiraTicketMetadata>) {

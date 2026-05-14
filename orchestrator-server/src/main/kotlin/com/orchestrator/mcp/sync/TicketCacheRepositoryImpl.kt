@@ -180,6 +180,17 @@ class TicketCacheRepositoryImpl(
         }
     }
 
+    override suspend fun countByProject(projectKey: String): Int = withContext(Dispatchers.IO) {
+        dataSource.connection.use { conn ->
+            val sql = "SELECT COUNT(*) FROM jira_ticket_cache WHERE project_key = ?"
+            conn.prepareStatement(sql).use { stmt ->
+                stmt.setString(1, projectKey)
+                val rs = stmt.executeQuery()
+                if (rs.next()) rs.getInt(1) else 0
+            }
+        }
+    }
+
     companion object {
         private val UPSERT_SQL = """
             INSERT INTO jira_ticket_cache 

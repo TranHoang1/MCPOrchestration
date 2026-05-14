@@ -87,10 +87,13 @@ class ProjectScannerImpl(
                 processPage(firstPage.issues, projectKey, startOffset, syncedCount, skippedCount)
                 fetchRemainingPages(projectKey, jql, startOffset + options.pageSize, totalIssues, options, syncedCount, skippedCount)
 
+                // Update synced count to actual unique tickets in DB (not upsert operations)
+                val actualCount = batchUpserter.countByProject(projectKey)
+                syncStateManager.updateProgress(projectKey, actualCount, actualCount)
                 syncStateManager.markCompleted(projectKey)
-                logger.info("Scan completed for '{}': {} synced, {} skipped", projectKey, syncedCount.get(), skippedCount.get())
+                logger.info("Scan completed for '{}': {} unique tickets in DB", projectKey, actualCount)
 
-                ScanResult(totalIssues, syncedCount.get(), skippedCount.get(), mark.elapsedNow(), scanType, ScanStatus.COMPLETED)
+                ScanResult(actualCount, actualCount, skippedCount.get(), mark.elapsedNow(), scanType, ScanStatus.COMPLETED)
             } catch (e: CancellationException) {
                 ScanResult(0, syncedCount.get(), skippedCount.get(), mark.elapsedNow(), scanType, ScanStatus.CANCELLED)
             } catch (e: Exception) {

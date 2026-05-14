@@ -21,4 +21,6 @@ interface TicketCacheRepository {
     suspend fun findByHash(projectKey: String, hash: String): TicketCache?
 
     suspend fun listProjects(): List<String>
+
+    suspend fun countByProject(projectKey: String): Int
 }

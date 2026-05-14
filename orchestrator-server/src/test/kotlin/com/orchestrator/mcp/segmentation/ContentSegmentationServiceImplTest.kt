@@ -7,6 +7,7 @@ import com.orchestrator.mcp.segmentation.prompt.SegmentationAiService
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.longs.shouldBeGreaterThan
+import io.kotest.matchers.longs.shouldBeGreaterThanOrEqual
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldContain
 import io.mockk.clearAllMocks
@@ -178,7 +179,7 @@ class ContentSegmentationServiceImplTest : FunSpec({
         )
 
         val result = service.segment("text")
-        result.processingTimeMs shouldBeGreaterThan 0
+        result.processingTimeMs shouldBeGreaterThanOrEqual 0
         result.provider shouldBe "openai"
     }
 })

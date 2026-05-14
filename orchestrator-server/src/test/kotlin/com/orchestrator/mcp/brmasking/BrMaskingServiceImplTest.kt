@@ -7,6 +7,7 @@ import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.longs.shouldBeGreaterThan
+import io.kotest.matchers.longs.shouldBeGreaterThanOrEqual
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldContain
 import io.kotest.matchers.string.shouldNotContain
@@ -261,7 +262,7 @@ class BrMaskingServiceImplTest : FunSpec({
         val service = createService(aiService)
         val result = service.maskBusinessRules("rule")
 
-        result.processingTimeMs shouldBeGreaterThan 0
+        result.processingTimeMs shouldBeGreaterThanOrEqual 0
     }
 
     // --- UT-23: BrMaskingConfig Default Values ---

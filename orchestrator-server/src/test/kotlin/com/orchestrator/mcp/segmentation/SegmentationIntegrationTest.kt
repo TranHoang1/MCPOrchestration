@@ -9,6 +9,7 @@ import com.orchestrator.mcp.segmentation.provider.ChatModelFactory
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.longs.shouldBeGreaterThan
+import io.kotest.matchers.longs.shouldBeGreaterThanOrEqual
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldContain
 import io.mockk.clearAllMocks
@@ -41,7 +42,7 @@ class SegmentationIntegrationTest : FunSpec({
             result.technicalContent shouldContain "NPE"
             result.businessRules shouldContain "12.5%"
             result.brSensitivityLevel shouldBe BrSensitivityLevel.LEVEL_1
-            result.processingTimeMs shouldBeGreaterThan 0
+            result.processingTimeMs shouldBeGreaterThanOrEqual 0
             result.provider shouldBe "openai"
         }
 

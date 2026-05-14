@@ -44,7 +44,7 @@ class UserManagementMigration(private val dataSource: DataSource) {
             CREATE TABLE users (
                 id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
                 email VARCHAR(255) NOT NULL UNIQUE,
-                jira_token_encrypted TEXT NOT NULL,
+                jira_token_encrypted TEXT NOT NULL DEFAULT '',
                 role VARCHAR(20) NOT NULL,
                 display_name VARCHAR(100) NOT NULL,
                 created_by UUID REFERENCES users(id),

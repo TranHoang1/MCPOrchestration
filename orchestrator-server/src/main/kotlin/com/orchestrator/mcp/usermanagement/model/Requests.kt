@@ -6,7 +6,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class CreateUserRequest(
     val email: String,
-    val jiraToken: String,
+    val jiraToken: String = "",
     val role: UserRole,
     val displayName: String
 )

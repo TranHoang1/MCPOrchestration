@@ -1,16 +1,29 @@
 /**
  * Shared navigation bar for all MCP Orchestrator pages.
  * Auto-injects a top nav with links based on auth state and user role.
- * Include via: <script src="/static/nav-bar.js"></script>
+ * Include via: <script src="nav-bar.js"></script>
  */
 (function() {
     'use strict';
 
+    const basePath = (function() {
+        const base = document.querySelector('base');
+        if (base) return base.getAttribute('href').replace(/\/$/, '');
+        const path = window.location.pathname;
+        // Detect sub-path: /myapp/static/page.html → basePath = /myapp
+        // Match first occurrence of a known top-level route segment
+        const match = path.match(/^(.*?)(?:\/static\/|\/login|\/profile|\/admin\/|\/sync\/)/);
+        if (match && match[1]) return match[1];
+        return '';
+    })();
+    window.__MCP_BASE = basePath;
+
     const NAV_LINKS = [
-        { href: '/sync/graph-viewer', label: '📊 Graph', auth: true },
-        { href: '/sync/dashboard', label: '🔄 Sync', auth: true },
-        { href: '/profile', label: '👤 Profile', auth: true },
-        { href: '/admin/schemas', label: '⚙️ Admin', auth: true, admin: true }
+        { href: basePath + '/sync/graph-viewer', label: '📊 Graph', auth: true },
+        { href: basePath + '/sync/dashboard', label: '🔄 Sync', auth: true },
+        { href: basePath + '/profile', label: '👤 Profile', auth: true },
+        { href: basePath + '/static/admin-users.html', label: '👥 Users', auth: true, admin: true },
+        { href: basePath + '/admin/schemas', label: '⚙️ Admin', auth: true, admin: true }
     ];
 
     function getAuthState() {
@@ -38,11 +51,11 @@
         const currentPath = getCurrentPath();
 
         // Don't show nav on login page
-        if (currentPath === '/login' || currentPath === '/static/login.html') return;
+        if (currentPath === basePath + '/login' || currentPath === basePath + '/static/login.html') return;
 
         // If not logged in, redirect to login
         if (!state.loggedIn) {
-            window.location.href = '/login';
+            window.location.href = basePath + '/login';
             return;
         }
 
@@ -69,7 +82,7 @@
 
         return `
             <div class="nav-left">
-                <a href="/sync/graph-viewer" class="nav-brand">🔮 MCP Orchestrator</a>
+                <a href="${basePath}/sync/graph-viewer" class="nav-brand">🔮 MCP Orchestrator</a>
                 ${links}
             </div>
             <div class="nav-right">
@@ -145,7 +158,7 @@
                 localStorage.removeItem('auth_token');
                 localStorage.removeItem('token_expires');
                 localStorage.removeItem('user_info');
-                window.location.href = '/login';
+                window.location.href = basePath + '/login';
             });
         }
     }

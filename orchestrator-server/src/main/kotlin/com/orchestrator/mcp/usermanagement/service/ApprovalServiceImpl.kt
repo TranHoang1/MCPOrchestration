@@ -77,6 +77,50 @@ class ApprovalServiceImpl(
         )
     }
 
+    override suspend fun listPendingApprovals(userId: String?, projectKey: String?): List<PendingApproval> {
+        val allEntries = getAllApprovalEntries(projectKey)
+        return buildPendingList(allEntries)
+    }
+
+    private suspend fun getAllApprovalEntries(projectKey: String?): Map<Pair<String, DocumentType>, List<ApprovalLogEntry>> {
+        // Get all entries grouped by (ticketKey, docType)
+        val entries = mutableMapOf<Pair<String, DocumentType>, MutableList<ApprovalLogEntry>>()
+        for (docType in DocumentType.entries) {
+            val found = findEntriesByType(docType, projectKey)
+            found.forEach { entry ->
+                val key = entry.ticketKey to entry.documentType
+                entries.getOrPut(key) { mutableListOf() }.add(entry)
+            }
+        }
+        return entries
+    }
+
+    private suspend fun findEntriesByType(docType: DocumentType, projectKey: String?): List<ApprovalLogEntry> {
+        // Use findPendingSyncEntries as base, then filter
+        // For a proper impl we'd add a repo method, but reuse existing data
+        val allPending = approvalLogRepo.findPendingSyncEntries()
+        return allPending.filter { it.documentType == docType }
+            .filter { projectKey == null || it.ticketKey.startsWith(projectKey) }
+    }
+
+    private suspend fun buildPendingList(
+        grouped: Map<Pair<String, DocumentType>, List<ApprovalLogEntry>>
+    ): List<PendingApproval> {
+        return grouped.mapNotNull { (key, entries) ->
+            val (ticketKey, docType) = key
+            val status = getApprovalStatus(ticketKey, docType)
+            if (status.overallStatus == "pending") {
+                val latest = entries.maxByOrNull { it.createdAt }
+                PendingApproval(
+                    ticketKey = ticketKey,
+                    documentType = docType,
+                    version = latest?.documentVersion ?: 1,
+                    attachedAt = latest?.createdAt ?: ""
+                )
+            } else null
+        }
+    }
+
     private suspend fun executeRejection(request: ApprovalRequest, userId: UUID): ApprovalResult {
         logger.info("Rejecting ${request.documentType} for ${request.ticketKey} by user $userId")
         val entry = approvalLogRepo.insert(

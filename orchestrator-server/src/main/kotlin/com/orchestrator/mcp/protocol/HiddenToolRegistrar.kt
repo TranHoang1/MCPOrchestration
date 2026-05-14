@@ -6,6 +6,7 @@ import com.orchestrator.mcp.registry.ToolRegistry
 import io.modelcontextprotocol.kotlin.sdk.types.CallToolResult
 import io.modelcontextprotocol.kotlin.sdk.types.TextContent
 import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.contentOrNull
 import kotlinx.serialization.json.jsonPrimitive
 import org.slf4j.LoggerFactory
 import java.io.File
@@ -92,9 +93,21 @@ object HiddenToolRegistrar {
                     val handler = koin.get<com.orchestrator.mcp.synctools.StatusToolHandler>()
                     handler.handle(args)
                 }
-                "approve_document", "get_approval_status", "list_pending_approvals" -> {
-                    // User management tools — not yet routed in HTTP mode
-                    CallToolResult(content = listOf(TextContent(text = "User management tools not available in HTTP mode yet")), isError = true)
+                "approve_document" -> {
+                    val tool = koin.get<com.orchestrator.mcp.usermanagement.tools.ApproveDocumentTool>()
+                    val userId = args?.get("user_id")?.jsonPrimitive?.contentOrNull
+                    val result = tool.execute(args ?: JsonObject(emptyMap()), userId)
+                    CallToolResult(content = listOf(TextContent(text = result)))
+                }
+                "get_approval_status" -> {
+                    val tool = koin.get<com.orchestrator.mcp.usermanagement.tools.GetApprovalStatusTool>()
+                    val result = tool.execute(args ?: JsonObject(emptyMap()))
+                    CallToolResult(content = listOf(TextContent(text = result)))
+                }
+                "list_pending_approvals" -> {
+                    val tool = koin.get<com.orchestrator.mcp.usermanagement.tools.ListPendingApprovalsTool>()
+                    val result = tool.execute(args ?: JsonObject(emptyMap()))
+                    CallToolResult(content = listOf(TextContent(text = result)))
                 }
                 else -> CallToolResult(content = listOf(TextContent(text = "Unknown builtin tool: $name")), isError = true)
             }

@@ -121,6 +121,15 @@ class AuthMigration(private val dataSource: DataSource) {
         }
         if (count > 0) return
 
+        // Ensure jira_token_encrypted column exists (may be added by UserManagementMigration)
+        try {
+            conn.createStatement().execute(
+                "ALTER TABLE users ADD COLUMN IF NOT EXISTS jira_token_encrypted TEXT NOT NULL DEFAULT ''"
+            )
+        } catch (e: Exception) {
+            logger.debug("jira_token_encrypted column check: {}", e.message)
+        }
+
         val defaultEmail = System.getenv("ADMIN_EMAIL") ?: "admin@localhost"
         val defaultPassword = System.getenv("ADMIN_PASSWORD") ?: "admin123"
         val defaultName = System.getenv("ADMIN_NAME") ?: "Administrator"
@@ -128,8 +137,8 @@ class AuthMigration(private val dataSource: DataSource) {
             .hashToString(12, defaultPassword.toCharArray())
 
         val sql = """
-            INSERT INTO users (id, email, role, display_name, active, password_hash, auth_mode)
-            VALUES (gen_random_uuid(), ?, 'SYSTEM_OWNER', ?, true, ?, 'local')
+            INSERT INTO users (id, email, role, display_name, active, password_hash, auth_mode, jira_token_encrypted)
+            VALUES (gen_random_uuid(), ?, 'SYSTEM_OWNER', ?, true, ?, 'local', '')
         """.trimIndent()
         conn.prepareStatement(sql).use { stmt ->
             stmt.setString(1, defaultEmail)

@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MCP Orchestrator — First-Time Setup</title>
+    <style>
+        :root {
+            --bg: #1a1a2e; --surface: #16213e; --card: #0f3460;
+            --accent: #e94560; --success: #4caf50; --text: #eaeaea;
+            --muted: #8892b0; --radius: 8px;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg); color: var(--text);
+            min-height: 100vh; display: flex; align-items: center; justify-content: center;
+        }
+        .setup-container { width: 100%; max-width: 480px; padding: 24px; }
+        .setup-card {
+            background: var(--surface); border-radius: var(--radius);
+            padding: 40px 32px; box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+        }
+        .setup-header { text-align: center; margin-bottom: 32px; }
+        .setup-header h1 { font-size: 1.5rem; margin-bottom: 8px; }
+        .setup-header p { color: var(--muted); font-size: 0.9rem; line-height: 1.5; }
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; font-size: 0.85rem; color: var(--muted); margin-bottom: 6px; }
+        .form-group input {
+            width: 100%; padding: 12px 16px; border-radius: var(--radius);
+            border: 1px solid var(--card); background: var(--bg);
+            color: var(--text); font-size: 0.95rem;
+        }
+        .form-group input:focus { outline: none; border-color: var(--accent); }
+        .form-group .hint { font-size: 0.75rem; color: var(--muted); margin-top: 4px; }
+        .btn {
+            width: 100%; padding: 12px; border-radius: var(--radius); border: none;
+            font-size: 0.95rem; font-weight: 600; cursor: pointer;
+            background: var(--accent); color: #fff; transition: opacity 0.2s;
+        }
+        .btn:hover { opacity: 0.9; }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .alert {
+            padding: 12px 16px; border-radius: var(--radius); font-size: 0.85rem;
+            margin-bottom: 20px; display: none;
+        }
+        .alert-error { background: rgba(233,69,96,0.15); border: 1px solid var(--accent); color: var(--accent); }
+        .alert-success { background: rgba(76,175,80,0.15); border: 1px solid var(--success); color: var(--success); }
+        .already-setup { text-align: center; padding: 40px 0; }
+        .already-setup a { color: var(--accent); text-decoration: none; }
+    </style>
+</head>
+<body>
+<div class="setup-container">
+    <div class="setup-card">
+        <div class="setup-header">
+            <h1>🚀 First-Time Setup</h1>
+            <p>Create your administrator account to get started.<br>
+            This page is only available when no users exist in the system.</p>
+        </div>
+
+        <div class="alert alert-error" id="alert-error" role="alert"></div>
+        <div class="alert alert-success" id="alert-success" role="status"></div>
+
+        <div id="setup-form-container">
+            <div class="form-group">
+                <label for="admin-email">Admin Email</label>
+                <input type="email" id="admin-email" placeholder="admin@yourcompany.com" required>
+            </div>
+            <div class="form-group">
+                <label for="admin-name">Display Name</label>
+                <input type="text" id="admin-name" placeholder="Your Name" required>
+            </div>
+            <div class="form-group">
+                <label for="admin-password">Password</label>
+                <input type="password" id="admin-password" placeholder="Choose a strong password" required>
+                <div class="hint">Minimum 6 characters</div>
+            </div>
+            <div class="form-group">
+                <label for="admin-password2">Confirm Password</label>
+                <input type="password" id="admin-password2" placeholder="Repeat password" required>
+            </div>
+            <button class="btn" id="btn-setup" disabled>Create Admin Account</button>
+        </div>
+
+        <div id="already-setup" class="already-setup" style="display:none">
+            <p>✅ System already has users configured.</p>
+            <p><a id="link-login">Go to Login →</a></p>
+        </div>
+    </div>
+</div>
+
+<script>
+(function() {
+    'use strict';
+    const basePath = window.__MCP_BASE || (function() {
+        const path = window.location.pathname;
+        const match = path.match(/^(.*?)(?:\/static\/|\/login|\/profile|\/admin\/|\/sync\/)/);
+        if (match && match[1]) return match[1];
+        return '';
+    })();
+
+    function init() {
+        checkIfSetupNeeded();
+        bindEvents();
+    }
+
+    function checkIfSetupNeeded() {
+        // Set login link href dynamically
+        var loginLink = document.getElementById('link-login');
+        if (loginLink) loginLink.href = basePath + '/login';
+
+        fetch(basePath + '/api/auth/setup-status')
+            .then(r => r.json())
+            .then(data => {
+                if (data.hasUsers) {
+                    document.getElementById('setup-form-container').style.display = 'none';
+                    document.getElementById('already-setup').style.display = 'block';
+                }
+            })
+            .catch(() => {});
+    }
+
+    function bindEvents() {
+        var inputs = ['admin-email', 'admin-name', 'admin-password', 'admin-password2'];
+        inputs.forEach(function(id) {
+            document.getElementById(id).addEventListener('input', updateBtn);
+        });
+        document.getElementById('btn-setup').addEventListener('click', doSetup);
+    }
+
+    function updateBtn() {
+        var email = document.getElementById('admin-email').value.trim();
+        var name = document.getElementById('admin-name').value.trim();
+        var pw = document.getElementById('admin-password').value;
+        var pw2 = document.getElementById('admin-password2').value;
+        document.getElementById('btn-setup').disabled = !(email && name && pw.length >= 6 && pw === pw2);
+    }
+
+    function doSetup() {
+        var email = document.getElementById('admin-email').value.trim();
+        var name = document.getElementById('admin-name').value.trim();
+        var password = document.getElementById('admin-password').value;
+
+        document.getElementById('btn-setup').disabled = true;
+        document.getElementById('btn-setup').textContent = 'Creating...';
+
+        fetch(basePath + '/api/auth/setup', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email: email, displayName: name, password: password })
+        })
+        .then(function(r) { return r.json().then(function(d) { return { ok: r.ok, data: d }; }); })
+        .then(function(res) {
+            if (!res.ok) throw new Error(res.data.error || res.data.message || 'Setup failed');
+            showSuccess('Admin account created! Redirecting to login...');
+            setTimeout(function() { window.location.href = basePath + '/login'; }, 2000);
+        })
+        .catch(function(err) {
+            showError(err.message);
+            document.getElementById('btn-setup').disabled = false;
+            document.getElementById('btn-setup').textContent = 'Create Admin Account';
+        });
+    }
+
+    function showError(msg) {
+        var el = document.getElementById('alert-error');
+        el.textContent = msg; el.style.display = 'block';
+        document.getElementById('alert-success').style.display = 'none';
+    }
+    function showSuccess(msg) {
+        var el = document.getElementById('alert-success');
+        el.textContent = msg; el.style.display = 'block';
+        document.getElementById('alert-error').style.display = 'none';
+    }
+
+    document.addEventListener('DOMContentLoaded', init);
+})();
+</script>
+</body>
+</html>

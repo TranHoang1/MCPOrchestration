@@ -52,10 +52,16 @@ class UserRepositoryImpl(
     override suspend fun findByEmail(email: String): User? = withContext(Dispatchers.IO) {
         dataSource.connection.use { conn ->
             val sql = "SELECT id, email, role, display_name, active, created_by, created_at, updated_at FROM users WHERE email = ?"
-            conn.prepareStatement(sql).use { stmt ->
-                stmt.setString(1, email)
-                val rs = stmt.executeQuery()
-                if (rs.next()) mapRowToUser(rs) else null
+            try {
+                conn.prepareStatement(sql).use { stmt ->
+                    stmt.setString(1, email)
+                    val rs = stmt.executeQuery()
+                    if (rs.next()) mapRowToUser(rs) else null
+                }
+            } catch (e: Exception) {
+                org.slf4j.LoggerFactory.getLogger(javaClass)
+                    .error("findByEmail('{}') SQL error: {}", email, e.message)
+                null
             }
         }
     }
@@ -144,5 +150,32 @@ class UserRepositoryImpl(
             createdAt = rs.getString("created_at") ?: "",
             updatedAt = rs.getString("updated_at") ?: ""
         )
+    }
+
+    override suspend fun countAll(): Int = withContext(Dispatchers.IO) {
+        dataSource.connection.use { conn ->
+            conn.createStatement().use { stmt ->
+                val rs = stmt.executeQuery("SELECT COUNT(*) FROM users")
+                rs.next(); rs.getInt(1)
+            }
+        }
+    }
+
+    override suspend fun createWithPassword(
+        email: String, displayName: String, role: String, passwordHash: String
+    ): Unit = withContext(Dispatchers.IO) {
+        dataSource.connection.use { conn ->
+            val sql = """
+                INSERT INTO users (id, email, role, display_name, active, password_hash, auth_mode)
+                VALUES (gen_random_uuid(), ?, ?, ?, true, ?, 'local')
+            """.trimIndent()
+            conn.prepareStatement(sql).use { stmt ->
+                stmt.setString(1, email)
+                stmt.setString(2, role)
+                stmt.setString(3, displayName)
+                stmt.setString(4, passwordHash)
+                stmt.executeUpdate()
+            }
+        }
     }
 }

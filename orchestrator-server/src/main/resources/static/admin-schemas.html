@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MCP Orchestrator — Credential Schemas</title>
-    <script src="/static/nav-bar.js"></script>
+    <script>(function(){var s=document.createElement("script");var p=window.location.pathname;var m=p.match(/^(.*?)\/(?:static\/|login|profile|admin\/|sync\/|nav-bar)/);s.src=(m&&m[1]?m[1]:"")+"/static/nav-bar.js";document.head.appendChild(s);})()</script>
     <style>
         :root {
             --bg: #1a1a2e;
@@ -178,9 +178,11 @@
     let currentServer = null;
     let fields = [];
 
+    const basePath = window.__MCP_BASE || '';
+
     function init() {
         authToken = localStorage.getItem('auth_token');
-        if (!authToken) { window.location.href = '/static/login.html'; return; }
+        if (!authToken) { window.location.href = basePath + '/login'; return; }
         loadServers();
         bindEvents();
     }
@@ -192,8 +194,8 @@
     function authFetch(url, opts) {
         opts = opts || {};
         opts.headers = Object.assign(getHeaders(), opts.headers || {});
-        return fetch(url, opts).then(r => {
-            if (r.status === 401) { localStorage.removeItem('auth_token'); window.location.href = '/static/login.html'; }
+        return fetch(basePath + url, opts).then(r => {
+            if (r.status === 401) { localStorage.removeItem('auth_token'); window.location.href = basePath + '/login'; }
             return r;
         });
     }
@@ -369,7 +371,7 @@
         document.getElementById('btn-add-field').addEventListener('click', addField);
         document.getElementById('btn-save-schema').addEventListener('click', saveSchema);
         document.getElementById('btn-back').addEventListener('click', () => {
-            window.location.href = '/static/profile.html';
+            window.location.href = basePath + '/profile';
         });
     }
 

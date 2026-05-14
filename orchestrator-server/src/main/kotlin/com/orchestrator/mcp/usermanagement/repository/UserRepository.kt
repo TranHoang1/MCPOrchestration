@@ -21,4 +21,6 @@ interface UserRepository {
     suspend fun setActive(id: UUID, active: Boolean): User?
     suspend fun countByRole(role: UserRole, activeOnly: Boolean = true): Int
     suspend fun getEncryptedToken(userId: UUID): String?
+    suspend fun countAll(): Int
+    suspend fun createWithPassword(email: String, displayName: String, role: String, passwordHash: String)
 }

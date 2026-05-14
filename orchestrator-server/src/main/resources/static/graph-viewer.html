@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MCP Orchestrator — 3D Graph Viewer</title>
-    <script src="/static/nav-bar.js"></script>
+    <script>(function(){var s=document.createElement("script");var p=window.location.pathname;var m=p.match(/^(.*?)\/(?:static\/|login|profile|admin\/|sync\/|nav-bar)/);s.src=(m&&m[1]?m[1]:"")+"/static/nav-bar.js";document.head.appendChild(s);})()</script>
     <script src="https://unpkg.com/three@0.149.0/build/three.min.js"></script>
     <script src="https://unpkg.com/three-spritetext@1.8.2/dist/three-spritetext.min.js"></script>
     <script src="https://unpkg.com/3d-force-graph@1.73.3/dist/3d-force-graph.min.js"></script>
@@ -288,6 +288,7 @@
 (function() {
     'use strict';
 
+    var basePath = window.__MCP_BASE || '';
     var LABEL_MAX_CHARS = 30;
     var graph = null;
     var graphData = { nodes: [], edges: [] };
@@ -362,7 +363,7 @@
     };
 
     function loadProjects() {
-        fetch('/sync/projects')
+        fetch(basePath + '/sync/projects')
             .then(function(r) { if (r.ok) return r.json(); throw new Error('Failed'); })
             .then(function(projects) {
                 var datalist = document.getElementById('project-list');
@@ -488,7 +489,7 @@
         localStorage.setItem('graph-project', project);
         showLoading(true);
 
-        fetch('/sync/graph/' + project + '?view=' + view)
+        fetch(basePath + '/sync/graph/' + project + '?view=' + view)
             .then(function(r) { if (r.ok) return r.json(); throw new Error('HTTP ' + r.status); })
             .then(function(data) {
                 showLoading(false);
@@ -554,7 +555,7 @@
             var project = document.getElementById('project-select').value.trim();
             if (!project) return;
             var view = document.getElementById('view-select').value;
-            fetch('/sync/graph/' + project + '?view=' + view)
+            fetch(basePath + '/sync/graph/' + project + '?view=' + view)
                 .then(function(r) { if (r.ok) return r.json(); return null; })
                 .then(function(data) {
                     if (!data) return;

@@ -66,3 +66,10 @@ data class AuthErrorResponse(
     val error: String,
     val message: String
 )
+
+@Serializable
+data class SetupRequest(
+    val email: String,
+    val displayName: String,
+    val password: String
+)

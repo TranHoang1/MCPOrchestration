@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MCP Orchestrator — User Management</title>
+    <script>(function(){var s=document.createElement("script");var p=window.location.pathname;var m=p.match(/^(.*?)\/(?:static\/|login|profile|admin\/|sync\/|nav-bar)/);s.src=(m&&m[1]?m[1]:"")+"/static/nav-bar.js";document.head.appendChild(s);})()</script>
+    <style>
+        :root {
+            --bg: #1a1a2e;
+            --surface: #16213e;
+            --card: #0f3460;
+            --accent: #e94560;
+            --success: #4caf50;
+            --warning: #ff9800;
+            --text: #eaeaea;
+            --muted: #8892b0;
+            --radius: 8px;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+        }
+        .page { max-width: 1000px; margin: 0 auto; padding: 24px; }
+        .top-bar {
+            display: flex; align-items: center; justify-content: space-between;
+            margin-bottom: 24px; flex-wrap: wrap; gap: 12px;
+        }
+        .top-bar h1 { font-size: 1.4rem; }
+        .btn {
+            padding: 8px 16px; border-radius: var(--radius); border: none;
+            font-size: 0.85rem; font-weight: 600; cursor: pointer; transition: opacity 0.2s;
+        }
+        .btn:hover { opacity: 0.85; }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .btn-accent { background: var(--accent); color: #fff; }
+        .btn-success { background: var(--success); color: #fff; }
+        .btn-muted { background: var(--card); color: var(--text); border: 1px solid var(--muted); }
+        .btn-danger { background: #c62828; color: #fff; }
+        .btn-sm { padding: 6px 12px; font-size: 0.8rem; }
+        .section {
+            background: var(--surface); border-radius: var(--radius);
+            padding: 24px; margin-bottom: 20px;
+        }
+        .section h2 { font-size: 1.1rem; margin-bottom: 16px; }
+        .user-table {
+            width: 100%; border-collapse: collapse; font-size: 0.9rem;
+        }
+        .user-table th {
+            text-align: left; padding: 10px 12px; background: var(--card);
+            color: var(--muted); font-size: 0.8rem; text-transform: uppercase;
+        }
+        .user-table td {
+            padding: 10px 12px; border-bottom: 1px solid var(--card); vertical-align: middle;
+        }
+        .user-table tr:last-child td { border-bottom: none; }
+        .badge {
+            display: inline-block; padding: 2px 8px; border-radius: 4px;
+            font-size: 0.75rem; font-weight: 600;
+        }
+        .badge-active { background: rgba(76,175,80,0.2); color: var(--success); }
+        .badge-inactive { background: rgba(233,69,96,0.2); color: var(--accent); }
+        .badge-role { background: rgba(15,52,96,0.8); color: var(--muted); }
+        .form-row { display: flex; gap: 12px; margin-bottom: 12px; flex-wrap: wrap; }
+        .form-group { display: flex; flex-direction: column; flex: 1; min-width: 180px; }
+        .form-group label { font-size: 0.8rem; color: var(--muted); margin-bottom: 4px; }
+        .form-group input, .form-group select {
+            padding: 8px 12px; border-radius: 4px; border: 1px solid var(--card);
+            background: var(--bg); color: var(--text); font-size: 0.85rem;
+        }
+        .form-group input:focus, .form-group select:focus {
+            outline: none; border-color: var(--accent);
+        }
+        .alert {
+            padding: 10px 14px; border-radius: var(--radius); font-size: 0.85rem;
+            margin-bottom: 16px; display: none;
+        }
+        .alert-success { background: rgba(76,175,80,0.15); border: 1px solid var(--success); color: var(--success); }
+        .alert-error { background: rgba(233,69,96,0.15); border: 1px solid var(--accent); color: var(--accent); }
+        .alert.visible { display: block; }
+        .empty-state { text-align: center; padding: 40px; color: var(--muted); font-size: 0.9rem; }
+        .actions-cell { display: flex; gap: 6px; }
+    </style>
+</head>
+<body>
+<div class="page">
+    <div class="top-bar">
+        <h1>👥 User Management</h1>
+        <button class="btn btn-accent" id="btn-show-create">+ New User</button>
+    </div>
+
+    <div class="alert alert-success" id="alert-success" role="status" aria-live="polite"></div>
+    <div class="alert alert-error" id="alert-error" role="alert" aria-live="polite"></div>
+
+    <!-- Create User Form (hidden by default) -->
+    <section class="section" id="create-section" style="display:none">
+        <h2>Create User</h2>
+        <div class="form-row">
+            <div class="form-group">
+                <label for="new-email">Email</label>
+                <input type="email" id="new-email" placeholder="user@example.com">
+            </div>
+            <div class="form-group">
+                <label for="new-name">Display Name</label>
+                <input type="text" id="new-name" placeholder="John Doe">
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label for="new-role">Role</label>
+                <select id="new-role">
+                    <option value="DEVELOPER">Developer</option>
+                    <option value="BA">Business Analyst</option>
+                    <option value="QA">QA Engineer</option>
+                    <option value="LEADER">Leader</option>
+                    <option value="SYSTEM_OWNER">System Owner</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="new-token">Jira Token <span style="color:var(--muted);font-size:0.75rem">(optional — can add later)</span></label>
+                <input type="password" id="new-token" placeholder="Jira API token (optional)">
+            </div>
+        </div>
+        <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:12px">
+            <button class="btn btn-muted btn-sm" id="btn-cancel-create">Cancel</button>
+            <button class="btn btn-success" id="btn-create-user">Create</button>
+        </div>
+    </section>
+
+    <!-- User List -->
+    <section class="section" id="users-section">
+        <h2>Users</h2>
+        <div id="users-container"><div class="empty-state">Loading...</div></div>
+    </section>
+
+    <!-- Pending Approvals -->
+    <section class="section" id="approvals-section">
+        <h2>📋 Pending Approvals</h2>
+        <div id="approvals-container"><div class="empty-state">Loading...</div></div>
+    </section>
+</div>
+
+<script>
+(function() {
+    'use strict';
+    let authToken = null;
+
+    const basePath = window.__MCP_BASE || '';
+
+    function init() {
+        authToken = localStorage.getItem('auth_token');
+        if (!authToken) { window.location.href = basePath + '/login'; return; }
+        bindEvents();
+        loadUsers();
+        loadPendingApprovals();
+    }
+
+    function authFetch(url, opts) {
+        opts = opts || {};
+        opts.headers = Object.assign({
+            'Authorization': 'Bearer ' + authToken,
+            'Content-Type': 'application/json'
+        }, opts.headers || {});
+        return fetch(basePath + url, opts).then(r => {
+            if (r.status === 401) { localStorage.removeItem('auth_token'); window.location.href = basePath + '/login'; }
+            return r;
+        });
+    }
+
+    function bindEvents() {
+        document.getElementById('btn-show-create').addEventListener('click', () => {
+            document.getElementById('create-section').style.display = 'block';
+        });
+        document.getElementById('btn-cancel-create').addEventListener('click', () => {
+            document.getElementById('create-section').style.display = 'none';
+        });
+        document.getElementById('btn-create-user').addEventListener('click', createUser);
+    }
+
+    function loadUsers() {
+        authFetch('/admin/users')
+            .then(r => { if (r.ok) return r.json(); throw new Error('Failed to load users'); })
+            .then(users => renderUsers(users))
+            .catch(err => showError(err.message));
+    }
+
+    function renderUsers(users) {
+        const container = document.getElementById('users-container');
+        if (!users || users.length === 0) {
+            container.innerHTML = '<div class="empty-state">No users found.</div>';
+            return;
+        }
+        let html = '<table class="user-table" role="grid"><thead><tr>';
+        html += '<th>Name</th><th>Email</th><th>Role</th><th>Active</th><th>Actions</th>';
+        html += '</tr></thead><tbody>';
+        users.forEach(u => { html += buildUserRow(u); });
+        html += '</tbody></table>';
+        container.innerHTML = html;
+        bindUserActions();
+    }
+
+    function buildUserRow(user) {
+        const statusBadge = user.active
+            ? '<span class="badge badge-active">Active</span>'
+            : '<span class="badge badge-inactive">Inactive</span>';
+        const roleBadge = '<span class="badge badge-role">' + (user.role || 'N/A') + '</span>';
+        return '<tr data-id="' + user.id + '">' +
+            '<td>' + escHtml(user.displayName || '') + '</td>' +
+            '<td>' + escHtml(user.email || '') + '</td>' +
+            '<td>' + roleBadge + '</td>' +
+            '<td>' + statusBadge + '</td>' +
+            '<td class="actions-cell">' +
+                '<button class="btn btn-muted btn-sm btn-edit" data-id="' + user.id + '">Edit</button>' +
+                (user.active ? '<button class="btn btn-danger btn-sm btn-deactivate" data-id="' + user.id + '">Deactivate</button>' : '') +
+            '</td></tr>';
+    }
+
+    function bindUserActions() {
+        document.querySelectorAll('.btn-edit').forEach(btn => {
+            btn.addEventListener('click', e => editUser(e.target.dataset.id));
+        });
+        document.querySelectorAll('.btn-deactivate').forEach(btn => {
+            btn.addEventListener('click', e => deactivateUser(e.target.dataset.id));
+        });
+    }
+
+    function createUser() {
+        const email = document.getElementById('new-email').value.trim();
+        const displayName = document.getElementById('new-name').value.trim();
+        const role = document.getElementById('new-role').value;
+        const jiraToken = document.getElementById('new-token').value.trim();
+        if (!email || !displayName) { showError('Email and display name are required.'); return; }
+
+        authFetch('/admin/users', {
+            method: 'POST',
+            body: JSON.stringify({ email, displayName, role, jiraToken })
+        })
+        .then(r => { if (r.ok || r.status === 201) return r.json(); return r.json().then(e => { throw new Error(e.error || 'Create failed'); }); })
+        .then(() => { showSuccess('User created'); document.getElementById('create-section').style.display = 'none'; loadUsers(); })
+        .catch(err => showError(err.message));
+    }
+
+    function editUser(userId) {
+        const newName = prompt('Enter new display name:');
+        if (!newName) return;
+        authFetch('/admin/users/' + userId, {
+            method: 'PUT',
+            body: JSON.stringify({ displayName: newName })
+        })
+        .then(r => { if (r.ok) return r.json(); throw new Error('Update failed'); })
+        .then(() => { showSuccess('User updated'); loadUsers(); })
+        .catch(err => showError(err.message));
+    }
+
+    function deactivateUser(userId) {
+        if (!confirm('Deactivate this user?')) return;
+        authFetch('/admin/users/' + userId, { method: 'DELETE' })
+            .then(r => { if (r.ok) return r.json(); throw new Error('Deactivation failed'); })
+            .then(() => { showSuccess('User deactivated'); loadUsers(); })
+            .catch(err => showError(err.message));
+    }
+
+    function loadPendingApprovals() {
+        authFetch('/mcp', {
+            method: 'POST',
+            body: JSON.stringify({
+                jsonrpc: '2.0', id: 1, method: 'tools/call',
+                params: { name: 'list_pending_approvals', arguments: {} }
+            })
+        })
+        .then(r => r.json())
+        .then(data => {
+            const content = data?.result?.content?.[0]?.text;
+            if (content) renderApprovals(JSON.parse(content));
+            else renderApprovals([]);
+        })
+        .catch(() => renderApprovals([]));
+    }
+
+    function renderApprovals(approvals) {
+        const container = document.getElementById('approvals-container');
+        if (!approvals || approvals.length === 0) {
+            container.innerHTML = '<div class="empty-state">No pending approvals.</div>';
+            return;
+        }
+        let html = '<table class="user-table"><thead><tr><th>Ticket</th><th>Document</th><th>Version</th><th>Date</th></tr></thead><tbody>';
+        approvals.forEach(a => {
+            html += '<tr><td>' + escHtml(a.ticketKey) + '</td><td>' + escHtml(a.documentType) + '</td>' +
+                '<td>v' + a.version + '</td><td>' + escHtml(a.attachedAt || '') + '</td></tr>';
+        });
+        html += '</tbody></table>';
+        container.innerHTML = html;
+    }
+
+    function escHtml(str) { const d = document.createElement('div'); d.textContent = str; return d.innerHTML; }
+
+    function showSuccess(msg) {
+        const el = document.getElementById('alert-success');
+        el.textContent = msg; el.classList.add('visible');
+        setTimeout(() => el.classList.remove('visible'), 4000);
+    }
+    function showError(msg) {
+        const el = document.getElementById('alert-error');
+        el.textContent = msg; el.classList.add('visible');
+        setTimeout(() => el.classList.remove('visible'), 5000);
+    }
+
+    document.addEventListener('DOMContentLoaded', init);
+})();
+</script>
+</body>
+</html>

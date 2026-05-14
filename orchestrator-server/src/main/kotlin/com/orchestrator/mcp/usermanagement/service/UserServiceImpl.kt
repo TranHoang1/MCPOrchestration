@@ -16,11 +16,13 @@ class UserServiceImpl(
     override suspend fun createUser(request: CreateUserRequest, adminId: UUID): User {
         validateCreateRequest(request)
         checkEmailUniqueness(request.email)
-        val encryptedToken = encryptionService.encrypt(request.jiraToken)
+        val encryptedToken = if (request.jiraToken.isNotBlank()) {
+            encryptionService.encrypt(request.jiraToken)
+        } else null
         logger.info("Creating user: email=${request.email}, role=${request.role}")
         return userRepository.create(
             email = request.email,
-            encryptedToken = encryptedToken,
+            encryptedToken = encryptedToken ?: "",
             role = request.role,
             displayName = request.displayName,
             createdBy = adminId
@@ -66,7 +68,6 @@ class UserServiceImpl(
         require(request.email.contains("@")) { "Invalid email format" }
         require(request.email.length <= 255) { "Email too long" }
         require(request.displayName.length in 2..100) { "Display name must be 2-100 characters" }
-        require(request.jiraToken.isNotBlank()) { "Jira token cannot be blank" }
     }
 
     private fun validateUpdateRequest(request: UpdateUserRequest) {

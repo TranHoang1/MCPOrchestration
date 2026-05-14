@@ -217,6 +217,10 @@ suspend fun CoroutineScope.startHttpStreamableServer(
     server.createContext("/admin/schemas") { exchange ->
         serveResource(exchange, "static/admin-schemas.html")
     }
+    // Serve nav-bar.js from root so alias routes can load it via relative path
+    server.createContext("/nav-bar.js") { exchange ->
+        serveResource(exchange, "static/nav-bar.js")
+    }
 
     server.start()
     httpLogger.info(
@@ -495,4 +499,13 @@ private fun runUserManagementStartup() {
     }
 
     httpLogger.info("User Management startup complete")
+
+    // Start Jira approval sync background job
+    try {
+        val syncJob = org.koin.java.KoinJavaComponent.getKoin()
+            .get<com.orchestrator.mcp.usermanagement.service.ApprovalJiraSyncJob>()
+        syncJob.start()
+    } catch (e: Exception) {
+        httpLogger.warn("Approval Jira sync job failed to start: ${e.message}")
+    }
 }

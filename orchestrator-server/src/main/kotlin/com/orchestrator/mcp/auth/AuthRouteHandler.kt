@@ -7,6 +7,7 @@ import com.orchestrator.mcp.auth.model.LoginResponse
 import com.orchestrator.mcp.auth.model.BridgeTokenRequest
 import com.orchestrator.mcp.auth.model.BridgeTokenResponse
 import com.orchestrator.mcp.auth.model.RefreshResponse
+import com.orchestrator.mcp.auth.model.SetupRequest
 import com.sun.net.httpserver.HttpExchange
 import kotlinx.serialization.json.Json
 import org.slf4j.LoggerFactory
@@ -39,6 +40,8 @@ class AuthRouteHandler(
             path == "/login" && exchange.requestMethod == "POST" -> doLogin(exchange)
             path == "/bridge-token" && exchange.requestMethod == "POST" -> doBridgeToken(exchange)
             path == "/refresh" && exchange.requestMethod == "POST" -> doRefresh(exchange)
+            path == "/setup-status" && exchange.requestMethod == "GET" -> doSetupStatus(exchange)
+            path == "/setup" && exchange.requestMethod == "POST" -> doSetup(exchange)
             else -> sendError(exchange, 404, "NOT_FOUND", "Not found")
         }
     }
@@ -62,6 +65,23 @@ class AuthRouteHandler(
         val headers = extractHeaders(exchange)
         val response = loginHandler.refresh(headers)
         sendJson(exchange, 200, json.encodeToString(RefreshResponse.serializer(), response))
+    }
+
+    private fun doSetupStatus(exchange: HttpExchange) {
+        val hasUsers = kotlinx.coroutines.runBlocking { loginHandler.hasAnyUsers() }
+        sendJson(exchange, 200, """{"hasUsers":$hasUsers}""")
+    }
+
+    private fun doSetup(exchange: HttpExchange) {
+        val hasUsers = kotlinx.coroutines.runBlocking { loginHandler.hasAnyUsers() }
+        if (hasUsers) {
+            sendError(exchange, 403, "SETUP_COMPLETE", "Setup already completed. Use login instead.")
+            return
+        }
+        val body = exchange.requestBody.bufferedReader().use { it.readText() }
+        val request = json.decodeFromString<SetupRequest>(body)
+        kotlinx.coroutines.runBlocking { loginHandler.setupFirstAdmin(request) }
+        sendJson(exchange, 201, """{"success":true,"message":"Admin account created"}""")
     }
 
     private fun extractHeaders(exchange: HttpExchange): Map<String, String> =

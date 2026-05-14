@@ -15,6 +15,8 @@ import com.orchestrator.mcp.usermanagement.routes.AdminRoutes
 import com.orchestrator.mcp.usermanagement.service.*
 import com.orchestrator.mcp.usermanagement.tools.ApproveDocumentTool
 import com.orchestrator.mcp.usermanagement.tools.GetApprovalStatusTool
+import com.orchestrator.mcp.usermanagement.tools.ListPendingApprovalsTool
+import org.koin.core.qualifier.named
 import org.koin.dsl.module
 
 /**
@@ -43,6 +45,10 @@ val userManagementModule = module {
     single<UserService> { UserServiceImpl(get(), get()) }
     single<PermissionService> { PermissionServiceImpl(get(), get(), get()) }
     single<ApprovalService> { ApprovalServiceImpl(get(), get(), get()) }
+    single<JiraCommentPoster> { JiraCommentPosterImpl(get(named("jiraHttpClient")), get()) }
+
+    // Background Jobs
+    single { ApprovalJiraSyncJob(get(), get(), get()) }
 
     // Auth Middleware
     single {
@@ -63,4 +69,5 @@ val userManagementModule = module {
     // MCP Tool Handlers
     single { ApproveDocumentTool(get()) }
     single { GetApprovalStatusTool(get()) }
+    single { ListPendingApprovalsTool(get()) }
 }

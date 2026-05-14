@@ -38,7 +38,9 @@ class AdminRoutes(
     }
 
     private suspend fun route(exchange: HttpExchange, method: String, path: String) {
-        val headers = exchange.requestHeaders.entries.associate { (k, v) -> k to (v.firstOrNull() ?: "") }
+        val headers = exchange.requestHeaders.entries.associate { (k, v) ->
+            k.lowercase() to (v.firstOrNull() ?: "")
+        }
         val adminId = authMiddleware.validateAdmin(headers)
         val parts = path.split("/").filter { it.isNotBlank() }
 

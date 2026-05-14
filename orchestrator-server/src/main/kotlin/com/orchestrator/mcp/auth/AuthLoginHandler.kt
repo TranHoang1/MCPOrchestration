@@ -6,8 +6,10 @@ import com.orchestrator.mcp.auth.model.BridgeTokenResponse
 import com.orchestrator.mcp.auth.model.LoginRequest
 import com.orchestrator.mcp.auth.model.LoginResponse
 import com.orchestrator.mcp.auth.model.RefreshResponse
+import com.orchestrator.mcp.auth.model.SetupRequest
 import com.orchestrator.mcp.auth.model.UserInfo
 import com.orchestrator.mcp.usermanagement.repository.UserRepository
+import at.favre.lib.crypto.bcrypt.BCrypt
 import org.slf4j.LoggerFactory
 import java.time.Instant
 import java.time.temporal.ChronoUnit
@@ -73,5 +75,27 @@ class AuthLoginHandler(
         val newToken = jwtAuthService.createSessionToken(claims.userId, claims.email, claims.roles)
         val expiresAt = Instant.now().plus(config.sessionExpiryHours.toLong(), ChronoUnit.HOURS)
         return RefreshResponse(token = newToken, expires_at = expiresAt.toString())
+    }
+
+    /** Check if any users exist in the system (for setup wizard). */
+    suspend fun hasAnyUsers(): Boolean {
+        return userRepository.countAll() > 0
+    }
+
+    /** Create the first admin user (only works when DB is empty). */
+    suspend fun setupFirstAdmin(request: SetupRequest) {
+        require(request.email.contains("@")) { "Invalid email" }
+        require(request.password.length >= 6) { "Password must be at least 6 characters" }
+        require(request.displayName.length in 2..100) { "Name must be 2-100 characters" }
+
+        val passwordHash = BCrypt.withDefaults()
+            .hashToString(12, request.password.toCharArray())
+        userRepository.createWithPassword(
+            email = request.email,
+            displayName = request.displayName,
+            role = "SYSTEM_OWNER",
+            passwordHash = passwordHash
+        )
+        logger.info("First admin created via setup wizard: {}", request.email)
     }
 }

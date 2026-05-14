@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MCP Orchestrator — Sync Dashboard</title>
-    <script src="/static/nav-bar.js"></script>
+    <script>(function(){var s=document.createElement("script");var p=window.location.pathname;var m=p.match(/^(.*?)\/(?:static\/|login|profile|admin\/|sync\/|nav-bar)/);s.src=(m&&m[1]?m[1]:"")+"/static/nav-bar.js";document.head.appendChild(s);})()</script>
     <style>
         :root {
             --bg: #1a1a2e;
@@ -189,6 +189,7 @@
 (function() {
     'use strict';
 
+    const basePath = window.__MCP_BASE || '';
     const state = { ws: null, pollInterval: null };
 
     function init() {
@@ -199,7 +200,7 @@
     }
 
     function connectWebSocket() {
-        state.ws = new EventSource('/sync/live');
+        state.ws = new EventSource(basePath + '/sync/live');
         state.ws.onopen = () => setWsStatus(true);
         state.ws.onerror = () => { setWsStatus(false); state.ws.close(); setTimeout(connectWebSocket, 3000); };
         state.ws.onmessage = (e) => handleEvent(JSON.parse(e.data));
@@ -263,7 +264,7 @@
         document.getElementById('btn-start').onclick = () => {
             const key = document.getElementById('project-input').value.trim();
             if (!key) return;
-            fetch('/sync/start', {
+            fetch(basePath + '/sync/start', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ projectKey: key, fullSync: false })
@@ -272,7 +273,7 @@
         document.getElementById('btn-stop').onclick = () => {
             const key = document.getElementById('project-input').value.trim();
             if (!key) return;
-            fetch('/sync/stop', {
+            fetch(basePath + '/sync/stop', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ projectKey: key })
@@ -283,7 +284,7 @@
     function pollStatus() {
         const key = document.getElementById('project-input').value.trim();
         if (!key) return;
-        fetch(`/sync/status/${key}`)
+        fetch(basePath + `/sync/status/${key}`)
             .then(r => { if (r.ok) return r.json(); throw new Error('Not found'); })
             .then(data => {
                 document.getElementById('val-status').textContent = data.status;

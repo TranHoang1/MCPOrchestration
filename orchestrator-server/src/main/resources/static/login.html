@@ -152,6 +152,7 @@
     </style>
 </head>
 <body>
+<script>(function(){var s=document.createElement("script");var p=window.location.pathname;var m=p.match(/^(.*?)\/(?:static\/|login|profile|admin\/|sync\/|nav-bar)/);s.src=(m&&m[1]?m[1]:"")+"/static/nav-bar.js";document.head.appendChild(s);})()</script>
 <div class="login-container">
     <div class="login-card">
         <div class="login-header">
@@ -204,6 +205,8 @@
 (function() {
     'use strict';
 
+    const basePath = window.__MCP_BASE || '';
+
     const els = {
         form: document.getElementById('login-form'),
         username: document.getElementById('username'),
@@ -226,12 +229,12 @@
     function checkExistingToken() {
         const token = localStorage.getItem('auth_token');
         if (token) {
-            window.location.href = '/static/profile.html';
+            window.location.href = basePath + '/profile';
         }
     }
 
     function checkSsoAvailability() {
-        fetch('/api/admin/sso/config')
+        fetch(basePath + '/api/admin/sso/config')
             .then(r => { if (r.ok) return r.json(); throw new Error(); })
             .then(data => {
                 if (data && data.enabled) {
@@ -271,7 +274,7 @@
             password: els.password.value
         });
 
-        fetch('/api/auth/login', {
+        fetch(basePath + '/api/auth/login', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: body
@@ -286,7 +289,7 @@
             if (data.user) {
                 localStorage.setItem('user_info', JSON.stringify(data.user));
             }
-            window.location.href = '/static/profile.html';
+            window.location.href = basePath + '/profile';
         })
         .catch(err => {
             showError(err.message);
@@ -298,7 +301,7 @@
     }
 
     function handleSsoLogin() {
-        window.location.href = '/api/auth/sso/authorize';
+        window.location.href = basePath + '/api/auth/sso/authorize';
     }
 
     function showError(message) {

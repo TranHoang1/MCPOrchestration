@@ -7,4 +7,5 @@ interface ApprovalService {
     suspend fun approveDocument(request: ApprovalRequest): ApprovalResult
     suspend fun rejectDocument(request: ApprovalRequest): ApprovalResult
     suspend fun getApprovalStatus(ticketKey: String, docType: DocumentType): ApprovalStatus
+    suspend fun listPendingApprovals(userId: String?, projectKey: String?): List<PendingApproval>
 }

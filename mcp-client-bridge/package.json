@@ -1,6 +1,6 @@
 {
   "name": "mcp-orchestrator-bridge",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "description": "MCP Orchestrator Bridge — connects AI agents to MCP Orchestrator Server via HTTP Streamable transport. Semantic tool discovery, dynamic execution, health check, auto-reconnect.",
   "main": "dist/index.js",
   "bin": {

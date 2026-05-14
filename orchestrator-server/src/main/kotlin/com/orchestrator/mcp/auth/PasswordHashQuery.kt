@@ -19,7 +19,7 @@ object PasswordHashQuery {
     }
 
     private fun queryHash(dataSource: DataSource, userId: String): String? {
-        val sql = "SELECT password_hash FROM users WHERE id = ?"
+        val sql = "SELECT password_hash FROM users WHERE id = ?::uuid"
         return try {
             dataSource.connection.use { conn ->
                 conn.prepareStatement(sql).use { stmt ->

@@ -290,6 +290,20 @@
 
     var basePath = window.__MCP_BASE || '';
     var LABEL_MAX_CHARS = 30;
+
+    // Authenticated fetch — adds JWT token from localStorage
+    function authFetch(url, options) {
+        var token = localStorage.getItem('auth_token');
+        if (!token) { window.location.href = basePath + '/login'; return Promise.reject('No token'); }
+        var opts = options || {};
+        opts.headers = opts.headers || {};
+        opts.headers['Authorization'] = 'Bearer ' + token;
+        return fetch(url, opts).then(function(r) {
+            if (r.status === 401) { localStorage.removeItem('auth_token'); window.location.href = basePath + '/login'; }
+            return r;
+        });
+    }
+
     var graph = null;
     var graphData = { nodes: [], edges: [] };
     var activeFilters = { status: [], priority: [], type: [] };
@@ -363,7 +377,7 @@
     };
 
     function loadProjects() {
-        fetch(basePath + '/sync/projects')
+        authFetch(basePath + '/sync/projects')
             .then(function(r) { if (r.ok) return r.json(); throw new Error('Failed'); })
             .then(function(projects) {
                 var datalist = document.getElementById('project-list');
@@ -489,7 +503,7 @@
         localStorage.setItem('graph-project', project);
         showLoading(true);
 
-        fetch(basePath + '/sync/graph/' + project + '?view=' + view)
+        authFetch(basePath + '/sync/graph/' + project + '?view=' + view)
             .then(function(r) { if (r.ok) return r.json(); throw new Error('HTTP ' + r.status); })
             .then(function(data) {
                 showLoading(false);
@@ -555,7 +569,7 @@
             var project = document.getElementById('project-select').value.trim();
             if (!project) return;
             var view = document.getElementById('view-select').value;
-            fetch(basePath + '/sync/graph/' + project + '?view=' + view)
+            authFetch(basePath + '/sync/graph/' + project + '?view=' + view)
                 .then(function(r) { if (r.ok) return r.json(); return null; })
                 .then(function(data) {
                     if (!data) return;

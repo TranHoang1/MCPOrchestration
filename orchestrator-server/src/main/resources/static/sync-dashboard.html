@@ -190,6 +190,19 @@
     'use strict';
 
     const basePath = window.__MCP_BASE || '';
+
+    // Authenticated fetch — adds JWT token from localStorage
+    function authFetch(url, options) {
+        const token = localStorage.getItem('auth_token');
+        if (!token) { window.location.href = basePath + '/login'; return Promise.reject('No token'); }
+        const opts = options || {};
+        opts.headers = Object.assign({ 'Authorization': 'Bearer ' + token }, opts.headers || {});
+        return fetch(url, opts).then(r => {
+            if (r.status === 401) { localStorage.removeItem('auth_token'); window.location.href = basePath + '/login'; }
+            return r;
+        });
+    }
+
     const state = { ws: null, pollInterval: null };
 
     function init() {
@@ -264,7 +277,7 @@
         document.getElementById('btn-start').onclick = () => {
             const key = document.getElementById('project-input').value.trim();
             if (!key) return;
-            fetch(basePath + '/sync/start', {
+            authFetch(basePath + '/sync/start', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ projectKey: key, fullSync: false })
@@ -273,7 +286,7 @@
         document.getElementById('btn-stop').onclick = () => {
             const key = document.getElementById('project-input').value.trim();
             if (!key) return;
-            fetch(basePath + '/sync/stop', {
+            authFetch(basePath + '/sync/stop', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ projectKey: key })
@@ -284,7 +297,7 @@
     function pollStatus() {
         const key = document.getElementById('project-input').value.trim();
         if (!key) return;
-        fetch(basePath + `/sync/status/${key}`)
+        authFetch(basePath + `/sync/status/${key}`)
             .then(r => { if (r.ok) return r.json(); throw new Error('Not found'); })
             .then(data => {
                 document.getElementById('val-status').textContent = data.status;

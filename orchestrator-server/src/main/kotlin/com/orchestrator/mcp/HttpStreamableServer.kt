@@ -16,6 +16,7 @@ import com.orchestrator.mcp.server.addSecurityHeaders
 import com.orchestrator.mcp.server.authenticatedContext
 import com.orchestrator.mcp.server.authenticatedPageContext
 import com.orchestrator.mcp.server.handleCorsPreflightIfNeeded
+import com.orchestrator.mcp.server.registerSyncDashboardRoutes
 import com.sun.net.httpserver.HttpServer
 import com.sun.net.httpserver.HttpExchange
 import kotlinx.coroutines.CoroutineScope
@@ -149,6 +150,15 @@ suspend fun CoroutineScope.startHttpStreamableServer(
             handleProjectsRequest(exchange, ticketCacheRepo)
         }
         httpLogger.info("Projects API registered: /sync/projects (authenticated)")
+    }
+
+    // Sync Dashboard API endpoints (MTO-83) — protected by auth (MTO-109)
+    val dashboardService = org.koin.java.KoinJavaComponent.getKoin()
+        .getOrNull<com.orchestrator.mcp.dashboard.SyncDashboardService>()
+    val eventBus = org.koin.java.KoinJavaComponent.getKoin()
+        .getOrNull<com.orchestrator.mcp.dashboard.SyncEventBus>()
+    if (dashboardService != null && eventBus != null) {
+        registerSyncDashboardRoutes(server, authMiddleware, dashboardService, eventBus)
     }
 
     // Admin API endpoints (MTO-39: User Management)

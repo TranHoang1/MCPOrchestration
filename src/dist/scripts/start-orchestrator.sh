@@ -20,9 +20,13 @@ if [[ ! -f "$ENV_FILE" ]]; then
 fi
 
 if [[ -f "$ENV_FILE" ]]; then
+    # Strip Windows CRLF if present
+    ENV_CLEAN=$(mktemp)
+    sed 's/\r$//' "$ENV_FILE" > "$ENV_CLEAN"
     set -a
-    source "$ENV_FILE"
+    source "$ENV_CLEAN"
     set +a
+    rm -f "$ENV_CLEAN"
     echo "[orchestrator] Loaded environment from .env"
 fi
 
@@ -72,4 +76,4 @@ echo "[orchestrator] Config:    ${CONFIG_FILE}"
 echo "[orchestrator] ──────────────────────────────────────"
 
 # === Start server ===
-exec java -jar "${SCRIPT_DIR}/mcp-orchestrator-all.jar" --config "${CONFIG_FILE}"
+exec java -jar "${SCRIPT_DIR}/mcp-orchestrator-all.jar" "--config=${CONFIG_FILE}"

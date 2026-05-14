@@ -85,4 +85,4 @@ Write-Host "[orchestrator] ─────────────────�
 
 # === Start server ===
 $JarPath = Join-Path $ScriptDir "mcp-orchestrator-all.jar"
-java -jar $JarPath --config $ConfigFile
+java -jar $JarPath "--config=$ConfigFile"

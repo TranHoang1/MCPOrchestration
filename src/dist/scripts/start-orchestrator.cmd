@@ -98,4 +98,4 @@ echo [orchestrator] Config:    %CONFIG_FILE%
 echo [orchestrator] ──────────────────────────────────────
 
 REM === Start server ===
-java -jar "%~dp0mcp-orchestrator-all.jar" --config "%CONFIG_FILE%"
+java -jar "%~dp0mcp-orchestrator-all.jar" "--config=%CONFIG_FILE%"

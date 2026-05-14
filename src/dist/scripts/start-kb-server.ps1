@@ -96,4 +96,4 @@ Write-Host "[kb-server] ──────────────────�
 
 # === Start server ===
 $JarPath = Join-Path $ScriptDir "kb-server-all.jar"
-java -jar $JarPath --config $ConfigFile
+java -jar $JarPath "--config=$ConfigFile"

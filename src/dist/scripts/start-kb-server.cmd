@@ -109,4 +109,4 @@ echo [kb-server] Config:     %CONFIG_FILE%
 echo [kb-server] ──────────────────────────────────────
 
 REM === Start server ===
-java -jar "%~dp0kb-server-all.jar" --config "%CONFIG_FILE%"
+java -jar "%~dp0kb-server-all.jar" "--config=%CONFIG_FILE%"

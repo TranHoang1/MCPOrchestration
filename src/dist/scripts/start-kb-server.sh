@@ -20,9 +20,13 @@ if [[ ! -f "$ENV_FILE" ]]; then
 fi
 
 if [[ -f "$ENV_FILE" ]]; then
+    # Strip Windows CRLF if present
+    ENV_CLEAN=$(mktemp)
+    sed 's/\r$//' "$ENV_FILE" > "$ENV_CLEAN"
     set -a
-    source "$ENV_FILE"
+    source "$ENV_CLEAN"
     set +a
+    rm -f "$ENV_CLEAN"
     echo "[kb-server] Loaded environment from .env"
 fi
 
@@ -84,4 +88,4 @@ echo "[kb-server] Config:     ${CONFIG_FILE}"
 echo "[kb-server] ──────────────────────────────────────"
 
 # === Start server ===
-exec java -jar "${SCRIPT_DIR}/kb-server-all.jar" --config "${CONFIG_FILE}"
+exec java -jar "${SCRIPT_DIR}/kb-server-all.jar" "--config=${CONFIG_FILE}"

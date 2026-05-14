@@ -86,11 +86,69 @@ Start scripts accept CLI args that override env vars:
 | Error | Cause | Fix |
 |-------|-------|-----|
 | `Connection refused :5432` | PostgreSQL not running | Start PostgreSQL service |
-| `relation does not exist` | Database not initialized | Server auto-creates tables on first start |
+| `Flyway migration failed` | Migration script error or checksum mismatch | Check logs for details; see Database Migration section below |
 | `Embedding service unavailable` | Ollama not running | Start Ollama: `ollama serve` |
 | `Required config 'kb.database.url' is empty` | Missing DB_URL env var | Set DB_URL or DB_HOST+DB_PORT+DB_NAME in .env |
 | `java: command not found` | Java not installed | Install Java 21 |
 | Port already in use | Another instance running | Change port via `--port` or kill existing process |
+
+## Database Migration (Flyway)
+
+Database schema is managed by **Flyway**. Migrations run automatically on application startup — no manual steps needed for normal operation.
+
+### How it works
+
+1. On first start with an **empty database**: Flyway creates all tables from scratch
+2. On first start with an **existing database** (pre-Flyway): Flyway baselines at version 0, then applies any pending migrations
+3. On subsequent starts: Flyway checks for pending migrations and applies them (typically a no-op)
+
+### Migration scripts location
+
+```
+orchestrator-server/src/main/resources/db/migration/   ← Orchestrator DB
+orchestrator-client/src/main/resources/db/migration/   ← Client/Bridge DB
+kb-server/src/main/resources/db/migration/             ← KB Server DB
+```
+
+### Checking migration status
+
+```bash
+# Show applied and pending migrations
+./gradlew :orchestrator-server:flywayInfo
+./gradlew :kb-server:flywayInfo
+./gradlew :orchestrator-client:flywayInfo
+```
+
+### Rolling back a migration
+
+Flyway Community Edition does not support `flyway undo`. Use the custom rollback task:
+
+```bash
+# Rollback a specific version (e.g., V301)
+./gradlew :orchestrator-server:flywayUndo -PundoVersion=301
+
+# Verify rollback
+./gradlew :orchestrator-server:flywayInfo
+```
+
+Rollback scripts (`U{version}__*.sql`) are located alongside forward migrations.
+
+### Upgrading from pre-Flyway versions
+
+If upgrading from a version that used `DatabaseInitializer` (v1.3.0 or earlier):
+
+1. **No action needed** — Flyway detects existing tables and baselines automatically
+2. All migration scripts use `CREATE TABLE IF NOT EXISTS` for safety
+3. The `flyway_schema_history` table is created automatically on first startup
+
+### Troubleshooting migrations
+
+| Issue | Solution |
+|-------|----------|
+| `Validate failed: Migrations have been applied out of order` | Set `flyway.outOfOrder=true` temporarily or re-baseline |
+| `Checksum mismatch` on existing migration | A committed migration was modified — revert the change or run `flyway repair` |
+| Migration fails mid-way | Fix the SQL, delete the failed entry from `flyway_schema_history`, restart |
+| `relation already exists` (without IF NOT EXISTS) | Migration script missing `IF NOT EXISTS` — fix and re-run |
 
 ## Architecture
 

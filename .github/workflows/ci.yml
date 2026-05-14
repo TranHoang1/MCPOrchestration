@@ -48,6 +48,13 @@ jobs:
           chmod +x ./gradlew
           ./gradlew build -x test
 
+      - name: Validate Flyway migrations
+        run: ./gradlew :orchestrator-server:processResources :kb-server:processResources :orchestrator-client:processResources
+        env:
+          DB_URL: jdbc:postgresql://localhost:5432/mcp_test
+          DB_USER: postgres
+          DB_PASSWORD: postgres
+
       - name: Run tests
         run: ./gradlew test
         env:

@@ -12,6 +12,10 @@ dependencies {
     // YAML parsing
     implementation(libs.kaml)
 
+    // Database migration
+    api(libs.flyway.core)
+    api(libs.flyway.postgresql)
+
     // Logging
     implementation(libs.logback.classic)
 

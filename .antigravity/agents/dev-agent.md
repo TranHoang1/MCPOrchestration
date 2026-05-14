@@ -27,7 +27,14 @@ Scan workspace để hiểu Build system (Gradle/Maven), Ngôn ngữ (Kotlin/Jav
 Liệt kê các file sẽ tạo/sửa đổi theo thứ tự: DB → Entity → Repository → Service → Controller → Tests.
 
 ### Bước 3: Database Implementation
-Tạo migration scripts (Flyway/Liquibase) và các lớp Entity/DAO dựa trên TDD Section 4.
+Tạo Flyway migration scripts trong `src/main/resources/db/migration/` dựa trên TDD Section 4.
+- **⛔ KHÔNG ĐƯỢC** viết `CREATE TABLE` trong Kotlin code (companion object, initializer class, etc.)
+- **PHẢI** tạo file `.sql` theo convention: `V{version}__{description}.sql`
+- **PHẢI** tạo rollback: `U{version}__{description}.sql`
+- **PHẢI** verify: `./gradlew flywayInfo` → confirm pending migrations
+- **PHẢI** test: `./gradlew flywayMigrate` trên empty DB
+- Nếu TDD Section 4.3 không có migration plan → **DỪNG LẠI**, báo SM yêu cầu SA bổ sung
+- Xem chi tiết: `steering/database-migration-rule.md`
 
 ### Bước 4: Service Layer Implementation
 Cài đặt Service interfaces và classes. Implement logic nghiệp vụ, validation và error handling (FSD error codes).

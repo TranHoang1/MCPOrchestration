@@ -1,7 +1,6 @@
 package com.orchestrator.mcp.usermanagement.di
 
 import com.orchestrator.mcp.usermanagement.config.UserManagementConfig
-import com.orchestrator.mcp.usermanagement.migration.UserManagementMigration
 import com.orchestrator.mcp.usermanagement.repository.ApprovalLogRepository
 import com.orchestrator.mcp.usermanagement.repository.ApprovalLogRepositoryImpl
 import com.orchestrator.mcp.usermanagement.repository.RolePermissionRepository
@@ -29,7 +28,7 @@ val userManagementModule = module {
     single { UserManagementConfig() }
 
     // Migration
-    single { UserManagementMigration(get()) }
+    single { com.orchestrator.mcp.auth.AdminSeeder(get()) }
 
     // Repositories
     single<UserRepository> { UserRepositoryImpl(get()) }

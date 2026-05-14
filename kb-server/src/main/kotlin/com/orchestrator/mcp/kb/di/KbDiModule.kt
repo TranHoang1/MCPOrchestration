@@ -20,7 +20,6 @@ import com.orchestrator.mcp.kb.queue.handler.SyncTaskHandler
 import com.orchestrator.mcp.kb.queue.repository.QueueTaskRepository
 import com.orchestrator.mcp.kb.queue.repository.QueueTaskRepositoryImpl
 import com.orchestrator.mcp.kb.store.database.DatabaseFactory
-import com.orchestrator.mcp.kb.store.database.KbDatabaseInitializer
 import com.orchestrator.mcp.kb.store.encryption.EncryptionService
 import com.orchestrator.mcp.kb.store.encryption.EncryptionServiceImpl
 import com.orchestrator.mcp.kb.store.repository.KbEntryRepository
@@ -86,7 +85,6 @@ fun kbConfigModule(config: KbConfig) = module {
 /** Infrastructure: DataSource, HttpClient, EmbeddingService, KbVectorClient */
 fun kbInfraModule() = module {
     single<HikariDataSource> { DatabaseFactory.createDataSource(get()) }
-    single { KbDatabaseInitializer(get()) }
     single {
         HttpClient(CIO) {
             install(ContentNegotiation) {

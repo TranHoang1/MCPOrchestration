@@ -122,7 +122,6 @@ fun appModule(configPath: String? = null) = module {
     single<ToolFilterService> { ToolFilterServiceImpl() }
     single<ToolManagementService> { ToolManagementServiceImpl(get(), get(), get()) }
     single<ConfigDbSyncService> { ConfigDbSyncServiceImpl(get(), get()) }
-    single { DatabaseInitializer(get()) }
 
     // Registry
     single<ToolRegistry> { ToolRegistryImpl() }
@@ -221,10 +220,8 @@ fun appModule(configPath: String? = null) = module {
             get<FileProxyConfig>(), get(), get(), get()
         )
     }
-    single { FileProxyMigration(get()) }
 
     // Jira Sync Module
-    single { JiraSyncDatabaseInitializer(get()) }
     single<SyncStateManager> { SyncStateManagerImpl(get()) }
     single<TicketCacheRepository> { TicketCacheRepositoryImpl(get()) }
     single<TicketGraphRepository> { TicketGraphRepositoryImpl(get()) }

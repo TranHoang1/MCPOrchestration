@@ -111,13 +111,7 @@ class TokenEncryptionServiceImpl(
     }
 
     private fun ensureSystemConfigTable(conn: java.sql.Connection) {
-        val sql = """
-            CREATE TABLE IF NOT EXISTS system_config (
-                config_key TEXT PRIMARY KEY,
-                config_value TEXT NOT NULL,
-                created_at TEXT DEFAULT to_char(NOW(), 'YYYY-MM-DD"T"HH24:MI:SS"Z"')
-            )
-        """.trimIndent()
-        conn.createStatement().use { it.execute(sql) }
+        // Table created by Flyway V300__usermgmt_tables.sql (MTO-108)
+        // No-op: kept for backward compatibility with pre-Flyway deployments
     }
 }

@@ -8,8 +8,9 @@ import com.orchestrator.mcp.kb.protocol.KbToolHandler
 import com.orchestrator.mcp.kb.queue.CrashRecoveryService
 import com.orchestrator.mcp.kb.queue.QueueWatchdog
 import com.orchestrator.mcp.kb.queue.QueueWorker
-import com.orchestrator.mcp.kb.store.database.KbDatabaseInitializer
+import com.orchestrator.mcp.core.migration.FlywayMigrationRunner
 import com.orchestrator.mcp.kb.transport.KbHttpTransport
+import com.zaxxer.hikari.HikariDataSource
 import io.modelcontextprotocol.kotlin.sdk.server.StdioServerTransport
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
@@ -32,8 +33,8 @@ class KbApplication {
         val koinApp = startKoin { modules(kbAppModule(config)) }
         val koin = koinApp.koin
 
-        // Initialize database schema (idempotent)
-        initializeDatabase(koin.get())
+        // Initialize database schema via Flyway (MTO-108)
+        initializeDatabase(koin.get<HikariDataSource>())
 
         // Crash recovery before worker starts (BR-17)
         startQueueSystem(koin)
@@ -49,11 +50,12 @@ class KbApplication {
         }
     }
 
-    private fun initializeDatabase(initializer: KbDatabaseInitializer) {
+    private fun initializeDatabase(dataSource: HikariDataSource) {
         try {
-            runBlocking { initializer.initialize() }
+            FlywayMigrationRunner.migrate(dataSource)
         } catch (e: Exception) {
-            logger.warn("DB init skipped (may not be available): {}", e.message)
+            logger.error("FATAL: KB database migration failed", e)
+            throw e
         }
     }
 

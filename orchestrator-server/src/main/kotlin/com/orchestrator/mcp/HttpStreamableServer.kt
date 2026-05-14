@@ -456,46 +456,25 @@ private fun registerUserManagementTools(toolRegistry: ToolRegistry) {
 }
 
 /**
- * Run User Management startup tasks: migration + permission seeding.
+ * Run User Management startup tasks: permission seeding + admin seeding.
+ * Note: Schema migration is handled by Flyway (MTO-108). No DDL here.
  */
 private fun runUserManagementStartup() {
     try {
-        val migration = org.koin.java.KoinJavaComponent.getKoin()
-            .get<com.orchestrator.mcp.usermanagement.migration.UserManagementMigration>()
-        migration.migrate()
-
         val permissionService = org.koin.java.KoinJavaComponent.getKoin()
             .get<com.orchestrator.mcp.usermanagement.service.PermissionService>()
         kotlinx.coroutines.runBlocking { permissionService.seedIfEmpty() }
     } catch (e: Exception) {
-        httpLogger.warn("User Management migration failed (non-critical): ${e.message}")
+        httpLogger.warn("Permission seeding failed (non-critical): ${e.message}")
     }
 
-    // Auth module migration (MTO-95) — independent try-catch
+    // Seed default admin user if users table is empty (MTO-95)
     try {
-        val authMigration = org.koin.java.KoinJavaComponent.getKoin()
-            .getOrNull<com.orchestrator.mcp.auth.AuthMigration>()
-        authMigration?.migrate()
+        val adminSeeder = org.koin.java.KoinJavaComponent.getKoin()
+            .getOrNull<com.orchestrator.mcp.auth.AdminSeeder>()
+        adminSeeder?.seedIfEmpty()
     } catch (e: Exception) {
-        httpLogger.warn("Auth migration failed: ${e.message}")
-    }
-
-    // SSO module migration (MTO-101) — independent try-catch
-    try {
-        val ssoMigration = org.koin.java.KoinJavaComponent.getKoin()
-            .getOrNull<com.orchestrator.mcp.auth.sso.SsoMigration>()
-        ssoMigration?.migrate()
-    } catch (e: Exception) {
-        httpLogger.warn("SSO migration failed: ${e.message}")
-    }
-
-    // Credential module migration (MTO-96) — independent try-catch
-    try {
-        val credentialMigration = org.koin.java.KoinJavaComponent.getKoin()
-            .getOrNull<com.orchestrator.mcp.credentials.CredentialMigration>()
-        credentialMigration?.migrate()
-    } catch (e: Exception) {
-        httpLogger.warn("Credential migration failed: ${e.message}")
+        httpLogger.warn("Admin seeding failed: ${e.message}")
     }
 
     httpLogger.info("User Management startup complete")

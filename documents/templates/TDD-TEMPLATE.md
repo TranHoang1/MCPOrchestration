@@ -220,11 +220,36 @@ CREATE TABLE {table_name} (
 CREATE INDEX {idx_name} ON {table_name} ({column1}, {column2});
 ```
 
-### 4.3 Migration Plan
+### 4.3 Migration Plan (MANDATORY — Flyway)
 
-| Order | Script | Description | Estimated Time | Rollback |
-|-------|--------|-------------|----------------|----------|
-| 1 | {V1__create_table.sql} | {Description} | {time} | {V1__rollback.sql} |
+> ⛔ **Rule**: Mọi database change PHẢI có Flyway migration script. KHÔNG ĐƯỢC viết DDL trong application code.
+> Xem chi tiết: `steering/database-migration-rule.md`
+
+#### Migration Scripts
+
+| Order | Script | Description | Estimated Time | Rollback Script |
+|-------|--------|-------------|----------------|-----------------|
+| 1 | `V{N}__{description}.sql` | {Description} | {time} | `U{N}__{description}.sql` |
+
+#### Migration Script Location
+
+```
+{module}/src/main/resources/db/migration/
+├── V{N}__{description}.sql
+└── U{N}__{description}.sql (rollback)
+```
+
+#### Backward Compatibility Assessment
+
+| Change | Type | Risk | Multi-step Required? |
+|--------|------|------|---------------------|
+| {describe change} | Additive / Breaking | Low / Medium / High | Yes / No |
+
+#### Rollback Strategy
+
+- **Automated**: `flyway undo` (requires Flyway Teams) or manual `U{N}__` scripts
+- **Data preservation**: {describe how data is preserved during rollback}
+- **Downtime estimate**: {estimate}
 
 ### 4.4 Query Patterns
 

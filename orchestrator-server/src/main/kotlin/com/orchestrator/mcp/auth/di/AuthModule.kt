@@ -3,7 +3,7 @@ package com.orchestrator.mcp.auth.di
 import com.orchestrator.mcp.auth.AuthConfig
 import com.orchestrator.mcp.auth.AuthLoginHandler
 import com.orchestrator.mcp.auth.AuthMiddleware
-import com.orchestrator.mcp.auth.AuthMigration
+import com.orchestrator.mcp.auth.AdminSeeder
 import com.orchestrator.mcp.auth.AuthRouteHandler
 import com.orchestrator.mcp.auth.BridgeTokenRepository
 import com.orchestrator.mcp.auth.BridgeTokenRepositoryImpl
@@ -27,7 +27,7 @@ val authModule = module {
     single { AuthMiddleware(get(), get(), get(), get()) }
     single { AuthLoginHandler(get(), get(), get(), get(), get(), get()) }
     single { AuthRouteHandler(get(), get()) }
-    single { AuthMigration(get()) }
+    single { AdminSeeder(get()) }
 
     // SSO components (MTO-101)
     single { SsoPkceManager() }
@@ -35,5 +35,4 @@ val authModule = module {
     single<SsoConfigRepository> { SsoConfigRepositoryImpl(get()) }
     single<SsoService> { SsoServiceImpl(get(), get(), get(), get(), get(), get()) }
     single { SsoRoutes(get(), get()) }
-    single { SsoMigration(get()) }
 }

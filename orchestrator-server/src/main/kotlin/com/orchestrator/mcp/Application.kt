@@ -3,9 +3,7 @@ package com.orchestrator.mcp
 import com.orchestrator.mcp.core.config.OrchestratorConfig
 import com.orchestrator.mcp.di.appModule
 import com.orchestrator.mcp.fileproxy.FileProxyCleanupService
-import com.orchestrator.mcp.fileproxy.FileProxyMigration
 import com.orchestrator.mcp.fileproxy.FileProxyService
-import com.orchestrator.mcp.sync.JiraSyncDatabaseInitializer
 import com.orchestrator.mcp.protocol.HiddenToolRegistrar
 import com.orchestrator.mcp.protocol.McpServerFactory
 import com.orchestrator.mcp.client.upstream.HealthMonitor
@@ -60,34 +58,19 @@ fun realMain(args: Array<String>) = runBlocking {
     val serverManager = koin.get<UpstreamServerManager>()
     val healthMonitor = koin.get<HealthMonitor>()
     val dbSyncService = koin.get<com.orchestrator.mcp.config.ConfigDbSyncService>()
-    val dbInitializer = koin.get<com.orchestrator.mcp.client.vectordb.DatabaseInitializer>()
     val toolIndexer = koin.get<ToolIndexer>()
     val vectorDbClient = koin.get<VectorDbClient>()
     val fileProxyService = koin.get<FileProxyService>()
-    val fileProxyMigration = koin.get<FileProxyMigration>()
     val fileProxyCleanup = koin.get<FileProxyCleanupService>()
     val fileProxySessionId = koin.get<UUID>(named("fileProxySessionId"))
-    val jiraSyncDbInitializer = koin.get<JiraSyncDatabaseInitializer>()
 
-    // Initialize DB schema
+    // Run Flyway database migration (BEFORE any repository access)
     try {
-        dbInitializer.initialize()
+        val dataSource = koin.get<com.zaxxer.hikari.HikariDataSource>()
+        com.orchestrator.mcp.core.migration.FlywayMigrationRunner.migrate(dataSource)
     } catch (e: Exception) {
-        logger.error("Critical: Database schema initialization failed: ${e.message}")
-    }
-
-    // Initialize Jira Sync DB schema
-    try {
-        jiraSyncDbInitializer.initialize()
-    } catch (e: Exception) {
-        logger.error("Jira sync schema initialization failed: ${e.message}")
-    }
-
-    // Initialize File Proxy DB schema
-    try {
-        fileProxyMigration.migrate()
-    } catch (e: Exception) {
-        logger.error("File proxy migration failed: ${e.message}")
+        logger.error("FATAL: Database migration failed — application cannot start", e)
+        throw e
     }
 
     // Initialize Vector DB collection

@@ -26,6 +26,7 @@ kaml = "0.77.0"
 # Database
 postgresql = "42.7.5"
 hikaricp = "5.1.0"
+flyway = "10.22.0"
 
 # Testing
 junit = "5.11.4"
@@ -76,6 +77,8 @@ kaml = { module = "com.charleskorn.kaml:kaml", version.ref = "kaml" }
 # Database
 postgresql = { module = "org.postgresql:postgresql", version.ref = "postgresql" }
 hikaricp = { module = "com.zaxxer:HikariCP", version.ref = "hikaricp" }
+flyway-core = { module = "org.flywaydb:flyway-core", version.ref = "flyway" }
+flyway-postgresql = { module = "org.flywaydb:flyway-database-postgresql", version.ref = "flyway" }
 
 # Testing
 junit-jupiter = { module = "org.junit.jupiter:junit-jupiter", version.ref = "junit" }

@@ -29,7 +29,16 @@ Khi được SM gọi để review và enrich FSD:
 5. **Bổ sung Integration Specifications**: Đặc tả các điểm kết nối với hệ thống bên ngoài (Auth, Retry, Error Handling).
 6. **Bổ sung Pseudocode**: Cho các logic nghiệp vụ phức tạp.
 7. **Review Data Model**: Đảm bảo nhất quán với codebase hiện tại.
-8. **Bổ sung Non-Functional Requirements**: Định lượng các chỉ số (Response time, Throughput).
+8. **Validate Database Migration Strategy (MANDATORY)**: Nếu FSD có data model changes → PHẢI verify có migration plan. Xem `steering/database-migration-rule.md`.
+9. **Bổ sung Non-Functional Requirements**: Định lượng các chỉ số (Response time, Throughput).
+
+### ⛔ Database Change Validation — MANDATORY
+Khi review FSD có bất kỳ thay đổi data model nào:
+1. **PHẢI flag** nếu FSD thiếu migration strategy section
+2. **PHẢI đề xuất** migration approach: additive (safe) vs breaking (multi-step)
+3. **PHẢI verify** FK dependencies giữa tables mới và existing tables
+4. **PHẢI kiểm tra** backward compatibility — version N-1 có thể đọc DB sau migration không?
+5. Nếu FSD chỉ mô tả "thêm table X" mà không nói migration → **DỪNG LẠI**, yêu cầu BA bổ sung hoặc tự thêm section migration vào FSD
 
 ## Quy trình thực hiện (Kiro Legacy)
 

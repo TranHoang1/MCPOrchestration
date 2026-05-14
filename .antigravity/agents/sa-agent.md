@@ -37,7 +37,17 @@ Xây dựng các thành phần:
 - **System Architecture**: Mô hình component, deployment, giao tiếp (REST/Async).
 - **API Design**: Endpoint, Request/Response body (JSON), HTTP status codes.
 - **Database Design**: DDL scripts, Index strategy, Query patterns (EXPLAIN analysis).
+- **Database Migration Plan (MANDATORY)**: Flyway migration scripts, rollback scripts, version numbering. Xem `steering/database-migration-rule.md`.
 - **Class/Module Design**: Package structure, DI style, Error handling strategy.
+
+### ⛔ Database Migration — MANDATORY cho mọi TDD có database changes
+Khi TDD Section 4 có bất kỳ thay đổi database nào (new table, alter column, new index):
+1. **PHẢI** specify Flyway migration script names (e.g., `V10__create_users.sql`)
+2. **PHẢI** có rollback script tương ứng (e.g., `U10__create_users.sql`)
+3. **PHẢI** xác định version range theo module (xem steering rule)
+4. **PHẢI** phân loại: additive (safe) vs breaking (cần multi-step)
+5. **KHÔNG ĐƯỢC** thiết kế DDL chạy trực tiếp từ application code
+6. Nếu feature cần breaking change → PHẢI có multi-step migration plan (add → migrate → drop)
 
 ### Bước 3: Thiết kế E2E Test Architecture
 **CRITICAL**: Định nghĩa kiến trúc cho E2E-API và E2E-UI tests. Chỉ rõ các common steps có thể tái sử dụng để Developer implement hiệu quả.

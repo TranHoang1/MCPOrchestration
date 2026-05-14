@@ -25,6 +25,25 @@ Scan workspace để hiểu Containerization (Dockerfile), CI/CD (Jenkins/GitLab
 ### Bước 2: Tạo Deployment Guide (DPG)
 Xây dựng tài liệu hướng dẫn triển khai từng bước: Prerequisites, DB Migration, Application Deploy, Configuration, Verification, và Rollback Plan.
 
+### ⛔ Database Migration trong Deployment — MANDATORY
+Mọi DPG có database changes PHẢI include:
+1. **Pre-deploy**: `flyway info` — verify current schema version
+2. **Migration**: `flyway migrate` — apply pending migrations
+3. **Verify**: `flyway info` — confirm all migrations applied
+4. **Rollback procedure**: `flyway undo` hoặc manual rollback scripts
+5. **Backup**: Database backup TRƯỚC khi migrate (pg_dump)
+6. Xem chi tiết: `steering/database-migration-rule.md`
+
+Deployment order bắt buộc:
+```
+1. Backup database (pg_dump)
+2. Run Flyway migrate
+3. Verify migration success (flyway info)
+4. Deploy application
+5. Health check + smoke test
+6. If fail → rollback app → flyway undo → restore backup
+```
+
 ### Bước 3: Tạo Release Notes (RLN)
 Tổng hợp các thay đổi từ BRD và TDD để viết bản tin phát hành cho người dùng và kỹ thuật.
 

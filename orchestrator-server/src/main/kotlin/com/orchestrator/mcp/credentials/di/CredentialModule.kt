@@ -11,7 +11,6 @@ val credentialModule = module {
     single<CredentialSchemaRepository> { CredentialSchemaRepositoryImpl(get()) }
     single<CredentialSchemaService> { CredentialSchemaServiceImpl(get()) }
     single { CredentialSchemaRoutes(get(), get()) }
-    single { CredentialMigration(get()) }
 
     // MTO-97: User Credential CRUD (profile)
     single<UserCredentialRepository> { UserCredentialRepositoryImpl(get()) }

@@ -241,6 +241,7 @@ SM: BÁO CÁO TỔNG KẾT
    - Đọc `logs/sa-agent.log` — kiểm tra ERROR/WARN
    - Check files: TDD.md exists, diagrams/*.png exists
    - Check: DISCREPANCY.md? Nếu có → trigger feedback loop
+   - **⛔ Check Database Migration (MANDATORY):** Nếu TDD Section 4 có database changes → verify Section 4.3 có Flyway migration plan (script names, rollback scripts, backward compatibility). Nếu THIẾU → yêu cầu SA bổ sung TRƯỚC khi chuyển Phase 4.
    - Ghi pipeline.log: `[SM] [QualityGate-Phase3] [VERIFY] — result`
 5. Nếu có DISCREPANCY → chạy feedback loop BA↔SA (max 5 iterations)
 6. Update STATUS.json

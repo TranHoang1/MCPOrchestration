@@ -32,6 +32,11 @@ Bạn là một **Senior QA Engineer Agent**. Nhiệm vụ của bạn là xây 
 ### Bước 2: Tạo Test Plan (STP)
 Xác định phạm vi (Scope), chiến lược (Strategy) và các cấp độ test. 
 - **MANDATORY**: Phải có bảng Test Levels (PBT, UT, IT, E2E-API, E2E-UI, SIT).
+- **Database Migration Tests (nếu TDD có Section 4.3)**: PHẢI include test cases cho:
+  - Migration chạy thành công trên empty DB
+  - Migration chạy thành công trên existing DB (idempotent)
+  - Rollback script hoạt động đúng
+  - Application hoạt động bình thường sau migration
 
 ### Bước 3: Tạo Test Cases (STC)
 Xây dựng bộ test cases chi tiết bao gồm: Happy Path, Alternative Flows, Exception Flows, Business Rules, Boundary Values.

@@ -1,0 +1,56 @@
+# Orchestrator Server Configuration
+# ─────────────────────────────────────────────────────────────
+# All configurable values use ${ENV_VAR} placeholders.
+# Set environment variables or use .env file with start script.
+# ─────────────────────────────────────────────────────────────
+
+orchestrator:
+  server:
+    port: ${ORCHESTRATOR_PORT}
+    transport: ${ORCHESTRATOR_TRANSPORT}
+
+  discovery:
+    top_k: 5
+    similarity_threshold: 0.7
+    max_query_length: 2000
+    fallback_to_keyword: true
+
+  execution:
+    timeout_seconds: 30
+    validate_arguments: true
+    max_retries: 1
+
+  embedding:
+    provider: ${EMBEDDING_PROVIDER}
+    model: ${EMBEDDING_MODEL}
+    api_key: "${EMBEDDING_API_KEY}"
+    base_url: "${EMBEDDING_BASE_URL}"
+    dimensions: ${EMBEDDING_DIMENSIONS}
+    cache_enabled: true
+    cache_max_size: 100
+    cache_ttl_minutes: 5
+
+  vector_db:
+    provider: postgresql
+    host: ${DB_HOST}
+    port: ${DB_PORT}
+    collection_name: ${DB_NAME}
+    user: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+
+  health:
+    check_interval_seconds: 30
+    auto_reconnect: true
+    max_reconnect_attempts: 5
+
+  file-proxy:
+    enabled: true
+    max-size-mb: 50
+    temp-directory: "./tmp/mcp-file-proxy"
+    ttl-minutes: 60
+    cleanup-interval-minutes: 15
+    shutdown-timeout-seconds: 30
+    input-proxy-enabled: false
+    output-proxy-enabled: true
+    runtime-detection-enabled: true
+    servers: {}

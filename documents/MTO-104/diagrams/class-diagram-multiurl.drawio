@@ -1,0 +1,53 @@
+<mxGraphModel dx="1422" dy="762" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
+  <root>
+    <mxCell id="0" />
+    <mxCell id="1" parent="0" />
+    <!-- Title -->
+    <mxCell id="2" value="Multi-URL Fallback — Class Diagram" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=16;fontStyle=1" vertex="1" parent="1">
+      <mxGeometry x="350" y="20" width="350" height="30" as="geometry" />
+    </mxCell>
+    <!-- UrlManager Class -->
+    <mxCell id="3" value="&lt;b&gt;UrlManager&lt;/b&gt;&#xa;─────────────────&#xa;- urls: List&lt;String&gt;&#xa;- urlIndex: Int&#xa;- errors: List&lt;UrlError&gt;&#xa;─────────────────&#xa;+ activeUrl: String&#xa;+ urlCount: Int&#xa;+ advance(): String&#xa;+ markFailed(url, error): void&#xa;+ getErrors(): List&lt;UrlError&gt;&#xa;+ clearErrors(): void&#xa;+ hasNext(): Boolean&#xa;+ reset(): void" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;size=15;fillColor=#d5e8d4;strokeColor=#82b366;align=left;spacingLeft=10;verticalAlign=top;spacingTop=5;" vertex="1" parent="1">
+      <mxGeometry x="100" y="80" width="220" height="240" as="geometry" />
+    </mxCell>
+    <!-- UrlError Data Class -->
+    <mxCell id="4" value="&lt;b&gt;UrlError&lt;/b&gt;&#xa;─────────────────&#xa;+ url: String&#xa;+ error: String&#xa;+ timestamp: Long" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;size=15;fillColor=#fff2cc;strokeColor=#d6b656;align=left;spacingLeft=10;verticalAlign=top;spacingTop=5;" vertex="1" parent="1">
+      <mxGeometry x="100" y="370" width="200" height="100" as="geometry" />
+    </mxCell>
+    <!-- BridgeConfig Class -->
+    <mxCell id="5" value="&lt;b&gt;BridgeConfig&lt;/b&gt;&#xa;─────────────────&#xa;+ orchestratorUrls: List&lt;String&gt;&#xa;+ orchestratorUrl: String&#xa;+ connectionTimeoutMs: Long = 5000&#xa;+ maxRetryBeforeRotate: Int = 3&#xa;+ reconnectEnabled: Boolean&#xa;+ baseReconnectDelayMs: Long&#xa;+ maxReconnectDelayMs: Long&#xa;+ requestTimeoutMs: Long&#xa;+ token: String?&#xa;─────────────────&#xa;+ load(args): BridgeConfig&#xa;- parseUrls(args): List&lt;String&gt;" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;size=15;fillColor=#fff2cc;strokeColor=#d6b656;align=left;spacingLeft=10;verticalAlign=top;spacingTop=5;" vertex="1" parent="1">
+      <mxGeometry x="400" y="80" width="260" height="240" as="geometry" />
+    </mxCell>
+    <!-- ReconnectionManager Class -->
+    <mxCell id="6" value="&lt;b&gt;ReconnectionManager&lt;/b&gt;&#xa;─────────────────&#xa;- config: BridgeConfig&#xa;- client: HttpStreamableClient&#xa;- urlManager: UrlManager&#xa;- attempt: Int&#xa;+ state: BridgeState&#xa;─────────────────&#xa;+ connectWithFailover(): Boolean&#xa;+ reconnectWithFailover(): void&#xa;- reportErrors(): void&#xa;- calculateBackoff(attempt): Long&#xa;+ reconnectLoop(): void" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;size=15;fillColor=#e1d5e7;strokeColor=#9673a6;align=left;spacingLeft=10;verticalAlign=top;spacingTop=5;" vertex="1" parent="1">
+      <mxGeometry x="730" y="80" width="270" height="230" as="geometry" />
+    </mxCell>
+    <!-- HttpStreamableClient Class -->
+    <mxCell id="7" value="&lt;b&gt;HttpStreamableClient&lt;/b&gt;&#xa;─────────────────&#xa;- config: BridgeConfig&#xa;- sessionId: String?&#xa;- requestIdCounter: Int&#xa;- connected: Boolean&#xa;─────────────────&#xa;+ initialize(url?, timeout?): Boolean&#xa;+ resetSession(): void&#xa;+ callTool(name, args): Result&#xa;+ isConnected: Boolean" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;size=15;fillColor=#f8cecc;strokeColor=#b85450;align=left;spacingLeft=10;verticalAlign=top;spacingTop=5;" vertex="1" parent="1">
+      <mxGeometry x="730" y="360" width="270" height="190" as="geometry" />
+    </mxCell>
+    <!-- BridgeState Enum -->
+    <mxCell id="8" value="&lt;b&gt;«enum» BridgeState&lt;/b&gt;&#xa;─────────────────&#xa;DISCONNECTED&#xa;CONNECTING&#xa;CONNECTED&#xa;RECONNECTING" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;size=15;fillColor=#f5f5f5;strokeColor=#666666;align=left;spacingLeft=10;verticalAlign=top;spacingTop=5;" vertex="1" parent="1">
+      <mxGeometry x="430" y="400" width="200" height="120" as="geometry" />
+    </mxCell>
+    <!-- Relationships -->
+    <mxCell id="e1" value="1..*" style="edgeStyle=orthogonalEdgeStyle;endArrow=diamond;endFill=1;" edge="1" source="4" target="3" parent="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="e2" value="creates" style="edgeStyle=orthogonalEdgeStyle;dashed=1;" edge="1" source="5" target="3" parent="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="e3" value="uses" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="6" target="3" parent="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="e4" value="uses" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="6" target="7" parent="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="e5" value="configured by" style="edgeStyle=orthogonalEdgeStyle;dashed=1;" edge="1" source="6" target="5" parent="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="e6" value="state" style="edgeStyle=orthogonalEdgeStyle;dashed=1;" edge="1" source="6" target="8" parent="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+  </root>
+</mxGraphModel>

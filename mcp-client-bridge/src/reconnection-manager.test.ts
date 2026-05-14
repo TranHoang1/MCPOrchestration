@@ -12,11 +12,14 @@ describe('ReconnectionManager', () => {
   beforeEach(() => {
     jest.spyOn(console, 'error').mockImplementation(() => {});
     config = {
+      orchestratorUrls: ['http://localhost:8080'],
       orchestratorUrl: 'http://localhost:8080',
       reconnectEnabled: true,
       maxReconnectDelayMs: 100,
       baseReconnectDelayMs: 10,
       requestTimeoutMs: 30000,
+      connectionTimeoutMs: 5000,
+      maxRetryBeforeRotate: 3,
       enableLocalStreamWrite: true,
       pingIntervalMs: 30000,
       pingTimeoutMs: 5000,
@@ -41,7 +44,7 @@ describe('ReconnectionManager', () => {
     expect(manager.state).toBe(BridgeState.CONNECTED);
   });
 
-  it('should transition to DISCONNECTED after 3 failed attempts', async () => {
+  it('should transition to DISCONNECTED after all URLs fail', async () => {
     mockClient.initialize = jest.fn().mockResolvedValue(false);
     Object.defineProperty(mockClient, 'isConnected', { get: () => false });
 
@@ -50,7 +53,24 @@ describe('ReconnectionManager', () => {
 
     expect(result).toBe(false);
     expect(manager.state).toBe(BridgeState.DISCONNECTED);
-    expect(mockClient.initialize).toHaveBeenCalledTimes(3);
+  });
+
+  it('should try multiple URLs on failover', async () => {
+    config.orchestratorUrls = ['http://primary:8080', 'http://backup:8080'];
+    config.orchestratorUrl = 'http://primary:8080';
+
+    mockClient.initialize = jest.fn()
+      .mockResolvedValueOnce(false)
+      .mockResolvedValueOnce(true);
+    Object.defineProperty(mockClient, 'isConnected', { get: () => true });
+
+    const manager = new ReconnectionManager(config, mockClient);
+    const result = await manager.connectWithRetry();
+
+    expect(result).toBe(true);
+    expect(mockClient.initialize).toHaveBeenCalledTimes(2);
+    expect(mockClient.initialize).toHaveBeenCalledWith('http://primary:8080');
+    expect(mockClient.initialize).toHaveBeenCalledWith('http://backup:8080');
   });
 
   it('should not reconnect when disabled', async () => {
@@ -61,7 +81,6 @@ describe('ReconnectionManager', () => {
     const manager = new ReconnectionManager(config, mockClient);
     await manager.reconnectLoop();
 
-    // Should return immediately without calling initialize
     expect(mockClient.initialize).not.toHaveBeenCalled();
   });
 });

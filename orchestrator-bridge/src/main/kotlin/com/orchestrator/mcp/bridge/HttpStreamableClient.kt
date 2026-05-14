@@ -22,6 +22,7 @@ class HttpStreamableClient(private val config: BridgeConfig) {
     private val requestIdCounter = AtomicLong(0)
     private var sessionId: String? = null
     private var connected = false
+    private var activeUrl: String = config.orchestratorUrl
 
     private val json = Json {
         ignoreUnknownKeys = true
@@ -35,7 +36,8 @@ class HttpStreamableClient(private val config: BridgeConfig) {
 
     val isConnected: Boolean get() = connected
 
-    suspend fun initialize(): Boolean {
+    suspend fun initialize(url: String? = null, timeoutMs: Long? = null): Boolean {
+        if (url != null) activeUrl = url
         val request = buildJsonRpcRequest("initialize", buildJsonObject {
             put("protocolVersion", JsonPrimitive("2025-03-26"))
             put("capabilities", buildJsonObject {})
@@ -72,10 +74,11 @@ class HttpStreamableClient(private val config: BridgeConfig) {
     fun resetSession() {
         sessionId = null
         connected = false
+        requestIdCounter.set(0)
     }
 
     private suspend fun sendRawRequest(body: String, includeSession: Boolean): HttpResponse {
-        return httpClient.post("${config.orchestratorUrl}/mcp") {
+        return httpClient.post("${activeUrl}/mcp") {
             contentType(ContentType.Application.Json)
             config.token?.let { header("Authorization", "Bearer $it") }
             if (includeSession && sessionId != null) {

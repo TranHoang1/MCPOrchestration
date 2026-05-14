@@ -19,13 +19,16 @@ class HttpStreamableClient:
         self._session_id: str | None = None
         self._connected = False
         self._request_id = 0
+        self._active_url = config.orchestrator_url
 
     @property
     def is_connected(self) -> bool:
         return self._connected
 
-    async def initialize(self) -> bool:
+    async def initialize(self, url: str | None = None) -> bool:
         """Send initialize request, store session ID."""
+        if url:
+            self._active_url = url
         self._ensure_client()
         request = self._build_request("initialize", {
             "protocolVersion": "2025-03-26",
@@ -62,6 +65,7 @@ class HttpStreamableClient:
     def reset_session(self) -> None:
         self._session_id = None
         self._connected = False
+        self._request_id = 0
 
     async def close(self) -> None:
         self._connected = False
@@ -90,7 +94,7 @@ class HttpStreamableClient:
             headers["Authorization"] = f"Bearer {self._config.token}"
         if include_session and self._session_id:
             headers["Mcp-Session-Id"] = self._session_id
-        url = f"{self._config.orchestrator_url}/mcp"
+        url = f"{self._active_url}/mcp"
         response = self._client.post(url, json=body, headers=headers)
         resp = await response
         resp.raise_for_status()

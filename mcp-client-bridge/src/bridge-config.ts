@@ -3,11 +3,14 @@
  * Loaded from CLI args and environment variables.
  */
 export interface BridgeConfig {
+  orchestratorUrls: string[];
   orchestratorUrl: string;
   reconnectEnabled: boolean;
   maxReconnectDelayMs: number;
   baseReconnectDelayMs: number;
   requestTimeoutMs: number;
+  connectionTimeoutMs: number;
+  maxRetryBeforeRotate: number;
   enableLocalStreamWrite: boolean;
   pingIntervalMs: number;
   pingTimeoutMs: number;
@@ -21,12 +24,16 @@ export const BridgeConfig = {
    */
   load(args: string[]): BridgeConfig {
     const token = parseToken(args);
+    const urls = parseUrls(args);
     return {
-      orchestratorUrl: parseUrl(args),
+      orchestratorUrls: urls,
+      orchestratorUrl: urls[0],
       reconnectEnabled: !args.includes('--no-reconnect'),
       maxReconnectDelayMs: 15_000,
       baseReconnectDelayMs: 1_000,
       requestTimeoutMs: parseTimeout(args),
+      connectionTimeoutMs: 5_000,
+      maxRetryBeforeRotate: 3,
       enableLocalStreamWrite: !args.includes('--no-local-write'),
       pingIntervalMs: parsePingInterval(args),
       pingTimeoutMs: parsePingTimeout(args),
@@ -60,10 +67,32 @@ function validateTokenFormat(token: string): void {
   }
 }
 
-function parseUrl(args: string[]): string {
+function parseUrls(args: string[]): string[] {
   const idx = args.indexOf('--url');
-  if (idx >= 0 && idx + 1 < args.length) return args[idx + 1];
-  return process.env.ORCHESTRATOR_URL ?? 'http://localhost:8080';
+  let raw: string;
+  if (idx >= 0 && idx + 1 < args.length) {
+    raw = args[idx + 1];
+  } else {
+    raw = process.env.ORCHESTRATOR_URLS
+      ?? process.env.ORCHESTRATOR_URL
+      ?? 'http://localhost:8080';
+  }
+
+  const urls = raw
+    .split(',')
+    .map(u => u.trim())
+    .filter(u => u.length > 0)
+    .filter(u => u.startsWith('http://') || u.startsWith('https://'));
+
+  if (urls.length === 0) {
+    console.error('[mcp-bridge] No valid URLs configured');
+    process.exit(1);
+  }
+  if (urls.length > 10) {
+    console.error('[mcp-bridge] URL list truncated to 10 entries');
+    return urls.slice(0, 10);
+  }
+  return urls;
 }
 
 function parseTimeout(args: string[]): number {

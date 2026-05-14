@@ -32,12 +32,66 @@ $script:State = "DISCONNECTED"
 $script:HealthCheckJob = $null
 $script:BaseDelay = 1
 $script:MaxDelay = 15
+$script:MaxRetryBeforeRotate = 3
 
-# Default URL
-if (-not $Url) { $Url = "http://localhost:8080" }
+# URL management state
+$script:Urls = @()
+$script:UrlIndex = 0
+$script:UrlCount = 0
+$script:ActiveUrl = ""
+$script:UrlErrors = @()
 
 # === Logging ===
 function Write-Log { param([string]$Message) [Console]::Error.WriteLine("[mcp-bridge] $Message") }
+
+# === URL Parsing ===
+function Parse-Urls {
+    $raw = $Url
+    if (-not $raw) { $raw = $env:ORCHESTRATOR_URLS }
+    if (-not $raw) { $raw = $env:ORCHESTRATOR_URL }
+    if (-not $raw) { $raw = "http://localhost:8080" }
+
+    $script:Urls = $raw -split ',' |
+        ForEach-Object { $_.Trim() } |
+        Where-Object { $_ -ne '' } |
+        Where-Object { $_ -match '^https?://' }
+
+    if ($script:Urls.Count -eq 0) {
+        Write-Log "ERROR: No valid URLs configured"
+        exit 1
+    }
+    if ($script:Urls.Count -gt 10) {
+        Write-Log "WARN: URL list truncated to 10"
+        $script:Urls = $script:Urls[0..9]
+    }
+    $script:UrlIndex = 0
+    $script:UrlCount = $script:Urls.Count
+    $script:ActiveUrl = $script:Urls[0]
+}
+
+function Advance-Url {
+    $script:UrlIndex = ($script:UrlIndex + 1) % $script:UrlCount
+    $script:ActiveUrl = $script:Urls[$script:UrlIndex]
+}
+
+function Add-UrlError { param([string]$UrlVal, [string]$Error)
+    $script:UrlErrors += "$UrlVal`: $Error"
+}
+
+function Test-HasNextUrl { return $script:UrlErrors.Count -lt $script:UrlCount }
+
+function Clear-UrlErrors { $script:UrlErrors = @() }
+
+function Reset-Urls {
+    $script:UrlIndex = 0
+    $script:ActiveUrl = $script:Urls[0]
+    $script:UrlErrors = @()
+}
+
+function Write-UrlErrors {
+    Write-Log "All URLs failed:"
+    foreach ($err in $script:UrlErrors) { Write-Log "  - $err" }
+}
 
 # === State Management ===
 function Set-BridgeState {
@@ -54,7 +108,7 @@ function Invoke-OrchestratorPost {
     if ($Token) { $headers["Authorization"] = "Bearer $Token" }
     if ($script:SessionId) { $headers["Mcp-Session-Id"] = $script:SessionId }
     try {
-        $response = Invoke-WebRequest -Uri "$Url/mcp" -Method POST -Body $Body `
+        $response = Invoke-WebRequest -Uri "$($script:ActiveUrl)/mcp" -Method POST -Body $Body `
             -Headers $headers -TimeoutSec $TimeoutOverride -UseBasicParsing
         return $response
     } catch {
@@ -123,6 +177,32 @@ function Stop-HealthCheck {
 function Start-ReconnectLoop {
     if ($NoReconnect) { return }
     Set-BridgeState "RECONNECTING" "starting reconnect"
+
+    # Phase 1: Retry active URL
+    for ($i = 0; $i -lt $script:MaxRetryBeforeRotate; $i++) {
+        $delay = [Math]::Min($script:BaseDelay * [Math]::Pow(2, $i), $script:MaxDelay)
+        Write-Log "Retry $($i+1)/$($script:MaxRetryBeforeRotate) for $($script:ActiveUrl) in ${delay}s"
+        Start-Sleep -Seconds $delay
+        if (Initialize-Session) { return }
+    }
+
+    # Phase 2: Rotate to other URLs
+    if ($script:UrlCount -gt 1) {
+        Clear-UrlErrors
+        Add-UrlError $script:ActiveUrl "Exhausted retries"
+
+        while (Test-HasNextUrl) {
+            Advance-Url
+            Write-Log "Switching to URL $($script:UrlIndex+1)/$($script:UrlCount): $($script:ActiveUrl)"
+            if (Initialize-Session) { return }
+            Add-UrlError $script:ActiveUrl "Connection failed"
+        }
+
+        Write-UrlErrors
+        Reset-Urls
+    }
+
+    # Phase 3: Infinite backoff
     $attempt = 0
     while ($true) {
         $delay = [Math]::Min($script:BaseDelay * [Math]::Pow(2, $attempt), $script:MaxDelay)
@@ -250,18 +330,31 @@ function Start-MainLoop {
 
 # === Entry Point ===
 Write-Log "MCP Bridge Client (PowerShell) v$script:Version starting..."
-Write-Log "Connecting to orchestrator at: $Url"
 
-# Initial connection
+Parse-Urls
+
+if ($script:UrlCount -gt 1) {
+    Write-Log "Configured $($script:UrlCount) URLs (failover enabled)"
+    for ($i = 0; $i -lt $script:UrlCount; $i++) {
+        Write-Log "  [$($i+1)] $($script:Urls[$i])"
+    }
+} else {
+    Write-Log "Connecting to orchestrator at: $($script:ActiveUrl)"
+}
+
+# Initial connection — try all URLs
 $connected = $false
-for ($i = 1; $i -le 3; $i++) {
+Clear-UrlErrors
+for ($i = 0; $i -lt $script:UrlCount; $i++) {
+    Write-Log "Trying URL $($script:UrlIndex+1)/$($script:UrlCount): $($script:ActiveUrl)"
     if (Initialize-Session) { $connected = $true; break }
-    $delay = $script:BaseDelay * [Math]::Pow(2, $i - 1)
-    Write-Log "Connection attempt $i failed, retrying in ${delay}s"
-    Start-Sleep -Seconds $delay
+    Add-UrlError $script:ActiveUrl "Connection failed"
+    if (Test-HasNextUrl) { Advance-Url }
 }
 
 if (-not $connected) {
+    Write-UrlErrors
+    Reset-Urls
     Write-Log "Failed initial connection, will retry in background"
     Start-ReconnectLoop
 }

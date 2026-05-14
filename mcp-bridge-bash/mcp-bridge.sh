@@ -16,7 +16,15 @@ PING_INTERVAL="${BRIDGE_PING_INTERVAL:-30}"
 PING_TIMEOUT="${BRIDGE_PING_TIMEOUT:-5}"
 BASE_DELAY=1
 MAX_DELAY=15
+MAX_RETRY_BEFORE_ROTATE=3
 ENABLE_LOCAL_TOOLS=true
+
+# URL management state
+declare -a URLS=()
+URL_INDEX=0
+URL_COUNT=0
+ACTIVE_URL=""
+declare -a URL_ERRORS=()
 
 # State files (PID-namespaced)
 STATE_FILE="/tmp/mcp-bridge-$$.state"
@@ -47,7 +55,7 @@ usage() {
 MCP Bridge Client (Bash) v$VERSION
 Usage: mcp-bridge.sh [OPTIONS]
 Options:
-  --url URL           Orchestrator URL (default: http://localhost:8080)
+  --url URL           Orchestrator URL(s), comma-separated (default: http://localhost:8080)
   --timeout SEC       Request timeout in seconds (default: 30)
   --ping-interval SEC Health check interval in seconds (default: 30, 0=disabled)
   --ping-timeout SEC  Ping timeout in seconds (default: 5)
@@ -55,6 +63,72 @@ Options:
   --no-local-tools    Disable local tools (stream_write_file)
   --help              Show this help
 EOF
+}
+
+# === URL Parsing ===
+parse_urls() {
+    local raw=""
+    if [[ -n "${ORCHESTRATOR_URL_RAW:-}" ]]; then
+        raw="$ORCHESTRATOR_URL_RAW"
+    elif [[ -n "${ORCHESTRATOR_URLS:-}" ]]; then
+        raw="$ORCHESTRATOR_URLS"
+    elif [[ -n "$ORCHESTRATOR_URL" ]]; then
+        raw="$ORCHESTRATOR_URL"
+    else
+        raw="http://localhost:8080"
+    fi
+
+    IFS=',' read -ra URL_LIST <<< "$raw"
+    URLS=()
+    for url in "${URL_LIST[@]}"; do
+        url=$(echo "$url" | xargs)
+        [[ -z "$url" ]] && continue
+        [[ "$url" != http://* && "$url" != https://* ]] && continue
+        URLS+=("$url")
+    done
+
+    if [[ ${#URLS[@]} -eq 0 ]]; then
+        log "ERROR: No valid URLs configured"
+        exit 1
+    fi
+    if [[ ${#URLS[@]} -gt 10 ]]; then
+        log "WARN: URL list truncated to 10"
+        URLS=("${URLS[@]:0:10}")
+    fi
+    URL_COUNT=${#URLS[@]}
+    URL_INDEX=0
+    ACTIVE_URL="${URLS[0]}"
+}
+
+# === URL Manager Functions ===
+url_advance() {
+    URL_INDEX=$(( (URL_INDEX + 1) % URL_COUNT ))
+    ACTIVE_URL="${URLS[$URL_INDEX]}"
+}
+
+url_mark_failed() {
+    URL_ERRORS+=("$1: $2")
+}
+
+url_has_next() {
+    [[ ${#URL_ERRORS[@]} -lt $URL_COUNT ]]
+}
+
+url_clear_errors() {
+    URL_ERRORS=()
+}
+
+url_reset() {
+    URL_INDEX=0
+    ACTIVE_URL="${URLS[0]}"
+    URL_ERRORS=()
+}
+
+url_report_errors() {
+    log "All URLs failed:"
+    for err in "${URL_ERRORS[@]}"; do
+        log "  - $err"
+    done
 }
 
 # === Logging ===
@@ -81,7 +155,7 @@ http_post() {
     [[ -n "$session_id" ]] && headers+=(-H "Mcp-Session-Id: $session_id")
 
     curl -s -m "$timeout_override" -X POST "${headers[@]}" \
-        -d "$body" "${ORCHESTRATOR_URL}/mcp" 2>/dev/null
+        -d "$body" "${ACTIVE_URL}/mcp" 2>/dev/null
 }
 
 initialize_session() {
@@ -126,16 +200,46 @@ health_check_loop() {
 # === Reconnection ===
 reconnect_loop() {
     [[ "${NO_RECONNECT:-}" == "true" ]] && return
-    local attempt=0
     transition_state "RECONNECTING" "starting reconnect"
 
+    # Phase 1: Retry active URL
+    local i=0
+    while [[ $i -lt $MAX_RETRY_BEFORE_ROTATE ]]; do
+        local delay=$((BASE_DELAY * (2 ** i)))
+        [[ $delay -gt $MAX_DELAY ]] && delay=$MAX_DELAY
+        log "Retry $((i+1))/$MAX_RETRY_BEFORE_ROTATE for $ACTIVE_URL in ${delay}s"
+        sleep "$delay"
+        if initialize_session; then
+            return 0
+        fi
+        ((i++))
+    done
+
+    # Phase 2: Rotate to other URLs
+    if [[ $URL_COUNT -gt 1 ]]; then
+        url_clear_errors
+        url_mark_failed "$ACTIVE_URL" "Exhausted retries"
+
+        while url_has_next; do
+            url_advance
+            log "Switching to URL $((URL_INDEX+1))/$URL_COUNT: $ACTIVE_URL"
+            if initialize_session; then
+                return 0
+            fi
+            url_mark_failed "$ACTIVE_URL" "Connection failed"
+        done
+
+        url_report_errors
+        url_reset
+    fi
+
+    # Phase 3: Infinite backoff
+    local attempt=0
     while true; do
         local delay=$((BASE_DELAY * (2 ** attempt)))
         [[ $delay -gt $MAX_DELAY ]] && delay=$MAX_DELAY
-
         log "Reconnecting in ${delay}s (attempt $attempt)"
         sleep "$delay"
-
         if initialize_session; then
             return 0
         fi
@@ -309,22 +413,38 @@ cleanup() {
 trap cleanup EXIT INT TERM
 
 parse_args "$@"
-log "MCP Bridge Client (Bash) v$VERSION starting..."
-log "Connecting to orchestrator at: $ORCHESTRATOR_URL"
+# Set ORCHESTRATOR_URL_RAW from --url arg if provided
+ORCHESTRATOR_URL_RAW="$ORCHESTRATOR_URL"
+parse_urls
 
-# Initial connection (3 retries)
+log "MCP Bridge Client (Bash) v$VERSION starting..."
+if [[ $URL_COUNT -gt 1 ]]; then
+    log "Configured $URL_COUNT URLs (failover enabled)"
+    for i in "${!URLS[@]}"; do
+        log "  [$((i+1))] ${URLS[$i]}"
+    done
+else
+    log "Connecting to orchestrator at: $ACTIVE_URL"
+fi
+
+# Initial connection — try all URLs
 connected=false
-for i in 1 2 3; do
+url_clear_errors
+for (( i=0; i<URL_COUNT; i++ )); do
+    log "Trying URL $((URL_INDEX+1))/$URL_COUNT: $ACTIVE_URL"
     if initialize_session; then
         connected=true
         break
     fi
-    delay=$((BASE_DELAY * (2 ** (i-1))))
-    log "Connection attempt $i failed, retrying in ${delay}s"
-    sleep "$delay"
+    url_mark_failed "$ACTIVE_URL" "Connection failed"
+    if url_has_next; then
+        url_advance
+    fi
 done
 
 if [[ "$connected" != "true" ]]; then
+    url_report_errors
+    url_reset
     log "Failed initial connection, will retry in background"
     reconnect_loop &
 fi

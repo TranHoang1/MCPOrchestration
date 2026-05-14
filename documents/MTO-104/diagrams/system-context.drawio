@@ -1,0 +1,48 @@
+<mxGraphModel adaptiveColors="auto">
+  <root>
+    <mxCell id="0"/>
+    <mxCell id="1" parent="0"/>
+    <mxCell id="title" value="&lt;b&gt;System Context — Multi-URL Fallback&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;fontSize=14;fontStyle=1;" vertex="1" parent="1">
+      <mxGeometry x="250" y="10" width="400" height="30" as="geometry"/>
+    </mxCell>
+    <mxCell id="dev" value="&lt;b&gt;Developer&lt;/b&gt;&#xa;(configures URLs)" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;fillColor=#e1f5fe;strokeColor=#0288d1;" vertex="1" parent="1">
+      <mxGeometry x="60" y="200" width="40" height="60" as="geometry"/>
+    </mxCell>
+    <mxCell id="host" value="&lt;b&gt;Host Application&lt;/b&gt;&#xa;(IDE, CLI tool)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff3e0;strokeColor=#f57c00;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="60" y="380" width="160" height="70" as="geometry"/>
+    </mxCell>
+    <mxCell id="bridge" value="&lt;b&gt;MCP Bridge Client&lt;/b&gt;&#xa;(Node.js / Python / Kotlin&#xa;/ Bash / PowerShell / CMD)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1f5fe;strokeColor=#0288d1;fontSize=11;fontStyle=0;" vertex="1" parent="1">
+      <mxGeometry x="320" y="200" width="240" height="80" as="geometry"/>
+    </mxCell>
+    <mxCell id="urlmgr" value="&lt;b&gt;URL Manager&lt;/b&gt;&#xa;(NEW component)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8f5e9;strokeColor=#388e3c;fontSize=11;dashed=1;" vertex="1" parent="1">
+      <mxGeometry x="340" y="340" width="200" height="60" as="geometry"/>
+    </mxCell>
+    <mxCell id="orch1" value="&lt;b&gt;Orchestrator&lt;/b&gt;&#xa;Instance 1&#xa;(http://host1:9180)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f3e5f5;strokeColor=#7b1fa2;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="660" y="140" width="180" height="70" as="geometry"/>
+    </mxCell>
+    <mxCell id="orch2" value="&lt;b&gt;Orchestrator&lt;/b&gt;&#xa;Instance 2&#xa;(http://host2:9180)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f3e5f5;strokeColor=#7b1fa2;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="660" y="240" width="180" height="70" as="geometry"/>
+    </mxCell>
+    <mxCell id="orch3" value="&lt;b&gt;Orchestrator&lt;/b&gt;&#xa;Instance N&#xa;(http://hostN:9180)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f3e5f5;strokeColor=#7b1fa2;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="660" y="340" width="180" height="70" as="geometry"/>
+    </mxCell>
+    <mxCell id="e1" value="--url, env vars" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;fontSize=10;" edge="1" source="dev" target="bridge" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e2" value="stdio (JSON-RPC)" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;startArrow=classic;startSize=6;fontSize=10;" edge="1" source="host" target="bridge" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e3" value="HTTP POST /mcp&#xa;(try sequentially)" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;fontSize=10;" edge="1" source="bridge" target="orch1" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e4" value="failover" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;dashed=1;fontSize=10;" edge="1" source="bridge" target="orch2" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e5" value="failover" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;dashed=1;fontSize=10;" edge="1" source="bridge" target="orch3" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e6" value="manages URLs" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;dashed=1;fontSize=10;" edge="1" source="bridge" target="urlmgr" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+  </root>
+</mxGraphModel>

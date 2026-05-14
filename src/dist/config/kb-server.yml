@@ -1,0 +1,78 @@
+# KB-Server Configuration
+# ─────────────────────────────────────────────────────────────
+# All configurable values use ${ENV_VAR} placeholders.
+# Set environment variables or use .env file with start script.
+# ─────────────────────────────────────────────────────────────
+
+kb:
+  server:
+    port: ${KB_SERVER_PORT}
+    transport: ${KB_SERVER_TRANSPORT}
+
+  database:
+    url: "${DB_URL}"
+    schema: "${DB_SCHEMA}"
+    username: "${DB_USERNAME}"
+    password: "${DB_PASSWORD}"
+    pool:
+      maximum_size: 10
+      minimum_idle: 2
+      idle_timeout_ms: 600000
+      connection_timeout_ms: 30000
+
+  embedding:
+    provider: "${EMBEDDING_PROVIDER}"
+    model: "${EMBEDDING_MODEL}"
+    base_url: "${EMBEDDING_BASE_URL}"
+    dimensions: ${EMBEDDING_DIMENSIONS}
+    cache_enabled: true
+    cache_max_size: 200
+    cache_ttl_minutes: 10
+
+  vector_db:
+    provider: "${VECTOR_DB_PROVIDER}"
+    collection_name: "${VECTOR_DB_COLLECTION}"
+
+  segmentation:
+    provider: "${SEGMENTATION_PROVIDER}"
+    model_name: "${SEGMENTATION_MODEL}"
+    temperature: 0.1
+    timeout_seconds: 30
+    max_segment_length: 2000
+    br_local_only: true
+
+  masking:
+    strategies:
+      - email
+      - phone
+      - bank_account
+      - id_card
+      - name
+    placeholder_format: "[{TYPE}_{INDEX}]"
+
+  security:
+    encryption_key: "${KB_ENCRYPTION_KEY}"
+    br_encryption_key: "${KB_BR_ENCRYPTION_KEY}"
+    default_role: "developer"
+    session_ttl_minutes: 30
+    rate_limit:
+      pii_unmask_per_hour: 10
+      br_level1_per_hour: 5
+      br_level2_per_hour: 15
+      br_level3_per_hour: 30
+
+  queue:
+    hpq_capacity: 100
+    npq_capacity: 1000
+    worker_count: 2
+    watchdog_interval_seconds: 60
+    stuck_threshold_minutes: 5
+    max_retries: 3
+    base_delay_ms: 1000
+
+  sync:
+    batch_size: 50
+
+  audit:
+    enabled: true
+    retention_days: 90

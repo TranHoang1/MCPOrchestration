@@ -1,0 +1,75 @@
+<mxGraphModel dx="1422" dy="762" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
+  <root>
+    <mxCell id="0" />
+    <mxCell id="1" parent="0" />
+    <!-- Title -->
+    <mxCell id="2" value="Multi-URL Fallback — Component Diagram" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=16;fontStyle=1" vertex="1" parent="1">
+      <mxGeometry x="350" y="20" width="380" height="30" as="geometry" />
+    </mxCell>
+    <!-- Config Layer -->
+    <mxCell id="3" value="Configuration Layer" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=12;fontStyle=1;verticalAlign=top;dashed=1;" vertex="1" parent="1">
+      <mxGeometry x="100" y="70" width="900" height="100" as="geometry" />
+    </mxCell>
+    <mxCell id="4" value="CLI Parser&#xa;(--url)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+      <mxGeometry x="130" y="100" width="120" height="50" as="geometry" />
+    </mxCell>
+    <mxCell id="5" value="ENV Reader&#xa;(ORCHESTRATOR_URLS)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+      <mxGeometry x="280" y="100" width="160" height="50" as="geometry" />
+    </mxCell>
+    <mxCell id="6" value="URL Validator&#xa;(http/https check)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+      <mxGeometry x="470" y="100" width="150" height="50" as="geometry" />
+    </mxCell>
+    <mxCell id="7" value="BridgeConfig&#xa;(orchestratorUrls[])" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontStyle=1;" vertex="1" parent="1">
+      <mxGeometry x="650" y="100" width="160" height="50" as="geometry" />
+    </mxCell>
+    <!-- State Management Layer -->
+    <mxCell id="8" value="State Management Layer" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=12;fontStyle=1;verticalAlign=top;dashed=1;" vertex="1" parent="1">
+      <mxGeometry x="100" y="200" width="900" height="130" as="geometry" />
+    </mxCell>
+    <mxCell id="9" value="UrlManager&#xa;&#xa;• urls: string[]&#xa;• activeUrl&#xa;• urlIndex&#xa;• errors[]" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;align=left;spacingLeft=10;" vertex="1" parent="1">
+      <mxGeometry x="130" y="230" width="180" height="90" as="geometry" />
+    </mxCell>
+    <mxCell id="10" value="ReconnectionManager&#xa;&#xa;• state: BridgeState&#xa;• attempt: int&#xa;• connectWithFailover()&#xa;• reconnectWithFailover()" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;align=left;spacingLeft=10;" vertex="1" parent="1">
+      <mxGeometry x="350" y="225" width="220" height="100" as="geometry" />
+    </mxCell>
+    <mxCell id="11" value="SessionManager&#xa;&#xa;• sessionId&#xa;• requestIdCounter&#xa;• resetSession()" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;align=left;spacingLeft=10;" vertex="1" parent="1">
+      <mxGeometry x="610" y="230" width="180" height="90" as="geometry" />
+    </mxCell>
+    <!-- Transport Layer -->
+    <mxCell id="12" value="Transport Layer" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=12;fontStyle=1;verticalAlign=top;dashed=1;" vertex="1" parent="1">
+      <mxGeometry x="100" y="360" width="900" height="100" as="geometry" />
+    </mxCell>
+    <mxCell id="13" value="HttpStreamableClient&#xa;&#xa;initialize(url, timeout)&#xa;callTool(name, args)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;" vertex="1" parent="1">
+      <mxGeometry x="350" y="385" width="220" height="60" as="geometry" />
+    </mxCell>
+    <!-- Error Reporting -->
+    <mxCell id="14" value="Error Reporter&#xa;&#xa;formatAggregatedErrors()&#xa;→ stderr" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="1">
+      <mxGeometry x="830" y="230" width="160" height="80" as="geometry" />
+    </mxCell>
+    <!-- Edges -->
+    <mxCell id="e1" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="4" target="7" parent="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="e2" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="5" target="7" parent="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="e3" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="6" target="7" parent="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="e4" value="urls[]" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="7" target="9" parent="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="e5" value="delegates URL selection" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="10" target="9" parent="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="e6" value="triggers reset" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="10" target="11" parent="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="e7" value="initialize(url)" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="10" target="13" parent="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="e8" value="getErrors()" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="9" target="14" parent="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+  </root>
+</mxGraphModel>

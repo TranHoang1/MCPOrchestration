@@ -1,0 +1,105 @@
+<mxGraphModel adaptiveColors="auto">
+  <root>
+    <mxCell id="0"/>
+    <mxCell id="1" parent="0"/>
+    <mxCell id="title" value="&lt;b&gt;Sequence — Failover on Disconnect&lt;/b&gt;" style="text;html=1;align=center;fontSize=13;fontStyle=1;" vertex="1" parent="1">
+      <mxGeometry x="150" y="10" width="400" height="30" as="geometry"/>
+    </mxCell>
+    <mxCell id="ll_bridge" value="Bridge Client" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=0;collapsible=0;recursiveResize=0;outlineConnect=0;fillColor=#e1f5fe;strokeColor=#0288d1;size=40;" vertex="1" parent="1">
+      <mxGeometry x="80" y="60" width="120" height="620" as="geometry"/>
+    </mxCell>
+    <mxCell id="ll_reconn" value="Reconnection&#xa;Manager" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=0;collapsible=0;recursiveResize=0;outlineConnect=0;fillColor=#fff3e0;strokeColor=#f57c00;size=40;" vertex="1" parent="1">
+      <mxGeometry x="280" y="60" width="120" height="620" as="geometry"/>
+    </mxCell>
+    <mxCell id="ll_urlmgr" value="URL Manager" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=0;collapsible=0;recursiveResize=0;outlineConnect=0;fillColor=#e8f5e9;strokeColor=#388e3c;size=40;" vertex="1" parent="1">
+      <mxGeometry x="480" y="60" width="120" height="620" as="geometry"/>
+    </mxCell>
+    <mxCell id="ll_srv" value="Server (activeUrl)" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=0;collapsible=0;recursiveResize=0;outlineConnect=0;fillColor=#fce4ec;strokeColor=#c62828;size=40;" vertex="1" parent="1">
+      <mxGeometry x="680" y="60" width="120" height="620" as="geometry"/>
+    </mxCell>
+    <mxCell id="m1" value="disconnect detected" style="html=1;endSize=6;startSize=6;strokeColor=#c62828;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="740" y="130" as="sourcePoint"/>
+        <mxPoint x="140" y="130" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="m2" value="startReconnect()" style="html=1;endSize=6;startSize=6;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="140" y="170" as="sourcePoint"/>
+        <mxPoint x="340" y="170" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="m3" value="retry activeUrl (attempt 1)" style="html=1;endSize=6;startSize=6;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="340" y="210" as="sourcePoint"/>
+        <mxPoint x="740" y="210" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="m4" value="FAIL" style="html=1;endSize=6;startSize=6;dashed=1;strokeColor=#c62828;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="740" y="240" as="sourcePoint"/>
+        <mxPoint x="340" y="240" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="m5" value="retry activeUrl (attempt 2)" style="html=1;endSize=6;startSize=6;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="340" y="280" as="sourcePoint"/>
+        <mxPoint x="740" y="280" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="m6" value="FAIL" style="html=1;endSize=6;startSize=6;dashed=1;strokeColor=#c62828;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="740" y="310" as="sourcePoint"/>
+        <mxPoint x="340" y="310" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="m7" value="retry activeUrl (attempt 3)" style="html=1;endSize=6;startSize=6;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="340" y="350" as="sourcePoint"/>
+        <mxPoint x="740" y="350" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="m8" value="FAIL" style="html=1;endSize=6;startSize=6;dashed=1;strokeColor=#c62828;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="740" y="380" as="sourcePoint"/>
+        <mxPoint x="340" y="380" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="m9" value="3 retries exhausted → rotate" style="html=1;endSize=6;startSize=6;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="340" y="420" as="sourcePoint"/>
+        <mxPoint x="540" y="420" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="m10" value="nextUrl (session reset)" style="html=1;endSize=6;startSize=6;dashed=1;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="540" y="450" as="sourcePoint"/>
+        <mxPoint x="340" y="450" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="m11" value="POST /mcp {initialize} to new URL" style="html=1;endSize=6;startSize=6;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="340" y="490" as="sourcePoint"/>
+        <mxPoint x="740" y="490" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="m12" value="200 OK {capabilities}" style="html=1;endSize=6;startSize=6;dashed=1;strokeColor=#388e3c;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="740" y="520" as="sourcePoint"/>
+        <mxPoint x="340" y="520" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="m13" value="connected (new activeUrl)" style="html=1;endSize=6;startSize=6;dashed=1;strokeColor=#388e3c;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="340" y="560" as="sourcePoint"/>
+        <mxPoint x="140" y="560" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="note1" value="Backoff: 1s, 2s, 4s" style="shape=note;whiteSpace=wrap;html=1;size=14;fillColor=#fff9e6;strokeColor=#d6b656;fontSize=9;" vertex="1" parent="1">
+      <mxGeometry x="560" y="250" width="120" height="30" as="geometry"/>
+    </mxCell>
+    <mxCell id="note2" value="Log WARN: Switching URL" style="shape=note;whiteSpace=wrap;html=1;size=14;fillColor=#fff9e6;strokeColor=#d6b656;fontSize=9;" vertex="1" parent="1">
+      <mxGeometry x="560" y="430" width="150" height="30" as="geometry"/>
+    </mxCell>
+  </root>
+</mxGraphModel>

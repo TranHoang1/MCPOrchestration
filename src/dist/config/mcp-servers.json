@@ -1,0 +1,44 @@
+{
+  "mcpServers": {
+    "kb-server": {
+      "command": "java",
+      "args": [
+        "-jar",
+        "kb-server-all.jar",
+        "--config=kb-server.yml",
+        "--transport=stdio"
+      ],
+      "env": {
+        "DB_URL": "${DB_URL}",
+        "DB_SCHEMA": "${DB_SCHEMA}",
+        "DB_USERNAME": "${DB_USERNAME}",
+        "DB_PASSWORD": "${DB_PASSWORD}",
+        "EMBEDDING_PROVIDER": "${EMBEDDING_PROVIDER}",
+        "EMBEDDING_MODEL": "${EMBEDDING_MODEL}",
+        "EMBEDDING_BASE_URL": "${EMBEDDING_BASE_URL}",
+        "EMBEDDING_DIMENSIONS": "${EMBEDDING_DIMENSIONS}",
+        "VECTOR_DB_PROVIDER": "${VECTOR_DB_PROVIDER}",
+        "VECTOR_DB_COLLECTION": "${VECTOR_DB_COLLECTION}",
+        "SEGMENTATION_PROVIDER": "${SEGMENTATION_PROVIDER}",
+        "SEGMENTATION_MODEL": "${SEGMENTATION_MODEL}",
+        "KB_ENCRYPTION_KEY": "${KB_ENCRYPTION_KEY}",
+        "KB_BR_ENCRYPTION_KEY": "${KB_BR_ENCRYPTION_KEY}",
+        "KB_SERVER_PORT": "${KB_SERVER_PORT}",
+        "KB_SERVER_TRANSPORT": "${KB_SERVER_TRANSPORT}"
+      },
+      "autoApprove": [
+        "kb_search",
+        "kb_read",
+        "kb_ingest",
+        "kb_delete",
+        "kb_link",
+        "kb_feedback",
+        "kb_audit_query",
+        "kb_sync_trigger",
+        "kb_sync_status",
+        "kb_unmask_pii",
+        "kb_unmask_br"
+      ]
+    }
+  }
+}

@@ -20,14 +20,18 @@ interface ToolCallResult {
 export class HttpStreamableClient {
   private requestIdCounter = 0;
   private _connected = false;
+  private _activeUrl: string;
 
-  constructor(private readonly config: BridgeConfig) {}
+  constructor(private readonly config: BridgeConfig) {
+    this._activeUrl = config.orchestratorUrl;
+  }
 
   get isConnected(): boolean {
     return this._connected;
   }
 
-  async initialize(): Promise<boolean> {
+  async initialize(url?: string): Promise<boolean> {
+    if (url) this._activeUrl = url;
     try {
       const response = await this.post('initialize', {
         protocolVersion: '2025-03-26',
@@ -39,7 +43,6 @@ export class HttpStreamableClient {
       });
 
       if (response.result || response.error) {
-        // Even "already initialized" means server is up
         this._connected = true;
         console.error(
           '[mcp-bridge] Connected to orchestrator ' +
@@ -88,6 +91,7 @@ export class HttpStreamableClient {
 
   resetSession(): void {
     this._connected = false;
+    this.requestIdCounter = 0;
   }
 
   close(): void {
@@ -121,7 +125,7 @@ export class HttpStreamableClient {
       }
 
       const res = await fetch(
-        `${this.config.orchestratorUrl}/mcp`,
+        `${this._activeUrl}/mcp`,
         {
           method: 'POST',
           headers,

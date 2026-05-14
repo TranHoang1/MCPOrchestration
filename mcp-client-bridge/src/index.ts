@@ -10,7 +10,12 @@ import { BridgeConfig } from './bridge-config.js';
 
 async function main(): Promise<void> {
   const config = BridgeConfig.load(process.argv.slice(2));
-  console.error(`[mcp-bridge] Connecting to orchestrator at: ${config.orchestratorUrl}`);
+  if (config.orchestratorUrls.length > 1) {
+    console.error(`[mcp-bridge] Configured ${config.orchestratorUrls.length} URLs (failover enabled)`);
+    config.orchestratorUrls.forEach((u, i) => console.error(`  [${i + 1}] ${u}`));
+  } else {
+    console.error(`[mcp-bridge] Connecting to orchestrator at: ${config.orchestratorUrl}`);
+  }
   if (config.token) {
     console.error('[mcp-bridge] Using JWT authentication');
   } else {

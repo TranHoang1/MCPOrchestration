@@ -19,6 +19,9 @@ if "%BRIDGE_TIMEOUT%"=="" set "BRIDGE_TIMEOUT=30"
 if "%BRIDGE_PING_INTERVAL%"=="" set "BRIDGE_PING_INTERVAL=30"
 if "%BRIDGE_PING_TIMEOUT%"=="" set "BRIDGE_PING_TIMEOUT=5"
 if "%MCP_BRIDGE_TOKEN%"=="" set "MCP_BRIDGE_TOKEN="
+set "MAX_RETRY_BEFORE_ROTATE=3"
+set "URL_COUNT=0"
+set "URL_INDEX=1"
 
 :: Parse arguments
 :parse_args
@@ -33,7 +36,10 @@ goto :parse_args
 :args_done
 
 echo [mcp-bridge] MCP Bridge Client (CMD) v%VERSION% starting... >&2
-echo [mcp-bridge] Connecting to orchestrator at: %ORCHESTRATOR_URL% >&2
+
+:: Parse URLs (comma-separated)
+call :parse_urls "%ORCHESTRATOR_URL%"
+echo [mcp-bridge] Connecting to orchestrator (%URL_COUNT% URLs configured) >&2
 
 :: Build auth header if token provided
 set "AUTH_HEADER="
@@ -44,20 +50,20 @@ if not "%MCP_BRIDGE_TOKEN%"=="" (
     echo [mcp-bridge] Warning: No token provided >&2
 )
 
-:: === Initial Connection ===
-call :initialize_session
-if !errorlevel! neq 0 (
-    echo [mcp-bridge] Connection attempt 1 failed, retrying... >&2
-    timeout /t 1 /nobreak >nul
-    call :initialize_session
-    if !errorlevel! neq 0 (
-        echo [mcp-bridge] Connection attempt 2 failed, retrying... >&2
-        timeout /t 2 /nobreak >nul
+:: === Initial Connection (try all URLs) ===
+set "CONNECTED=0"
+for /l %%i in (1,1,%URL_COUNT%) do (
+    if !CONNECTED! equ 0 (
+        call set "ACTIVE_URL=%%URL_%%i%%"
+        echo [mcp-bridge] Trying URL %%i/%URL_COUNT%: !ACTIVE_URL! >&2
         call :initialize_session
-        if !errorlevel! neq 0 (
-            echo [mcp-bridge] Failed initial connection >&2
+        if !errorlevel! equ 0 (
+            set "CONNECTED=1"
         )
     )
+)
+if !CONNECTED! equ 0 (
+    echo [mcp-bridge] All URLs failed initial connection >&2
 )
 
 echo [mcp-bridge] Bridge MCP server ready (stdio transport) >&2
@@ -176,7 +182,7 @@ goto :eof
 :handle_tool_call_proxy
 set "proxy_id=%~1"
 set "proxy_line=%~2"
-curl -s -m %BRIDGE_TIMEOUT% -X POST -H "Content-Type: application/json" %AUTH_HEADER% -d "!proxy_line!" "%ORCHESTRATOR_URL%/mcp" 2>nul
+curl -s -m %BRIDGE_TIMEOUT% -X POST -H "Content-Type: application/json" %AUTH_HEADER% -d "!proxy_line!" "!ACTIVE_URL!/mcp" 2>nul
 goto :eof
 
 :proxy_to_orchestrator
@@ -184,7 +190,7 @@ set "po_id=%~1"
 set "po_name=%~2"
 set "po_args=%~3"
 set "po_body={\"jsonrpc\":\"2.0\",\"id\":99,\"method\":\"tools/call\",\"params\":{\"name\":\"!po_name!\",\"arguments\":!po_args!}}"
-for /f "delims=" %%r in ('curl -s -m %BRIDGE_TIMEOUT% -X POST -H "Content-Type: application/json" %AUTH_HEADER% -d "!po_body!" "%ORCHESTRATOR_URL%/mcp" 2^>nul') do set "po_response=%%r"
+for /f "delims=" %%r in ('curl -s -m %BRIDGE_TIMEOUT% -X POST -H "Content-Type: application/json" %AUTH_HEADER% -d "!po_body!" "!ACTIVE_URL!/mcp" 2^>nul') do set "po_response=%%r"
 if "!po_response!"=="" (
     call :json_error !po_id! -1 "No response from orchestrator"
 ) else (
@@ -196,7 +202,7 @@ goto :eof
 :: === HTTP ===
 :initialize_session
 set "init_body={\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"initialize\",\"params\":{\"protocolVersion\":\"2025-03-26\",\"capabilities\":{},\"clientInfo\":{\"name\":\"mcp-bridge-cmd\",\"version\":\"1.0.0\"}}}"
-for /f "delims=" %%r in ('curl -s -m %BRIDGE_TIMEOUT% -X POST -H "Content-Type: application/json" %AUTH_HEADER% -d "!init_body!" "%ORCHESTRATOR_URL%/mcp" 2^>nul') do set "init_response=%%r"
+for /f "delims=" %%r in ('curl -s -m %BRIDGE_TIMEOUT% -X POST -H "Content-Type: application/json" %AUTH_HEADER% -d "!init_body!" "!ACTIVE_URL!/mcp" 2^>nul') do set "init_response=%%r"
 if "!init_response!"=="" exit /b 1
 echo !init_response! | findstr /c:"result" >nul
 if !errorlevel! equ 0 (
@@ -205,6 +211,20 @@ if !errorlevel! equ 0 (
     exit /b 0
 )
 exit /b 1
+
+:parse_urls
+set "RAW_URL=%~1"
+if "%RAW_URL%"=="" set "RAW_URL=%ORCHESTRATOR_URLS%"
+if "%RAW_URL%"=="" set "RAW_URL=%ORCHESTRATOR_URL%"
+if "%RAW_URL%"=="" set "RAW_URL=http://localhost:8080"
+set "URL_COUNT=0"
+for %%u in ("%RAW_URL:,=" "%") do (
+    set /a URL_COUNT+=1
+    call set "URL_!URL_COUNT!=%%~u"
+)
+set "URL_INDEX=1"
+call set "ACTIVE_URL=%%URL_1%%"
+goto :eof
 
 :: === Helpers ===
 :json_error

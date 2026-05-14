@@ -13,8 +13,11 @@ class BridgeState(Enum):
 
 @dataclass
 class BridgeConfig:
+    orchestrator_urls: list[str] = field(default_factory=lambda: ["http://localhost:8080"])
     orchestrator_url: str = "http://localhost:8080"
     request_timeout_ms: int = 30_000
+    connection_timeout_ms: int = 5_000
+    max_retry_before_rotate: int = 3
     ping_interval_ms: int = 30_000
     ping_timeout_ms: int = 5_000
     base_reconnect_delay_ms: int = 1_000

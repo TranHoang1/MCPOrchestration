@@ -1,0 +1,90 @@
+<mxGraphModel adaptiveColors="auto">
+  <root>
+    <mxCell id="0"/>
+    <mxCell id="1" parent="0"/>
+    <mxCell id="title" value="&lt;b&gt;Sequence — Initial Connection (Multi-URL)&lt;/b&gt;" style="text;html=1;align=center;fontSize=13;fontStyle=1;" vertex="1" parent="1">
+      <mxGeometry x="150" y="10" width="400" height="30" as="geometry"/>
+    </mxCell>
+    <mxCell id="ll_bridge" value="Bridge Client" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=0;collapsible=0;recursiveResize=0;outlineConnect=0;fillColor=#e1f5fe;strokeColor=#0288d1;size=40;" vertex="1" parent="1">
+      <mxGeometry x="80" y="60" width="120" height="520" as="geometry"/>
+    </mxCell>
+    <mxCell id="ll_urlmgr" value="URL Manager" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=0;collapsible=0;recursiveResize=0;outlineConnect=0;fillColor=#e8f5e9;strokeColor=#388e3c;size=40;" vertex="1" parent="1">
+      <mxGeometry x="280" y="60" width="120" height="520" as="geometry"/>
+    </mxCell>
+    <mxCell id="ll_srv1" value="Server URL1" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=0;collapsible=0;recursiveResize=0;outlineConnect=0;fillColor=#fce4ec;strokeColor=#c62828;size=40;" vertex="1" parent="1">
+      <mxGeometry x="480" y="60" width="120" height="520" as="geometry"/>
+    </mxCell>
+    <mxCell id="ll_srv2" value="Server URL2" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=0;collapsible=0;recursiveResize=0;outlineConnect=0;fillColor=#e8f5e9;strokeColor=#388e3c;size=40;" vertex="1" parent="1">
+      <mxGeometry x="680" y="60" width="120" height="520" as="geometry"/>
+    </mxCell>
+    <mxCell id="m1" value="parseUrls(urlString)" style="html=1;endSize=6;startSize=6;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="140" y="130" as="sourcePoint"/>
+        <mxPoint x="340" y="130" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="m2" value="urls[] (validated list)" style="html=1;endSize=6;startSize=6;dashed=1;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="340" y="160" as="sourcePoint"/>
+        <mxPoint x="140" y="160" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="m3" value="getNextUrl() → URL1" style="html=1;endSize=6;startSize=6;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="140" y="200" as="sourcePoint"/>
+        <mxPoint x="340" y="200" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="m4" value="POST /mcp {initialize}" style="html=1;endSize=6;startSize=6;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="140" y="240" as="sourcePoint"/>
+        <mxPoint x="540" y="240" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="m5" value="Timeout 5s / Connection refused" style="html=1;endSize=6;startSize=6;dashed=1;strokeColor=#c62828;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="540" y="280" as="sourcePoint"/>
+        <mxPoint x="140" y="280" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="m6" value="storeError(URL1, error)" style="html=1;endSize=6;startSize=6;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="140" y="320" as="sourcePoint"/>
+        <mxPoint x="340" y="320" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="m7" value="getNextUrl() → URL2" style="html=1;endSize=6;startSize=6;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="140" y="360" as="sourcePoint"/>
+        <mxPoint x="340" y="360" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="m8" value="POST /mcp {initialize}" style="html=1;endSize=6;startSize=6;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="140" y="400" as="sourcePoint"/>
+        <mxPoint x="740" y="400" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="m9" value="200 OK {capabilities}" style="html=1;endSize=6;startSize=6;dashed=1;strokeColor=#388e3c;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="740" y="440" as="sourcePoint"/>
+        <mxPoint x="140" y="440" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="m10" value="setActiveUrl(URL2)" style="html=1;endSize=6;startSize=6;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="140" y="480" as="sourcePoint"/>
+        <mxPoint x="340" y="480" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="note1" value="Log: Trying URL 1/2: URL1" style="shape=note;whiteSpace=wrap;html=1;size=14;fillColor=#fff9e6;strokeColor=#d6b656;fontSize=9;" vertex="1" parent="1">
+      <mxGeometry x="560" y="180" width="180" height="30" as="geometry"/>
+    </mxCell>
+    <mxCell id="note2" value="Log WARN: URL 1/2 failed&#xa;Log: Trying URL 2/2: URL2" style="shape=note;whiteSpace=wrap;html=1;size=14;fillColor=#fff9e6;strokeColor=#d6b656;fontSize=9;" vertex="1" parent="1">
+      <mxGeometry x="560" y="330" width="200" height="40" as="geometry"/>
+    </mxCell>
+    <mxCell id="note3" value="state = CONNECTED&#xa;activeUrl = URL2" style="shape=note;whiteSpace=wrap;html=1;size=14;fillColor=#e8f5e9;strokeColor=#388e3c;fontSize=9;" vertex="1" parent="1">
+      <mxGeometry x="560" y="470" width="160" height="40" as="geometry"/>
+    </mxCell>
+  </root>
+</mxGraphModel>

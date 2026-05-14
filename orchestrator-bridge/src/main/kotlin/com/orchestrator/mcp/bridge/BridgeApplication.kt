@@ -14,7 +14,12 @@ fun main(args: Array<String>) = runBlocking {
     logger.info("MCP Client Bridge v1.0.0 starting...")
 
     val config = BridgeConfig.load(args)
-    logger.info("Connecting to orchestrator at: ${config.orchestratorUrl}")
+    if (config.orchestratorUrls.size > 1) {
+        logger.info("Configured ${config.orchestratorUrls.size} URLs (failover enabled)")
+        config.orchestratorUrls.forEachIndexed { i, url -> logger.info("  [${i + 1}] $url") }
+    } else {
+        logger.info("Connecting to orchestrator at: ${config.orchestratorUrl}")
+    }
 
     val bridge = BridgeServer(config)
 

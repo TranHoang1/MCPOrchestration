@@ -208,7 +208,19 @@ SM: BÁO CÁO TỔNG KẾT
    - Check files: BRD.md exists, diagrams/*.png exists
    - Ghi pipeline.log: `[SM] [QualityGate-Phase1] [VERIFY] — result`
 6. Nếu có ERROR → gọi lại BA agent để fix
-7. Update STATUS.json
+7. **Quality Gate — Feature Assignment Check (MANDATORY):**
+   ```
+   Sau khi BA hoàn thành BRD:
+   1. Kiểm tra: ticket đã được gán vào feature chưa? (kb_feature_list → tìm ticket)
+   2. Nếu CHƯA → yêu cầu BA gán trước khi chuyển Phase 2
+   3. Ghi vào pipeline.log: [SM] [QualityGate-Feature] [VERIFY] — result
+   ```
+   - Gọi `kb_feature_list(project_key)` và tìm ticket trong danh sách features
+   - Nếu ticket KHÔNG thuộc feature nào → BLOCK Phase 2, gọi lại BA agent:
+     `"Ticket {key} chưa được gán vào feature. Hãy chạy Bước 3.5 (Feature Assignment)."`
+   - Nếu ticket ĐÃ thuộc feature → ghi log PASS và tiếp tục
+   - Ghi pipeline.log: `[SM] [QualityGate-Feature] [VERIFY] — {PASS/FAIL}: ticket {key} → feature {name}`
+8. Update STATUS.json
 
 ### Step 2: Specification (TA → FSD)
 1. Ghi pipeline.log: `[SM] [Phase-2] [START] — Invoking TA Agent`

@@ -1,0 +1,14 @@
+{
+  "ticket": "MTO-118",
+  "currentPhase": "done",
+  "phases": {
+    "requirements": { "status": "skipped", "reason": "Cleanup ticket — scope defined in MTO-117 TDD" },
+    "specification": { "status": "skipped", "reason": "File list in MTO-117 TDD §14" },
+    "design": { "status": "skipped", "reason": "Deletion list — no design needed" },
+    "implementation": { "status": "done", "completedAt": "2026-05-15T13:45:00Z", "note": "Deleted: synctools/ (4 files), crawler/ (12 files). Modified: AppModule, HttpStreamableServer, HiddenToolRegistrar." },
+    "testing": { "status": "done", "completedAt": "2026-05-15T13:45:00Z", "note": "Build verified: orchestrator-server compiles without sync/crawler code" },
+    "deployment": { "status": "not_started" }
+  },
+  "jiraStatus": "Done",
+  "lastUpdated": "2026-05-15T13:45:00Z"
+}

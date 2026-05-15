@@ -73,6 +73,14 @@ kb:
   sync:
     batch_size: 50
 
+  ai:
+    provider: "${AI_PROVIDER}"
+    model: "${AI_MODEL}"
+    base_url: "${AI_BASE_URL}"
+    temperature: 0.1
+    timeout_seconds: 60
+    max_tokens: 4000
+
   audit:
     enabled: true
     retention_days: 90

@@ -1,0 +1,39 @@
+<mxGraphModel adaptiveColors="auto">
+  <root>
+    <mxCell id="0"/>
+    <mxCell id="1" parent="0"/>
+    <mxCell id="t1" value="&lt;b&gt;jira_sync_state&lt;/b&gt;" style="swimlane;startSize=24;fillColor=#e1f5fe;strokeColor=#0288d1;html=1;fontSize=11;fontStyle=0;" vertex="1" parent="1">
+      <mxGeometry x="40" y="40" width="260" height="220" as="geometry"/>
+    </mxCell>
+    <mxCell id="t1f" value="&lt;b&gt;PK&lt;/b&gt; project_key VARCHAR(50)&#xa;last_sync_at TIMESTAMPTZ&#xa;last_offset INTEGER&#xa;total_issues INTEGER&#xa;synced_issues INTEGER&#xa;status VARCHAR(20)&#xa;error_message TEXT&#xa;updated_at TIMESTAMPTZ" style="text;html=1;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;whiteSpace=wrap;fontSize=10;" vertex="1" parent="t1">
+      <mxGeometry x="10" y="30" width="240" height="180" as="geometry"/>
+    </mxCell>
+    <mxCell id="t2" value="&lt;b&gt;jira_ticket_cache&lt;/b&gt;" style="swimlane;startSize=24;fillColor=#e1f5fe;strokeColor=#0288d1;html=1;fontSize=11;fontStyle=0;" vertex="1" parent="1">
+      <mxGeometry x="380" y="40" width="260" height="320" as="geometry"/>
+    </mxCell>
+    <mxCell id="t2f" value="&lt;b&gt;PK&lt;/b&gt; ticket_key VARCHAR(50)&#xa;&lt;b&gt;FK&lt;/b&gt; project_key VARCHAR(50)&#xa;summary TEXT&#xa;issue_type VARCHAR(50)&#xa;status VARCHAR(50)&#xa;priority VARCHAR(20)&#xa;parent_key VARCHAR(50)&#xa;epic_key VARCHAR(50)&#xa;labels JSONB&#xa;updated_at_jira TIMESTAMPTZ&#xa;synced_at TIMESTAMPTZ&#xa;content_hash VARCHAR(64)&#xa;kb_ingested BOOLEAN" style="text;html=1;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;whiteSpace=wrap;fontSize=10;" vertex="1" parent="t2">
+      <mxGeometry x="10" y="30" width="240" height="280" as="geometry"/>
+    </mxCell>
+    <mxCell id="t3" value="&lt;b&gt;jira_ticket_graph&lt;/b&gt;" style="swimlane;startSize=24;fillColor=#e1f5fe;strokeColor=#0288d1;html=1;fontSize=11;fontStyle=0;" vertex="1" parent="1">
+      <mxGeometry x="40" y="340" width="260" height="130" as="geometry"/>
+    </mxCell>
+    <mxCell id="t3f" value="&lt;b&gt;PK&lt;/b&gt; source_key VARCHAR(50)&#xa;&lt;b&gt;PK&lt;/b&gt; target_key VARCHAR(50)&#xa;&lt;b&gt;PK&lt;/b&gt; link_type VARCHAR(100)&#xa;category VARCHAR(20)" style="text;html=1;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;whiteSpace=wrap;fontSize=10;" vertex="1" parent="t3">
+      <mxGeometry x="10" y="30" width="240" height="90" as="geometry"/>
+    </mxCell>
+    <mxCell id="t4" value="&lt;b&gt;jira_attachment_queue&lt;/b&gt;" style="swimlane;startSize=24;fillColor=#e1f5fe;strokeColor=#0288d1;html=1;fontSize=11;fontStyle=0;" vertex="1" parent="1">
+      <mxGeometry x="380" y="420" width="260" height="300" as="geometry"/>
+    </mxCell>
+    <mxCell id="t4f" value="&lt;b&gt;PK&lt;/b&gt; id SERIAL&#xa;&lt;b&gt;FK&lt;/b&gt; ticket_key VARCHAR(50)&#xa;attachment_id VARCHAR(50)&#xa;filename VARCHAR(500)&#xa;mime_type VARCHAR(100)&#xa;size_bytes BIGINT&#xa;download_url TEXT&#xa;status VARCHAR(20)&#xa;retry_count INTEGER&#xa;error_message TEXT&#xa;created_at TIMESTAMPTZ&#xa;processed_at TIMESTAMPTZ" style="text;html=1;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;whiteSpace=wrap;fontSize=10;" vertex="1" parent="t4">
+      <mxGeometry x="10" y="30" width="240" height="260" as="geometry"/>
+    </mxCell>
+    <mxCell id="rel1" value="1..n" style="edgeStyle=entityRelationEdgeStyle;html=1;endArrow=ERmandOne;startArrow=ERoneToMany;endSize=12;startSize=12;fontSize=10;" edge="1" source="t1" target="t2" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="rel2" value="1..n" style="edgeStyle=entityRelationEdgeStyle;html=1;endArrow=ERmandOne;startArrow=ERoneToMany;endSize=12;startSize=12;fontSize=10;" edge="1" source="t2" target="t3" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="rel3" value="1..n" style="edgeStyle=entityRelationEdgeStyle;html=1;endArrow=ERmandOne;startArrow=ERoneToMany;endSize=12;startSize=12;fontSize=10;" edge="1" source="t2" target="t4" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+  </root>
+</mxGraphModel>

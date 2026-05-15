@@ -1,0 +1,51 @@
+<mxfile host="app.diagrams.net" modified="2026-05-15T00:00:00.000Z" agent="draw.io" type="device">
+  <diagram id="seq-sync-status" name="Sync Status Query Flow">
+    <mxGraphModel dx="1200" dy="600" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1200" pageHeight="600" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <!-- Participants -->
+        <mxCell id="p1" value="Agent" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;container=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;" vertex="1" parent="1">
+          <mxGeometry x="80" y="30" width="100" height="450" as="geometry" />
+        </mxCell>
+        <mxCell id="p2" value="kb-server" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;container=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;" vertex="1" parent="1">
+          <mxGeometry x="260" y="30" width="100" height="450" as="geometry" />
+        </mxCell>
+        <mxCell id="p3" value="JiraSyncStatus&#xa;Handler" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;container=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;" vertex="1" parent="1">
+          <mxGeometry x="440" y="30" width="120" height="450" as="geometry" />
+        </mxCell>
+        <mxCell id="p4" value="SyncState&#xa;Manager" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;container=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;" vertex="1" parent="1">
+          <mxGeometry x="640" y="30" width="100" height="450" as="geometry" />
+        </mxCell>
+        <mxCell id="p5" value="QueueService" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;container=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;" vertex="1" parent="1">
+          <mxGeometry x="820" y="30" width="100" height="450" as="geometry" />
+        </mxCell>
+        <!-- Messages -->
+        <mxCell id="m1" value="jira_sync_status(projectKey=&quot;MTO&quot;)" style="html=1;verticalAlign=bottom;endArrow=block;edgeStyle=elbowEdgeStyle;elbow=vertical;curved=0;rounded=0;" edge="1" parent="1" source="p1" target="p2">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="130" y="100" as="sourcePoint" /><mxPoint x="310" y="100" as="targetPoint" /></mxGeometry>
+        </mxCell>
+        <mxCell id="m2" value="handle(arguments)" style="html=1;verticalAlign=bottom;endArrow=block;edgeStyle=elbowEdgeStyle;elbow=vertical;curved=0;rounded=0;" edge="1" parent="1" source="p2" target="p3">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="310" y="140" as="sourcePoint" /><mxPoint x="500" y="140" as="targetPoint" /></mxGeometry>
+        </mxCell>
+        <mxCell id="m3" value="getOrCreate(&quot;MTO&quot;)" style="html=1;verticalAlign=bottom;endArrow=block;edgeStyle=elbowEdgeStyle;elbow=vertical;curved=0;rounded=0;" edge="1" parent="1" source="p3" target="p4">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="500" y="180" as="sourcePoint" /><mxPoint x="690" y="180" as="targetPoint" /></mxGeometry>
+        </mxCell>
+        <mxCell id="m4" value="SyncState(status=SYNCING, synced=90, total=200)" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;edgeStyle=elbowEdgeStyle;elbow=vertical;curved=0;rounded=0;" edge="1" parent="1" source="p4" target="p3">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="690" y="220" as="sourcePoint" /><mxPoint x="500" y="220" as="targetPoint" /></mxGeometry>
+        </mxCell>
+        <mxCell id="m5" value="getQueueMetrics()" style="html=1;verticalAlign=bottom;endArrow=block;edgeStyle=elbowEdgeStyle;elbow=vertical;curved=0;rounded=0;" edge="1" parent="1" source="p3" target="p5">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="500" y="260" as="sourcePoint" /><mxPoint x="870" y="260" as="targetPoint" /></mxGeometry>
+        </mxCell>
+        <mxCell id="m6" value="QueueMetrics(hpq=0, npq=2, processing=1, ...)" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;edgeStyle=elbowEdgeStyle;elbow=vertical;curved=0;rounded=0;" edge="1" parent="1" source="p5" target="p3">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="870" y="300" as="sourcePoint" /><mxPoint x="500" y="300" as="targetPoint" /></mxGeometry>
+        </mxCell>
+        <mxCell id="m7" value="compute progress % = (90*100)/200 = 45" style="html=1;verticalAlign=bottom;endArrow=block;edgeStyle=elbowEdgeStyle;elbow=vertical;curved=0;rounded=0;" edge="1" parent="1" source="p3" target="p3">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="500" y="340" as="sourcePoint" /><mxPoint x="500" y="360" as="targetPoint" /></mxGeometry>
+        </mxCell>
+        <mxCell id="m8" value="{projectKey:&quot;MTO&quot;, status:&quot;syncing&quot;, progress:45, syncedIssues:90, totalIssues:200, queue:{...}}" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;edgeStyle=elbowEdgeStyle;elbow=vertical;curved=0;rounded=0;" edge="1" parent="1" source="p3" target="p1">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="500" y="390" as="sourcePoint" /><mxPoint x="130" y="390" as="targetPoint" /></mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

@@ -24,10 +24,9 @@ object HiddenToolRegistrar {
     /** Tool names that should be hidden from tools/list */
     val hiddenToolNames = setOf("get_drawio_reference", "export_drawio")
 
-    /** All builtin tool names (hidden + sync + user management) */
+    /** All builtin tool names (hidden + user management) */
     private val builtinToolNames = mutableSetOf(
         "get_drawio_reference", "export_drawio",
-        "jira_project_sync", "jira_sync_status",
         "approve_document", "get_approval_status", "list_pending_approvals"
     )
 
@@ -73,26 +72,16 @@ object HiddenToolRegistrar {
         return when (name) {
             "get_drawio_reference" -> executeGetDrawioReference()
             "export_drawio" -> executeExportDrawio(args)
-            "jira_project_sync" -> executeSyncTool(name, args)
-            "jira_sync_status" -> executeSyncTool(name, args)
-            "approve_document", "get_approval_status", "list_pending_approvals" -> executeSyncTool(name, args)
+            "approve_document", "get_approval_status", "list_pending_approvals" -> executeUserManagementTool(name, args)
             else -> CallToolResult(content = listOf(TextContent(text = "Unknown hidden tool: $name")), isError = true)
         }
     }
 
-    /** Route sync/user-management tools through Koin-managed handlers */
-    private suspend fun executeSyncTool(name: String, args: JsonObject?): CallToolResult {
+    /** Route user-management tools through Koin-managed handlers */
+    private suspend fun executeUserManagementTool(name: String, args: JsonObject?): CallToolResult {
         return try {
             val koin = org.koin.java.KoinJavaComponent.getKoin()
             when (name) {
-                "jira_project_sync" -> {
-                    val handler = koin.get<com.orchestrator.mcp.synctools.SyncToolHandler>()
-                    handler.handle(args)
-                }
-                "jira_sync_status" -> {
-                    val handler = koin.get<com.orchestrator.mcp.synctools.StatusToolHandler>()
-                    handler.handle(args)
-                }
                 "approve_document" -> {
                     val tool = koin.get<com.orchestrator.mcp.usermanagement.tools.ApproveDocumentTool>()
                     val userId = args?.get("user_id")?.jsonPrimitive?.contentOrNull

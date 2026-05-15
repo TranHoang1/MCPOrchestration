@@ -14,5 +14,6 @@ enum class AuditEventType {
     FEEDBACK,
     SYNC_TRIGGER,
     ACCESS_DENIED,
-    RATE_LIMITED
+    RATE_LIMITED,
+    FEATURE_CRUD
 }

@@ -37,7 +37,7 @@ import com.orchestrator.mcp.audit.di.auditModule
 import com.orchestrator.mcp.linking.di.linkingModule
 import com.orchestrator.mcp.network.di.networkModule
 import com.orchestrator.mcp.feedback.di.feedbackModule
-import com.orchestrator.mcp.crawler.di.crawlerModule
+
 import com.orchestrator.mcp.dashboard.di.dashboardModule
 import com.orchestrator.mcp.graph.di.graphModule
 import com.orchestrator.mcp.ocr.di.ocrModule
@@ -233,10 +233,6 @@ fun appModule(configPath: String? = null) = module {
     // Jira Client Module (MTO-16)
     includes(jiraModule)
 
-    // Sync Tool Handlers (for HTTP mode builtin tool routing)
-    single { com.orchestrator.mcp.synctools.SyncToolHandler(get()) }
-    single { com.orchestrator.mcp.synctools.StatusToolHandler(get()) }
-
     // Sync Pipeline Module (MTO-47)
     single<SyncJiraClient> { SyncJiraClientAdapter(get()) }
     single<SyncPipelineConfig> {
@@ -252,9 +248,6 @@ fun appModule(configPath: String? = null) = module {
         )
     }
     includes(syncPipelineModule)
-
-    // Crawler Module (MTO-18)
-    includes(crawlerModule)
 
     // Attachment Module (MTO-19)
     includes(attachmentModule)

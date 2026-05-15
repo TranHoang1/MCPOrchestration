@@ -520,6 +520,7 @@ export function runFullIndex(
   }
 
   // --- Step 8: Output KB ingestion payloads ---
+  const projectKey = (config as any).jiraProjectKey || projectInfo.projectName;
   const kbPayloads: Array<{
     title: string;
     content: string;
@@ -530,7 +531,7 @@ export function runFullIndex(
     title: `Code Index — ${mod.name}`,
     content: buildModuleSummary(mod),
     tags: `code-index, ${mod.name}, ${mod.language}`,
-    project: projectInfo.projectName,
+    project: projectKey,
   }));
 
   // Add cleanup payloads for removed modules
@@ -539,7 +540,7 @@ export function runFullIndex(
       title: `Code Index — ${removedName}`,
       content: `Module "${removedName}" has been removed from the project.`,
       tags: `code-index, ${removedName}`,
-      project: projectInfo.projectName,
+      project: projectKey,
       action: "remove",
     });
   }

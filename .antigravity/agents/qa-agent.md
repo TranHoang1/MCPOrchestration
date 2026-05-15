@@ -71,6 +71,56 @@ Lưu tài liệu vào Knowledge Base và chuẩn bị các bản export (XLSX ch
   5. **E2E-UI**: Kiểm tra luồng người dùng trên browser (Cucumber/Serenity).
   6. **SIT**: Kiểm tra hệ thống tổng thể (Manual chỉ dành cho UX/Visual).
 
+### Feature CRUD Test Scenarios (KB Feature Management)
+
+Khi ticket liên quan đến Feature Management (kb_feature_* tools), QA PHẢI include các test scenarios sau:
+
+| TC ID | Scenario | Expected Result | Level |
+|-------|----------|-----------------|-------|
+| TC-FEAT-01 | `kb_feature_list` trả về empty cho project mới | Response: empty array, status 200 | IT |
+| TC-FEAT-02 | `kb_feature_create` tạo manual feature | Feature có source="manual", locked=true | IT |
+| TC-FEAT-03 | `kb_feature_update` adopt AI feature | source chuyển từ "ai" → "manual", locked=true | IT |
+| TC-FEAT-04 | `kb_feature_assign` di chuyển ticket giữa features | Ticket removed from old feature, added to new | IT |
+| TC-FEAT-05 | `kb_feature_delete` với AI feature | Hiển thị warning, yêu cầu confirm | IT |
+| TC-FEAT-06 | AI sync KHÔNG overwrite manual features | Manual features giữ nguyên sau jira_project_sync | E2E-API |
+| TC-FEAT-07 | BA list features sau AI sync | Cả 2 sources (ai + manual) đều visible | E2E-API |
+
+**Chi tiết test scenarios:**
+
+**TC-FEAT-01: Empty Feature List**
+- Precondition: Project mới, chưa có feature nào
+- Action: `kb_feature_list(project_key="NEW-PROJECT")`
+- Expected: `{ features: [], total: 0 }`
+
+**TC-FEAT-02: Create Manual Feature**
+- Action: `kb_feature_create(project_key, name="Auth Module", ticket_keys=["MTO-1"], description="...")`
+- Verify: Feature created với `source="manual"`, `locked=true`, tickets assigned
+
+**TC-FEAT-03: Adopt AI Feature**
+- Precondition: Feature tồn tại với `source="ai"`, `locked=false`
+- Action: `kb_feature_update(feature_id, name="Renamed", description="Updated")`
+- Verify: `source` chuyển thành `"manual"`, `locked=true`
+
+**TC-FEAT-04: Move Ticket Between Features**
+- Precondition: Ticket "MTO-5" thuộc Feature A
+- Action: `kb_feature_assign(feature_id=B, ticket_keys=["MTO-5"])`
+- Verify: MTO-5 removed from Feature A, added to Feature B
+
+**TC-FEAT-05: Delete AI Feature Warning**
+- Precondition: Feature có `source="ai"`
+- Action: `kb_feature_delete(feature_id)`
+- Verify: Response chứa warning message, feature bị xóa sau confirm
+
+**TC-FEAT-06: AI Sync Preserves Manual Features**
+- Precondition: Manual feature "Auth Module" tồn tại
+- Action: `jira_project_sync(projectKey, fullSync=true)`
+- Verify: Sau sync, "Auth Module" vẫn tồn tại với source="manual", không bị overwrite
+
+**TC-FEAT-07: Both Sources Visible After Sync**
+- Precondition: 1 manual feature + AI sync tạo thêm features
+- Action: `kb_feature_list(project_key)`
+- Verify: Response chứa cả features source="ai" và source="manual"
+
 ### Phase 6: Testing Execution
 - **Automation First**: Tối đa hóa tự động hóa để giảm SIT manual.
 - **Evidence**: Chụp ảnh màn hình (screenshots) cho các bước fail.

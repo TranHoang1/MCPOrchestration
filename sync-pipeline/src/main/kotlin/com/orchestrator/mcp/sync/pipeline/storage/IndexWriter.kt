@@ -15,6 +15,12 @@ interface IndexWriter {
 
     /** Get ticket summaries for post-processing (feature detection). */
     suspend fun getTicketSummaries(projectKey: String): List<TicketSummaryRow>
+
+    /** Load existing feature entries for AI protection check. */
+    suspend fun getFeatureEntries(projectKey: String): List<IndexEntry>
+
+    /** Get stored content hash for a ticket in a specific dimension. */
+    suspend fun getContentHash(ticketKey: String, dimensionId: String): String?
 }
 
 /**

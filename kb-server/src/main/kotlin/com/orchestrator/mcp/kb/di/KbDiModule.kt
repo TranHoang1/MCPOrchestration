@@ -11,9 +11,13 @@ import com.orchestrator.mcp.kb.graph.di.kbGraphModule
 import com.orchestrator.mcp.kb.masking.PiiMaskingEngine
 import com.orchestrator.mcp.kb.masking.PiiMaskingEngineImpl
 import com.orchestrator.mcp.kb.network.di.kbNetworkModule
+import com.orchestrator.mcp.kb.feature.FeatureRepository
+import com.orchestrator.mcp.kb.feature.FeatureRepositoryImpl
 import com.orchestrator.mcp.kb.protocol.KbMcpServerFactory
 import com.orchestrator.mcp.kb.protocol.KbToolHandler
 import com.orchestrator.mcp.kb.protocol.handlers.*
+import com.orchestrator.mcp.kb.protocol.handlers.feature.*
+import com.orchestrator.mcp.kb.synctools.*
 import com.orchestrator.mcp.kb.queue.*
 import com.orchestrator.mcp.kb.queue.handler.IngestTaskHandler
 import com.orchestrator.mcp.kb.queue.handler.SyncTaskHandler
@@ -150,6 +154,14 @@ fun kbSyncPipelineModule(config: KbConfig) = module {
             ),
             pipeline = com.orchestrator.mcp.sync.pipeline.config.PipelineConfig(
                 batchSize = config.kb.sync.batchSize
+            ),
+            ai = com.orchestrator.mcp.sync.pipeline.config.AiConfig(
+                provider = System.getenv("AI_PROVIDER") ?: "ollama",
+                model = System.getenv("AI_MODEL") ?: "qwen3:8b",
+                baseUrl = System.getenv("AI_BASE_URL") ?: "http://localhost:11434",
+                temperature = 0.1,
+                timeoutSeconds = 60,
+                maxTokens = 4000
             )
         )
     }
@@ -170,6 +182,20 @@ fun kbHandlersModule() = module {
     single { KbUnmaskBrHandler(get(), get()) } bind KbToolHandler::class
     single { KbGraphHandler(get()) } bind KbToolHandler::class
     single { KbNetworkHandler(get()) } bind KbToolHandler::class
+
+    // Feature CRUD handlers (MTO-116)
+    single { FeatureRepositoryImpl(get()) } bind FeatureRepository::class
+    single { KbFeatureListHandler(get(), get()) } bind KbToolHandler::class
+    single { KbFeatureCreateHandler(get(), get()) } bind KbToolHandler::class
+    single { KbFeatureUpdateHandler(get(), get()) } bind KbToolHandler::class
+    single { KbFeatureAssignHandler(get(), get()) } bind KbToolHandler::class
+    single { KbFeatureDeleteHandler(get(), get()) } bind KbToolHandler::class
+
+    // Unified sync tool handlers (MTO-117)
+    single { JiraProjectSyncHandler(get(), get(), get()) } bind KbToolHandler::class
+    single { JiraSyncStatusHandler(get(), get()) } bind KbToolHandler::class
+    single { JiraTicketGraphHandler(get(), get()) } bind KbToolHandler::class
+    single { JiraTicketSyncHandler(get()) } bind KbToolHandler::class
 }
 
 /** MCP protocol layer bindings */

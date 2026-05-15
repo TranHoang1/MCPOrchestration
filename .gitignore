@@ -18,6 +18,13 @@ Thumbs.db
 *.class
 .kotlin/
 
+# Gradle compiled output
+**/bin/
+
+# Python
+**/__pycache__/
+*.pyc
+
 # Local config
 local.properties
 

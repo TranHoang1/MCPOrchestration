@@ -1,0 +1,33 @@
+{
+  "ticket": "MTO-120",
+  "currentPhase": "requirements",
+  "phases": {
+    "requirements": { "status": "done", "file": "BRD.md", "version": "1.0", "completedAt": "2026-05-15T16:00:00Z" },
+    "specification": { "status": "not_started", "note": "FSD needed for MTO-121 through MTO-129" },
+    "design": { "status": "not_started" },
+    "implementation": { "status": "not_started" },
+    "testing": { "status": "not_started" },
+    "deployment": { "status": "not_started" }
+  },
+  "jiraStatus": "In Progress",
+  "stories": {
+    "MTO-121": "To Do",
+    "MTO-122": "To Do",
+    "MTO-123": "To Do",
+    "MTO-124": "To Do",
+    "MTO-125": "To Do",
+    "MTO-126": "To Do",
+    "MTO-127": "To Do",
+    "MTO-128": "To Do",
+    "MTO-129": "To Do"
+  },
+  "nextSteps": [
+    "Create FSD for MTO-120 (TA Agent)",
+    "Create TDD for MTO-121 (SQLite Schema) — first implementation target",
+    "Implement MTO-121 + MTO-122 (foundation: schema + scanner)",
+    "Then MTO-123 (MCP tools) + MTO-125 (background indexing)",
+    "Then MTO-126 (Kotlin bridge — primary implementation)",
+    "Then MTO-124 (Ollama embeddings) + MTO-127/128/129 (other clients)"
+  ],
+  "lastUpdated": "2026-05-15T16:00:00Z"
+}

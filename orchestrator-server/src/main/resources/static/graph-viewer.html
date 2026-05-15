@@ -316,7 +316,7 @@
         graph = ForceGraph3D({ rendererConfig: { preserveDrawingBuffer: true } })(document.getElementById('graph-container'))
             .backgroundColor('#0d1117')
             .nodeColor(function(n) { return n.color; })
-            .nodeVal(function(n) { return n.size; })
+            .nodeVal(function(n) { return n.size * 0.5; })
             .nodeLabel(function(n) { return n.id + ': ' + n.label; })
             .nodeThreeObjectExtend(true)
             .nodeThreeObject(function(n) { return createNodeLabel(n); })
@@ -342,6 +342,9 @@
             controls.rotateSpeed = 0.8;
             controls.zoomSpeed = 1.2;
         }
+
+        // Increase repulsion so nodes spread out for large graphs
+        graph.d3Force('charge').strength(-200);
 
         bindControls();
         loadProjects();
@@ -514,9 +517,13 @@
                 graph.d3Force('link').distance(function(link) {
                     var src = link.source;
                     var tgt = link.target;
-                    if (src.group === tgt.group) return 30;
-                    return 80;
+                    if (src.group === tgt.group) return 60;
+                    return 120;
                 });
+                // Auto-fit camera after data loads — use timeout since onEngineStop may not fire quickly
+                setTimeout(function() {
+                    graph.zoomToFit(400);
+                }, 3000);
                 updateStats(data.metadata);
                 updateLegend(data.nodes);
                 buildFilterChips(data.nodes);

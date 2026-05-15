@@ -517,7 +517,7 @@
                 graph.d3Force('link').distance(function(link) {
                     var src = link.source;
                     var tgt = link.target;
-                    if (src.group === tgt.group) return 60;
+                    if (src && tgt && src.group === tgt.group) return 60;
                     return 120;
                 });
                 // Auto-fit camera after data loads — use timeout since onEngineStop may not fire quickly
@@ -653,15 +653,17 @@
     function searchNode(query) {
         if (!query) return;
         var q = query.toLowerCase().trim();
+        // Search in live graph nodes (have x/y/z coordinates from simulation)
+        var liveNodes = graph.graphData().nodes;
         // Exact ID match first
-        var found = graphData.nodes.find(function(n) { return n.id.toLowerCase() === q; });
+        var found = liveNodes.find(function(n) { return n.id.toLowerCase() === q; });
         // Then partial match on ID or label
         if (!found) {
-            found = graphData.nodes.find(function(n) {
+            found = liveNodes.find(function(n) {
                 return n.id.toLowerCase().includes(q) || n.label.toLowerCase().includes(q);
             });
         }
-        if (found) {
+        if (found && found.x != null) {
             graph.cameraPosition({ x: found.x, y: found.y, z: found.z + 200 }, found, 1000);
             showDetails(found);
         }
@@ -804,26 +806,29 @@
     }
 
     function renderMinimap() {
-        if (!minimapCtx || !graphData.nodes || graphData.nodes.length === 0) return;
+        if (!minimapCtx || !graph) return;
+        var liveNodes = graph.graphData().nodes;
+        if (!liveNodes || liveNodes.length === 0) return;
         var w = minimapCanvas.width;
         var h = minimapCanvas.height;
         minimapCtx.clearRect(0, 0, w, h);
 
-        // Compute bounds
+        // Compute bounds from live node positions
         var minX = Infinity, maxX = -Infinity, minZ = Infinity, maxZ = -Infinity;
-        graphData.nodes.forEach(function(n) {
+        liveNodes.forEach(function(n) {
             if (n.x == null) return;
             if (n.x < minX) minX = n.x;
             if (n.x > maxX) maxX = n.x;
             if (n.z < minZ) minZ = n.z;
             if (n.z > maxZ) maxZ = n.z;
         });
+        if (minX === Infinity) return;
         var rangeX = (maxX - minX) || 1;
         var rangeZ = (maxZ - minZ) || 1;
         var pad = 10;
 
         // Draw nodes
-        graphData.nodes.forEach(function(n) {
+        liveNodes.forEach(function(n) {
             if (n.x == null) return;
             var px = pad + ((n.x - minX) / rangeX) * (w - 2 * pad);
             var pz = pad + ((n.z - minZ) / rangeZ) * (h - 2 * pad);
@@ -847,7 +852,9 @@
     }
 
     function handleMinimapClick(e) {
-        if (!graphData.nodes || graphData.nodes.length === 0) return;
+        if (!graph) return;
+        var liveNodes = graph.graphData().nodes;
+        if (!liveNodes || liveNodes.length === 0) return;
         var rect = minimapCanvas.getBoundingClientRect();
         var x = e.clientX - rect.left;
         var y = e.clientY - rect.top;
@@ -856,13 +863,14 @@
         var pad = 10;
 
         var minX = Infinity, maxX = -Infinity, minZ = Infinity, maxZ = -Infinity;
-        graphData.nodes.forEach(function(n) {
+        liveNodes.forEach(function(n) {
             if (n.x == null) return;
             if (n.x < minX) minX = n.x;
             if (n.x > maxX) maxX = n.x;
             if (n.z < minZ) minZ = n.z;
             if (n.z > maxZ) maxZ = n.z;
         });
+        if (minX === Infinity) return;
         var rangeX = (maxX - minX) || 1;
         var rangeZ = (maxZ - minZ) || 1;
 

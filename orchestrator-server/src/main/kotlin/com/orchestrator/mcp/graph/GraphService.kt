@@ -21,7 +21,16 @@ class GraphService(
         val strategy = viewStrategies[view] ?: viewStrategies[ViewMode.HIERARCHY]!!
 
         val nodes = tickets.map { strategy.toNode(it, tickets) }
-        val graphEdges = edges.map { toGraphEdge(it) }
+        val nodeIds = tickets.map { it.ticketKey }.toSet()
+        val validEdges = edges.filter { it.sourceKey in nodeIds && it.targetKey in nodeIds }
+        val graphEdges = validEdges.map { toGraphEdge(it) }
+
+        if (validEdges.size < edges.size) {
+            logger.debug(
+                "Filtered {} orphan edges (total={}, valid={})",
+                edges.size - validEdges.size, edges.size, validEdges.size
+            )
+        }
 
         return GraphResponse(
             nodes = nodes,
@@ -39,6 +48,9 @@ class GraphService(
         val (tickets, edges) = repository.bfsTraversal(issueKey, projectKey, depth)
         val strategy = viewStrategies[view] ?: viewStrategies[ViewMode.HIERARCHY]!!
 
+        val nodeIds = tickets.map { it.ticketKey }.toSet()
+        val validEdges = edges.filter { it.sourceKey in nodeIds && it.targetKey in nodeIds }
+
         val nodes = tickets.map { ticket ->
             val node = strategy.toNode(ticket, tickets)
             if (ticket.ticketKey == issueKey) {
@@ -48,8 +60,8 @@ class GraphService(
 
         return GraphResponse(
             nodes = nodes,
-            edges = edges.map { toGraphEdge(it) },
-            metadata = GraphMetadata(projectKey, view.name, nodes.size, edges.size)
+            edges = validEdges.map { toGraphEdge(it) },
+            metadata = GraphMetadata(projectKey, view.name, nodes.size, validEdges.size)
         )
     }
 

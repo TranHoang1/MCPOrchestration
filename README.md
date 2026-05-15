@@ -69,6 +69,26 @@ Connect 1 or 100 upstream MCP servers — stdio-based (local processes) or HTTP 
 
 Call any tool by name. The orchestrator knows which upstream server owns it, forwards the request, handles timeouts (configurable per-tool), retries on transient failures, and returns the result. No manual routing logic needed.
 
+### 🔄 Multi-URL Fallback & Failover
+
+Configure multiple orchestrator URLs for high availability. Bridge clients try each URL sequentially on startup and automatically failover on disconnect — no manual intervention needed.
+
+```json
+{
+  "command": "npx",
+  "args": ["mcp-orchestrator-bridge", "--url", "http://primary:9180,http://secondary:9180,http://tertiary:9180"]
+}
+```
+
+**How it works:**
+- URLs are tried left-to-right with a 5-second timeout per URL
+- On disconnect: retries the active URL 3 times (with exponential backoff), then rotates to the next
+- Session is automatically reset when switching servers (clean MCP handshake)
+- Aggregated error reporting when all URLs fail
+- Backward compatible — single URL works exactly as before
+
+Supports CLI (`--url`), environment variable (`ORCHESTRATOR_URLS`), or both. All 6 bridge clients (Node.js, Python, Kotlin, Bash, PowerShell, CMD) implement identical failover behavior.
+
 ### 🏥 Health Monitoring & Auto-Reconnect
 
 Every connection is monitored with periodic pings (default 30s). If a server goes down, the orchestrator detects it within one ping cycle, marks it unavailable, and starts exponential backoff reconnection (1s → 2s → 4s → ... → max 15s). When it comes back, tools are re-indexed automatically.
@@ -85,7 +105,7 @@ The orchestrator speaks HTTP Streamable transport. Your IDE speaks stdio. Bridge
 | **PowerShell** | PS 5.1+ / pwsh 7+ | Single `.ps1` file | Windows native, DevOps |
 | **CMD** | Windows Batch | Single `.cmd` file | Legacy Windows, restricted environments |
 
-All bridges include health check, auto-reconnect, and local utility tools.
+All bridges include health check, auto-reconnect, multi-URL failover, and local utility tools.
 
 ### 📁 Transparent File Proxy
 
@@ -303,7 +323,21 @@ Add the orchestrator to your IDE's MCP configuration. **No clone or build needed
 }
 ```
 
+**With multi-URL failover (high availability):**
+```json
+{
+  "mcpServers": {
+    "orchestrator": {
+      "command": "npx",
+      "args": ["mcp-orchestrator-bridge", "--url", "http://primary:9180,http://secondary:9180"]
+    }
+  }
+}
+```
+
 > 💡 That's it. No `git clone`, no `npm install`, no `pip install`. Just add the config and connect.
+> 
+> 💡 **Multi-URL:** Pass comma-separated URLs to `--url` for automatic failover. Or set `ORCHESTRATOR_URLS` env var.
 
 ---
 
@@ -383,7 +417,7 @@ Any MCP-compatible client works. Point it to the bridge client with `--url http:
 
 ## 🌐 Multi-Language Bridge Clients
 
-Choose the bridge client that fits your environment. All bridges provide the same core functionality: health check (30s ping), auto-reconnect, and local utility tools.
+Choose the bridge client that fits your environment. All bridges provide the same core functionality: health check (30s ping), auto-reconnect, multi-URL failover, and local utility tools.
 
 | Bridge | Auto-Download | Install Method | Best For |
 |--------|:---:|---------|----------|
@@ -563,6 +597,59 @@ orchestrator:
     auto_reconnect: true
     max_reconnect_attempts: 5
     backoff_multiplier: 2.0
+```
+
+---
+
+## 🔄 Multi-URL Failover Configuration
+
+Bridge clients support multiple orchestrator URLs for high availability. If the primary server goes down, the bridge automatically fails over to the next URL in the list.
+
+### Configuration Methods (priority order)
+
+| # | Method | Example |
+|---|--------|---------|
+| 1 | `--url` CLI argument | `--url "http://primary:9180,http://secondary:9180"` |
+| 2 | `ORCHESTRATOR_URLS` env var | `ORCHESTRATOR_URLS=http://a:9180,http://b:9180` |
+| 3 | `ORCHESTRATOR_URL` env var (single) | `ORCHESTRATOR_URL=http://localhost:9180` |
+| 4 | Default | `http://localhost:8080` |
+
+### Failover Behavior
+
+```
+Initial connection:
+  URL 1 → timeout 5s → URL 2 → timeout 5s → ... → URL N → all failed
+
+On disconnect (while running):
+  Retry active URL (3× with backoff) → rotate to next URL → session reset → connect
+```
+
+| Parameter | Value | Notes |
+|-----------|-------|-------|
+| Per-URL timeout | 5 seconds | Fixed, not configurable |
+| Retries before rotation | 3 | With exponential backoff (1s, 2s, 4s) |
+| Max URLs | 10 | List truncated with warning if exceeded |
+| Session reset | Automatic | On URL switch — clears session ID, re-initializes MCP |
+
+### Environment Variable Example
+
+```bash
+# Set multiple URLs via environment
+export ORCHESTRATOR_URLS="http://primary:9180,http://secondary:9180,http://dr-site:9180"
+
+# Bridge picks up automatically
+npx mcp-orchestrator-bridge
+```
+
+### Error Reporting
+
+When all URLs fail, the bridge outputs a structured error report:
+
+```
+All URLs failed:
+  - http://primary:9180: Connection refused
+  - http://secondary:9180: Timeout after 5000ms
+  - http://dr-site:9180: DNS resolution failed
 ```
 
 ---

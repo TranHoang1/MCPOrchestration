@@ -27,6 +27,7 @@ Thumbs.db
 
 # Local config
 local.properties
+.kiro/settings/
 
 # Office temp files
 ~$*

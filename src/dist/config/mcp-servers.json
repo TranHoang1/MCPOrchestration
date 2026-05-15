@@ -13,6 +13,14 @@
         "execute_sql"
       ]
     },
+    "atlassian": {
+      "command": "uvx",
+      "args": [
+        "mcp-atlassian-multi",
+        "--multi-user",
+        "--jira-url=https://jiraassist.atlassian.net"
+      ]
+    },
     "kb-server": {
       "command": "java",
       "args": [

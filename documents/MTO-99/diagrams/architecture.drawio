@@ -1,0 +1,69 @@
+<mxGraphModel dx="1422" dy="762" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
+  <root>
+    <mxCell id="0" />
+    <mxCell id="1" parent="0" />
+    <mxCell id="2" value="orchestrator-server" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=14;fontStyle=1;verticalAlign=top;spacingTop=5;" vertex="1" parent="1">
+      <mxGeometry x="80" y="40" width="1000" height="700" as="geometry" />
+    </mxCell>
+    <mxCell id="3" value="Execution Dispatcher" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=12;" vertex="1" parent="1">
+      <mxGeometry x="140" y="100" width="200" height="60" as="geometry" />
+    </mxCell>
+    <mxCell id="4" value="ProcessPoolManager" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=14;fontStyle=1;" vertex="1" parent="1">
+      <mxGeometry x="140" y="220" width="880" height="400" as="geometry" />
+    </mxCell>
+    <mxCell id="5" value="Pool: server1#cred_hash_A" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=11;verticalAlign=top;" vertex="1" parent="1">
+      <mxGeometry x="180" y="280" width="240" height="180" as="geometry" />
+    </mxCell>
+    <mxCell id="6" value="Instance 1 (ACTIVE)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=10;" vertex="1" parent="1">
+      <mxGeometry x="200" y="320" width="180" height="35" as="geometry" />
+    </mxCell>
+    <mxCell id="7" value="Instance 2 (IDLE)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;" vertex="1" parent="1">
+      <mxGeometry x="200" y="365" width="180" height="35" as="geometry" />
+    </mxCell>
+    <mxCell id="8" value="Instance 3 (WARMING)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=10;" vertex="1" parent="1">
+      <mxGeometry x="200" y="410" width="180" height="35" as="geometry" />
+    </mxCell>
+    <mxCell id="9" value="Pool: server1#cred_hash_B" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=11;verticalAlign=top;" vertex="1" parent="1">
+      <mxGeometry x="460" y="280" width="240" height="180" as="geometry" />
+    </mxCell>
+    <mxCell id="10" value="Instance 1 (ACTIVE)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=10;" vertex="1" parent="1">
+      <mxGeometry x="480" y="320" width="180" height="35" as="geometry" />
+    </mxCell>
+    <mxCell id="11" value="Pool: server2#cred_hash_A" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=11;verticalAlign=top;" vertex="1" parent="1">
+      <mxGeometry x="740" y="280" width="240" height="180" as="geometry" />
+    </mxCell>
+    <mxCell id="12" value="Instance 1 (IDLE)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;" vertex="1" parent="1">
+      <mxGeometry x="760" y="320" width="180" height="35" as="geometry" />
+    </mxCell>
+    <mxCell id="13" value="UpstreamServerManager&#xa;(existing, unmodified)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=12;fontColor=#333333;" vertex="1" parent="1">
+      <mxGeometry x="380" y="520" width="300" height="60" as="geometry" />
+    </mxCell>
+    <mxCell id="14" value="PoolHealthChecker" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="180" y="520" width="160" height="40" as="geometry" />
+    </mxCell>
+    <mxCell id="15" value="ScalingPolicy" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="720" y="520" width="160" height="40" as="geometry" />
+    </mxCell>
+    <mxCell id="16" value="PoolMetrics" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="720" y="570" width="160" height="40" as="geometry" />
+    </mxCell>
+    <mxCell id="17" value="Admin API&#xa;/admin/pool/*" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="820" y="100" width="160" height="60" as="geometry" />
+    </mxCell>
+    <mxCell id="18" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.2;entryY=0;entryDx=0;entryDy=0;" edge="1" source="3" target="4" parent="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="19" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" source="4" target="13" parent="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="20" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.9;entryY=0;entryDx=0;entryDy=0;" edge="1" source="17" target="4" parent="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="21" value="acquire()/release()" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=10;" vertex="1" parent="1">
+      <mxGeometry x="250" y="175" width="110" height="30" as="geometry" />
+    </mxCell>
+    <mxCell id="22" value="spawn/kill processes" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=10;" vertex="1" parent="1">
+      <mxGeometry x="530" y="490" width="120" height="30" as="geometry" />
+    </mxCell>
+  </root>
+</mxGraphModel>

@@ -1,6 +1,7 @@
 package com.orchestrator.mcp.scanner
 
 import com.orchestrator.mcp.client.upstream.UpstreamServerManager
+import com.orchestrator.mcp.credentials.CredentialResolver
 import com.orchestrator.mcp.jira.model.JiraIssue
 import com.orchestrator.mcp.jira.model.JiraSearchResponse
 import kotlinx.serialization.json.*
@@ -14,10 +15,13 @@ import org.slf4j.LoggerFactory
  *   { "key": "X-1", "summary": "...", "status": {...}, "issue_type": {...} }
  * This class reconstructs the standard Jira "fields" JsonObject expected by
  * downstream MetadataParser.
+ *
+ * MTO-111: Credentials are resolved from DB and injected via _meta.credentials.
+ * If no credentials are available, fails fast with a clear error message.
  */
 class McpPageFetcher(
     private val serverManager: UpstreamServerManager,
-    private val credentialResolver: com.orchestrator.mcp.credentials.CredentialResolver? = null,
+    private val credentialResolver: CredentialResolver? = null,
     private val serverName: String = ATLASSIAN_SERVER
 ) : PageFetcher {
 
@@ -31,14 +35,44 @@ class McpPageFetcher(
         logger.debug("MCP fetchPage: jql='{}', startAt={}, maxResults={}", jql, startAt, maxResults)
 
         val connection = serverManager.getConnection(serverName)
-            ?: throw McpPageFetchException("No connection to upstream server '$serverName'")
+            ?: throw McpPageFetchException(
+                "No connection to upstream server '$serverName'. " +
+                    "Ensure the atlassian server is configured in mcp-servers.json."
+            )
 
-        val params = buildToolCallParams(jql, startAt, maxResults)
+        val credentials = resolveCredentials()
+        val params = buildToolCallParams(jql, startAt, maxResults, credentials)
         val result = connection.sendRequest("tools/call", params)
         return parseResponse(result, startAt, maxResults)
     }
 
-    private fun buildToolCallParams(jql: String, startAt: Int, maxResults: Int): JsonObject {
+    /**
+     * Resolve credentials from DB for the atlassian server.
+     * MTO-111: Fails fast with actionable error if no credentials are saved.
+     */
+    private suspend fun resolveCredentials(): Map<String, String> {
+        if (credentialResolver == null) {
+            throw McpPageFetchException(
+                "Credential resolver not available. Cannot authenticate with Jira."
+            )
+        }
+        val credentials = credentialResolver.getFirstAvailableCredentials(serverName)
+        if (credentials.isNullOrEmpty()) {
+            throw McpPageFetchException(
+                "No Jira credentials found for server '$serverName'. " +
+                    "Please save credentials in Profile → Server Credentials (atlassian)."
+            )
+        }
+        logger.debug("Resolved sync credentials for server={}", serverName)
+        return credentials
+    }
+
+    private fun buildToolCallParams(
+        jql: String,
+        startAt: Int,
+        maxResults: Int,
+        credentials: Map<String, String>
+    ): JsonObject {
         return buildJsonObject {
             put("name", TOOL_NAME)
             putJsonObject("arguments") {
@@ -47,29 +81,16 @@ class McpPageFetcher(
                 put("limit", maxResults)
                 put("start_at", startAt)
             }
-            // Inject _meta.credentials for multi-user upstream (MTO-111)
-            val meta = resolveCredentialsMeta()
-            if (meta != null) put("_meta", meta)
+            // MTO-111: Always inject _meta.credentials for multi-user upstream
+            put("_meta", buildCredentialsMeta(credentials))
         }
     }
 
-    private fun resolveCredentialsMeta(): JsonObject? {
-        if (credentialResolver == null) return null
-        return try {
-            // Use first admin user's credentials for sync operations
-            val credentials = kotlinx.coroutines.runBlocking {
-                credentialResolver.getFirstAvailableCredentials(serverName)
-            } ?: return null
-            if (credentials.isEmpty()) return null
-            logger.debug("Injecting sync credentials for server={}", serverName)
-            buildJsonObject {
-                putJsonObject("credentials") {
-                    credentials.forEach { (key, value) -> put(key, value) }
-                }
+    private fun buildCredentialsMeta(credentials: Map<String, String>): JsonObject {
+        return buildJsonObject {
+            putJsonObject("credentials") {
+                credentials.forEach { (key, value) -> put(key, value) }
             }
-        } catch (e: Exception) {
-            logger.warn("Failed to resolve sync credentials: {}", e.message)
-            null
         }
     }
 

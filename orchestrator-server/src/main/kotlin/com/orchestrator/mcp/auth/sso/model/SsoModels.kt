@@ -85,3 +85,11 @@ data class IdpTokenResponse(
     @SerialName("expires_in") val expiresIn: Int? = null,
     @SerialName("refresh_token") val refreshToken: String? = null
 )
+
+/** Provider info for login page — public-safe fields only. */
+@Serializable
+data class SsoProviderInfo(
+    val name: String,
+    @SerialName("display_name") val displayName: String,
+    @SerialName("authorize_url") val authorizeUrl: String
+)

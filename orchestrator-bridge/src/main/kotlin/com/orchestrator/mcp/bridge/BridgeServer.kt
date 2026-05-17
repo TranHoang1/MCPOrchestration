@@ -1,5 +1,6 @@
 package com.orchestrator.mcp.bridge
 
+import com.orchestrator.mcp.bridge.codeintel.CodeIntelligenceModule
 import io.modelcontextprotocol.kotlin.sdk.server.Server
 import io.modelcontextprotocol.kotlin.sdk.server.ServerOptions
 import io.modelcontextprotocol.kotlin.sdk.server.ServerSession
@@ -36,6 +37,7 @@ class BridgeServer(private val config: BridgeConfig) {
     private val promoter = BridgeToolPromoter(httpClient)
     private val localStreamWrite = LocalStreamWriteTool()
     private val localEmbedImages = LocalEmbedImagesTool()
+    private var codeIntelModule: CodeIntelligenceModule? = null
     private var server: Server? = null
     private var scope: CoroutineScope? = null
 
@@ -47,6 +49,7 @@ class BridgeServer(private val config: BridgeConfig) {
 
     suspend fun stop() {
         logger.info("Bridge shutting down...")
+        codeIntelModule?.shutdown()
         healthCheckManager.stop()
         httpClient.close()
         scope?.cancel()
@@ -96,11 +99,23 @@ class BridgeServer(private val config: BridgeConfig) {
                 val rootPath = uriToPath(rootUri)
                 WorkspaceContext.setRoot(rootPath)
                 logger.info("Workspace root from client: $rootPath")
+                initializeCodeIntelligence(mcpServer, rootPath)
             } else {
                 logger.warn("No roots from client, using default")
+                initializeCodeIntelligence(mcpServer, WorkspaceContext.getRoot())
             }
         } catch (e: Exception) {
             logger.warn("listRoots not supported by client: ${e.message}")
+            initializeCodeIntelligence(mcpServer, WorkspaceContext.getRoot())
+        }
+    }
+
+    private fun initializeCodeIntelligence(mcpServer: Server, rootPath: String) {
+        val module = CodeIntelligenceModule(rootPath)
+        if (module.initialize()) {
+            module.registerTools(mcpServer)
+            scope?.let { module.startBackgroundIndexing(it) }
+            codeIntelModule = module
         }
     }
 

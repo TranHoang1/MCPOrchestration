@@ -1,7 +1,6 @@
 package com.orchestrator.mcp
 
 import com.orchestrator.mcp.core.config.OrchestratorConfig
-import com.orchestrator.mcp.core.model.ToolEntry
 import com.orchestrator.mcp.fileproxy.FileProxyCleanupService
 import com.orchestrator.mcp.fileproxy.FileProxyService
 import com.orchestrator.mcp.protocol.HiddenToolRegistrar
@@ -72,7 +71,6 @@ suspend fun CoroutineScope.startHttpStreamableServer(
             val toolRegistry = org.koin.java.KoinJavaComponent.getKoin()
                 .get<com.orchestrator.mcp.registry.ToolRegistry>()
             HiddenToolRegistrar.registerHiddenTools(toolRegistry)
-            registerSyncTools(toolRegistry)
             registerUserManagementTools(toolRegistry)
 
             // Run User Management migration + seed permissions
@@ -212,6 +210,16 @@ suspend fun CoroutineScope.startHttpStreamableServer(
             credentialSchemaRoutes.handle(exchange)
         }
         httpLogger.info("Credential Schema API registered: /api/admin/credential-schemas/*")
+    }
+
+    // Routing Table API endpoint (MTO-132: Bridge routing config)
+    val routingTableRoutes = org.koin.java.KoinJavaComponent.getKoin()
+        .getOrNull<com.orchestrator.mcp.routing.RoutingTableRoutes>()
+    if (routingTableRoutes != null) {
+        server.createContext("/api/routing-table") { exchange: HttpExchange ->
+            routingTableRoutes.handle(exchange)
+        }
+        httpLogger.info("Routing Table API registered: /api/routing-table")
     }
 
     // Static file serving (graph-viewer.html, sync-dashboard.html)
@@ -397,74 +405,6 @@ private fun serveResource(exchange: HttpExchange, resourcePath: String) {
     exchange.responseBody.use { it.write(bytes) }
 }
 
-
-/**
- * Register sync tools as hidden (discoverable via find_tools, not in tools/list).
- * jira_project_sync: hidden (write operation, needs discovery)
- * jira_sync_status: visible (read-only, agents check frequently)
- */
-private fun registerSyncTools(toolRegistry: ToolRegistry) {
-    val syncEntry = ToolEntry(
-        name = "jira_project_sync",
-        description = "Trigger Jira project sync. Scans all tickets, " +
-            "crawls content, builds graph, ingests into KB. " +
-            "Returns immediately — runs in background. " +
-            "Use jira_sync_status to check progress.",
-        inputSchema = kotlinx.serialization.json.buildJsonObject {
-            put("type", kotlinx.serialization.json.JsonPrimitive("object"))
-            put("properties", kotlinx.serialization.json.buildJsonObject {
-                put("projectKey", kotlinx.serialization.json.buildJsonObject {
-                    put("type", kotlinx.serialization.json.JsonPrimitive("string"))
-                    put("description", kotlinx.serialization.json.JsonPrimitive(
-                        "Jira project key (e.g. MTO)"
-                    ))
-                })
-                put("fullSync", kotlinx.serialization.json.buildJsonObject {
-                    put("type", kotlinx.serialization.json.JsonPrimitive("boolean"))
-                    put("description", kotlinx.serialization.json.JsonPrimitive(
-                        "true=full re-scan, false=incremental (default)"
-                    ))
-                })
-            })
-            put("required", kotlinx.serialization.json.buildJsonArray {
-                add(kotlinx.serialization.json.JsonPrimitive("projectKey"))
-            })
-        },
-        serverName = "__builtin__"
-    )
-    toolRegistry.registerTool(syncEntry)
-    toolRegistry.setHidden("jira_project_sync", true)
-
-    val statusEntry = ToolEntry(
-        name = "jira_sync_status",
-        description = "Check Jira project sync progress. Returns: " +
-            "status (idle/syncing/completed/error), progress %, " +
-            "synced/total counts, phase details, recent errors.",
-        inputSchema = kotlinx.serialization.json.buildJsonObject {
-            put("type", kotlinx.serialization.json.JsonPrimitive("object"))
-            put("properties", kotlinx.serialization.json.buildJsonObject {
-                put("projectKey", kotlinx.serialization.json.buildJsonObject {
-                    put("type", kotlinx.serialization.json.JsonPrimitive("string"))
-                    put("description", kotlinx.serialization.json.JsonPrimitive(
-                        "Jira project key to check status"
-                    ))
-                })
-            })
-            put("required", kotlinx.serialization.json.buildJsonArray {
-                add(kotlinx.serialization.json.JsonPrimitive("projectKey"))
-            })
-        },
-        serverName = "__builtin__"
-    )
-    toolRegistry.registerTool(statusEntry)
-    // jira_sync_status is also hidden — discoverable via find_tools only
-    toolRegistry.setHidden("jira_sync_status", true)
-
-    httpLogger.info(
-        "Registered sync tools: jira_project_sync (hidden), " +
-            "jira_sync_status (hidden)"
-    )
-}
 
 /**
  * Register User Management MCP tools (MTO-39).

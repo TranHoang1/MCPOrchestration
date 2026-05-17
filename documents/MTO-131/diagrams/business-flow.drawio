@@ -1,0 +1,90 @@
+<mxGraphModel adaptiveColors="auto">
+  <root>
+    <mxCell id="0"/>
+    <mxCell id="1" parent="0"/>
+    <mxCell id="title" value="&lt;b&gt;Bridge Client Local MCP Server Management — Business Flow&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=14;" vertex="1" parent="1">
+      <mxGeometry x="200" y="10" width="520" height="30" as="geometry"/>
+    </mxCell>
+    <mxCell id="lane1" value="Bridge Client" style="swimlane;horizontal=0;startSize=110;fillColor=#e1f5fe;strokeColor=#0288d1;html=1;" vertex="1" parent="1">
+      <mxGeometry x="0" y="50" width="1200" height="150" as="geometry"/>
+    </mxCell>
+    <mxCell id="n1" value="Read&#xa;mcp-servers.json" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1f5fe;strokeColor=#0288d1;" vertex="1" parent="lane1">
+      <mxGeometry x="120" y="45" width="140" height="60" as="geometry"/>
+    </mxCell>
+    <mxCell id="n2" value="Spawn Local&#xa;MCP Servers" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1f5fe;strokeColor=#0288d1;" vertex="1" parent="lane1">
+      <mxGeometry x="300" y="45" width="140" height="60" as="geometry"/>
+    </mxCell>
+    <mxCell id="n3" value="Connect to&#xa;Orchestrator" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1f5fe;strokeColor=#0288d1;" vertex="1" parent="lane1">
+      <mxGeometry x="480" y="45" width="140" height="60" as="geometry"/>
+    </mxCell>
+    <mxCell id="n4" value="Merge Tools&#xa;(Local + Remote)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8f5e9;strokeColor=#388e3c;" vertex="1" parent="lane1">
+      <mxGeometry x="660" y="45" width="140" height="60" as="geometry"/>
+    </mxCell>
+    <mxCell id="n5" value="Expose Unified&#xa;tools/list" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8f5e9;strokeColor=#388e3c;" vertex="1" parent="lane1">
+      <mxGeometry x="840" y="45" width="140" height="60" as="geometry"/>
+    </mxCell>
+    <mxCell id="lane2" value="Orchestrator" style="swimlane;horizontal=0;startSize=110;fillColor=#fff3e0;strokeColor=#f57c00;html=1;" vertex="1" parent="1">
+      <mxGeometry x="0" y="200" width="1200" height="150" as="geometry"/>
+    </mxCell>
+    <mxCell id="n6" value="Send Routing&#xa;Table" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff3e0;strokeColor=#f57c00;" vertex="1" parent="lane2">
+      <mxGeometry x="480" y="45" width="140" height="60" as="geometry"/>
+    </mxCell>
+    <mxCell id="n7" value="Handle Remote&#xa;Tool Calls" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff3e0;strokeColor=#f57c00;" vertex="1" parent="lane2">
+      <mxGeometry x="840" y="45" width="140" height="60" as="geometry"/>
+    </mxCell>
+    <mxCell id="lane3" value="AI Client" style="swimlane;horizontal=0;startSize=110;fillColor=#f3e5f5;strokeColor=#7b1fa2;html=1;" vertex="1" parent="1">
+      <mxGeometry x="0" y="350" width="1200" height="150" as="geometry"/>
+    </mxCell>
+    <mxCell id="n8" value="Call tools/list" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f3e5f5;strokeColor=#7b1fa2;" vertex="1" parent="lane3">
+      <mxGeometry x="840" y="15" width="140" height="60" as="geometry"/>
+    </mxCell>
+    <mxCell id="n9" value="Call tools/call&#xa;(any tool)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f3e5f5;strokeColor=#7b1fa2;" vertex="1" parent="lane3">
+      <mxGeometry x="1020" y="15" width="140" height="60" as="geometry"/>
+    </mxCell>
+    <mxCell id="lane4" value="Local MCP Servers" style="swimlane;horizontal=0;startSize=110;fillColor=#e8f5e9;strokeColor=#388e3c;html=1;" vertex="1" parent="1">
+      <mxGeometry x="0" y="500" width="1200" height="150" as="geometry"/>
+    </mxCell>
+    <mxCell id="n10" value="Initialize&#xa;(stdio)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8f5e9;strokeColor=#388e3c;" vertex="1" parent="lane4">
+      <mxGeometry x="300" y="45" width="140" height="60" as="geometry"/>
+    </mxCell>
+    <mxCell id="n11" value="Report Tools&#xa;(tools/list)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8f5e9;strokeColor=#388e3c;" vertex="1" parent="lane4">
+      <mxGeometry x="660" y="45" width="140" height="60" as="geometry"/>
+    </mxCell>
+    <mxCell id="n12" value="Execute Local&#xa;Tool Call" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8f5e9;strokeColor=#388e3c;" vertex="1" parent="lane4">
+      <mxGeometry x="1020" y="45" width="140" height="60" as="geometry"/>
+    </mxCell>
+    <mxCell id="e1" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;" edge="1" source="n1" target="n2" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e2" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;" edge="1" source="n2" target="n3" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e3" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;" edge="1" source="n3" target="n6" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e4" value="routing table" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;fontSize=10;" edge="1" source="n6" target="n4" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e5" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;" edge="1" source="n2" target="n10" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e6" value="tools/list" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;fontSize=10;" edge="1" source="n11" target="n4" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e7" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;" edge="1" source="n4" target="n5" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e8" value="unified list" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;fontSize=10;" edge="1" source="n5" target="n8" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e9" value="remote call" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;dashed=1;fontSize=10;" edge="1" source="n9" target="n7" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e10" value="local call" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;fontSize=10;" edge="1" source="n9" target="n12" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e11" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;" edge="1" source="n10" target="n11" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+  </root>
+</mxGraphModel>

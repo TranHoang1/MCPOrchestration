@@ -1,0 +1,124 @@
+<mxfile host="app.diagrams.net" modified="2026-05-15T00:00:00.000Z" agent="BA Agent" version="21.0.0" type="device">
+  <diagram id="arch-overview" name="Architecture Overview">
+    <mxGraphModel dx="1200" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1100" pageHeight="850" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        
+        <!-- Agent Layer -->
+        <mxCell id="agent-layer" value="Agent Layer" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=14;fontStyle=1;verticalAlign=top;spacingTop=5;" vertex="1" parent="1">
+          <mxGeometry x="50" y="30" width="1000" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="ba-agent" value="BA Agent" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="100" y="60" width="100" height="35" as="geometry" />
+        </mxCell>
+        <mxCell id="ta-agent" value="TA Agent" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="220" y="60" width="100" height="35" as="geometry" />
+        </mxCell>
+        <mxCell id="sa-agent" value="SA Agent" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="340" y="60" width="100" height="35" as="geometry" />
+        </mxCell>
+        <mxCell id="dev-agent" value="DEV Agent" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="460" y="60" width="100" height="35" as="geometry" />
+        </mxCell>
+        <mxCell id="qa-agent" value="QA Agent" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="580" y="60" width="100" height="35" as="geometry" />
+        </mxCell>
+
+        <!-- Arrow: Agent → MCP Tools -->
+        <mxCell id="arrow1" value="MCP Protocol" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;exitX=0.5;exitY=1;entryX=0.5;entryY=0;fontSize=10;" edge="1" parent="1" source="agent-layer" target="mcp-tools">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- MCP Tools Interface -->
+        <mxCell id="mcp-tools" value="MCP Tools Interface" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=14;fontStyle=1;verticalAlign=top;spacingTop=5;" vertex="1" parent="1">
+          <mxGeometry x="50" y="150" width="1000" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="tool-search" value="code_search" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e6ffe6;strokeColor=#82b366;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="100" y="180" width="110" height="35" as="geometry" />
+        </mxCell>
+        <mxCell id="tool-symbols" value="code_symbols" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e6ffe6;strokeColor=#82b366;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="230" y="180" width="110" height="35" as="geometry" />
+        </mxCell>
+        <mxCell id="tool-context" value="code_context" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e6ffe6;strokeColor=#82b366;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="360" y="180" width="110" height="35" as="geometry" />
+        </mxCell>
+        <mxCell id="tool-modules" value="code_modules" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e6ffe6;strokeColor=#82b366;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="490" y="180" width="110" height="35" as="geometry" />
+        </mxCell>
+        <mxCell id="tool-status" value="code_index_status" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e6ffe6;strokeColor=#82b366;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="620" y="180" width="120" height="35" as="geometry" />
+        </mxCell>
+
+        <!-- Arrow: MCP Tools → Bridge Core -->
+        <mxCell id="arrow2" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="mcp-tools" target="bridge-core">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Bridge Client Core -->
+        <mxCell id="bridge-core" value="Bridge Client Core" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=14;fontStyle=1;verticalAlign=top;spacingTop=5;" vertex="1" parent="1">
+          <mxGeometry x="50" y="270" width="1000" height="280" as="geometry" />
+        </mxCell>
+        
+        <!-- Components inside Bridge Core -->
+        <mxCell id="file-scanner" value="File Scanner&#xa;+ Extractor" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6e6;strokeColor=#b85450;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="100" y="300" width="150" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="query-layer" value="Query Layer&#xa;(FTS5 / Vector)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6e6;strokeColor=#b85450;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="300" y="300" width="150" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="bg-indexer" value="Background Indexer&#xa;+ File Watcher" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6e6;strokeColor=#b85450;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="500" y="300" width="170" height="50" as="geometry" />
+        </mxCell>
+
+        <!-- SQLite Database -->
+        <mxCell id="sqlite-db" value="SQLite Database (WAL mode)" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=10;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=12;fontStyle=1;verticalAlign=top;spacingTop=12;" vertex="1" parent="1">
+          <mxGeometry x="100" y="380" width="900" height="150" as="geometry" />
+        </mxCell>
+        <mxCell id="tbl-files" value="files" style="shape=mxgraph.flowchart.database;whiteSpace=wrap;html=1;fillColor=#f3e8ff;strokeColor=#9673a6;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="150" y="430" width="80" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="tbl-symbols" value="symbols" style="shape=mxgraph.flowchart.database;whiteSpace=wrap;html=1;fillColor=#f3e8ff;strokeColor=#9673a6;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="280" y="430" width="80" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="tbl-modules" value="modules" style="shape=mxgraph.flowchart.database;whiteSpace=wrap;html=1;fillColor=#f3e8ff;strokeColor=#9673a6;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="410" y="430" width="80" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="tbl-embeddings" value="embeddings" style="shape=mxgraph.flowchart.database;whiteSpace=wrap;html=1;fillColor=#f3e8ff;strokeColor=#9673a6;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="540" y="430" width="100" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="fts5-table" value="FTS5 Virtual Table (full-text search index)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f3e8ff;strokeColor=#9673a6;fontSize=10;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="150" y="495" width="500" height="25" as="geometry" />
+        </mxCell>
+
+        <!-- Arrows from components to SQLite -->
+        <mxCell id="arr-scan-db" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;exitX=0.5;exitY=1;entryX=0.2;entryY=0;" edge="1" parent="1" source="file-scanner" target="sqlite-db">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="arr-query-db" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;exitX=0.5;exitY=1;entryX=0.4;entryY=0;" edge="1" parent="1" source="query-layer" target="sqlite-db">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="arr-idx-db" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;exitX=0.5;exitY=1;entryX=0.6;entryY=0;" edge="1" parent="1" source="bg-indexer" target="sqlite-db">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Arrow: Bridge Core → Ollama -->
+        <mxCell id="arrow3" value="(Optional)" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;exitX=0.5;exitY=1;entryX=0.5;entryY=0;dashed=1;fontSize=10;" edge="1" parent="1" source="bridge-core" target="ollama">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Ollama -->
+        <mxCell id="ollama" value="Ollama (localhost:11434)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=14;fontStyle=1;verticalAlign=top;spacingTop=5;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="200" y="590" width="700" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="nomic" value="nomic-embed-text&#xa;(768-dim vectors)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#666666;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="260" y="620" width="160" height="35" as="geometry" />
+        </mxCell>
+        <mxCell id="qwen" value="qwen3:8b&#xa;(summarization)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#666666;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="480" y="620" width="160" height="35" as="geometry" />
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

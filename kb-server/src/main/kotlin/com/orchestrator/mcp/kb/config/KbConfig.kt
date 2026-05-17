@@ -26,7 +26,8 @@ data class KbSettings(
 @Serializable
 data class KbServerConfig(
     val port: Int = 9181,
-    val transport: String = "stdio"
+    val transport: String = "stdio",
+    val bind_address: String = "127.0.0.1"
 )
 
 @Serializable

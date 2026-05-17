@@ -1,0 +1,63 @@
+<mxGraphModel dx="1422" dy="762" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
+  <root>
+    <mxCell id="0" />
+    <mxCell id="1" parent="0" />
+    <mxCell id="2" value="&lt;&lt;interface&gt;&gt;&#xa;ProcessPoolManager" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;fontStyle=1;verticalAlign=top;" vertex="1" parent="1">
+      <mxGeometry x="400" y="40" width="250" height="120" as="geometry" />
+    </mxCell>
+    <mxCell id="3" value="+ acquire(serverName, credHash): PooledConnection&#xa;+ release(connection): Unit&#xa;+ getPoolStatus(): List&lt;PoolStatus&gt;&#xa;+ shutdown(): Unit&#xa;+ start(): Unit" style="text;html=1;align=left;verticalAlign=top;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=10;" vertex="1" parent="1">
+      <mxGeometry x="410" y="75" width="280" height="80" as="geometry" />
+    </mxCell>
+    <mxCell id="4" value="ProcessPoolManagerImpl" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=12;fontStyle=1;verticalAlign=top;" vertex="1" parent="1">
+      <mxGeometry x="200" y="220" width="280" height="160" as="geometry" />
+    </mxCell>
+    <mxCell id="5" value="- pools: ConcurrentHashMap&lt;PoolKey, List&lt;PoolEntry&gt;&gt;&#xa;- waitChannels: Map&lt;PoolKey, Channel&lt;PoolEntry&gt;&gt;&#xa;- globalCount: AtomicInteger&#xa;- healthChecker: PoolHealthChecker&#xa;- scalingPolicy: ScalingPolicy&#xa;- metrics: PoolMetrics" style="text;html=1;align=left;verticalAlign=top;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=10;" vertex="1" parent="1">
+      <mxGeometry x="210" y="250" width="260" height="100" as="geometry" />
+    </mxCell>
+    <mxCell id="6" value="PassthroughPoolManager" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=12;fontStyle=1;fontColor=#333333;" vertex="1" parent="1">
+      <mxGeometry x="560" y="220" width="250" height="80" as="geometry" />
+    </mxCell>
+    <mxCell id="7" value="(no pooling — direct delegation)" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=10;" vertex="1" parent="1">
+      <mxGeometry x="590" y="260" width="190" height="30" as="geometry" />
+    </mxCell>
+    <mxCell id="8" value="PoolEntry" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=11;fontStyle=1;verticalAlign=top;" vertex="1" parent="1">
+      <mxGeometry x="80" y="440" width="200" height="130" as="geometry" />
+    </mxCell>
+    <mxCell id="9" value="+ instanceId: String&#xa;+ poolKey: PoolKey&#xa;+ connection: McpConnection&#xa;+ state: AtomicRef&lt;InstanceState&gt;&#xa;+ lastUsedAt: AtomicRef&lt;Instant&gt;&#xa;+ requestCount: AtomicLong" style="text;html=1;align=left;verticalAlign=top;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=10;" vertex="1" parent="1">
+      <mxGeometry x="90" y="465" width="180" height="100" as="geometry" />
+    </mxCell>
+    <mxCell id="10" value="PoolKey" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=11;fontStyle=1;verticalAlign=top;" vertex="1" parent="1">
+      <mxGeometry x="320" y="440" width="180" height="80" as="geometry" />
+    </mxCell>
+    <mxCell id="11" value="@JvmInline value class&#xa;+ value: String  // serverName#credHash" style="text;html=1;align=left;verticalAlign=top;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=10;" vertex="1" parent="1">
+      <mxGeometry x="330" y="465" width="170" height="40" as="geometry" />
+    </mxCell>
+    <mxCell id="12" value="&lt;&lt;interface&gt;&gt;&#xa;ScalingPolicy" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;fontStyle=1;verticalAlign=top;" vertex="1" parent="1">
+      <mxGeometry x="540" y="440" width="220" height="80" as="geometry" />
+    </mxCell>
+    <mxCell id="13" value="+ onSlowResponse(poolKey, responseMs)&#xa;+ evaluateScaleDown(pools): List&lt;PoolEntry&gt;" style="text;html=1;align=left;verticalAlign=top;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=10;" vertex="1" parent="1">
+      <mxGeometry x="550" y="470" width="210" height="40" as="geometry" />
+    </mxCell>
+    <mxCell id="14" value="PoolHealthChecker" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;fontStyle=1;" vertex="1" parent="1">
+      <mxGeometry x="800" y="440" width="180" height="50" as="geometry" />
+    </mxCell>
+    <mxCell id="15" value="PoolMetrics" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;fontStyle=1;" vertex="1" parent="1">
+      <mxGeometry x="800" y="510" width="180" height="50" as="geometry" />
+    </mxCell>
+    <mxCell id="16" value="PoolConfig" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;fontStyle=1;verticalAlign=top;" vertex="1" parent="1">
+      <mxGeometry x="80" y="610" width="220" height="120" as="geometry" />
+    </mxCell>
+    <mxCell id="17" value="+ enabled: Boolean&#xa;+ maxInstancesPerServer: Int&#xa;+ maxTotalInstances: Int&#xa;+ idleTimeoutMs: Long&#xa;+ acquireTimeoutMs: Long&#xa;+ healthCheckIntervalMs: Long" style="text;html=1;align=left;verticalAlign=top;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=10;" vertex="1" parent="1">
+      <mxGeometry x="90" y="635" width="180" height="90" as="geometry" />
+    </mxCell>
+    <mxCell id="18" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;dashed=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.3;entryY=1;entryDx=0;entryDy=0;" edge="1" source="4" target="2" parent="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="19" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;dashed=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.7;entryY=1;entryDx=0;entryDy=0;" edge="1" source="6" target="2" parent="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="20" value="implements" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=9;fontStyle=2;" vertex="1" parent="1">
+      <mxGeometry x="340" y="180" width="70" height="30" as="geometry" />
+    </mxCell>
+  </root>
+</mxGraphModel>

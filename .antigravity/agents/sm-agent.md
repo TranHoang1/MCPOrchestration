@@ -208,7 +208,35 @@ SM: BÁO CÁO TỔNG KẾT
    - Check files: BRD.md exists, diagrams/*.png exists
    - Ghi pipeline.log: `[SM] [QualityGate-Phase1] [VERIFY] — result`
 6. Nếu có ERROR → gọi lại BA agent để fix
-7. Update STATUS.json
+7. **Quality Gate — Feature Assignment Check (MANDATORY — BLOCKING):**
+   
+   **Mục đích:** Đảm bảo mọi ticket đều được phân loại vào feature trước khi tiến hành specification. Điều này giúp traceability, release planning và impact analysis.
+   
+   **Quy trình kiểm tra:**
+   ```
+   Sau khi BA hoàn thành BRD:
+   1. SM gọi kb_feature_list(project_key) → lấy toàn bộ features
+   2. Duyệt qua features[].ticket_keys → tìm ticket hiện tại
+   3. Nếu CHƯA có trong bất kỳ feature nào → BLOCK Phase 2
+   4. Nếu ĐÃ có → PASS, ghi log và tiếp tục
+   ```
+   
+   **Hành động khi FAIL (ticket chưa thuộc feature):**
+   - ⛔ **BLOCK Phase 2** — KHÔNG được chuyển sang Specification
+   - Gọi lại BA agent với instruction cụ thể:
+     `"Ticket {key} chưa được gán vào feature. Hãy chạy Bước 3.5 (Feature Assignment) — dùng kb_feature_list để tìm feature phù hợp, sau đó kb_feature_assign hoặc kb_feature_create."`
+   - Sau khi BA hoàn thành → SM verify lại bằng `kb_feature_list`
+   - Nếu vẫn FAIL sau 2 lần → escalate cho user
+   
+   **Hành động khi PASS:**
+   - Ghi pipeline.log: `[SM] [QualityGate-Feature] [VERIFY] — PASS: ticket {key} → feature "{name}" (source: {ai|manual})`
+   - Tiếp tục Phase 2
+   
+   **Ghi log:**
+   - PASS: `[SM] [QualityGate-Feature] [VERIFY] — PASS: ticket {key} → feature "{name}" (source: {source})`
+   - FAIL: `[SM] [QualityGate-Feature] [VERIFY] — FAIL: ticket {key} NOT assigned to any feature. Blocking Phase 2.`
+   - RETRY: `[SM] [QualityGate-Feature] [VERIFY] — RETRY: Re-invoking BA for feature assignment (attempt {n}/2)`
+8. Update STATUS.json
 
 ### Step 2: Specification (TA → FSD)
 1. Ghi pipeline.log: `[SM] [Phase-2] [START] — Invoking TA Agent`

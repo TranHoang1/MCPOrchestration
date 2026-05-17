@@ -1,0 +1,88 @@
+<mxGraphModel adaptiveColors="auto">
+  <root>
+    <mxCell id="0"/>
+    <mxCell id="1" parent="0"/>
+    <mxCell id="title" value="&lt;b&gt;Sequence Diagram — Ollama Integration (Embedding + Fallback)&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;fontSize=13;fontStyle=1;" vertex="1" parent="1">
+      <mxGeometry x="120" y="10" width="520" height="30" as="geometry"/>
+    </mxCell>
+    <mxCell id="agent_h" value="&lt;b&gt;Agent&lt;/b&gt;" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=0;collapsible=0;recursiveResize=0;outlineConnect=0;size=30;fillColor=#fff3e0;strokeColor=#f57c00;" vertex="1" parent="1">
+      <mxGeometry x="40" y="60" width="80" height="500" as="geometry"/>
+    </mxCell>
+    <mxCell id="tool_h" value="&lt;b&gt;code_context&lt;/b&gt;" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=0;collapsible=0;recursiveResize=0;outlineConnect=0;size=30;fillColor=#e8f5e9;strokeColor=#388e3c;" vertex="1" parent="1">
+      <mxGeometry x="190" y="60" width="110" height="500" as="geometry"/>
+    </mxCell>
+    <mxCell id="ollama_h" value="&lt;b&gt;Ollama&lt;/b&gt;&lt;br&gt;localhost:11434" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=0;collapsible=0;recursiveResize=0;outlineConnect=0;size=30;fillColor=#fff3e0;strokeColor=#f57c00;" vertex="1" parent="1">
+      <mxGeometry x="380" y="60" width="120" height="500" as="geometry"/>
+    </mxCell>
+    <mxCell id="db_h" value="&lt;b&gt;SQLite&lt;/b&gt;&lt;br&gt;(embeddings)" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=0;collapsible=0;recursiveResize=0;outlineConnect=0;size=30;fillColor=#f3e5f5;strokeColor=#7b1fa2;" vertex="1" parent="1">
+      <mxGeometry x="570" y="60" width="110" height="500" as="geometry"/>
+    </mxCell>
+    <mxCell id="fts_h" value="&lt;b&gt;FTS5&lt;/b&gt;&lt;br&gt;(fallback)" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=0;collapsible=0;recursiveResize=0;outlineConnect=0;size=30;fillColor=#f5f5f5;strokeColor=#666666;" vertex="1" parent="1">
+      <mxGeometry x="740" y="60" width="90" height="500" as="geometry"/>
+    </mxCell>
+    <mxCell id="m1" value="code_context(query, top_k=5)" style="html=1;endSize=6;startSize=6;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="80" y="120" as="sourcePoint"/>
+        <mxPoint x="245" y="120" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="m2" value="check layers.embeddings" style="html=1;endSize=6;startSize=6;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="245" y="150" as="sourcePoint"/>
+        <mxPoint x="245" y="175" as="targetPoint"/>
+        <Array as="points">
+          <mxPoint x="295" y="150"/>
+          <mxPoint x="295" y="175"/>
+        </Array>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="alt_box" value="&lt;b&gt;alt&lt;/b&gt; [embeddings available]" style="shape=umlFrame;whiteSpace=wrap;html=1;width=180;height=20;fillColor=none;strokeColor=#0288d1;" vertex="1" parent="1">
+      <mxGeometry x="150" y="190" width="560" height="160" as="geometry"/>
+    </mxCell>
+    <mxCell id="m3" value="POST /api/embeddings {query}" style="html=1;endSize=6;startSize=6;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="245" y="220" as="sourcePoint"/>
+        <mxPoint x="440" y="220" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="m4" value="vector[768]" style="html=1;endSize=6;startSize=6;dashed=1;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="440" y="250" as="sourcePoint"/>
+        <mxPoint x="245" y="250" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="m5" value="load stored embeddings" style="html=1;endSize=6;startSize=6;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="245" y="280" as="sourcePoint"/>
+        <mxPoint x="625" y="280" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="m6" value="cosine similarity → top_k" style="html=1;endSize=6;startSize=6;dashed=1;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="625" y="310" as="sourcePoint"/>
+        <mxPoint x="245" y="310" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="alt_else" value="&lt;b&gt;else&lt;/b&gt; [Ollama unavailable — FTS5 fallback]" style="line;strokeWidth=1;html=1;fillColor=none;strokeColor=#c62828;dashed=1;" vertex="1" parent="1">
+      <mxGeometry x="150" y="360" width="560" height="10" as="geometry"/>
+    </mxCell>
+    <mxCell id="m7" value="FTS5 MATCH query" style="html=1;endSize=6;startSize=6;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="245" y="390" as="sourcePoint"/>
+        <mxPoint x="785" y="390" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="m8" value="keyword results" style="html=1;endSize=6;startSize=6;dashed=1;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="785" y="420" as="sourcePoint"/>
+        <mxPoint x="245" y="420" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="m9" value="JSON {results, search_method}" style="html=1;endSize=6;startSize=6;dashed=1;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="245" y="470" as="sourcePoint"/>
+        <mxPoint x="80" y="470" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+  </root>
+</mxGraphModel>

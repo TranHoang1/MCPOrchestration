@@ -80,11 +80,25 @@ class SyncOrchestratorImpl(
         options: SyncOptions,
         stats: SyncStats
     ) {
+        if (!options.fullSync && isUnchanged(ticket)) {
+            stats.skipped++
+            return
+        }
         val entries = dimensionProcessor.process(ticket, options.dimensions)
         batchWriter.writeBatch(entries)
         queueVectorEntries(entries)
         stats.processed++
         stats.addEntries(entries)
+    }
+
+    private suspend fun isUnchanged(ticket: CrawledTicket): Boolean {
+        return try {
+            val existingHash = batchWriter.getContentHash(ticket.key, "ticket_metadata")
+            existingHash != null && existingHash == ticket.contentHash
+        } catch (e: Exception) {
+            logger.warn("Hash check failed for {}: {}", ticket.key, e.message)
+            false
+        }
     }
 
     private suspend fun queueVectorEntries(entries: List<IndexEntry>) {

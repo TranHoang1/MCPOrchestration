@@ -25,13 +25,10 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Build Orchestrator Server (Shadow JAR)
+      - name: Package Server Bundle
         run: |
           chmod +x ./gradlew
-          ./gradlew :orchestrator-server:shadowJar
-
-      - name: Package Server Bundle
-        run: ./gradlew packageServerBundle
+          ./gradlew packageServerBundle
 
       - name: Build Node.js Bridge
         run: |
@@ -45,9 +42,6 @@ jobs:
           cd mcp-client-bridge
           tar -czf ../mcp-bridge-nodejs.tar.gz dist/ package.json node_modules/
 
-      - name: Make Bash bridge executable
-        run: chmod +x mcp-bridge-bash/mcp-bridge.sh
-
       - name: Create Release
         uses: softprops/action-gh-release@v2
         with:
@@ -56,9 +50,6 @@ jobs:
             build/distributions/mcp-orchestration-server-*.zip
             orchestrator-server/build/libs/mcp-orchestrator-all.jar
             mcp-bridge-nodejs.tar.gz
-            mcp-bridge-bash/mcp-bridge.sh
-            mcp-bridge-powershell/mcp-bridge.ps1
-            mcp-bridge-cmd/mcp-bridge.cmd
 
   publish-nodejs-bridge:
     runs-on: ubuntu-latest

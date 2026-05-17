@@ -33,28 +33,184 @@
             display: flex;
             align-items: center;
             gap: 16px;
-            margin-bottom: 24px;
+            margin-bottom: 16px;
             flex-wrap: wrap;
         }
-        .header h1 {
-            font-size: 1.5rem;
-            flex: 1;
-        }
-        .header select, .header input, .header button {
+        .header h1 { font-size: 1.5rem; flex: 1; }
+        .header button {
             padding: 8px 16px;
             border-radius: var(--radius);
-            border: 1px solid var(--muted);
+            border: none;
             background: var(--surface);
             color: var(--text);
             font-size: 0.9rem;
-        }
-        .header button {
             cursor: pointer;
-            border: none;
             font-weight: 600;
         }
         #btn-start { background: var(--success); }
         #btn-stop { background: var(--accent); }
+
+        /* Tab Bar */
+        .tab-bar {
+            display: flex;
+            gap: 4px;
+            padding: 8px 0;
+            margin-bottom: 16px;
+            overflow-x: auto;
+            scrollbar-width: thin;
+            align-items: center;
+        }
+        .project-tab {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 12px;
+            border-radius: var(--radius);
+            border: 1px solid transparent;
+            background: var(--surface);
+            color: var(--text);
+            cursor: pointer;
+            white-space: nowrap;
+            font-size: 0.85rem;
+            transition: background 0.15s;
+        }
+        .project-tab[aria-selected="true"] {
+            background: var(--card);
+            border-color: var(--accent);
+            font-weight: 600;
+        }
+        .project-tab:hover { background: var(--card); }
+        .project-tab:focus { outline: 2px solid var(--accent); outline-offset: 2px; }
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--muted);
+            flex-shrink: 0;
+        }
+        .status-dot.idle { background: var(--success); }
+        .status-dot.completed { background: var(--success); }
+        .status-dot.running { background: var(--warning); animation: pulse 1.5s infinite; }
+        .status-dot.error { background: var(--accent); }
+        .status-dot.failed { background: var(--accent); }
+        .status-dot.disconnected { background: var(--muted); }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+        .tab-close {
+            margin-left: 4px;
+            opacity: 0.5;
+            font-size: 1rem;
+            line-height: 1;
+            background: none;
+            border: none;
+            color: inherit;
+            cursor: pointer;
+            padding: 0 2px;
+        }
+        .tab-close:hover { opacity: 1; color: var(--accent); }
+        .tab-add {
+            padding: 8px 14px;
+            border-radius: var(--radius);
+            border: 1px dashed var(--muted);
+            background: transparent;
+            color: var(--muted);
+            cursor: pointer;
+            font-size: 1rem;
+            flex-shrink: 0;
+        }
+        .tab-add:hover { border-color: var(--text); color: var(--text); }
+        .tab-input {
+            padding: 6px 10px;
+            border-radius: var(--radius);
+            border: 1px solid var(--accent);
+            background: var(--surface);
+            color: var(--text);
+            font-size: 0.85rem;
+            width: 130px;
+            text-transform: uppercase;
+        }
+        .tab-input:focus { outline: none; box-shadow: 0 0 0 2px var(--accent); }
+        .tab-input-error {
+            font-size: 0.75rem;
+            color: var(--accent);
+            position: absolute;
+            top: 100%;
+            left: 0;
+            margin-top: 2px;
+            white-space: nowrap;
+        }
+        .tab-input-wrap {
+            position: relative;
+            display: inline-flex;
+        }
+
+        /* View Toggle */
+        .view-toggle {
+            display: flex;
+            gap: 4px;
+            margin-bottom: 16px;
+        }
+        .view-toggle button {
+            padding: 6px 14px;
+            border-radius: var(--radius);
+            border: 1px solid var(--muted);
+            background: transparent;
+            color: var(--muted);
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+        .view-toggle button.active {
+            background: var(--card);
+            color: var(--text);
+            border-color: var(--accent);
+        }
+
+        /* Overview Grid */
+        .overview-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
+        }
+        .mini-card {
+            background: var(--surface);
+            border-radius: var(--radius);
+            padding: 16px;
+            cursor: pointer;
+            border-left: 4px solid var(--muted);
+            transition: transform 0.1s;
+        }
+        .mini-card:hover { transform: translateY(-2px); }
+        .mini-card:focus { outline: 2px solid var(--accent); outline-offset: 2px; }
+        .mini-card.idle { border-left-color: var(--success); }
+        .mini-card.completed { border-left-color: var(--success); }
+        .mini-card.running { border-left-color: var(--warning); }
+        .mini-card.error, .mini-card.failed { border-left-color: var(--accent); }
+        .mini-card .mc-key { font-weight: 700; font-size: 1rem; margin-bottom: 8px; }
+        .mini-card .mc-status { font-size: 0.8rem; color: var(--muted); }
+        .mini-card .mc-progress { font-size: 0.85rem; margin-top: 4px; }
+        .mini-card .mc-time { font-size: 0.75rem; color: var(--muted); margin-top: 4px; }
+
+        /* Empty State */
+        #empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--muted);
+        }
+        #empty-state p { font-size: 1.1rem; margin-bottom: 16px; }
+        #btn-add-first {
+            padding: 12px 24px;
+            border-radius: var(--radius);
+            border: 2px dashed var(--muted);
+            background: transparent;
+            color: var(--text);
+            cursor: pointer;
+            font-size: 1rem;
+        }
+        #btn-add-first:hover { border-color: var(--accent); }
+
+        /* Existing detail styles */
         .progress-section {
             background: var(--surface);
             border-radius: var(--radius);
@@ -75,10 +231,7 @@
             transition: width 0.5s ease;
             width: 0%;
         }
-        .progress-text {
-            font-size: 0.9rem;
-            color: var(--muted);
-        }
+        .progress-text { font-size: 0.9rem; color: var(--muted); }
         .status-cards {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -137,14 +290,147 @@
         }
         .ws-status.connected { background: var(--success); }
         .ws-status.disconnected { background: var(--accent); }
+
+        /* ─── MTO-64: History Table ─── */
+        .history-section {
+            background: var(--surface);
+            border-radius: var(--radius);
+            padding: 20px;
+            margin-top: 20px;
+        }
+        .history-section h3 {
+            margin-bottom: 12px;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .history-section h3 .history-count {
+            font-size: 0.75rem;
+            color: var(--muted);
+            font-weight: 400;
+        }
+        .history-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+        }
+        .history-table th {
+            text-align: left;
+            padding: 8px 12px;
+            border-bottom: 2px solid var(--card);
+            color: var(--muted);
+            font-weight: 600;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .history-table td {
+            padding: 8px 12px;
+            border-bottom: 1px solid var(--card);
+            color: var(--text);
+        }
+        .history-table tr:last-child td { border-bottom: none; }
+        .history-table .status-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        .history-table .status-badge.completed { background: #1b5e20; color: #a5d6a7; }
+        .history-table .status-badge.failed { background: #b71c1c; color: #ef9a9a; }
+        .history-empty {
+            text-align: center;
+            padding: 20px;
+            color: var(--muted);
+            font-size: 0.85rem;
+        }
+
+        /* ─── MTO-65: Error Detail Panel ─── */
+        .error-panel {
+            background: #2d1b1b;
+            border: 1px solid var(--accent);
+            border-radius: var(--radius);
+            padding: 20px;
+            margin-top: 20px;
+        }
+        .error-panel-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+        .error-panel-header h3 {
+            font-size: 1rem;
+            color: var(--accent);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .error-panel-actions {
+            display: flex;
+            gap: 8px;
+        }
+        .error-panel-actions button {
+            padding: 6px 14px;
+            border-radius: var(--radius);
+            border: none;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        .btn-retry {
+            background: var(--warning);
+            color: #000;
+        }
+        .btn-retry:hover { opacity: 0.85; }
+        .btn-retry:disabled { opacity: 0.5; cursor: not-allowed; }
+        .btn-clear-errors {
+            background: var(--surface);
+            color: var(--text);
+            border: 1px solid var(--muted) !important;
+        }
+        .btn-clear-errors:hover { border-color: var(--text) !important; }
+        .error-details-list {
+            list-style: none;
+        }
+        .error-detail-item {
+            background: var(--surface);
+            border-radius: var(--radius);
+            padding: 12px 16px;
+            margin-bottom: 8px;
+            border-left: 3px solid var(--accent);
+        }
+        .error-detail-item:last-child { margin-bottom: 0; }
+        .error-detail-item .error-phase {
+            font-size: 0.75rem;
+            color: var(--warning);
+            text-transform: uppercase;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        .error-detail-item .error-message {
+            font-size: 0.85rem;
+            color: var(--text);
+            margin-bottom: 4px;
+            word-break: break-word;
+        }
+        .error-detail-item .error-meta {
+            font-size: 0.75rem;
+            color: var(--muted);
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
     </style>
 </head>
+
 <body>
 <div class="dashboard">
     <header class="header">
         <h1>🔄 Sync Dashboard</h1>
-        <span class="ws-status disconnected" id="ws-indicator"></span>
-        <input id="project-input" placeholder="Project key (e.g. MTO)" value="MTO">
+        <span class="ws-status disconnected" id="ws-indicator" title="SSE connection status"></span>
         <button id="btn-start">▶ Start Sync</button>
         <button id="btn-stop">⏹ Stop</button>
     </header>
@@ -153,40 +439,76 @@
         ⚠️ Jira credentials not configured. <a href="" id="cred-link" style="color:#3498db; text-decoration:underline;">Configure in Profile → Server Credentials</a> before syncing.
     </section>
 
-    <section class="progress-section">
-        <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
-        <span class="progress-text" id="progress-text">No active sync</span>
-    </section>
+    <nav class="tab-bar" id="tab-bar" role="tablist" aria-label="Project tabs"></nav>
 
-    <section class="status-cards">
-        <div class="card" id="card-status">
-            <h3>Status</h3>
-            <div class="value" id="val-status">IDLE</div>
-            <div class="sub" id="val-project">—</div>
-        </div>
-        <div class="card" id="card-synced">
-            <h3>Synced Issues</h3>
-            <div class="value" id="val-synced">0</div>
-            <div class="sub" id="val-total">of 0 total</div>
-        </div>
-        <div class="card" id="card-last-sync">
-            <h3>Last Sync</h3>
-            <div class="value" id="val-last-sync">Never</div>
-            <div class="sub">Last completed sync</div>
-        </div>
-    </section>
+    <div class="view-toggle" id="view-toggle" style="display:none;">
+        <button id="btn-view-detail" class="active" aria-pressed="true">Detail</button>
+        <button id="btn-view-overview" aria-pressed="false">Overview</button>
+    </div>
 
-    <section class="queue-status">
-        <span class="badge pending" id="badge-pending">Pending: 0</span>
-        <span class="badge processing" id="badge-processing">Processing: 0</span>
-        <span class="badge completed" id="badge-completed">Completed: 0</span>
-        <span class="badge failed" id="badge-failed">Failed: 0</span>
-    </section>
+    <div id="detail-content" role="tabpanel" style="display:none;">
+        <section class="progress-section">
+            <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+            <span class="progress-text" id="progress-text">No active sync</span>
+        </section>
 
-    <section class="error-log">
-        <h3>Recent Events</h3>
-        <ul id="error-list"></ul>
-    </section>
+        <section class="status-cards">
+            <div class="card" id="card-status">
+                <h3>Status</h3>
+                <div class="value" id="val-status">IDLE</div>
+                <div class="sub" id="val-project">—</div>
+            </div>
+            <div class="card" id="card-synced">
+                <h3>Synced Issues</h3>
+                <div class="value" id="val-synced">0</div>
+                <div class="sub" id="val-total">of 0 total</div>
+            </div>
+            <div class="card" id="card-last-sync">
+                <h3>Last Sync</h3>
+                <div class="value" id="val-last-sync">Never</div>
+                <div class="sub">Last completed sync</div>
+            </div>
+        </section>
+
+        <section class="queue-status">
+            <span class="badge pending" id="badge-pending">Pending: 0</span>
+            <span class="badge processing" id="badge-processing">Processing: 0</span>
+            <span class="badge completed" id="badge-completed">Completed: 0</span>
+            <span class="badge failed" id="badge-failed">Failed: 0</span>
+        </section>
+
+        <section class="error-log">
+            <h3>Recent Events</h3>
+            <ul id="error-list"></ul>
+        </section>
+
+        <!-- MTO-65: Error Detail Panel (shown when sync fails) -->
+        <section class="error-panel" id="error-panel" style="display:none;" aria-live="polite">
+            <div class="error-panel-header">
+                <h3>⚠️ Sync Error Details</h3>
+                <div class="error-panel-actions">
+                    <button class="btn-retry" id="btn-retry" aria-label="Retry sync">🔄 Retry</button>
+                    <button class="btn-clear-errors" id="btn-clear-errors" aria-label="Clear errors">✕ Clear</button>
+                </div>
+            </div>
+            <ul class="error-details-list" id="error-details-list"></ul>
+        </section>
+
+        <!-- MTO-64: Sync History Table -->
+        <section class="history-section" id="history-section">
+            <h3>📊 Sync History <span class="history-count" id="history-count"></span></h3>
+            <div id="history-content"></div>
+        </section>
+    </div>
+
+    <div id="overview-content" role="tabpanel" style="display:none;">
+        <div class="overview-grid" id="overview-grid"></div>
+    </div>
+
+    <div id="empty-state">
+        <p>Add a project to start monitoring</p>
+        <button id="btn-add-first">+ Add Project</button>
+    </div>
 </div>
 
 <script>
@@ -194,38 +516,976 @@
     'use strict';
 
     const basePath = window.__MCP_BASE || '';
+    const MAX_PROJECTS = 10;
+    const KEY_PATTERN = /^[A-Z][A-Z0-9_]+$/;
+    const MAX_LOG_ENTRIES = 50;
+    const POLL_INTERVAL_MS = 10000;
 
-    // Authenticated fetch — adds JWT token from localStorage
+    // ─── Authenticated fetch ───
     function authFetch(url, options) {
         const token = localStorage.getItem('auth_token');
         if (!token) { window.location.href = basePath + '/login'; return Promise.reject('No token'); }
         const opts = options || {};
         opts.headers = Object.assign({ 'Authorization': 'Bearer ' + token }, opts.headers || {});
-        return fetch(url, opts).then(r => {
+        return fetch(url, opts).then(function(r) {
             if (r.status === 401) { localStorage.removeItem('auth_token'); window.location.href = basePath + '/login'; }
             return r;
         });
     }
 
-    const state = { ws: null, pollInterval: null };
+    // ─── StorageManager ───
+    var StorageManager = {
+        KEYS: {
+            PROJECTS: 'sync_dashboard_projects',
+            ACTIVE_TAB: 'sync_dashboard_active_tab',
+            VIEW_MODE: 'sync_dashboard_view_mode'
+        },
 
-    function init() {
-        document.getElementById('cred-link').href = basePath + '/profile';
-        checkJiraCredentials();
-        connectWebSocket();
-        bindButtons();
-        pollStatus();
-        state.pollInterval = setInterval(pollStatus, 10000);
+        getProjects: function() {
+            try {
+                var raw = localStorage.getItem(this.KEYS.PROJECTS);
+                if (!raw) return [];
+                var parsed = JSON.parse(raw);
+                if (!Array.isArray(parsed)) return [];
+                return parsed.filter(function(p) { return p && p.key && KEY_PATTERN.test(p.key); });
+            } catch (e) { return []; }
+        },
+
+        saveProjects: function(projects) {
+            try { localStorage.setItem(this.KEYS.PROJECTS, JSON.stringify(projects)); }
+            catch (e) { console.error('[Storage] Write failed:', e.message); }
+        },
+
+        getActiveTab: function() {
+            var val = parseInt(localStorage.getItem(this.KEYS.ACTIVE_TAB), 10);
+            return isNaN(val) || val < 0 ? 0 : val;
+        },
+
+        saveActiveTab: function(index) {
+            try { localStorage.setItem(this.KEYS.ACTIVE_TAB, String(index)); }
+            catch (e) { console.error('[Storage] Write failed:', e.message); }
+        },
+
+        getViewMode: function() {
+            var mode = localStorage.getItem(this.KEYS.VIEW_MODE);
+            return (mode === 'overview') ? 'overview' : 'detail';
+        },
+
+        saveViewMode: function(mode) {
+            try { localStorage.setItem(this.KEYS.VIEW_MODE, mode); }
+            catch (e) { console.error('[Storage] Write failed:', e.message); }
+        }
+    };
+
+    // ─── SSEManager ───
+    var SSEManager = {
+        connection: null,
+        reconnectAttempts: 0,
+        reconnectTimer: null,
+        MAX_RECONNECT_DELAY: 30000,
+
+        connect: function() {
+            if (this.connection) { this.connection.close(); }
+            this.connection = new EventSource(basePath + '/sync/live');
+            this.connection.onopen = this.handleOpen.bind(this);
+            this.connection.onerror = this.handleError.bind(this);
+            this.connection.onmessage = this.handleMessage.bind(this);
+        },
+
+        disconnect: function() {
+            if (this.reconnectTimer) { clearTimeout(this.reconnectTimer); this.reconnectTimer = null; }
+            if (this.connection) { this.connection.close(); this.connection = null; }
+        },
+
+        handleMessage: function(e) {
+            try {
+                var data = JSON.parse(e.data);
+                ProjectManager.onSSEEvent(data);
+            } catch (err) { /* ignore malformed events */ }
+        },
+
+        handleError: function() {
+            if (this.connection) { this.connection.close(); this.connection = null; }
+            setWsIndicator(false);
+            console.warn('[SSE] Disconnected, reconnecting...');
+            this.scheduleReconnect();
+        },
+
+        handleOpen: function() {
+            this.reconnectAttempts = 0;
+            setWsIndicator(true);
+            console.info('[SSE] Connected');
+            // Re-poll to catch missed events
+            ProjectManager.pollAllStatuses();
+        },
+
+        scheduleReconnect: function() {
+            var self = this;
+            var delay = Math.min(1000 * Math.pow(2, this.reconnectAttempts), this.MAX_RECONNECT_DELAY);
+            this.reconnectAttempts++;
+            console.info('[SSE] Reconnect attempt ' + this.reconnectAttempts + ' in ' + delay + 'ms');
+            this.reconnectTimer = setTimeout(function() { self.connect(); }, delay);
+        }
+    };
+
+    function setWsIndicator(connected) {
+        var el = document.getElementById('ws-indicator');
+        el.className = 'ws-status ' + (connected ? 'connected' : 'disconnected');
+        el.title = connected ? 'SSE connected' : 'SSE disconnected';
     }
 
+    // ─── TabBar ───
+    var TabBar = {
+        render: function(projects, activeIndex) {
+            var container = document.getElementById('tab-bar');
+            container.innerHTML = '';
+
+            projects.forEach(function(proj, i) {
+                var btn = document.createElement('button');
+                btn.className = 'project-tab';
+                btn.setAttribute('role', 'tab');
+                btn.id = 'tab-' + proj.key;
+                btn.setAttribute('aria-controls', 'detail-content');
+                var isActive = (i === activeIndex);
+                btn.setAttribute('aria-selected', String(isActive));
+                btn.setAttribute('tabindex', isActive ? '0' : '-1');
+
+                var statusClass = TabBar.getStatusClass(proj.key);
+                btn.innerHTML =
+                    '<span class="status-dot ' + statusClass + '" aria-hidden="true"></span>' +
+                    '<span class="tab-label">' + proj.key + '</span>';
+
+                var closeBtn = document.createElement('button');
+                closeBtn.className = 'tab-close';
+                closeBtn.setAttribute('aria-label', 'Remove ' + proj.key);
+                closeBtn.title = 'Remove ' + proj.key;
+                closeBtn.textContent = '\u00d7';
+                closeBtn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    ProjectManager.removeProject(i);
+                });
+                btn.appendChild(closeBtn);
+
+                btn.addEventListener('click', function() { ProjectManager.switchTab(i); });
+                container.appendChild(btn);
+            });
+
+            // Add button
+            var addBtn = document.createElement('button');
+            addBtn.className = 'tab-add';
+            addBtn.id = 'btn-add-tab';
+            addBtn.setAttribute('aria-label', 'Add project');
+            addBtn.title = 'Add project';
+            addBtn.textContent = '+';
+            addBtn.addEventListener('click', function() { TabBar.showAddInput(); });
+            container.appendChild(addBtn);
+
+            // Keyboard navigation within tablist
+            container.addEventListener('keydown', function(e) {
+                var tabs = container.querySelectorAll('.project-tab');
+                if (!tabs.length) return;
+                var focused = document.activeElement;
+                var idx = Array.prototype.indexOf.call(tabs, focused);
+                if (idx < 0) return;
+
+                if (e.key === 'ArrowRight') {
+                    e.preventDefault();
+                    var next = (idx + 1) % tabs.length;
+                    tabs[next].focus();
+                } else if (e.key === 'ArrowLeft') {
+                    e.preventDefault();
+                    var prev = (idx - 1 + tabs.length) % tabs.length;
+                    tabs[prev].focus();
+                } else if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    focused.click();
+                } else if (e.key === 'Delete') {
+                    e.preventDefault();
+                    ProjectManager.removeProject(idx);
+                }
+            });
+        },
+
+        getStatusClass: function(key) {
+            var cached = ProjectManager.cache[key];
+            if (!cached) return 'disconnected';
+            var s = (cached.status || '').toLowerCase();
+            if (s === 'running') return 'running';
+            if (s === 'failed') return 'error';
+            if (s === 'completed') return 'completed';
+            if (s === 'idle') return 'idle';
+            return 'disconnected';
+        },
+
+        showAddInput: function() {
+            var addBtn = document.getElementById('btn-add-tab');
+            if (!addBtn) return;
+            addBtn.style.display = 'none';
+
+            var wrap = document.createElement('span');
+            wrap.className = 'tab-input-wrap';
+            var input = document.createElement('input');
+            input.className = 'tab-input';
+            input.id = 'tab-input';
+            input.type = 'text';
+            input.placeholder = 'PROJECT_KEY';
+            input.maxLength = 20;
+            input.setAttribute('aria-label', 'Enter project key');
+            wrap.appendChild(input);
+
+            addBtn.parentNode.insertBefore(wrap, addBtn);
+            input.focus();
+
+            function cleanup() {
+                if (wrap.parentNode) wrap.parentNode.removeChild(wrap);
+                addBtn.style.display = '';
+            }
+
+            input.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') {
+                    var val = input.value.trim().toUpperCase();
+                    var err = ProjectManager.validateKey(val);
+                    if (err) {
+                        TabBar.showInputError(wrap, err);
+                    } else {
+                        cleanup();
+                        ProjectManager.addProject(val);
+                    }
+                } else if (e.key === 'Escape') {
+                    cleanup();
+                }
+            });
+            input.addEventListener('blur', function() { setTimeout(cleanup, 150); });
+        },
+
+        showInputError: function(wrap, msg) {
+            var existing = wrap.querySelector('.tab-input-error');
+            if (existing) existing.remove();
+            var span = document.createElement('span');
+            span.className = 'tab-input-error';
+            span.textContent = msg;
+            wrap.appendChild(span);
+            console.warn('[Validation] Invalid key: ' + msg);
+        },
+
+        updateStatusDot: function(key, status) {
+            var tab = document.getElementById('tab-' + key);
+            if (!tab) return;
+            var dot = tab.querySelector('.status-dot');
+            if (!dot) return;
+            dot.className = 'status-dot ' + status;
+        },
+
+        setActiveTab: function(index) {
+            var tabs = document.querySelectorAll('.project-tab');
+            tabs.forEach(function(t, i) {
+                var isActive = (i === index);
+                t.setAttribute('aria-selected', String(isActive));
+                t.setAttribute('tabindex', isActive ? '0' : '-1');
+            });
+        }
+    };
+
+    // ─── HistoryManager (MTO-64) ───
+    var HistoryManager = {
+        STORAGE_KEY: 'sync_dashboard_history',
+        MAX_ENTRIES: 10,
+
+        getAll: function() {
+            try {
+                var raw = localStorage.getItem(this.STORAGE_KEY);
+                return raw ? JSON.parse(raw) : {};
+            } catch (e) { return {}; }
+        },
+
+        getForProject: function(key) {
+            var all = this.getAll();
+            return all[key] || [];
+        },
+
+        addEntry: function(key, entry) {
+            var all = this.getAll();
+            if (!all[key]) all[key] = [];
+            all[key].unshift(entry);
+            if (all[key].length > this.MAX_ENTRIES) all[key].pop();
+            try { localStorage.setItem(this.STORAGE_KEY, JSON.stringify(all)); }
+            catch (e) { console.error('[History] Write failed:', e.message); }
+        },
+
+        recordCompleted: function(key, data) {
+            this.addEntry(key, {
+                date: new Date().toISOString(),
+                duration: data.duration || null,
+                issuesSynced: data.syncedIssues || 0,
+                status: 'completed',
+                errors: 0
+            });
+        },
+
+        recordFailed: function(key, data) {
+            this.addEntry(key, {
+                date: new Date().toISOString(),
+                duration: data.duration || null,
+                issuesSynced: data.syncedIssues || 0,
+                status: 'failed',
+                errors: 1
+            });
+        },
+
+        renderTable: function(key) {
+            var container = document.getElementById('history-content');
+            var countEl = document.getElementById('history-count');
+            var entries = this.getForProject(key);
+            countEl.textContent = entries.length > 0 ? '(last ' + entries.length + ')' : '';
+
+            if (entries.length === 0) {
+                container.innerHTML = '<div class="history-empty">No sync history yet</div>';
+                return;
+            }
+
+            var html = '<table class="history-table" aria-label="Sync history"><thead><tr>' +
+                '<th>Date</th><th>Duration</th><th>Issues</th><th>Status</th><th>Errors</th>' +
+                '</tr></thead><tbody>';
+
+            entries.forEach(function(e) {
+                var date = new Date(e.date).toLocaleString();
+                var duration = e.duration ? HistoryManager.formatDuration(e.duration) : '—';
+                var statusClass = e.status === 'completed' ? 'completed' : 'failed';
+                var statusLabel = e.status === 'completed' ? 'OK' : 'FAIL';
+                html += '<tr>' +
+                    '<td>' + date + '</td>' +
+                    '<td>' + duration + '</td>' +
+                    '<td>' + (e.issuesSynced || 0) + '</td>' +
+                    '<td><span class="status-badge ' + statusClass + '">' + statusLabel + '</span></td>' +
+                    '<td>' + (e.errors || 0) + '</td>' +
+                    '</tr>';
+            });
+
+            html += '</tbody></table>';
+            container.innerHTML = html;
+        },
+
+        formatDuration: function(ms) {
+            if (ms < 1000) return ms + 'ms';
+            var sec = Math.round(ms / 1000);
+            if (sec < 60) return sec + 's';
+            var min = Math.floor(sec / 60);
+            var rem = sec % 60;
+            return min + 'm ' + rem + 's';
+        }
+    };
+
+    // ─── ErrorPanel (MTO-65) ───
+    var ErrorPanel = {
+        errors: {}, // keyed by project
+
+        getErrors: function(key) {
+            return this.errors[key] || [];
+        },
+
+        addError: function(key, errorData) {
+            if (!this.errors[key]) this.errors[key] = [];
+            this.errors[key].unshift({
+                phase: errorData.phase || 'sync',
+                message: errorData.message || 'Unknown error',
+                timestamp: new Date().toISOString(),
+                affectedIssues: errorData.affectedIssues || 0
+            });
+            // Keep max 20 errors per project
+            if (this.errors[key].length > 20) this.errors[key].pop();
+        },
+
+        clearErrors: function(key) {
+            this.errors[key] = [];
+        },
+
+        render: function(key, status) {
+            var panel = document.getElementById('error-panel');
+            var list = document.getElementById('error-details-list');
+            var errors = this.getErrors(key);
+
+            if (status !== 'FAILED' && errors.length === 0) {
+                panel.style.display = 'none';
+                return;
+            }
+
+            panel.style.display = '';
+            list.innerHTML = '';
+
+            if (errors.length === 0) {
+                list.innerHTML = '<li class="error-detail-item"><span class="error-message">Sync failed — no detailed error info available.</span></li>';
+                return;
+            }
+
+            errors.forEach(function(err) {
+                var li = document.createElement('li');
+                li.className = 'error-detail-item';
+                var time = new Date(err.timestamp).toLocaleString();
+                li.innerHTML =
+                    '<div class="error-phase">' + ErrorPanel.escapeHtml(err.phase) + '</div>' +
+                    '<div class="error-message">' + ErrorPanel.escapeHtml(err.message) + '</div>' +
+                    '<div class="error-meta">' +
+                        '<span>🕐 ' + time + '</span>' +
+                        (err.affectedIssues > 0 ? '<span>📋 ' + err.affectedIssues + ' issues affected</span>' : '') +
+                    '</div>';
+                list.appendChild(li);
+            });
+        },
+
+        escapeHtml: function(str) {
+            var div = document.createElement('div');
+            div.textContent = str;
+            return div.innerHTML;
+        },
+
+        bindButtons: function() {
+            var self = this;
+            document.getElementById('btn-retry').addEventListener('click', function() {
+                var key = ProjectManager.getActiveKey();
+                if (!key) return;
+                var btn = this;
+                btn.disabled = true;
+                btn.textContent = '⏳ Retrying...';
+                authFetch(basePath + '/sync/start', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ projectKey: key, fullSync: false })
+                }).then(function(r) { return r.json(); })
+                  .then(function(d) {
+                      btn.disabled = false;
+                      btn.textContent = '🔄 Retry';
+                      var cached = ProjectManager.cache[key];
+                      if (cached) {
+                          var entry = { time: new Date().toLocaleTimeString(), type: 'action', message: d.message || 'Retry initiated' };
+                          cached.events.unshift(entry);
+                          if (cached.events.length > MAX_LOG_ENTRIES) cached.events.pop();
+                      }
+                      ProjectManager.renderContent();
+                  })
+                  .catch(function() {
+                      btn.disabled = false;
+                      btn.textContent = '🔄 Retry';
+                  });
+            });
+
+            document.getElementById('btn-clear-errors').addEventListener('click', function() {
+                var key = ProjectManager.getActiveKey();
+                if (!key) return;
+                self.clearErrors(key);
+                var cached = ProjectManager.cache[key];
+                if (cached && cached.status === 'FAILED') {
+                    cached.status = 'IDLE';
+                    cached.errorMessage = null;
+                }
+                ProjectManager.renderContent();
+                TabBar.updateStatusDot(key, TabBar.getStatusClass(key));
+            });
+        }
+    };
+
+    // ─── DetailView ───
+    var DetailView = {
+        render: function(data) {
+            if (!data) { this.showNoData(); return; }
+            var status = data.status || 'IDLE';
+            var synced = data.syncedIssues || 0;
+            var total = data.totalIssues || 0;
+            var pct = data.percentage || 0;
+
+            document.getElementById('progress-fill').style.width = pct + '%';
+            document.getElementById('progress-text').textContent =
+                total > 0 ? (synced + '/' + total + ' issues (' + pct + '%)') : 'No active sync';
+            document.getElementById('val-status').textContent = status;
+            document.getElementById('val-project').textContent = data.projectKey || '—';
+            document.getElementById('val-synced').textContent = synced;
+            document.getElementById('val-total').textContent = 'of ' + total + ' total';
+
+            if (data.lastSyncAt) {
+                document.getElementById('val-last-sync').textContent = new Date(data.lastSyncAt).toLocaleString();
+            } else {
+                document.getElementById('val-last-sync').textContent = 'Never';
+            }
+
+            var cardStatus = document.getElementById('card-status');
+            cardStatus.className = 'card';
+            if (status === 'RUNNING') cardStatus.className = 'card active';
+            else if (status === 'FAILED') cardStatus.className = 'card error';
+
+            // Render event log for this project
+            this.renderLog(data.events || []);
+
+            // MTO-65: Render error panel
+            ErrorPanel.render(data.projectKey, status);
+
+            // MTO-64: Render history table
+            HistoryManager.renderTable(data.projectKey);
+        },
+
+        renderLog: function(events) {
+            var ul = document.getElementById('error-list');
+            ul.innerHTML = '';
+            events.forEach(function(entry) {
+                var li = document.createElement('li');
+                li.innerHTML = '<span class="time">' + entry.time + '</span> [' + entry.type + '] ' + entry.message;
+                ul.appendChild(li);
+            });
+        },
+
+        showNoData: function() {
+            document.getElementById('progress-fill').style.width = '0%';
+            document.getElementById('progress-text').textContent = 'No active sync';
+            document.getElementById('val-status').textContent = 'IDLE';
+            document.getElementById('val-project').textContent = '—';
+            document.getElementById('val-synced').textContent = '0';
+            document.getElementById('val-total').textContent = 'of 0 total';
+            document.getElementById('val-last-sync').textContent = 'Never';
+            document.getElementById('card-status').className = 'card';
+            document.getElementById('error-list').innerHTML = '';
+            document.getElementById('error-panel').style.display = 'none';
+            document.getElementById('history-content').innerHTML = '<div class="history-empty">No sync history yet</div>';
+            document.getElementById('history-count').textContent = '';
+        }
+    };
+
+    // ─── OverviewGrid ───
+    var OverviewGrid = {
+        render: function(cache, projects) {
+            var grid = document.getElementById('overview-grid');
+            grid.innerHTML = '';
+            projects.forEach(function(proj, i) {
+                var data = cache[proj.key] || {};
+                var status = (data.status || 'IDLE').toLowerCase();
+                var card = document.createElement('div');
+                card.className = 'mini-card ' + status;
+                card.setAttribute('tabindex', '0');
+                card.setAttribute('role', 'button');
+                card.setAttribute('aria-label', proj.key + ' - ' + (data.status || 'IDLE'));
+
+                var synced = data.syncedIssues || 0;
+                var total = data.totalIssues || 0;
+                var lastSync = data.lastSyncAt ? new Date(data.lastSyncAt).toLocaleString() : 'Never';
+
+                card.innerHTML =
+                    '<div class="mc-key">' + proj.key + '</div>' +
+                    '<div class="mc-status">' + (data.status || 'IDLE') + '</div>' +
+                    '<div class="mc-progress">' + synced + ' / ' + total + ' issues</div>' +
+                    '<div class="mc-time">Last: ' + lastSync + '</div>';
+
+                card.addEventListener('click', function() {
+                    ProjectManager.switchTab(i);
+                    ProjectManager.setViewMode('detail');
+                });
+                card.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); card.click(); }
+                });
+                grid.appendChild(card);
+            });
+        },
+
+        updateCard: function(key, data) {
+            // For efficiency, update single card if overview is visible
+            var grid = document.getElementById('overview-grid');
+            var cards = grid.querySelectorAll('.mini-card');
+            var projects = ProjectManager.projects;
+            for (var i = 0; i < projects.length; i++) {
+                if (projects[i].key === key && cards[i]) {
+                    var status = (data.status || 'IDLE').toLowerCase();
+                    cards[i].className = 'mini-card ' + status;
+                    var synced = data.syncedIssues || 0;
+                    var total = data.totalIssues || 0;
+                    var lastSync = data.lastSyncAt ? new Date(data.lastSyncAt).toLocaleString() : 'Never';
+                    cards[i].innerHTML =
+                        '<div class="mc-key">' + key + '</div>' +
+                        '<div class="mc-status">' + (data.status || 'IDLE') + '</div>' +
+                        '<div class="mc-progress">' + synced + ' / ' + total + ' issues</div>' +
+                        '<div class="mc-time">Last: ' + lastSync + '</div>';
+                    break;
+                }
+            }
+        }
+    };
+
+    // ─── ProjectManager ───
+    var ProjectManager = {
+        projects: [],
+        activeTabIndex: 0,
+        viewMode: 'detail',
+        cache: {},
+        pollInterval: null,
+        monitoredKeys: null, // Set for O(1) lookup
+
+        init: function() {
+            // Load persisted state
+            this.projects = StorageManager.getProjects();
+            this.activeTabIndex = StorageManager.getActiveTab();
+            this.viewMode = StorageManager.getViewMode();
+
+            // Clamp activeTabIndex
+            if (this.activeTabIndex >= this.projects.length) this.activeTabIndex = 0;
+
+            // Build monitored keys set
+            this.rebuildKeySet();
+
+            // Initialize cache for each project
+            var self = this;
+            this.projects.forEach(function(p) {
+                if (!self.cache[p.key]) {
+                    self.cache[p.key] = { projectKey: p.key, status: 'IDLE', syncedIssues: 0, totalIssues: 0, percentage: 0, lastSyncAt: null, errorMessage: null, events: [] };
+                }
+            });
+
+            // Render UI
+            this.renderAll();
+
+            // Connect SSE
+            SSEManager.connect();
+
+            // Initial poll
+            this.pollAllStatuses();
+
+            // Start polling interval
+            this.pollInterval = setInterval(function() { self.pollAllStatuses(); }, POLL_INTERVAL_MS);
+
+            // Check Jira credentials
+            checkJiraCredentials();
+
+            // Bind header buttons
+            this.bindButtons();
+
+            // Bind view toggle
+            this.bindViewToggle();
+
+            // MTO-65: Bind error panel buttons
+            ErrorPanel.bindButtons();
+
+            // Bind empty state button
+            var addFirstBtn = document.getElementById('btn-add-first');
+            if (addFirstBtn) {
+                addFirstBtn.addEventListener('click', function() { TabBar.showAddInput(); });
+            }
+        },
+
+        rebuildKeySet: function() {
+            this.monitoredKeys = new Set(this.projects.map(function(p) { return p.key; }));
+        },
+
+        validateKey: function(key) {
+            if (!key) return 'Key is required';
+            if (!KEY_PATTERN.test(key)) return 'Must be uppercase letters, digits, underscore (e.g. MTO_V2)';
+            if (this.monitoredKeys && this.monitoredKeys.has(key)) return 'Project already added';
+            if (this.projects.length >= MAX_PROJECTS) return 'Maximum ' + MAX_PROJECTS + ' projects';
+            return null;
+        },
+
+        addProject: function(key) {
+            var err = this.validateKey(key);
+            if (err) { console.warn('[Validation] ' + err); return; }
+
+            var entry = { key: key, addedAt: new Date().toISOString() };
+            this.projects.push(entry);
+            StorageManager.saveProjects(this.projects);
+            this.rebuildKeySet();
+
+            // Initialize cache
+            this.cache[key] = { projectKey: key, status: 'IDLE', syncedIssues: 0, totalIssues: 0, percentage: 0, lastSyncAt: null, errorMessage: null, events: [] };
+
+            // Activate new tab
+            this.activeTabIndex = this.projects.length - 1;
+            StorageManager.saveActiveTab(this.activeTabIndex);
+
+            console.info('[Project] Added: ' + key);
+
+            // Poll status for new project
+            this.pollSingleProject(key);
+
+            // Re-render
+            this.renderAll();
+        },
+
+        removeProject: function(index) {
+            if (index < 0 || index >= this.projects.length) return;
+            var proj = this.projects[index];
+
+            // Confirm if running
+            var cached = this.cache[proj.key];
+            if (cached && cached.status === 'RUNNING') {
+                if (!confirm('Sync is running for ' + proj.key + '. Remove anyway?')) return;
+            }
+
+            // Remove
+            this.projects.splice(index, 1);
+            delete this.cache[proj.key];
+            StorageManager.saveProjects(this.projects);
+            this.rebuildKeySet();
+
+            console.info('[Project] Removed: ' + proj.key);
+
+            // Adjust active tab (BR-04)
+            if (this.projects.length === 0) {
+                this.activeTabIndex = 0;
+            } else if (this.activeTabIndex >= this.projects.length) {
+                this.activeTabIndex = this.projects.length - 1;
+            } else if (index < this.activeTabIndex) {
+                this.activeTabIndex--;
+            } else if (index === this.activeTabIndex && this.activeTabIndex >= this.projects.length) {
+                this.activeTabIndex = this.projects.length - 1;
+            }
+            StorageManager.saveActiveTab(this.activeTabIndex);
+
+            this.renderAll();
+        },
+
+        switchTab: function(index) {
+            if (index < 0 || index >= this.projects.length) return;
+            this.activeTabIndex = index;
+            StorageManager.saveActiveTab(index);
+            TabBar.setActiveTab(index);
+            this.renderContent();
+        },
+
+        setViewMode: function(mode) {
+            this.viewMode = mode;
+            StorageManager.saveViewMode(mode);
+            this.updateViewToggleUI();
+            this.renderContent();
+        },
+
+        toggleViewMode: function() {
+            this.setViewMode(this.viewMode === 'detail' ? 'overview' : 'detail');
+        },
+
+        onSSEEvent: function(event) {
+            var key = event.projectKey;
+            if (!key || !this.monitoredKeys.has(key)) return;
+
+            var cached = this.cache[key];
+            if (!cached) return;
+
+            // Update cache based on event type
+            switch (event.type) {
+                case 'progress':
+                    cached.status = 'RUNNING';
+                    cached.syncedIssues = event.syncedIssues || cached.syncedIssues;
+                    cached.totalIssues = event.totalIssues || cached.totalIssues;
+                    cached.percentage = event.percentage || cached.percentage;
+                    break;
+                case 'completed':
+                    cached.status = 'COMPLETED';
+                    cached.syncedIssues = event.totalSynced || cached.syncedIssues;
+                    cached.percentage = 100;
+                    cached.lastSyncAt = new Date().toISOString();
+                    // MTO-64: Record history entry
+                    var completedDuration = event.duration || (cached._startedAt ? Date.now() - cached._startedAt : null);
+                    HistoryManager.recordCompleted(key, {
+                        syncedIssues: cached.syncedIssues,
+                        duration: completedDuration
+                    });
+                    cached._startedAt = null;
+                    break;
+                case 'error':
+                    cached.status = 'FAILED';
+                    cached.errorMessage = event.message || 'Unknown error';
+                    // MTO-65: Track error details
+                    ErrorPanel.addError(key, {
+                        phase: event.phase || 'sync',
+                        message: event.message || 'Unknown error',
+                        affectedIssues: event.affectedIssues || 0
+                    });
+                    // MTO-64: Record failed history entry
+                    var failedDuration = event.duration || (cached._startedAt ? Date.now() - cached._startedAt : null);
+                    HistoryManager.recordFailed(key, {
+                        syncedIssues: cached.syncedIssues,
+                        duration: failedDuration
+                    });
+                    cached._startedAt = null;
+                    break;
+                case 'started':
+                    cached.status = 'RUNNING';
+                    cached.percentage = 0;
+                    cached.syncedIssues = 0;
+                    // Track start time for duration calculation
+                    cached._startedAt = Date.now();
+                    break;
+                default:
+                    break;
+            }
+
+            // Add to event log (ring buffer)
+            var logEntry = { time: new Date().toLocaleTimeString(), type: event.type, message: event.message || (key + ' ' + event.type) };
+            cached.events.unshift(logEntry);
+            if (cached.events.length > MAX_LOG_ENTRIES) cached.events.pop();
+
+            // Update tab status dot
+            TabBar.updateStatusDot(key, TabBar.getStatusClass(key));
+
+            // Update active view
+            if (this.viewMode === 'detail') {
+                var activeKey = this.getActiveKey();
+                if (activeKey === key) { DetailView.render(cached); }
+            } else {
+                OverviewGrid.updateCard(key, cached);
+            }
+        },
+
+        getActiveKey: function() {
+            if (this.projects.length === 0) return null;
+            return this.projects[this.activeTabIndex] ? this.projects[this.activeTabIndex].key : null;
+        },
+
+        pollAllStatuses: function() {
+            if (this.projects.length === 0) return;
+            var keys = this.projects.map(function(p) { return p.key; }).join(',');
+            var self = this;
+            authFetch(basePath + '/sync/status?projects=' + encodeURIComponent(keys))
+                .then(function(r) { return r.ok ? r.json() : null; })
+                .then(function(data) {
+                    if (!data || !data.projects) return;
+                    data.projects.forEach(function(proj) {
+                        self.updateCacheFromStatus(proj);
+                    });
+                    self.renderContent();
+                    // Update all tab dots
+                    self.projects.forEach(function(p) {
+                        TabBar.updateStatusDot(p.key, TabBar.getStatusClass(p.key));
+                    });
+                })
+                .catch(function(err) { console.error('[API] GET /sync/status → ' + err); });
+        },
+
+        pollSingleProject: function(key) {
+            var self = this;
+            authFetch(basePath + '/sync/status/' + encodeURIComponent(key))
+                .then(function(r) { return r.ok ? r.json() : null; })
+                .then(function(data) {
+                    if (!data) return;
+                    self.updateCacheFromStatus(data);
+                    TabBar.updateStatusDot(key, TabBar.getStatusClass(key));
+                    if (self.getActiveKey() === key) self.renderContent();
+                })
+                .catch(function() { /* project may not exist yet */ });
+        },
+
+        updateCacheFromStatus: function(data) {
+            var key = data.projectKey;
+            if (!this.cache[key]) return;
+            this.cache[key].status = data.status || 'IDLE';
+            this.cache[key].syncedIssues = data.syncedIssues || 0;
+            this.cache[key].totalIssues = data.totalIssues || 0;
+            this.cache[key].percentage = data.percentage || 0;
+            this.cache[key].lastSyncAt = data.lastSyncAt || this.cache[key].lastSyncAt;
+            this.cache[key].errorMessage = data.errorMessage || null;
+        },
+
+        renderAll: function() {
+            var hasProjects = this.projects.length > 0;
+
+            // Show/hide sections
+            document.getElementById('empty-state').style.display = hasProjects ? 'none' : '';
+            document.getElementById('tab-bar').style.display = hasProjects ? 'flex' : 'none';
+            document.getElementById('view-toggle').style.display = hasProjects ? 'flex' : 'none';
+
+            if (hasProjects) {
+                TabBar.render(this.projects, this.activeTabIndex);
+                this.updateViewToggleUI();
+                this.renderContent();
+            } else {
+                document.getElementById('detail-content').style.display = 'none';
+                document.getElementById('overview-content').style.display = 'none';
+            }
+        },
+
+        renderContent: function() {
+            if (this.projects.length === 0) return;
+
+            if (this.viewMode === 'detail') {
+                document.getElementById('detail-content').style.display = '';
+                document.getElementById('overview-content').style.display = 'none';
+                var activeKey = this.getActiveKey();
+                var data = activeKey ? this.cache[activeKey] : null;
+                DetailView.render(data);
+            } else {
+                document.getElementById('detail-content').style.display = 'none';
+                document.getElementById('overview-content').style.display = '';
+                OverviewGrid.render(this.cache, this.projects);
+            }
+        },
+
+        updateViewToggleUI: function() {
+            var btnDetail = document.getElementById('btn-view-detail');
+            var btnOverview = document.getElementById('btn-view-overview');
+            if (this.viewMode === 'detail') {
+                btnDetail.classList.add('active');
+                btnDetail.setAttribute('aria-pressed', 'true');
+                btnOverview.classList.remove('active');
+                btnOverview.setAttribute('aria-pressed', 'false');
+            } else {
+                btnOverview.classList.add('active');
+                btnOverview.setAttribute('aria-pressed', 'true');
+                btnDetail.classList.remove('active');
+                btnDetail.setAttribute('aria-pressed', 'false');
+            }
+        },
+
+        bindButtons: function() {
+            var self = this;
+            document.getElementById('btn-start').addEventListener('click', function() {
+                if (this.disabled) return;
+                var key = self.getActiveKey();
+                if (!key) return;
+                authFetch(basePath + '/sync/start', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ projectKey: key, fullSync: false })
+                }).then(function(r) { return r.json(); })
+                  .then(function(d) {
+                      var cached = self.cache[key];
+                      if (cached) {
+                          var entry = { time: new Date().toLocaleTimeString(), type: 'action', message: d.message || 'Sync started' };
+                          cached.events.unshift(entry);
+                          if (cached.events.length > MAX_LOG_ENTRIES) cached.events.pop();
+                      }
+                      self.renderContent();
+                  })
+                  .catch(function() {});
+            });
+
+            document.getElementById('btn-stop').addEventListener('click', function() {
+                var key = self.getActiveKey();
+                if (!key) return;
+                authFetch(basePath + '/sync/stop', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ projectKey: key })
+                }).then(function(r) { return r.json(); })
+                  .then(function(d) {
+                      var cached = self.cache[key];
+                      if (cached) {
+                          var entry = { time: new Date().toLocaleTimeString(), type: 'action', message: d.message || 'Sync stopped' };
+                          cached.events.unshift(entry);
+                          if (cached.events.length > MAX_LOG_ENTRIES) cached.events.pop();
+                      }
+                      self.renderContent();
+                  })
+                  .catch(function() {});
+            });
+        },
+
+        bindViewToggle: function() {
+            var self = this;
+            document.getElementById('btn-view-detail').addEventListener('click', function() { self.setViewMode('detail'); });
+            document.getElementById('btn-view-overview').addEventListener('click', function() { self.setViewMode('overview'); });
+        }
+    };
+
+    // ─── Jira Credentials Check ───
     function checkJiraCredentials() {
         authFetch(basePath + '/api/credentials')
-            .then(r => r.ok ? r.json() : null)
-            .then(data => {
-                const servers = (data && data.servers) || [];
-                const hasJira = servers.some(c => c.server_name === 'atlassian' && c.is_complete);
-                const btn = document.getElementById('btn-start');
-                const warning = document.getElementById('cred-warning');
+            .then(function(r) { return r.ok ? r.json() : null; })
+            .then(function(data) {
+                var servers = (data && data.servers) || [];
+                var hasJira = servers.some(function(c) { return c.server_name === 'atlassian' && c.is_complete; });
+                var btn = document.getElementById('btn-start');
+                var warning = document.getElementById('cred-warning');
                 if (!hasJira) {
                     btn.disabled = true;
                     btn.style.opacity = '0.5';
@@ -239,117 +1499,12 @@
                     warning.style.display = 'none';
                 }
             })
-            .catch(() => {});
+            .catch(function() {});
+
+        document.getElementById('cred-link').href = basePath + '/profile';
     }
 
-    function connectWebSocket() {
-        state.ws = new EventSource(basePath + '/sync/live');
-        state.ws.onopen = () => setWsStatus(true);
-        state.ws.onerror = () => { setWsStatus(false); state.ws.close(); setTimeout(connectWebSocket, 3000); };
-        state.ws.onmessage = (e) => handleEvent(JSON.parse(e.data));
-    }
-
-    function setWsStatus(connected) {
-        const el = document.getElementById('ws-indicator');
-        el.className = 'ws-status ' + (connected ? 'connected' : 'disconnected');
-    }
-
-    function handleEvent(event) {
-        addLogEntry(event.type, event.projectKey, event.message || '');
-        switch (event.type) {
-            case 'progress': updateProgress(event); break;
-            case 'completed': showCompleted(event); break;
-            case 'error': showError(event); break;
-            case 'attachment_processed': updateAttachment(event); break;
-        }
-    }
-
-    function updateProgress(event) {
-        document.getElementById('progress-fill').style.width = event.percentage + '%';
-        document.getElementById('progress-text').textContent =
-            `${event.syncedIssues}/${event.totalIssues} issues (${event.percentage}%)`;
-        document.getElementById('val-synced').textContent = event.syncedIssues;
-        document.getElementById('val-total').textContent = `of ${event.totalIssues} total`;
-        document.getElementById('val-status').textContent = 'RUNNING';
-        setCardActive('card-status', true);
-    }
-
-    function showCompleted(event) {
-        document.getElementById('progress-fill').style.width = '100%';
-        document.getElementById('val-status').textContent = 'COMPLETED';
-        document.getElementById('val-last-sync').textContent = new Date().toLocaleTimeString();
-        setCardActive('card-status', false);
-    }
-
-    function showError(event) {
-        document.getElementById('val-status').textContent = 'FAILED';
-        document.getElementById('card-status').className = 'card error';
-    }
-
-    function updateAttachment(event) {
-        // Update badge counters from event data
-    }
-
-    function setCardActive(id, active) {
-        document.getElementById(id).className = 'card' + (active ? ' active' : '');
-    }
-
-    function addLogEntry(type, project, message) {
-        const ul = document.getElementById('error-list');
-        const li = document.createElement('li');
-        const time = new Date().toLocaleTimeString();
-        li.innerHTML = `<span class="time">${time}</span> [${type}] ${project} ${message}`;
-        ul.prepend(li);
-        if (ul.children.length > 50) ul.removeChild(ul.lastChild);
-    }
-
-    function bindButtons() {
-        document.getElementById('btn-start').onclick = () => {
-            const key = document.getElementById('project-input').value.trim();
-            if (!key) return;
-            authFetch(basePath + '/sync/start', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ projectKey: key, fullSync: false })
-            }).then(r => r.json()).then(d => addLogEntry('action', key, d.message));
-        };
-        document.getElementById('btn-stop').onclick = () => {
-            const key = document.getElementById('project-input').value.trim();
-            if (!key) return;
-            authFetch(basePath + '/sync/stop', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ projectKey: key })
-            }).then(r => r.json()).then(d => addLogEntry('action', key, d.message));
-        };
-    }
-
-    function pollStatus() {
-        const key = document.getElementById('project-input').value.trim();
-        if (!key) return;
-        authFetch(basePath + `/sync/status/${key}`)
-            .then(r => { if (r.ok) return r.json(); throw new Error('Not found'); })
-            .then(data => {
-                document.getElementById('val-status').textContent = data.status;
-                document.getElementById('val-project').textContent = data.projectKey;
-                document.getElementById('val-synced').textContent = data.syncedIssues;
-                document.getElementById('val-total').textContent = `of ${data.totalIssues} total`;
-                document.getElementById('progress-fill').style.width = data.percentage + '%';
-                document.getElementById('progress-text').textContent =
-                    `${data.syncedIssues}/${data.totalIssues} issues (${data.percentage}%)`;
-                if (data.lastSyncAt) {
-                    document.getElementById('val-last-sync').textContent =
-                        new Date(data.lastSyncAt).toLocaleString();
-                }
-                setCardActive('card-status', data.status === 'RUNNING');
-                if (data.status === 'FAILED') {
-                    document.getElementById('card-status').className = 'card error';
-                }
-            })
-            .catch(() => {});
-    }
-
-    document.addEventListener('DOMContentLoaded', init);
+    document.addEventListener('DOMContentLoaded', function() { ProjectManager.init(); });
 })();
 </script>
 </body>

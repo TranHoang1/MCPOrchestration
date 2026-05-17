@@ -270,7 +270,7 @@
         <p>Visualize your Jira project as an interactive 3D graph.</p>
         <div class="onboarding-tips">
             <div class="tip">🖱️ <strong>Click</strong> a node to see ticket details</div>
-            <div class="tip">🔄 <strong>Left-drag</strong> to rotate the graph</div>
+            <div class="tip">🔄 <strong>Left-drag</strong> to pan the graph</div>
             <div class="tip">🔍 <strong>Scroll</strong> to zoom in/out</div>
             <div class="tip">✋ <strong>Right-drag</strong> to pan</div>
             <div class="tip">⚙️ Use <strong>Filter</strong> to show/hide by status or type</div>
@@ -315,6 +315,7 @@
         if (!checkWebGLSupport()) return;
         graph = ForceGraph3D({ rendererConfig: { preserveDrawingBuffer: true } })(document.getElementById('graph-container'))
             .backgroundColor('#0d1117')
+            .numDimensions(2) // MTO-112: Flatten to 2D — fixes camera/zoom issues for large graphs (89+ nodes)
             .nodeColor(function(n) { return n.color; })
             .nodeVal(function(n) { return n.size * 0.5; })
             .nodeLabel(function(n) { return n.id + ': ' + n.label; })
@@ -469,7 +470,7 @@
                 case 'f': case 'F': toggleFilter(); break;
                 case 'e': case 'E': exportPNG(); break;
                 case 'm': case 'M': toggleMinimap(); break;
-                case 'r': case 'R': graph.cameraPosition({ x: 0, y: 0, z: 500 }, { x: 0, y: 0, z: 0 }, 1000); break;
+                case 'r': case 'R': graph.zoomToFit(400, 40); break;
                 case '/': e.preventDefault(); document.getElementById('search').focus(); break;
                 case 'Escape': hideDetailsIfUnpinned(); document.getElementById('filter-panel').classList.remove('open'); break;
                 case '?': toggleShortcutsHelp(); break;
@@ -520,10 +521,14 @@
                     if (src && tgt && src.group === tgt.group) return 60;
                     return 120;
                 });
-                // Auto-fit camera after data loads — use timeout since onEngineStop may not fire quickly
+                // MTO-112: Auto-fit camera with padding — 2D mode makes zoomToFit reliable
+                // Use two passes: quick fit after warmup, then refined fit after stabilization
                 setTimeout(function() {
-                    graph.zoomToFit(400);
-                }, 3000);
+                    graph.zoomToFit(400, 40); // 40px padding ensures labels are visible
+                }, 1500);
+                setTimeout(function() {
+                    graph.zoomToFit(600, 40); // Second pass after full stabilization
+                }, 3500);
                 updateStats(data.metadata);
                 updateLegend(data.nodes);
                 buildFilterChips(data.nodes);
@@ -664,7 +669,8 @@
             });
         }
         if (found && found.x != null) {
-            graph.cameraPosition({ x: found.x, y: found.y, z: found.z + 200 }, found, 1000);
+            // MTO-112: In 2D mode, camera is on z-axis looking at x/y plane
+            graph.cameraPosition({ x: found.x, y: found.y, z: graph.camera().position.z }, found, 1000);
             showDetails(found);
         }
     }
@@ -813,28 +819,29 @@
         var h = minimapCanvas.height;
         minimapCtx.clearRect(0, 0, w, h);
 
-        // Compute bounds from live node positions
-        var minX = Infinity, maxX = -Infinity, minZ = Infinity, maxZ = -Infinity;
+        // MTO-112: In 2D mode, nodes use x/y coordinates (z is always 0)
+        var minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
         liveNodes.forEach(function(n) {
             if (n.x == null) return;
             if (n.x < minX) minX = n.x;
             if (n.x > maxX) maxX = n.x;
-            if (n.z < minZ) minZ = n.z;
-            if (n.z > maxZ) maxZ = n.z;
+            var yVal = n.y || 0;
+            if (yVal < minY) minY = yVal;
+            if (yVal > maxY) maxY = yVal;
         });
         if (minX === Infinity) return;
         var rangeX = (maxX - minX) || 1;
-        var rangeZ = (maxZ - minZ) || 1;
+        var rangeY = (maxY - minY) || 1;
         var pad = 10;
 
         // Draw nodes
         liveNodes.forEach(function(n) {
             if (n.x == null) return;
             var px = pad + ((n.x - minX) / rangeX) * (w - 2 * pad);
-            var pz = pad + ((n.z - minZ) / rangeZ) * (h - 2 * pad);
+            var py = pad + (((n.y || 0) - minY) / rangeY) * (h - 2 * pad);
             minimapCtx.fillStyle = n.color || '#4CAF50';
             minimapCtx.beginPath();
-            minimapCtx.arc(px, pz, 2.5, 0, Math.PI * 2);
+            minimapCtx.arc(px, py, 2.5, 0, Math.PI * 2);
             minimapCtx.fill();
         });
 
@@ -843,10 +850,10 @@
             var cam = graph.camera();
             if (cam) {
                 var cx = pad + ((cam.position.x - minX) / rangeX) * (w - 2 * pad);
-                var cz = pad + ((cam.position.z - minZ) / rangeZ) * (h - 2 * pad);
+                var cy = pad + ((cam.position.y - minY) / rangeY) * (h - 2 * pad);
                 minimapCtx.strokeStyle = '#58a6ff';
                 minimapCtx.lineWidth = 1.5;
-                minimapCtx.strokeRect(cx - 15, cz - 12, 30, 24);
+                minimapCtx.strokeRect(cx - 15, cy - 12, 30, 24);
             }
         }
     }
@@ -862,21 +869,24 @@
         var h = minimapCanvas.height;
         var pad = 10;
 
-        var minX = Infinity, maxX = -Infinity, minZ = Infinity, maxZ = -Infinity;
+        // MTO-112: Use x/y bounds matching 2D mode
+        var minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
         liveNodes.forEach(function(n) {
             if (n.x == null) return;
             if (n.x < minX) minX = n.x;
             if (n.x > maxX) maxX = n.x;
-            if (n.z < minZ) minZ = n.z;
-            if (n.z > maxZ) maxZ = n.z;
+            var yVal = n.y || 0;
+            if (yVal < minY) minY = yVal;
+            if (yVal > maxY) maxY = yVal;
         });
         if (minX === Infinity) return;
         var rangeX = (maxX - minX) || 1;
-        var rangeZ = (maxZ - minZ) || 1;
+        var rangeY = (maxY - minY) || 1;
 
         var worldX = minX + ((x - pad) / (w - 2 * pad)) * rangeX;
-        var worldZ = minZ + ((y - pad) / (h - 2 * pad)) * rangeZ;
-        graph.cameraPosition({ x: worldX, y: 0, z: worldZ + 200 }, { x: worldX, y: 0, z: worldZ }, 1000);
+        var worldY = minY + ((y - pad) / (h - 2 * pad)) * rangeY;
+        // In 2D mode, camera looks down z-axis at the x/y plane
+        graph.cameraPosition({ x: worldX, y: worldY, z: graph.camera().position.z }, { x: worldX, y: worldY, z: 0 }, 1000);
     }
 
     // ─── Export PNG (MTO-88) ───────────────────────────────────────────

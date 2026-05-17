@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="app.diagrams.net" modified="2026-05-17T10:00:00.000Z" agent="draw.io" version="21.0.0">
+  <diagram name="Tab State Diagram" id="tab-state">
+    <mxGraphModel dx="1200" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1100" pageHeight="850" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <!-- Not Monitored -->
+        <mxCell id="2" value="Not Monitored" style="ellipse;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="50" y="350" width="140" height="60" as="geometry" />
+        </mxCell>
+        <!-- Active/Idle -->
+        <mxCell id="3" value="Active / Idle" style="ellipse;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="320" y="150" width="140" height="60" as="geometry" />
+        </mxCell>
+        <!-- Active/Running -->
+        <mxCell id="4" value="Active / Running" style="ellipse;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="600" y="150" width="150" height="60" as="geometry" />
+        </mxCell>
+        <!-- Active/Error -->
+        <mxCell id="5" value="Active / Error" style="ellipse;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="600" y="300" width="140" height="60" as="geometry" />
+        </mxCell>
+        <!-- Active/Disconnected -->
+        <mxCell id="6" value="Active / Disconnected" style="ellipse;whiteSpace=wrap;html=1;fillColor=#e6e6e6;strokeColor=#999999;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="320" y="450" width="160" height="60" as="geometry" />
+        </mxCell>
+        <!-- Inactive/* -->
+        <mxCell id="7" value="Inactive / *" style="ellipse;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="320" y="300" width="140" height="60" as="geometry" />
+        </mxCell>
+        <!-- Transitions -->
+        <mxCell id="10" value="add" style="endArrow=classic;html=1;strokeWidth=2;" edge="1" parent="1" source="2" target="3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="11" value="sync starts" style="endArrow=classic;html=1;strokeWidth=2;" edge="1" parent="1" source="3" target="4">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="12" value="sync completes" style="endArrow=classic;html=1;strokeWidth=2;" edge="1" parent="1" source="4" target="3">
+          <mxGeometry x="-0.2" y="-10" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="13" value="sync fails" style="endArrow=classic;html=1;strokeWidth=2;" edge="1" parent="1" source="4" target="5">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="14" value="SSE lost" style="endArrow=classic;html=1;strokeWidth=2;strokeColor=#999999;" edge="1" parent="1" source="3" target="6">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="15" value="SSE reconnects" style="endArrow=classic;html=1;strokeWidth=2;strokeColor=#82b366;" edge="1" parent="1" source="6" target="3">
+          <mxGeometry x="-0.3" y="10" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="16" value="click other tab" style="endArrow=classic;html=1;strokeWidth=2;strokeColor=#6c8ebf;" edge="1" parent="1" source="3" target="7">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="17" value="click this tab" style="endArrow=classic;html=1;strokeWidth=2;strokeColor=#6c8ebf;" edge="1" parent="1" source="7" target="3">
+          <mxGeometry x="-0.2" y="10" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="18" value="click X (remove)" style="endArrow=classic;html=1;strokeWidth=2;strokeColor=#b85450;" edge="1" parent="1" source="7" target="2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="19" value="click X (remove)" style="endArrow=classic;html=1;strokeWidth=2;strokeColor=#b85450;" edge="1" parent="1" source="3" target="2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

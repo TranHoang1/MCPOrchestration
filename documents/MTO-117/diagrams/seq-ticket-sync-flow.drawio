@@ -1,0 +1,91 @@
+<mxfile host="app.diagrams.net" modified="2026-05-15T00:00:00.000Z" agent="draw.io" type="device">
+  <diagram id="seq-ticket-sync" name="Single Ticket Sync Flow">
+    <mxGraphModel dx="1422" dy="762" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="900" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <!-- Participants -->
+        <mxCell id="p1" value="Agent" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;container=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;" vertex="1" parent="1">
+          <mxGeometry x="80" y="30" width="100" height="700" as="geometry" />
+        </mxCell>
+        <mxCell id="p2" value="kb-server" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;container=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;" vertex="1" parent="1">
+          <mxGeometry x="240" y="30" width="100" height="700" as="geometry" />
+        </mxCell>
+        <mxCell id="p3" value="JiraTicketSync&#xa;Handler" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;container=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;" vertex="1" parent="1">
+          <mxGeometry x="400" y="30" width="120" height="700" as="geometry" />
+        </mxCell>
+        <mxCell id="p4" value="TicketCrawler" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;container=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;" vertex="1" parent="1">
+          <mxGeometry x="580" y="30" width="100" height="700" as="geometry" />
+        </mxCell>
+        <mxCell id="p5" value="ContentFetcher" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;container=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;" vertex="1" parent="1">
+          <mxGeometry x="740" y="30" width="110" height="700" as="geometry" />
+        </mxCell>
+        <mxCell id="p6" value="KBIngestor" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;container=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;" vertex="1" parent="1">
+          <mxGeometry x="910" y="30" width="100" height="700" as="geometry" />
+        </mxCell>
+        <mxCell id="p7" value="GraphBuilder" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;container=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;" vertex="1" parent="1">
+          <mxGeometry x="1070" y="30" width="100" height="700" as="geometry" />
+        </mxCell>
+        <mxCell id="p8" value="Jira API" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;container=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;" vertex="1" parent="1">
+          <mxGeometry x="1230" y="30" width="100" height="700" as="geometry" />
+        </mxCell>
+        <!-- Messages -->
+        <mxCell id="m1" value="jira_ticket_sync(issueKey=&quot;MTO-117&quot;)" style="html=1;verticalAlign=bottom;endArrow=block;edgeStyle=elbowEdgeStyle;elbow=vertical;curved=0;rounded=0;" edge="1" parent="1" source="p1" target="p2">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="130" y="100" as="sourcePoint" /><mxPoint x="290" y="100" as="targetPoint" /></mxGeometry>
+        </mxCell>
+        <mxCell id="m2" value="handle(arguments)" style="html=1;verticalAlign=bottom;endArrow=block;edgeStyle=elbowEdgeStyle;elbow=vertical;curved=0;rounded=0;" edge="1" parent="1" source="p2" target="p3">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="290" y="130" as="sourcePoint" /><mxPoint x="460" y="130" as="targetPoint" /></mxGeometry>
+        </mxCell>
+        <mxCell id="m3" value="validate issueKey format" style="html=1;verticalAlign=bottom;endArrow=block;edgeStyle=elbowEdgeStyle;elbow=vertical;curved=0;rounded=0;" edge="1" parent="1" source="p3" target="p3">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="460" y="160" as="sourcePoint" /><mxPoint x="460" y="180" as="targetPoint" /></mxGeometry>
+        </mxCell>
+        <mxCell id="m4" value="crawlSingle(&quot;MTO-117&quot;)" style="html=1;verticalAlign=bottom;endArrow=block;edgeStyle=elbowEdgeStyle;elbow=vertical;curved=0;rounded=0;" edge="1" parent="1" source="p3" target="p4">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="460" y="200" as="sourcePoint" /><mxPoint x="630" y="200" as="targetPoint" /></mxGeometry>
+        </mxCell>
+        <mxCell id="m5" value="fetch(&quot;MTO-117&quot;)" style="html=1;verticalAlign=bottom;endArrow=block;edgeStyle=elbowEdgeStyle;elbow=vertical;curved=0;rounded=0;" edge="1" parent="1" source="p4" target="p5">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="630" y="240" as="sourcePoint" /><mxPoint x="795" y="240" as="targetPoint" /></mxGeometry>
+        </mxCell>
+        <mxCell id="m6" value="GET /rest/api/3/issue/MTO-117" style="html=1;verticalAlign=bottom;endArrow=block;edgeStyle=elbowEdgeStyle;elbow=vertical;curved=0;rounded=0;" edge="1" parent="1" source="p5" target="p8">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="795" y="280" as="sourcePoint" /><mxPoint x="1280" y="280" as="targetPoint" /></mxGeometry>
+        </mxCell>
+        <mxCell id="m7" value="issue data + comments + links" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;edgeStyle=elbowEdgeStyle;elbow=vertical;curved=0;rounded=0;" edge="1" parent="1" source="p8" target="p5">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="1280" y="310" as="sourcePoint" /><mxPoint x="795" y="310" as="targetPoint" /></mxGeometry>
+        </mxCell>
+        <mxCell id="m8" value="TicketContent" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;edgeStyle=elbowEdgeStyle;elbow=vertical;curved=0;rounded=0;" edge="1" parent="1" source="p5" target="p4">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="795" y="340" as="sourcePoint" /><mxPoint x="630" y="340" as="targetPoint" /></mxGeometry>
+        </mxCell>
+        <mxCell id="m9" value="computeHash(content)" style="html=1;verticalAlign=bottom;endArrow=block;edgeStyle=elbowEdgeStyle;elbow=vertical;curved=0;rounded=0;" edge="1" parent="1" source="p4" target="p4">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="630" y="370" as="sourcePoint" /><mxPoint x="630" y="390" as="targetPoint" /></mxGeometry>
+        </mxCell>
+        <!-- Alt: Content changed -->
+        <mxCell id="alt1" value="[Content changed]" style="shape=mxgraph.uml.frame;whiteSpace=wrap;pointerEvents=0;recursiveResize=0;container=0;width=120;height=20;" vertex="1" parent="1">
+          <mxGeometry x="560" y="410" width="600" height="130" as="geometry" />
+        </mxCell>
+        <mxCell id="m10" value="buildEdges(&quot;MTO-117&quot;, links, parentKey)" style="html=1;verticalAlign=bottom;endArrow=block;edgeStyle=elbowEdgeStyle;elbow=vertical;curved=0;rounded=0;" edge="1" parent="1" source="p4" target="p7">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="630" y="440" as="sourcePoint" /><mxPoint x="1120" y="440" as="targetPoint" /></mxGeometry>
+        </mxCell>
+        <mxCell id="m11" value="ingest(content)" style="html=1;verticalAlign=bottom;endArrow=block;edgeStyle=elbowEdgeStyle;elbow=vertical;curved=0;rounded=0;" edge="1" parent="1" source="p4" target="p6">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="630" y="480" as="sourcePoint" /><mxPoint x="960" y="480" as="targetPoint" /></mxGeometry>
+        </mxCell>
+        <mxCell id="m12" value="generateEmbedding → upsert vector" style="html=1;verticalAlign=bottom;endArrow=block;edgeStyle=elbowEdgeStyle;elbow=vertical;curved=0;rounded=0;" edge="1" parent="1" source="p6" target="p6">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="960" y="510" as="sourcePoint" /><mxPoint x="960" y="530" as="targetPoint" /></mxGeometry>
+        </mxCell>
+        <!-- Return -->
+        <mxCell id="m13" value="CrawlItemResult" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;edgeStyle=elbowEdgeStyle;elbow=vertical;curved=0;rounded=0;" edge="1" parent="1" source="p4" target="p3">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="630" y="570" as="sourcePoint" /><mxPoint x="460" y="570" as="targetPoint" /></mxGeometry>
+        </mxCell>
+        <!-- Opt: includeLinked -->
+        <mxCell id="opt1" value="[includeLinked=true]" style="shape=mxgraph.uml.frame;whiteSpace=wrap;pointerEvents=0;recursiveResize=0;container=0;width=140;height=20;" vertex="1" parent="1">
+          <mxGeometry x="380" y="600" width="320" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="m14" value="crawlSingle(linkedKey) for each" style="html=1;verticalAlign=bottom;endArrow=block;edgeStyle=elbowEdgeStyle;elbow=vertical;curved=0;rounded=0;" edge="1" parent="1" source="p3" target="p4">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="460" y="625" as="sourcePoint" /><mxPoint x="630" y="625" as="targetPoint" /></mxGeometry>
+        </mxCell>
+        <!-- Final response -->
+        <mxCell id="m15" value="{issueKey:&quot;MTO-117&quot;, status:&quot;completed&quot;, changed:true, linkedSynced:3}" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;edgeStyle=elbowEdgeStyle;elbow=vertical;curved=0;rounded=0;" edge="1" parent="1" source="p3" target="p1">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="460" y="670" as="sourcePoint" /><mxPoint x="130" y="670" as="targetPoint" /></mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

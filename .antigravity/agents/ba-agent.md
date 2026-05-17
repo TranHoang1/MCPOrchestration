@@ -34,8 +34,24 @@ Trích xuất Ticket Key và Template. Xác định xem cần tạo BRD, FSD hay
 
 **KHÔNG TỰ TẠO template mới**. Mọi document phải tuân thủ đúng cấu trúc section của template.
 
-### Bước 3: Thu thập dữ liệu Jira
-Lấy thông tin ticket chính và **tất cả ticket liên quan** (linked tickets, subtasks) một cách đệ quy. Dùng `mcp_atlassian_jira_get_issue`.
+### Bước 3: KB-First Data Retrieval
+Ưu tiên lấy dữ liệu từ Knowledge Base trước, chỉ gọi Jira khi KB chưa có.
+
+**Quy trình KB-First (MANDATORY):**
+```
+1. kb_search(issue_key) hoặc kb_read(issue_key) → lấy từ KB trước
+2. Nếu KHÔNG TÌM THẤY → jira_project_sync(projectKey, fullSync=false) + jira_sync_status chờ
+3. Sau khi sync xong → kb_read(issue_key) lần 2
+4. Nếu vẫn không có → FALLBACK: gọi Jira API trực tiếp (jira_get_issue)
+```
+
+**Lưu ý:**
+- KB-First giúp giảm API calls tới Jira, tăng tốc độ xử lý
+- `jira_project_sync` sẽ đồng bộ toàn bộ tickets mới/cập nhật vào KB
+- `jira_sync_status` trả về trạng thái sync (pending/running/completed/failed)
+- Chỉ dùng `jira_get_issue` trực tiếp khi cả 2 bước trên đều thất bại
+
+**Sau khi có dữ liệu (từ KB hoặc Jira):** Lấy thông tin ticket chính và **tất cả ticket liên quan** (linked tickets, subtasks) một cách đệ quy.
 
 **⛔ MANDATORY — 9 Fields bắt buộc phải lấy cho MỖI ticket:**
 | # | Field | Jira API Field | Mục đích |
@@ -56,6 +72,55 @@ jira_get_issue(issue_key="MTO-XX", fields="summary,description,status,issuetype,
 ```
 
 **KHÔNG được bỏ qua bất kỳ field nào trong 9 fields trên.** Nếu field trống (null), vẫn phải ghi nhận là "không có dữ liệu" thay vì skip.
+
+### Bước 3.5: Feature Assignment (NEW — KB-First Feature Management)
+Sau khi thu thập dữ liệu, kiểm tra và gán ticket vào Feature phù hợp trong KB.
+
+**Quy trình Feature Assignment (MANDATORY):**
+```
+1. kb_feature_list(project_key) → lấy TOÀN BỘ features hiện có (cả ai + manual)
+2. Tìm ticket trong danh sách features:
+   - Duyệt qua mỗi feature.ticket_keys → kiểm tra ticket đã thuộc feature nào chưa
+3. Nếu ticket ĐÃ thuộc feature:
+   - Ghi log: "[BA] [Step-3.5] [SKIP] — Ticket already in feature: {feature_name}"
+   - Verify feature vẫn phù hợp (nếu không → kb_feature_assign sang feature khác)
+4. Nếu ticket CHƯA thuộc feature nào:
+   a. Tìm feature phù hợp trong danh sách hiện có:
+      - So sánh ticket summary/description với feature name/description
+      - Ưu tiên gán vào feature có sẵn thay vì tạo mới
+      → kb_feature_assign(feature_id, ticket_keys=[ticket_key])
+   b. Nếu KHÔNG có feature phù hợp → tạo mới:
+      → kb_feature_create(project_key, name, ticket_keys=[ticket_key], description)
+5. Ghi feature assignment vào BRD (section Related Features)
+```
+
+**⛔ BLOCKING RULE:** SM sẽ BLOCK Phase 2 nếu ticket chưa được gán feature. BA PHẢI hoàn thành bước này trước khi kết thúc Phase 1.
+
+**Lưu ý:**
+- Feature có 2 nguồn: `ai` (tự động từ AI sync) và `manual` (BA tạo thủ công)
+- BA có thể "adopt" feature AI bằng `kb_feature_update` (source chuyển thành manual)
+- Mỗi ticket PHẢI thuộc ít nhất 1 feature để đảm bảo traceability (SM quality gate sẽ block nếu thiếu)
+- Nếu tạo feature mới, cung cấp description rõ ràng về scope và mục đích
+- AI features (`source="ai"`) có thể bị overwrite khi sync lại — nếu BA muốn giữ, phải "adopt" (update → chuyển thành manual)
+- Ghi log: `[BA] [Step-3.5] [DONE] — Feature assigned: {feature_name} (source: {ai|manual})`
+
+**Output trong BRD:**
+Thêm section "Related Features" vào BRD với thông tin:
+```markdown
+## Related Features
+| Feature ID | Feature Name | Source | Tickets |
+|------------|-------------|--------|---------|
+| feat-xxx   | Feature ABC | manual | MTO-1, MTO-2 |
+```
+
+**Ví dụ flow hoàn chỉnh:**
+```
+BA: kb_feature_list("MTO") → [{id: "feat-1", name: "Auth", tickets: ["MTO-1"]}, ...]
+BA: Ticket MTO-5 chưa thuộc feature nào
+BA: MTO-5 summary = "Add OAuth2 login" → phù hợp với "Auth" feature
+BA: kb_feature_assign("feat-1", ["MTO-5"])
+BA: Log → "[BA] [Step-3.5] [DONE] — Feature assigned: Auth (source: manual)"
+```
 
 ### Bước 4: Lưu vào Knowledge Base
 Sử dụng `mcp_knowledge-base_kb_ingest` để đưa dữ liệu đã thu thập vào KB. Gắn tag theo ticket key.

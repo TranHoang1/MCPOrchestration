@@ -86,60 +86,11 @@ The Database Schema & Sync State Management provides the persistence foundation 
 3. **Relationship visualization** — Maintain a graph of ticket relationships for dependency analysis and visualization
 4. **Attachment processing** — Queue and track attachment downloads/processing with retry capability
 
-```mermaid
-flowchart TB
-    subgraph "Jira Sync Service - MTO-14"
-        A[Sync Job Scheduler] --> B[SyncStateManager]
-        B --> C[(jira_sync_state)]
-        A --> D[Ticket Fetcher]
-        D --> E[(jira_ticket_cache)]
-        D --> F[(jira_ticket_graph)]
-        D --> G[(jira_attachment_queue)]
-    end
-    
-    subgraph "Existing Infrastructure"
-        H[(PostgreSQL DB)]
-        I[HikariCP Pool]
-    end
-    
-    C --> H
-    E --> H
-    F --> H
-    G --> H
-    I --> H
-    B --> I
-```
+![Architecture Overview](diagrams/brd-architecture-overview.png)
+*[Edit in draw.io](diagrams/brd-architecture-overview.drawio)*
 
-```mermaid
-sequenceDiagram
-    participant Scheduler as Sync Job
-    participant SSM as SyncStateManager
-    participant DB as PostgreSQL
-    participant Cache as jira_ticket_cache
-    participant Graph as jira_ticket_graph
-    participant Queue as jira_attachment_queue
-
-    Scheduler->>SSM: getOrCreate(projectKey)
-    SSM->>DB: SELECT/INSERT jira_sync_state
-    DB-->>SSM: SyncState(IDLE)
-    SSM->>DB: UPDATE status=RUNNING
-    
-    loop For each batch of tickets
-        Scheduler->>SSM: updateProgress(projectKey, offset, synced)
-        SSM->>DB: UPDATE last_offset, synced_issues
-        Scheduler->>Cache: UPSERT ticket metadata
-        Scheduler->>Graph: INSERT relationships
-        Scheduler->>Queue: INSERT attachments
-    end
-    
-    alt Success
-        Scheduler->>SSM: markCompleted(projectKey)
-        SSM->>DB: UPDATE status=COMPLETED
-    else Failure
-        Scheduler->>SSM: markFailed(projectKey, error)
-        SSM->>DB: UPDATE status=FAILED, error_message
-    end
-```
+![Sync Sequence Diagram](diagrams/brd-sync-sequence.png)
+*[Edit in draw.io](diagrams/brd-sync-sequence.drawio)*
 
 ![Use Case Diagram](diagrams/use-case.png)
 *[Edit in draw.io](diagrams/use-case.drawio)*
@@ -605,76 +556,13 @@ The database schema supports the following end-to-end sync lifecycle:
 
 ### Database Schema Diagram (ER)
 
-```mermaid
-erDiagram
-    jira_sync_state {
-        varchar project_key PK
-        timestamptz last_sync_at
-        integer last_offset
-        integer total_issues
-        integer synced_issues
-        varchar status
-        text error_message
-        timestamptz updated_at
-    }
-    
-    jira_ticket_cache {
-        varchar ticket_key PK
-        varchar project_key FK
-        text summary
-        varchar issue_type
-        varchar status
-        varchar priority
-        varchar parent_key
-        varchar epic_key
-        jsonb labels
-        timestamptz updated_at_jira
-        timestamptz synced_at
-        varchar content_hash
-        boolean kb_ingested
-    }
-    
-    jira_ticket_graph {
-        varchar source_key PK
-        varchar target_key PK
-        varchar link_type PK
-        varchar category
-    }
-    
-    jira_attachment_queue {
-        serial id PK
-        varchar ticket_key FK
-        varchar attachment_id
-        varchar filename
-        varchar mime_type
-        bigint size_bytes
-        text download_url
-        varchar status
-        integer retry_count
-        text error_message
-        timestamptz created_at
-        timestamptz processed_at
-    }
-    
-    jira_sync_state ||--o{ jira_ticket_cache : "project_key"
-    jira_ticket_cache ||--o{ jira_ticket_graph : "source_key"
-    jira_ticket_cache ||--o{ jira_ticket_graph : "target_key"
-    jira_ticket_cache ||--o{ jira_attachment_queue : "ticket_key"
-```
+![Database Schema ER Diagram](diagrams/brd-er-diagram.png)
+*[Edit in draw.io](diagrams/brd-er-diagram.drawio)*
 
 ### State Machine: Sync Status Lifecycle
 
-```mermaid
-stateDiagram-v2
-    [*] --> IDLE : getOrCreate()
-    IDLE --> RUNNING : markRunning()
-    RUNNING --> COMPLETED : markCompleted()
-    RUNNING --> FAILED : markFailed()
-    RUNNING --> PAUSED : markPaused()
-    PAUSED --> RUNNING : markRunning()
-    FAILED --> RUNNING : markRunning() (retry)
-    COMPLETED --> RUNNING : markRunning() (re-sync)
-```
+![Sync Status State Machine](diagrams/brd-sync-state-machine.png)
+*[Edit in draw.io](diagrams/brd-sync-state-machine.drawio)*
 
 ### Glossary
 

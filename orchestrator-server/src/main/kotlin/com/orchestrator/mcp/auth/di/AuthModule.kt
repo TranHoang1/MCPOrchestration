@@ -31,8 +31,9 @@ val authModule = module {
 
     // SSO components (MTO-101)
     single { SsoPkceManager() }
-    single { SsoTokenExchange(HttpClient(CIO)) }
+    single { OidcDiscoveryClient(HttpClient(CIO)) }
+    single { SsoTokenExchange(HttpClient(CIO), get()) }
     single<SsoConfigRepository> { SsoConfigRepositoryImpl(get()) }
-    single<SsoService> { SsoServiceImpl(get(), get(), get(), get(), get(), get()) }
+    single<SsoService> { SsoServiceImpl(get(), get(), get(), get(), get(), get(), get()) }
     single { SsoRoutes(get(), get()) }
 }

@@ -1,0 +1,26 @@
+{
+  "ticket": "MTO-120",
+  "currentPhase": "done",
+  "phases": {
+    "requirements": { "status": "done", "file": "BRD.md", "version": "1.0", "completedAt": "2026-05-15T16:00:00Z" },
+    "specification": { "status": "done", "file": "FSD.md", "version": "1.0", "completedAt": "2026-07-08T12:00:00Z" },
+    "design": { "status": "done", "completedAt": "2026-07-09T10:00:00Z" },
+    "implementation": { "status": "done", "completedAt": "2026-07-09T12:00:00Z" },
+    "test_planning": { "status": "done", "file": "STP.md", "version": "1.0", "completedAt": "2025-07-10T10:00:00Z" },
+    "testing": { "status": "done", "result": "PASSED", "details": "orchestrator-bridge: 20/20 PASSED, kb-server: all PASSED", "completedAt": "2025-07-10T11:00:00Z" },
+    "deployment": { "status": "done", "file": "DPG.md", "version": "1.0", "completedAt": "2025-07-10T11:30:00Z" }
+  },
+  "jiraStatus": "In Progress",
+  "stories": {
+    "MTO-121": { "status": "Done", "phase": "tested", "files": ["codeintel/db/", "codeintel/model/", "codeintel/config/"] },
+    "MTO-122": { "status": "Done", "phase": "tested", "files": ["codeintel/scanner/", "codeintel/extractor/"] },
+    "MTO-123": { "status": "Done", "phase": "tested", "files": ["codeintel/query/", "codeintel/tools/", "codeintel/storage/"] },
+    "MTO-124": { "status": "Done", "phase": "tested", "files": ["codeintel/ollama/"] },
+    "MTO-125": { "status": "Done", "phase": "tested", "files": ["codeintel/indexer/"] },
+    "MTO-126": { "status": "Done", "phase": "tested", "files": ["codeintel/CodeIntelligenceModule.kt", "BridgeServer.kt integration"] },
+    "MTO-127": { "status": "Done", "phase": "tested", "files": ["mcp-client-bridge/src/code-intel/"] },
+    "MTO-128": { "status": "Done", "phase": "tested", "files": ["mcp-bridge-python/src/mcp_bridge/code_intel/"] },
+    "MTO-129": { "status": "Done", "phase": "tested", "files": ["mcp-bridge-powershell/code-intel.ps1", "mcp-bridge-bash/code-intel.sh"] }
+  },
+  "lastUpdated": "2025-07-10T11:30:00Z"
+}

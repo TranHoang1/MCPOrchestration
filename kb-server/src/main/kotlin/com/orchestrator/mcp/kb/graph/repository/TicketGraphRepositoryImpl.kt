@@ -50,6 +50,31 @@ class TicketGraphRepositoryImpl(
         )
     }
 
+    override suspend fun findOutgoing(sourceKey: String): List<TicketRelation> {
+        val sql = """
+            SELECT source_key, target_key, link_type, category
+            FROM ticket_graph WHERE source_key = ?
+        """.trimIndent()
+        return queryRelations(sql, sourceKey)
+    }
+
+    override suspend fun findIncoming(targetKey: String): List<TicketRelation> {
+        val sql = """
+            SELECT source_key, target_key, link_type, category
+            FROM ticket_graph WHERE target_key = ?
+        """.trimIndent()
+        return queryRelations(sql, targetKey)
+    }
+
+    private fun queryRelations(sql: String, param: String): List<TicketRelation> {
+        return dataSource.connection.use { conn ->
+            conn.prepareStatement(sql).use { stmt ->
+                stmt.setString(1, param)
+                stmt.executeQuery().use { rs -> mapResults(rs) }
+            }
+        }
+    }
+
     private fun parseCategory(value: String?): RelationCategory {
         return try {
             value?.let { RelationCategory.valueOf(it.uppercase()) }

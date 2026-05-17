@@ -1,4 +1,5 @@
 {
+  "jiraProjectKey": "MTO",
   "includedExtensions": [
     ".kt",
     ".java",

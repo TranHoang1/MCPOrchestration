@@ -1,6 +1,7 @@
 package com.orchestrator.mcp.sync.pipeline.storage
 
 import com.orchestrator.mcp.sync.pipeline.model.IndexEntry
+import com.orchestrator.mcp.sync.pipeline.model.SourceRef
 import com.zaxxer.hikari.HikariDataSource
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -57,6 +58,31 @@ class PostgresIndexWriter(
         }
     }
 
+    override suspend fun getFeatureEntries(projectKey: String): List<IndexEntry> {
+        return withContext(Dispatchers.IO) {
+            dataSource.connection.use { conn ->
+                conn.prepareStatement(FEATURES_SQL).use { stmt ->
+                    stmt.setString(1, projectKey)
+                    val rs = stmt.executeQuery()
+                    buildList { while (rs.next()) add(mapIndexEntry(rs)) }
+                }
+            }
+        }
+    }
+
+    override suspend fun getContentHash(ticketKey: String, dimensionId: String): String? {
+        return withContext(Dispatchers.IO) {
+            dataSource.connection.use { conn ->
+                conn.prepareStatement(HASH_SQL).use { stmt ->
+                    stmt.setString(1, ticketKey)
+                    stmt.setString(2, dimensionId)
+                    val rs = stmt.executeQuery()
+                    if (rs.next()) rs.getString("content_hash") else null
+                }
+            }
+        }
+    }
+
     private fun executeBatchUpsert(conn: Connection, entries: List<IndexEntry>) {
         conn.prepareStatement(UPSERT_SQL).use { stmt ->
             for (entry in entries) {
@@ -102,6 +128,29 @@ class PostgresIndexWriter(
         )
     }
 
+    private fun mapIndexEntry(rs: java.sql.ResultSet): IndexEntry {
+        val dataStr = rs.getString("data") ?: "{}"
+        val data = json.decodeFromString<Map<String, String?>>(dataStr)
+        val derivedStr = rs.getString("derived_from")
+        val derived = derivedStr?.let { json.decodeFromString<List<String>>(it) }
+        return IndexEntry(
+            id = rs.getString("id"),
+            dimensionId = rs.getString("dimension_id"),
+            projectKey = rs.getString("project_key"),
+            ticketKey = rs.getString("ticket_key"),
+            entryKey = rs.getString("entry_key"),
+            sourceRef = SourceRef(
+                type = rs.getString("source_type") ?: "ai_derived",
+                path = rs.getString("source_path") ?: "",
+                syncedAt = kotlinx.datetime.Instant.DISTANT_PAST,
+                contentHash = rs.getString("content_hash"),
+                derivedFrom = derived
+            ),
+            data = data,
+            vectorText = rs.getString("vector_text")
+        )
+    }
+
     companion object {
         private const val UPSERT_SQL = """
             INSERT INTO sync.index_entries 
@@ -125,6 +174,19 @@ class PostgresIndexWriter(
             SELECT ticket_key, data 
             FROM sync.index_entries 
             WHERE dimension_id = 'ticket_metadata' AND project_key = ?
+        """
+
+        private const val FEATURES_SQL = """
+            SELECT id, dimension_id, project_key, ticket_key, entry_key,
+                   source_type, source_path, content_hash, derived_from, data, vector_text
+            FROM sync.index_entries
+            WHERE dimension_id = 'feature_grouping' AND project_key = ?
+        """
+
+        private const val HASH_SQL = """
+            SELECT content_hash FROM sync.index_entries
+            WHERE ticket_key = ? AND dimension_id = ?
+            LIMIT 1
         """
     }
 }

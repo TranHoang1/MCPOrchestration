@@ -1,0 +1,75 @@
+<mxGraphModel adaptiveColors="auto">
+  <root>
+    <mxCell id="0"/>
+    <mxCell id="1" parent="0"/>
+    <mxCell id="grp1" value="&lt;b&gt;Jira Sync Service - MTO-14&lt;/b&gt;" style="swimlane;startSize=30;fillColor=#e1f5fe;strokeColor=#0288d1;html=1;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="40" y="40" width="560" height="280" as="geometry"/>
+    </mxCell>
+    <mxCell id="a" value="Sync Job Scheduler" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8f5e9;strokeColor=#388e3c;fontSize=11;" vertex="1" parent="grp1">
+      <mxGeometry x="20" y="50" width="160" height="70" as="geometry"/>
+    </mxCell>
+    <mxCell id="b" value="SyncStateManager" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8f5e9;strokeColor=#388e3c;fontSize=11;" vertex="1" parent="grp1">
+      <mxGeometry x="20" y="170" width="160" height="70" as="geometry"/>
+    </mxCell>
+    <mxCell id="c" value="jira_sync_state" style="shape=cylinder3;whiteSpace=wrap;html=1;fillColor=#f3e5f5;strokeColor=#7b1fa2;fontSize=11;size=10;" vertex="1" parent="grp1">
+      <mxGeometry x="240" y="170" width="130" height="70" as="geometry"/>
+    </mxCell>
+    <mxCell id="d" value="Ticket Fetcher" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8f5e9;strokeColor=#388e3c;fontSize=11;" vertex="1" parent="grp1">
+      <mxGeometry x="240" y="50" width="130" height="70" as="geometry"/>
+    </mxCell>
+    <mxCell id="e" value="jira_ticket_cache" style="shape=cylinder3;whiteSpace=wrap;html=1;fillColor=#f3e5f5;strokeColor=#7b1fa2;fontSize=11;size=10;" vertex="1" parent="grp1">
+      <mxGeometry x="410" y="40" width="130" height="70" as="geometry"/>
+    </mxCell>
+    <mxCell id="f" value="jira_ticket_graph" style="shape=cylinder3;whiteSpace=wrap;html=1;fillColor=#f3e5f5;strokeColor=#7b1fa2;fontSize=11;size=10;" vertex="1" parent="grp1">
+      <mxGeometry x="410" y="120" width="130" height="70" as="geometry"/>
+    </mxCell>
+    <mxCell id="g" value="jira_attachment_queue" style="shape=cylinder3;whiteSpace=wrap;html=1;fillColor=#f3e5f5;strokeColor=#7b1fa2;fontSize=11;size=10;" vertex="1" parent="grp1">
+      <mxGeometry x="410" y="200" width="130" height="70" as="geometry"/>
+    </mxCell>
+    <mxCell id="grp2" value="&lt;b&gt;Existing Infrastructure&lt;/b&gt;" style="swimlane;startSize=30;fillColor=#f5f5f5;strokeColor=#666666;html=1;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="660" y="40" width="200" height="280" as="geometry"/>
+    </mxCell>
+    <mxCell id="h" value="PostgreSQL DB" style="shape=cylinder3;whiteSpace=wrap;html=1;fillColor=#f3e5f5;strokeColor=#7b1fa2;fontSize=11;size=10;" vertex="1" parent="grp2">
+      <mxGeometry x="40" y="50" width="120" height="70" as="geometry"/>
+    </mxCell>
+    <mxCell id="i" value="HikariCP Pool" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff3e0;strokeColor=#f57c00;fontSize=11;" vertex="1" parent="grp2">
+      <mxGeometry x="40" y="170" width="120" height="70" as="geometry"/>
+    </mxCell>
+    <mxCell id="ea1" edge="1" source="a" target="b" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="ea2" edge="1" source="b" target="c" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="ea3" edge="1" source="a" target="d" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="ea4" edge="1" source="d" target="e" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="ea5" edge="1" source="d" target="f" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="ea6" edge="1" source="d" target="g" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="ea7" edge="1" source="c" target="h" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="ea8" edge="1" source="e" target="h" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="ea9" edge="1" source="f" target="h" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="ea10" edge="1" source="g" target="h" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="ea11" edge="1" source="i" target="h" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="ea12" edge="1" source="b" target="i" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+  </root>
+</mxGraphModel>

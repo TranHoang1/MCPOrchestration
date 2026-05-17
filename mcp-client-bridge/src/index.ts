@@ -21,6 +21,9 @@ async function main(): Promise<void> {
   } else {
     console.error('[mcp-bridge] Warning: No token provided. Running without authentication.');
   }
+  if (config.enableLocalServers) {
+    console.error('[mcp-bridge] Local server management: ENABLED');
+  }
 
   const bridge = new BridgeServer(config);
 

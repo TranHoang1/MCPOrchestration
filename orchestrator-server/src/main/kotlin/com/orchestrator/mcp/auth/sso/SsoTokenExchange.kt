@@ -3,7 +3,6 @@ package com.orchestrator.mcp.auth.sso
 import com.orchestrator.mcp.auth.sso.model.IdpTokenResponse
 import com.orchestrator.mcp.auth.sso.model.SsoConfig
 import io.ktor.client.*
-import io.ktor.client.request.*
 import io.ktor.client.request.forms.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
@@ -14,9 +13,12 @@ import org.slf4j.LoggerFactory
 
 /**
  * Handles OAuth2 token exchange with the Identity Provider.
- * Exchanges authorization code + PKCE verifier for tokens.
+ * Uses OIDC Discovery to resolve token endpoint dynamically.
  */
-class SsoTokenExchange(private val httpClient: HttpClient) {
+class SsoTokenExchange(
+    private val httpClient: HttpClient,
+    private val discoveryClient: OidcDiscoveryClient
+) {
 
     private val logger = LoggerFactory.getLogger(javaClass)
     private val json = Json { ignoreUnknownKeys = true; encodeDefaults = true }
@@ -30,7 +32,6 @@ class SsoTokenExchange(private val httpClient: HttpClient) {
     ): IdpTokenResponse {
         val tokenUrl = resolveTokenEndpoint(config.issuerUrl)
         logger.debug("Exchanging code at: {}", tokenUrl)
-
         val response = httpClient.submitForm(
             url = tokenUrl,
             formParameters = buildExchangeParams(config, code, codeVerifier, clientSecret)
@@ -43,7 +44,7 @@ class SsoTokenExchange(private val httpClient: HttpClient) {
         return json.decodeFromString<IdpTokenResponse>(response.bodyAsText())
     }
 
-    /** Parse ID token claims (JWT payload without signature verification for user info). */
+    /** Parse ID token claims (JWT payload — user info extraction). */
     fun parseIdTokenClaims(idToken: String): Map<String, String> {
         val parts = idToken.split(".")
         if (parts.size != 3) throw SsoException.InvalidIdTokenException("Malformed JWT")
@@ -52,7 +53,17 @@ class SsoTokenExchange(private val httpClient: HttpClient) {
             Charsets.UTF_8
         )
         val jsonObj = json.decodeFromString<JsonObject>(payload)
-        return jsonObj.entries.associate { (k, v) -> k to v.jsonPrimitive.content }
+        return jsonObj.entries.associate { (k, v) ->
+            k to v.jsonPrimitive.content
+        }
+    }
+
+    /** Resolve token endpoint via OIDC Discovery. */
+    private suspend fun resolveTokenEndpoint(issuerUrl: String): String {
+        val metadata = discoveryClient.discover(issuerUrl)
+        if (metadata.tokenEndpoint.isNotBlank()) return metadata.tokenEndpoint
+        // Fallback for non-standard providers
+        return "${issuerUrl.trimEnd('/')}/protocol/openid-connect/token"
     }
 
     private fun buildExchangeParams(
@@ -64,10 +75,5 @@ class SsoTokenExchange(private val httpClient: HttpClient) {
         append("client_id", config.clientId)
         append("client_secret", clientSecret)
         append("code_verifier", codeVerifier)
-    }
-
-    private fun resolveTokenEndpoint(issuerUrl: String): String {
-        val base = issuerUrl.trimEnd('/')
-        return "$base/protocol/openid-connect/token"
     }
 }

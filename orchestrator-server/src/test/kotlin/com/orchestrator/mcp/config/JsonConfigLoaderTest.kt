@@ -93,11 +93,11 @@ class JsonConfigLoaderTest : FunSpec({
         servers shouldHaveSize 0
     }
 
-    test("invalid JSON returns empty list") {
+    test("invalid JSON throws ConfigValidationException") {
         val json = "not valid json {{"
-        val servers = JsonConfigLoader
-            .parseUpstreamServers(json)
-        servers shouldHaveSize 0
+        io.kotest.assertions.throwables.shouldThrow<ConfigValidationException> {
+            JsonConfigLoader.parseUpstreamServers(json)
+        }
     }
 
     test("defaults applied for missing fields") {

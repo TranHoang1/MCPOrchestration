@@ -20,7 +20,8 @@ import java.util.concurrent.Executors
 class KbHttpTransport(
     private val handlers: List<KbToolHandler>,
     private val graphRoutes: GraphRoutes,
-    private val port: Int
+    private val port: Int,
+    private val bindAddress: String = "127.0.0.1"
 ) {
     private val logger = LoggerFactory.getLogger(javaClass)
     private val json = Json { ignoreUnknownKeys = true; encodeDefaults = true }
@@ -29,7 +30,7 @@ class KbHttpTransport(
     }
 
     fun start() {
-        val server = HttpServer.create(InetSocketAddress(port), 0)
+        val server = HttpServer.create(InetSocketAddress(bindAddress, port), 0)
         server.executor = Executors.newFixedThreadPool(4)
 
         server.createContext("/mcp") { exchange -> handleMcp(exchange) }
@@ -40,8 +41,8 @@ class KbHttpTransport(
         server.createContext("/static") { exchange -> serveStatic(exchange) }
 
         server.start()
-        logger.info("KB Server HTTP transport listening on port {}", port)
-        logger.info("Graph viewer: http://localhost:{}/sync/graph-viewer", port)
+        logger.info("KB Server HTTP transport listening on {}:{}", bindAddress, port)
+        logger.info("Graph viewer: http://{}:{}/sync/graph-viewer", bindAddress, port)
 
         // Block forever
         Thread.currentThread().join()

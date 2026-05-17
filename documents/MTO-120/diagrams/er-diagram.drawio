@@ -1,0 +1,39 @@
+<mxGraphModel adaptiveColors="auto">
+  <root>
+    <mxCell id="0"/>
+    <mxCell id="1" parent="0"/>
+    <mxCell id="title" value="&lt;b&gt;ER Diagram — Code Intelligence Database&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;fontSize=14;fontStyle=1;" vertex="1" parent="1">
+      <mxGeometry x="200" y="10" width="400" height="30" as="geometry"/>
+    </mxCell>
+    <mxCell id="files" value="&lt;b&gt;files&lt;/b&gt;&lt;hr&gt;&lt;font style=&quot;font-size:10px&quot;&gt;id: INTEGER PK&lt;br&gt;path: TEXT UNIQUE&lt;br&gt;language: TEXT&lt;br&gt;content_hash: TEXT&lt;br&gt;size_bytes: INTEGER&lt;br&gt;last_indexed: TEXT&lt;br&gt;module_id: INTEGER FK&lt;/font&gt;" style="shape=table;startSize=24;container=0;collapsible=0;childLayout=tableLayout;fixedRows=1;rowLines=0;fontStyle=1;align=center;overflow=fill;html=1;fillColor=#e1f5fe;strokeColor=#0288d1;rounded=1;" vertex="1" parent="1">
+      <mxGeometry x="280" y="80" width="200" height="160" as="geometry"/>
+    </mxCell>
+    <mxCell id="symbols" value="&lt;b&gt;symbols&lt;/b&gt;&lt;hr&gt;&lt;font style=&quot;font-size:10px&quot;&gt;id: INTEGER PK&lt;br&gt;file_id: INTEGER FK&lt;br&gt;name: TEXT&lt;br&gt;kind: TEXT&lt;br&gt;signature: TEXT&lt;br&gt;line_start: INTEGER&lt;br&gt;line_end: INTEGER&lt;br&gt;visibility: TEXT&lt;/font&gt;" style="shape=table;startSize=24;container=0;collapsible=0;childLayout=tableLayout;fixedRows=1;rowLines=0;fontStyle=1;align=center;overflow=fill;html=1;fillColor=#e8f5e9;strokeColor=#388e3c;rounded=1;" vertex="1" parent="1">
+      <mxGeometry x="580" y="80" width="200" height="180" as="geometry"/>
+    </mxCell>
+    <mxCell id="modules" value="&lt;b&gt;modules&lt;/b&gt;&lt;hr&gt;&lt;font style=&quot;font-size:10px&quot;&gt;id: INTEGER PK&lt;br&gt;name: TEXT UNIQUE&lt;br&gt;path: TEXT&lt;br&gt;description: TEXT&lt;br&gt;summary: TEXT&lt;br&gt;embedding: BLOB&lt;/font&gt;" style="shape=table;startSize=24;container=0;collapsible=0;childLayout=tableLayout;fixedRows=1;rowLines=0;fontStyle=1;align=center;overflow=fill;html=1;fillColor=#f3e5f5;strokeColor=#7b1fa2;rounded=1;" vertex="1" parent="1">
+      <mxGeometry x="40" y="80" width="180" height="150" as="geometry"/>
+    </mxCell>
+    <mxCell id="embeddings" value="&lt;b&gt;embeddings&lt;/b&gt;&lt;hr&gt;&lt;font style=&quot;font-size:10px&quot;&gt;id: INTEGER PK&lt;br&gt;file_id: INTEGER FK&lt;br&gt;vector: BLOB (768×f32)&lt;br&gt;text_summary: TEXT&lt;br&gt;model: TEXT&lt;br&gt;created_at: TEXT&lt;/font&gt;" style="shape=table;startSize=24;container=0;collapsible=0;childLayout=tableLayout;fixedRows=1;rowLines=0;fontStyle=1;align=center;overflow=fill;html=1;fillColor=#fff3e0;strokeColor=#f57c00;rounded=1;" vertex="1" parent="1">
+      <mxGeometry x="280" y="320" width="200" height="150" as="geometry"/>
+    </mxCell>
+    <mxCell id="fts5" value="&lt;b&gt;symbols_fts&lt;/b&gt;&lt;br&gt;(FTS5 Virtual Table)&lt;hr&gt;&lt;font style=&quot;font-size:10px&quot;&gt;name&lt;br&gt;signature&lt;br&gt;file_path&lt;br&gt;module_name&lt;/font&gt;" style="shape=table;startSize=24;container=0;collapsible=0;childLayout=tableLayout;fixedRows=1;rowLines=0;fontStyle=1;align=center;overflow=fill;html=1;fillColor=#f5f5f5;strokeColor=#666666;rounded=1;dashed=1;" vertex="1" parent="1">
+      <mxGeometry x="580" y="340" width="200" height="120" as="geometry"/>
+    </mxCell>
+    <mxCell id="schema_ver" value="&lt;b&gt;schema_version&lt;/b&gt;&lt;hr&gt;&lt;font style=&quot;font-size:10px&quot;&gt;version: INTEGER PK&lt;br&gt;applied_at: TEXT&lt;/font&gt;" style="shape=table;startSize=24;container=0;collapsible=0;childLayout=tableLayout;fixedRows=1;rowLines=0;fontStyle=1;align=center;overflow=fill;html=1;fillColor=#f5f5f5;strokeColor=#666666;rounded=1;" vertex="1" parent="1">
+      <mxGeometry x="40" y="320" width="180" height="80" as="geometry"/>
+    </mxCell>
+    <mxCell id="e_mod_files" value="1:N" style="edgeStyle=entityRelationEdgeStyle;rounded=1;html=1;endArrow=ERmany;startArrow=ERone;endSize=10;startSize=10;fontSize=10;" edge="1" source="modules" target="files" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e_files_sym" value="1:N" style="edgeStyle=entityRelationEdgeStyle;rounded=1;html=1;endArrow=ERmany;startArrow=ERone;endSize=10;startSize=10;fontSize=10;" edge="1" source="files" target="symbols" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e_files_emb" value="1:1" style="edgeStyle=entityRelationEdgeStyle;rounded=1;html=1;endArrow=ERone;startArrow=ERone;endSize=10;startSize=10;fontSize=10;" edge="1" source="files" target="embeddings" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e_sym_fts" value="content sync" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;dashed=1;fontSize=10;" edge="1" source="symbols" target="fts5" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+  </root>
+</mxGraphModel>

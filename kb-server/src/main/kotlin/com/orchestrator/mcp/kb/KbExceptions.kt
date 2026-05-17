@@ -31,5 +31,8 @@ class KbLlmTimeoutException(timeoutSeconds: Int) :
 class KbQueueFullException(channel: String, capacity: Int) :
     KbException("KB_QUEUE_FULL", "$channel queue at capacity ($capacity)")
 
+class KbDuplicateException(entity: String, identifier: String) :
+    KbException("KB_DUPLICATE_ERROR", "Duplicate $entity: '$identifier'")
+
 class KbInternalException(message: String, cause: Throwable? = null) :
     KbException("KB_INTERNAL_ERROR", message, cause)

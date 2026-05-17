@@ -1,0 +1,85 @@
+<mxGraphModel dx="1422" dy="762" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
+  <root>
+    <mxCell id="0" />
+    <mxCell id="1" parent="0" />
+    <mxCell id="2" value="Client&#xa;(ExecutionDispatcher)" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;collapsible=0;recursiveResize=0;outlineConnect=0;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="80" y="40" width="140" height="700" as="geometry" />
+    </mxCell>
+    <mxCell id="3" value="ProcessPoolManager" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;collapsible=0;recursiveResize=0;outlineConnect=0;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="320" y="40" width="140" height="700" as="geometry" />
+    </mxCell>
+    <mxCell id="4" value="Pool&#xa;(ConcurrentHashMap)" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;collapsible=0;recursiveResize=0;outlineConnect=0;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="560" y="40" width="140" height="700" as="geometry" />
+    </mxCell>
+    <mxCell id="5" value="UpstreamServerManager" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;collapsible=0;recursiveResize=0;outlineConnect=0;fillColor=#f5f5f5;strokeColor=#666666;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="800" y="40" width="160" height="700" as="geometry" />
+    </mxCell>
+    <mxCell id="6" value="1. acquire(serverName, credHash)" style="html=1;verticalAlign=bottom;endArrow=block;exitX=1;exitY=0;exitDx=0;exitDy=0;fontSize=10;" edge="1" parent="1">
+      <mxGeometry x="-0.2" y="10" relative="1" as="geometry">
+        <mxPoint x="150" y="140" as="sourcePoint" />
+        <mxPoint x="390" y="140" as="targetPoint" />
+        <mxPoint as="offset" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="7" value="2. findIdleInstance(poolKey)" style="html=1;verticalAlign=bottom;endArrow=block;fontSize=10;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="390" y="180" as="sourcePoint" />
+        <mxPoint x="630" y="180" as="targetPoint" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="8" value="[idle found] return instance" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;fontSize=10;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="630" y="210" as="sourcePoint" />
+        <mxPoint x="390" y="210" as="targetPoint" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="9" value="[no idle, under max]&#xa;3. connect(serverName)" style="html=1;verticalAlign=bottom;endArrow=block;fontSize=10;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="390" y="280" as="sourcePoint" />
+        <mxPoint x="880" y="280" as="targetPoint" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="10" value="new McpConnection" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;fontSize=10;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="880" y="320" as="sourcePoint" />
+        <mxPoint x="390" y="320" as="targetPoint" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="11" value="4. return PooledConnection" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;fontSize=10;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="390" y="370" as="sourcePoint" />
+        <mxPoint x="150" y="370" as="targetPoint" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="12" value="5. connection.sendRequest(method, params)" style="html=1;verticalAlign=bottom;endArrow=block;fontSize=10;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="150" y="420" as="sourcePoint" />
+        <mxPoint x="880" y="420" as="targetPoint" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="13" value="response" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;fontSize=10;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="880" y="460" as="sourcePoint" />
+        <mxPoint x="150" y="460" as="targetPoint" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="14" value="6. release(pooledConnection)" style="html=1;verticalAlign=bottom;endArrow=block;fontSize=10;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="150" y="520" as="sourcePoint" />
+        <mxPoint x="390" y="520" as="targetPoint" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="15" value="7. update metrics, set IDLE" style="html=1;verticalAlign=bottom;endArrow=block;fontSize=10;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="390" y="560" as="sourcePoint" />
+        <mxPoint x="630" y="560" as="targetPoint" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="16" value="8. check scalingPolicy" style="html=1;verticalAlign=bottom;endArrow=block;fontSize=10;dashed=1;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="390" y="610" as="sourcePoint" />
+        <mxPoint x="390" y="650" as="targetPoint" />
+      </mxGeometry>
+    </mxCell>
+  </root>
+</mxGraphModel>

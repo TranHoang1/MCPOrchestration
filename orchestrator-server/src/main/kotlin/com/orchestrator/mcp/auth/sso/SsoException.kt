@@ -29,4 +29,10 @@ sealed class SsoException(
 
     class InvalidConfigException(reason: String) :
         SsoException("Invalid SSO config: $reason", "INVALID_SSO_CONFIG", 400)
+
+    class DiscoveryFailedException(url: String, status: Int) :
+        SsoException(
+            "OIDC discovery failed for $url (HTTP $status)",
+            "DISCOVERY_FAILED", 400
+        )
 }

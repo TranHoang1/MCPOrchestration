@@ -1,0 +1,14 @@
+{
+  "ticket": "MTO-119",
+  "currentPhase": "done",
+  "phases": {
+    "requirements": { "status": "skipped", "reason": "Agent process update — requirements defined in parent tickets" },
+    "specification": { "status": "skipped", "reason": "Changes defined in MTO-116/MTO-117 TDDs" },
+    "design": { "status": "skipped", "reason": "Agent markdown updates — no code design needed" },
+    "implementation": { "status": "done", "completedAt": "2026-05-15T13:30:00Z" },
+    "testing": { "status": "done", "note": "Verified agent files updated correctly" },
+    "deployment": { "status": "done", "note": "Agent files committed" }
+  },
+  "jiraStatus": "Done",
+  "lastUpdated": "2026-05-15T13:30:00Z"
+}

@@ -100,7 +100,17 @@ class ToolIndexer(
 
         val toolsResponse = connection.sendRequest("tools/list", null)
         val tools = parseToolsList(toolsResponse)
-        if (tools.isEmpty()) return 0
+
+        // MTO-113: Warn when connected server returns 0 tools
+        if (tools.isEmpty()) {
+            logger.warn(
+                "Server '$serverName' returned 0 tools after " +
+                    "successful connection. This likely indicates " +
+                    "a malformed config (e.g. missing comma in " +
+                    "args array) or server-side issue."
+            )
+            return 0
+        }
 
         return indexTools(serverName, tools)
     }

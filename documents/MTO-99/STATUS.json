@@ -1,0 +1,15 @@
+{
+  "ticket": "MTO-99",
+  "currentPhase": "implementation",
+  "phases": {
+    "requirements": { "status": "done", "file": "(Jira description)", "version": 1, "completedAt": "2026-05-17T09:00:00Z" },
+    "specification": { "status": "done", "file": "(Jira description)", "version": 1, "completedAt": "2026-05-17T09:00:00Z" },
+    "design": { "status": "done", "file": "TDD.md", "version": 1, "completedAt": "2026-05-17T09:30:00Z" },
+    "feedback_loop": { "status": "not_needed" },
+    "test_planning": { "status": "not_started" },
+    "implementation": { "status": "in_progress", "note": "Phase 1 (data models) + Phase 2 (interfaces) done. Phase 3 (core impl) in progress." },
+    "testing": { "status": "not_started" },
+    "deployment": { "status": "not_started" }
+  },
+  "lastUpdated": "2026-05-17T09:20:00Z"
+}

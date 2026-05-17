@@ -1,0 +1,57 @@
+<mxGraphModel adaptiveColors="auto">
+  <root>
+    <mxCell id="0"/>
+    <mxCell id="1" parent="0"/>
+    <mxCell id="title" value="&lt;b&gt;System Context — Local Code Intelligence&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;fontSize=14;fontStyle=1;" vertex="1" parent="1">
+      <mxGeometry x="250" y="10" width="400" height="30" as="geometry"/>
+    </mxCell>
+    <mxCell id="bridge" value="&lt;b&gt;Bridge Client&lt;/b&gt;&lt;br&gt;(Kotlin / Node.js / Python / PS / Bash)" style="swimlane;startSize=40;fillColor=#e1f5fe;strokeColor=#0288d1;html=1;rounded=1;" vertex="1" parent="1">
+      <mxGeometry x="240" y="160" width="420" height="280" as="geometry"/>
+    </mxCell>
+    <mxCell id="scanner" value="File Scanner +&lt;br&gt;Signature Extractor" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8f5e9;strokeColor=#388e3c;" vertex="1" parent="bridge">
+      <mxGeometry x="20" y="60" width="160" height="60" as="geometry"/>
+    </mxCell>
+    <mxCell id="sqlite" value="SQLite DB&lt;br&gt;(FTS5 + Vectors)" style="shape=cylinder3;whiteSpace=wrap;html=1;fillColor=#f3e5f5;strokeColor=#7b1fa2;size=12;" vertex="1" parent="bridge">
+      <mxGeometry x="20" y="160" width="160" height="80" as="geometry"/>
+    </mxCell>
+    <mxCell id="mcptools" value="MCP Tools&lt;br&gt;(5 tools)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8f5e9;strokeColor=#388e3c;" vertex="1" parent="bridge">
+      <mxGeometry x="240" y="60" width="160" height="60" as="geometry"/>
+    </mxCell>
+    <mxCell id="indexer" value="Background&lt;br&gt;Indexing Engine" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8f5e9;strokeColor=#388e3c;" vertex="1" parent="bridge">
+      <mxGeometry x="240" y="160" width="160" height="60" as="geometry"/>
+    </mxCell>
+    <mxCell id="e_scan_db" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;" edge="1" source="scanner" target="sqlite" parent="bridge">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e_idx_scan" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;" edge="1" source="indexer" target="scanner" parent="bridge">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e_tools_db" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;" edge="1" source="mcptools" target="sqlite" parent="bridge">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="agents" value="&lt;b&gt;MCP Agents&lt;/b&gt;&lt;br&gt;(BA, TA, SA, DEV)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff3e0;strokeColor=#f57c00;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="740" y="200" width="160" height="70" as="geometry"/>
+    </mxCell>
+    <mxCell id="workspace" value="&lt;b&gt;Workspace&lt;/b&gt;&lt;br&gt;File System" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="20" y="200" width="140" height="70" as="geometry"/>
+    </mxCell>
+    <mxCell id="ollama" value="&lt;b&gt;Ollama&lt;/b&gt;&lt;br&gt;(localhost:11434)&lt;br&gt;nomic-embed-text&lt;br&gt;qwen3:8b" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff3e0;strokeColor=#f57c00;fontSize=11;dashed=1;" vertex="1" parent="1">
+      <mxGeometry x="340" y="520" width="180" height="80" as="geometry"/>
+    </mxCell>
+    <mxCell id="kbserver" value="&lt;b&gt;KB Server&lt;/b&gt;&lt;br&gt;VCS Index&lt;br&gt;(PostgreSQL)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fce4ec;strokeColor=#c62828;fontSize=11;dashed=1;" vertex="1" parent="1">
+      <mxGeometry x="740" y="380" width="160" height="70" as="geometry"/>
+    </mxCell>
+    <mxCell id="e_agents_tools" value="MCP Protocol&lt;br&gt;(tool calls)" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;fontSize=10;" edge="1" source="agents" target="mcptools" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e_ws_bridge" value="File events +&lt;br&gt;content read" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;fontSize=10;" edge="1" source="workspace" target="bridge" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e_bridge_ollama" value="HTTP API&lt;br&gt;(optional)" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;fontSize=10;dashed=1;" edge="1" source="bridge" target="ollama" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+    <mxCell id="e_agents_kb" value="Fallback /&lt;br&gt;Documentation" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endSize=6;fontSize=10;dashed=1;" edge="1" source="agents" target="kbserver" parent="1">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+  </root>
+</mxGraphModel>

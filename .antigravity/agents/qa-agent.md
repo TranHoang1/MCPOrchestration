@@ -84,6 +84,9 @@ Khi ticket liên quan đến Feature Management (kb_feature_* tools), QA PHẢI 
 | TC-FEAT-05 | `kb_feature_delete` với AI feature | Hiển thị warning, yêu cầu confirm | IT |
 | TC-FEAT-06 | AI sync KHÔNG overwrite manual features | Manual features giữ nguyên sau jira_project_sync | E2E-API |
 | TC-FEAT-07 | BA list features sau AI sync | Cả 2 sources (ai + manual) đều visible | E2E-API |
+| TC-FEAT-08 | `kb_feature_assign` với ticket đã thuộc feature khác | Ticket auto-removed from old, added to new | IT |
+| TC-FEAT-09 | `kb_feature_create` với duplicate name | Error response hoặc unique constraint | IT |
+| TC-FEAT-10 | `kb_feature_list` filter by source | Chỉ trả về features matching source filter | IT |
 
 **Chi tiết test scenarios:**
 
@@ -111,15 +114,36 @@ Khi ticket liên quan đến Feature Management (kb_feature_* tools), QA PHẢI 
 - Action: `kb_feature_delete(feature_id)`
 - Verify: Response chứa warning message, feature bị xóa sau confirm
 
-**TC-FEAT-06: AI Sync Preserves Manual Features**
-- Precondition: Manual feature "Auth Module" tồn tại
+**TC-FEAT-06: AI Sync Preserves Manual Features (CRITICAL)**
+- Precondition: Manual feature "Auth Module" tồn tại với `source="manual"`, `locked=true`
 - Action: `jira_project_sync(projectKey, fullSync=true)`
-- Verify: Sau sync, "Auth Module" vẫn tồn tại với source="manual", không bị overwrite
+- Verify sau sync:
+  - "Auth Module" vẫn tồn tại
+  - `source` vẫn là `"manual"` (KHÔNG bị chuyển thành "ai")
+  - `locked` vẫn là `true`
+  - `ticket_keys` không bị thay đổi
+  - AI KHÔNG tạo feature trùng tên với manual feature
+- **Đây là test case quan trọng nhất** — đảm bảo BA không mất công sức phân loại thủ công
 
 **TC-FEAT-07: Both Sources Visible After Sync**
 - Precondition: 1 manual feature + AI sync tạo thêm features
 - Action: `kb_feature_list(project_key)`
 - Verify: Response chứa cả features source="ai" và source="manual"
+
+**TC-FEAT-08: Auto-Remove from Old Feature on Reassign**
+- Precondition: Ticket "MTO-5" thuộc Feature A (ticket_keys contains "MTO-5")
+- Action: `kb_feature_assign(feature_id=B, ticket_keys=["MTO-5"])`
+- Verify: Feature A.ticket_keys KHÔNG còn "MTO-5", Feature B.ticket_keys CÓ "MTO-5"
+
+**TC-FEAT-09: Duplicate Feature Name Handling**
+- Precondition: Feature "Auth Module" đã tồn tại trong project
+- Action: `kb_feature_create(project_key, name="Auth Module", ...)`
+- Verify: Error response (409 Conflict) hoặc auto-rename (implementation-dependent)
+
+**TC-FEAT-10: Filter Features by Source**
+- Precondition: Project có cả ai và manual features
+- Action: `kb_feature_list(project_key, source="manual")`
+- Verify: Chỉ trả về features có source="manual"
 
 ### Phase 6: Testing Execution
 - **Automation First**: Tối đa hóa tự động hóa để giảm SIT manual.

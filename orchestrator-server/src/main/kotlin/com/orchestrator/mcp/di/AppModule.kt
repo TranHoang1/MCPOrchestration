@@ -141,20 +141,39 @@ fun appModule(configPath: String? = null) = module {
     single { HealthMonitor(get(), get()) }
 
     // Process Pool Manager (MTO-99)
-    single<com.orchestrator.mcp.client.pool.ProcessPoolManager> {
+    single<com.orchestrator.mcp.client.pool.model.PoolConfig> {
         val poolCfg = get<OrchestratorConfig>().orchestrator.pool
-        com.orchestrator.mcp.client.pool.ProcessPoolManagerImpl(
-            com.orchestrator.mcp.client.pool.model.PoolConfig(
-                maxInstancesPerServer = poolCfg.maxInstancesPerServer,
-                maxTotalInstances = poolCfg.maxTotalInstances,
-                idleTimeoutMs = poolCfg.idleTimeoutMs,
-                slowResponseThresholdMs = poolCfg.slowResponseThresholdMs,
-                healthCheckIntervalMs = poolCfg.healthCheckIntervalMs,
-                scaleCheckIntervalMs = poolCfg.scaleCheckIntervalMs
-            )
+        com.orchestrator.mcp.client.pool.model.PoolConfig(
+            enabled = poolCfg.enabled,
+            maxInstancesPerServer = poolCfg.maxInstancesPerServer,
+            maxTotalInstances = poolCfg.maxTotalInstances,
+            idleTimeoutMs = poolCfg.idleTimeoutMs,
+            acquireTimeoutMs = poolCfg.acquireTimeoutMs,
+            slowResponseThresholdMs = poolCfg.slowResponseThresholdMs,
+            healthCheckIntervalMs = poolCfg.healthCheckIntervalMs,
+            healthCheckMaxFailures = poolCfg.healthCheckMaxFailures,
+            warmupInstances = poolCfg.warmupInstances,
+            scaleUpCooldownMs = poolCfg.scaleUpCooldownMs,
+            scaleCheckIntervalMs = poolCfg.scaleCheckIntervalMs
         )
     }
+    single<com.orchestrator.mcp.client.pool.ProcessPoolManager> {
+        val poolConfig = get<com.orchestrator.mcp.client.pool.model.PoolConfig>()
+        if (poolConfig.enabled) {
+            com.orchestrator.mcp.client.pool.ProcessPoolManagerImpl(poolConfig)
+        } else {
+            com.orchestrator.mcp.client.pool.PassthroughPoolManager(get(), poolConfig)
+        }
+    }
     single { com.orchestrator.mcp.client.pool.PoolMetricsCollector(get()) }
+    single<com.orchestrator.mcp.client.pool.ScalingPolicy> {
+        com.orchestrator.mcp.client.pool.DefaultScalingPolicy(get())
+    }
+    single {
+        com.orchestrator.mcp.client.pool.PoolHealthChecker(get()) { _, entry ->
+            entry.connection.close()
+        }
+    }
 
     // Discovery
     single { KeywordSearchEngine(get()) }
@@ -290,4 +309,12 @@ fun appModule(configPath: String? = null) = module {
 
     // Credential Module (MTO-96: Credential Schema CRUD)
     includes(credentialModule)
+
+    // Routing Table (MTO-132: Bridge routing config)
+    single<com.orchestrator.mcp.routing.RoutingTableService> {
+        com.orchestrator.mcp.routing.RoutingTableServiceImpl(get())
+    }
+    single {
+        com.orchestrator.mcp.routing.RoutingTableRoutes(get(), get())
+    }
 }

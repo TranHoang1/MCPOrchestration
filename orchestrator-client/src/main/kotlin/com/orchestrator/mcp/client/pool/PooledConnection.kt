@@ -1,15 +1,15 @@
 package com.orchestrator.mcp.client.pool
 
 import com.orchestrator.mcp.client.pool.model.ProcessState
-import com.orchestrator.mcp.client.pool.model.PoolException
 import com.orchestrator.mcp.client.upstream.McpConnection
 import kotlinx.serialization.json.JsonObject
 import java.util.concurrent.atomic.AtomicLong
 import java.util.concurrent.atomic.AtomicReference
 
 /**
- * Connection wrapper with state tracking for pool management.
+ * Legacy connection wrapper with state tracking for pool management.
  * Delegates MCP operations to the underlying McpConnection.
+ * @see com.orchestrator.mcp.client.pool.model.PoolEntry for new pool implementation.
  */
 class PooledConnection(
     val id: String,
@@ -31,7 +31,7 @@ class PooledConnection(
     fun transitionTo(newState: ProcessState) {
         val current = state.get()
         if (!current.canTransitionTo(newState)) {
-            throw PoolException.InvalidStateTransitionException(current, newState)
+            error("Invalid state transition: $current → $newState")
         }
         state.set(newState)
     }

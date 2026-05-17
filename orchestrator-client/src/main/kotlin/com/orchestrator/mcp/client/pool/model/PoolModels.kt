@@ -1,21 +1,12 @@
 package com.orchestrator.mcp.client.pool.model
 
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 /**
- * Configuration for the process pool system.
+ * State machine for legacy pooled connections.
+ * @deprecated Use [InstanceState] for new pool implementation.
  */
-@Serializable
-data class PoolConfig(
-    val maxInstancesPerServer: Int = 5,
-    val maxTotalInstances: Int = 50,
-    val idleTimeoutMs: Long = 300_000L,
-    val slowResponseThresholdMs: Long = 10_000L,
-    val healthCheckIntervalMs: Long = 30_000L,
-    val scaleCheckIntervalMs: Long = 15_000L
-)
-
-/** State machine for individual pooled connections. */
 enum class ProcessState {
     STARTING,
     IDLE,
@@ -33,23 +24,55 @@ enum class ProcessState {
     }
 }
 
-/** Metrics for a single pool (one pool_key). */
-data class PoolMetrics(
+/** Pool status DTO for monitoring and admin API responses. */
+@Serializable
+data class PoolStatus(
+    @SerialName("pool_key")
     val poolKey: String,
+    @SerialName("server_name")
     val serverName: String,
-    val totalConnections: Int,
-    val idleConnections: Int,
-    val busyConnections: Int,
+    @SerialName("credential_hash")
+    val credentialHash: String,
+    @SerialName("total_instances")
+    val totalInstances: Int,
+    @SerialName("active_instances")
+    val activeInstances: Int,
+    @SerialName("idle_instances")
+    val idleInstances: Int,
+    @SerialName("warming_instances")
+    val warmingInstances: Int,
+    @SerialName("avg_response_time_ms")
     val avgResponseTimeMs: Long,
+    @SerialName("requests_per_minute")
+    val requestsPerMinute: Double,
+    @SerialName("queue_depth")
+    val queueDepth: Int
+)
+
+/** Metrics for a single pool (one pool_key). */
+@Serializable
+data class PoolMetrics(
+    @SerialName("pool_key")
+    val poolKey: String,
+    @SerialName("server_name")
+    val serverName: String,
+    @SerialName("total_connections")
+    val totalConnections: Int,
+    @SerialName("idle_connections")
+    val idleConnections: Int,
+    @SerialName("busy_connections")
+    val busyConnections: Int,
+    @SerialName("avg_response_time_ms")
+    val avgResponseTimeMs: Long,
+    @SerialName("total_requests")
     val totalRequests: Long,
+    @SerialName("total_errors")
     val totalErrors: Long
 )
 
-/** Entry in the pool — wraps a connection with state tracking. */
-data class PoolEntry(
-    val id: String,
-    val poolKey: String,
-    val serverName: String,
-    val createdAtMs: Long,
-    val lastUsedAtMs: Long
+/** A pooled connection reference returned from acquire(). */
+data class PooledConnectionRef(
+    val poolKey: PoolKey,
+    val instanceId: String,
+    val acquiredAtMs: Long = System.currentTimeMillis()
 )

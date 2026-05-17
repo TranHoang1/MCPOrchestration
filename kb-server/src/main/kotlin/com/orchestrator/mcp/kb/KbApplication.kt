@@ -45,7 +45,7 @@ class KbApplication {
 
         when (transport) {
             "stdio" -> startStdio(mcpServer, realStdout)
-            "http" -> startHttp(koin.getAll(), koin.get(), config.kb.server.port)
+            "http" -> startHttp(koin.getAll(), koin.get(), config.kb.server.port, config.kb.server.bind_address)
             else -> error("Unknown transport: $transport")
         }
     }
@@ -117,9 +117,9 @@ class KbApplication {
         }
     }
 
-    private fun startHttp(handlers: List<KbToolHandler>, graphRoutes: GraphRoutes, port: Int) {
-        logger.info("KB Server starting HTTP transport on port {}", port)
-        val httpTransport = KbHttpTransport(handlers, graphRoutes, port)
+    private fun startHttp(handlers: List<KbToolHandler>, graphRoutes: GraphRoutes, port: Int, bindAddress: String) {
+        logger.info("KB Server starting HTTP transport on {}:{}", bindAddress, port)
+        val httpTransport = KbHttpTransport(handlers, graphRoutes, port, bindAddress)
         httpTransport.start()
     }
 

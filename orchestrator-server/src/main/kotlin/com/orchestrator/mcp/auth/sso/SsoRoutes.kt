@@ -2,15 +2,17 @@ package com.orchestrator.mcp.auth.sso
 
 import com.orchestrator.mcp.auth.sso.model.SsoConfigRequest
 import com.orchestrator.mcp.auth.sso.model.SsoConfigResponse
+import com.orchestrator.mcp.auth.sso.model.SsoProviderInfo
 import com.orchestrator.mcp.usermanagement.routes.AdminAuthMiddleware
 import com.sun.net.httpserver.HttpExchange
 import kotlinx.coroutines.runBlocking
+import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.json.Json
 import org.slf4j.LoggerFactory
 
 /**
  * HTTP route handler for SSO endpoints.
- * Public: /api/auth/sso/authorize, /api/auth/sso/callback
+ * Public: /api/auth/sso/providers, /api/auth/sso/authorize, /api/auth/sso/callback
  * Admin: /api/admin/sso/config (GET, PUT)
  */
 class SsoRoutes(
@@ -45,6 +47,7 @@ class SsoRoutes(
 
     private fun routePublic(exchange: HttpExchange, path: String) {
         when {
+            path == "/providers" && exchange.requestMethod == "GET" -> doListProviders(exchange)
             path == "/authorize" && exchange.requestMethod == "GET" -> doAuthorize(exchange)
             path == "/callback" && exchange.requestMethod == "GET" -> doCallback(exchange)
             else -> sendError(exchange, 404, "NOT_FOUND", "Not found")
@@ -66,6 +69,14 @@ class SsoRoutes(
             "PUT" -> doSaveConfig(exchange)
             else -> sendError(exchange, 405, "METHOD_NOT_ALLOWED", "Method not allowed")
         }
+    }
+
+    private fun doListProviders(exchange: HttpExchange) {
+        val providers = runBlocking { ssoService.listProviders() }
+        val body = json.encodeToString(
+            ListSerializer(SsoProviderInfo.serializer()), providers
+        )
+        sendJson(exchange, 200, body)
     }
 
     private fun doAuthorize(exchange: HttpExchange) {
@@ -105,19 +116,20 @@ class SsoRoutes(
         sendJson(exchange, 200, """{"status":"saved","enabled":${saved.enabled}}""")
     }
 
-    private fun buildConfigResponse(config: com.orchestrator.mcp.auth.sso.model.SsoConfig) =
-        SsoConfigResponse(
-            enabled = config.enabled,
-            issuerUrl = config.issuerUrl,
-            clientId = config.clientId,
-            hasClientSecret = config.clientSecretEncrypted.isNotBlank(),
-            scopes = config.scopes,
-            redirectUri = config.redirectUri,
-            defaultRole = config.defaultRole,
-            claimsMapping = config.claimsMapping,
-            autoCreateUsers = config.autoCreateUsers,
-            updatedAt = config.updatedAt
-        )
+    private fun buildConfigResponse(
+        config: com.orchestrator.mcp.auth.sso.model.SsoConfig
+    ) = SsoConfigResponse(
+        enabled = config.enabled,
+        issuerUrl = config.issuerUrl,
+        clientId = config.clientId,
+        hasClientSecret = config.clientSecretEncrypted.isNotBlank(),
+        scopes = config.scopes,
+        redirectUri = config.redirectUri,
+        defaultRole = config.defaultRole,
+        claimsMapping = config.claimsMapping,
+        autoCreateUsers = config.autoCreateUsers,
+        updatedAt = config.updatedAt
+    )
 
     private fun parseQueryParams(query: String): Map<String, String> =
         query.split("&").filter { it.contains("=") }.associate {

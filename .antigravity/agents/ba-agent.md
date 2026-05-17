@@ -73,24 +73,36 @@ jira_get_issue(issue_key="MTO-XX", fields="summary,description,status,issuetype,
 
 **KHÔNG được bỏ qua bất kỳ field nào trong 9 fields trên.** Nếu field trống (null), vẫn phải ghi nhận là "không có dữ liệu" thay vì skip.
 
-### Bước 3.5: Feature Assignment (NEW)
+### Bước 3.5: Feature Assignment (NEW — KB-First Feature Management)
 Sau khi thu thập dữ liệu, kiểm tra và gán ticket vào Feature phù hợp trong KB.
 
 **Quy trình Feature Assignment (MANDATORY):**
 ```
-1. kb_feature_list(project_key) → xem ticket thuộc feature nào
-2. Nếu ticket chưa thuộc feature nào:
-   a. Tìm feature phù hợp → kb_feature_assign(feature_id, ticket_key)
-   b. Hoặc tạo feature mới → kb_feature_create(project_key, name, ticket_keys, description)
-3. Ghi feature assignment vào BRD (section Related Features)
+1. kb_feature_list(project_key) → lấy TOÀN BỘ features hiện có (cả ai + manual)
+2. Tìm ticket trong danh sách features:
+   - Duyệt qua mỗi feature.ticket_keys → kiểm tra ticket đã thuộc feature nào chưa
+3. Nếu ticket ĐÃ thuộc feature:
+   - Ghi log: "[BA] [Step-3.5] [SKIP] — Ticket already in feature: {feature_name}"
+   - Verify feature vẫn phù hợp (nếu không → kb_feature_assign sang feature khác)
+4. Nếu ticket CHƯA thuộc feature nào:
+   a. Tìm feature phù hợp trong danh sách hiện có:
+      - So sánh ticket summary/description với feature name/description
+      - Ưu tiên gán vào feature có sẵn thay vì tạo mới
+      → kb_feature_assign(feature_id, ticket_keys=[ticket_key])
+   b. Nếu KHÔNG có feature phù hợp → tạo mới:
+      → kb_feature_create(project_key, name, ticket_keys=[ticket_key], description)
+5. Ghi feature assignment vào BRD (section Related Features)
 ```
+
+**⛔ BLOCKING RULE:** SM sẽ BLOCK Phase 2 nếu ticket chưa được gán feature. BA PHẢI hoàn thành bước này trước khi kết thúc Phase 1.
 
 **Lưu ý:**
 - Feature có 2 nguồn: `ai` (tự động từ AI sync) và `manual` (BA tạo thủ công)
 - BA có thể "adopt" feature AI bằng `kb_feature_update` (source chuyển thành manual)
-- Mỗi ticket NÊN thuộc ít nhất 1 feature để đảm bảo traceability
+- Mỗi ticket PHẢI thuộc ít nhất 1 feature để đảm bảo traceability (SM quality gate sẽ block nếu thiếu)
 - Nếu tạo feature mới, cung cấp description rõ ràng về scope và mục đích
-- Ghi log: `[BA] [Step-3.5] [DONE] — Feature assigned: {feature_name}`
+- AI features (`source="ai"`) có thể bị overwrite khi sync lại — nếu BA muốn giữ, phải "adopt" (update → chuyển thành manual)
+- Ghi log: `[BA] [Step-3.5] [DONE] — Feature assigned: {feature_name} (source: {ai|manual})`
 
 **Output trong BRD:**
 Thêm section "Related Features" vào BRD với thông tin:
@@ -99,6 +111,15 @@ Thêm section "Related Features" vào BRD với thông tin:
 | Feature ID | Feature Name | Source | Tickets |
 |------------|-------------|--------|---------|
 | feat-xxx   | Feature ABC | manual | MTO-1, MTO-2 |
+```
+
+**Ví dụ flow hoàn chỉnh:**
+```
+BA: kb_feature_list("MTO") → [{id: "feat-1", name: "Auth", tickets: ["MTO-1"]}, ...]
+BA: Ticket MTO-5 chưa thuộc feature nào
+BA: MTO-5 summary = "Add OAuth2 login" → phù hợp với "Auth" feature
+BA: kb_feature_assign("feat-1", ["MTO-5"])
+BA: Log → "[BA] [Step-3.5] [DONE] — Feature assigned: Auth (source: manual)"
 ```
 
 ### Bước 4: Lưu vào Knowledge Base

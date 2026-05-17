@@ -23,6 +23,12 @@ dependencies {
     implementation(libs.mcp.sdk.server)
     implementation(libs.kotlinx.io.core)
 
+    // SQLite (for local code intelligence index)
+    implementation(libs.sqlite.jdbc)
+
+    // ONNX Runtime (optional — for local embedding fallback)
+    compileOnly("com.microsoft.onnxruntime:onnxruntime:1.18.0")
+
     // KotlinX
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.kotlinx.serialization.json)

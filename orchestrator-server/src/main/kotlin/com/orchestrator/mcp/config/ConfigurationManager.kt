@@ -185,8 +185,9 @@ class ConfigurationManagerImpl(
         logger.info(
             "Loading upstream servers from JSON config"
         )
+        // MTO-113: Validate JSON syntax before parsing
         return JsonConfigLoader
-            .parseUpstreamServers(jsonContent)
+            .parseUpstreamServers(jsonContent, "mcp-servers.json")
     }
 
     private fun loadJsonSettings(): OrchestratorSettings? {

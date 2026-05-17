@@ -2,6 +2,7 @@ package com.orchestrator.mcp.client.pool
 
 import com.orchestrator.mcp.client.pool.model.PoolConfig
 import com.orchestrator.mcp.client.pool.model.PoolException
+import com.orchestrator.mcp.client.pool.model.PoolKey
 import com.orchestrator.mcp.client.pool.model.PoolMetrics
 import com.orchestrator.mcp.client.pool.model.ProcessState
 import com.orchestrator.mcp.client.upstream.McpConnection
@@ -35,7 +36,9 @@ class ProcessPool(
                 return idle
             }
             if (connections.size >= config.maxInstancesPerServer) {
-                throw PoolException.PoolExhaustedException(poolKey, config.maxInstancesPerServer)
+                throw PoolException.ExhaustedException(
+                    PoolKey(poolKey), config.maxInstancesPerServer
+                )
             }
         }
         return spawnAndAcquire(command, args, env)
@@ -132,7 +135,7 @@ class ProcessPool(
             conn.start()
             return conn
         } catch (e: Exception) {
-            throw PoolException.ProcessSpawnFailedException(serverName, e.message ?: "Unknown")
+            throw PoolException.SpawnFailedException(serverName, e)
         }
     }
 

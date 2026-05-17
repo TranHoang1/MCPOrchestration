@@ -212,6 +212,16 @@ suspend fun CoroutineScope.startHttpStreamableServer(
         httpLogger.info("Credential Schema API registered: /api/admin/credential-schemas/*")
     }
 
+    // Routing Table API endpoint (MTO-132: Bridge routing config)
+    val routingTableRoutes = org.koin.java.KoinJavaComponent.getKoin()
+        .getOrNull<com.orchestrator.mcp.routing.RoutingTableRoutes>()
+    if (routingTableRoutes != null) {
+        server.createContext("/api/routing-table") { exchange: HttpExchange ->
+            routingTableRoutes.handle(exchange)
+        }
+        httpLogger.info("Routing Table API registered: /api/routing-table")
+    }
+
     // Static file serving (graph-viewer.html, sync-dashboard.html)
     server.createContext("/static") { exchange ->
         handleStaticFile(exchange)

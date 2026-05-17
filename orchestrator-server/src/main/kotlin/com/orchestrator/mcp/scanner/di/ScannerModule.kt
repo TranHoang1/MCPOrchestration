@@ -1,5 +1,6 @@
 package com.orchestrator.mcp.scanner.di
 
+import com.orchestrator.mcp.credentials.CredentialResolver
 import com.orchestrator.mcp.scanner.*
 import com.orchestrator.mcp.scanner.config.ScannerConfig
 import org.koin.dsl.module
@@ -9,7 +10,7 @@ import org.koin.dsl.module
  * Register via `includes(scannerModule)` in AppModule.
  *
  * Uses McpPageFetcher (MCP upstream "atlassian") by default.
- * Legacy PageFetcherImpl (direct REST) is available but deprecated.
+ * MTO-111: CredentialResolver is required for credential injection into sync calls.
  */
 val scannerModule = module {
 
@@ -19,7 +20,7 @@ val scannerModule = module {
 
     single { MetadataParser() }
 
-    single<PageFetcher> { McpPageFetcher(get(), getOrNull()) }
+    single<PageFetcher> { McpPageFetcher(get(), get<CredentialResolver>()) }
 
     single<BatchUpserter> { BatchUpserterImpl(get(), get()) }
 

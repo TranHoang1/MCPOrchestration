@@ -12,6 +12,10 @@ export interface BridgeConfig {
   connectionTimeoutMs: number;
   maxRetryBeforeRotate: number;
   enableLocalStreamWrite: boolean;
+  enableLocalServers: boolean;
+  configPath: string | undefined;
+  healthIntervalMs: number;
+  routingRefreshMs: number;
   pingIntervalMs: number;
   pingTimeoutMs: number;
   token: string | null;
@@ -35,6 +39,10 @@ export const BridgeConfig = {
       connectionTimeoutMs: 5_000,
       maxRetryBeforeRotate: 3,
       enableLocalStreamWrite: !args.includes('--no-local-write'),
+      enableLocalServers: !args.includes('--no-local-servers'),
+      configPath: parseConfigPath(args),
+      healthIntervalMs: parseHealthInterval(args),
+      routingRefreshMs: parseRoutingRefresh(args),
       pingIntervalMs: parsePingInterval(args),
       pingTimeoutMs: parsePingTimeout(args),
       token,
@@ -135,4 +143,38 @@ function parsePingTimeout(args: string[]): number {
     if (!isNaN(val) && val >= 1000) return val;
   }
   return 5_000;
+}
+
+function parseConfigPath(args: string[]): string | undefined {
+  const idx = args.indexOf('--config-path');
+  if (idx >= 0 && idx + 1 < args.length) return args[idx + 1];
+  return process.env.MCP_CONFIG_PATH ?? undefined;
+}
+
+function parseHealthInterval(args: string[]): number {
+  const idx = args.indexOf('--health-interval');
+  if (idx >= 0 && idx + 1 < args.length) {
+    const val = parseInt(args[idx + 1], 10);
+    if (!isNaN(val) && val >= 0) return val;
+  }
+  const envVal = process.env.MCP_HEALTH_INTERVAL;
+  if (envVal) {
+    const val = parseInt(envVal, 10);
+    if (!isNaN(val) && val >= 0) return val;
+  }
+  return 30_000;
+}
+
+function parseRoutingRefresh(args: string[]): number {
+  const idx = args.indexOf('--routing-refresh');
+  if (idx >= 0 && idx + 1 < args.length) {
+    const val = parseInt(args[idx + 1], 10);
+    if (!isNaN(val) && val >= 0) return val;
+  }
+  const envVal = process.env.MCP_ROUTING_REFRESH;
+  if (envVal) {
+    const val = parseInt(envVal, 10);
+    if (!isNaN(val) && val >= 0) return val;
+  }
+  return 60_000;
 }

@@ -194,9 +194,7 @@
 
         <div class="sso-section" id="sso-section">
             <div class="divider"><span>or</span></div>
-            <button type="button" class="btn btn-sso" id="btn-sso">
-                🔑 Sign in with SSO
-            </button>
+            <div id="sso-providers"></div>
         </div>
     </div>
 </div>
@@ -213,7 +211,6 @@
         password: document.getElementById('password'),
         togglePw: document.getElementById('toggle-pw'),
         btnLogin: document.getElementById('btn-login'),
-        btnSso: document.getElementById('btn-sso'),
         ssoSection: document.getElementById('sso-section'),
         errorAlert: document.getElementById('error-alert')
     };
@@ -248,14 +245,30 @@
     }
 
     function checkSsoAvailability() {
-        fetch(basePath + '/api/admin/sso/config')
+        fetch(basePath + '/api/auth/sso/providers')
             .then(r => { if (r.ok) return r.json(); throw new Error(); })
-            .then(data => {
-                if (data && data.enabled) {
+            .then(providers => {
+                if (providers && providers.length > 0) {
+                    renderSsoProviders(providers);
                     els.ssoSection.classList.add('visible');
                 }
             })
             .catch(() => {});
+    }
+
+    function renderSsoProviders(providers) {
+        const container = document.getElementById('sso-providers');
+        providers.forEach(provider => {
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'btn btn-sso';
+            btn.style.marginBottom = '8px';
+            btn.textContent = '\uD83D\uDD11 Sign in with ' + provider.display_name;
+            btn.addEventListener('click', () => {
+                window.location.href = basePath + provider.authorize_url;
+            });
+            container.appendChild(btn);
+        });
     }
 
     function bindEvents() {
@@ -263,7 +276,6 @@
         els.password.addEventListener('input', updateButtonState);
         els.togglePw.addEventListener('click', togglePasswordVisibility);
         els.form.addEventListener('submit', handleLogin);
-        els.btnSso.addEventListener('click', handleSsoLogin);
     }
 
     function updateButtonState() {
@@ -312,10 +324,6 @@
             els.password.value = '';
             els.password.focus();
         });
-    }
-
-    function handleSsoLogin() {
-        window.location.href = basePath + '/api/auth/sso/authorize';
     }
 
     function showError(message) {

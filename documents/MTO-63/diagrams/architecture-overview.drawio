@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="app.diagrams.net" modified="2026-05-17T10:00:00.000Z" agent="draw.io" version="21.0.0">
+  <diagram name="Architecture Overview" id="arch-overview">
+    <mxGraphModel dx="1200" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1100" pageHeight="850" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <!-- Browser Container -->
+        <mxCell id="2" value="Browser — sync-dashboard.html" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;verticalAlign=top;fontStyle=1;fontSize=14;spacingTop=5;arcSize=8;" vertex="1" parent="1">
+          <mxGeometry x="50" y="30" width="700" height="450" as="geometry" />
+        </mxCell>
+        <!-- ProjectManager -->
+        <mxCell id="3" value="&lt;b&gt;ProjectManager&lt;/b&gt;&lt;br&gt;(state management)&lt;br&gt;&lt;hr&gt;- projects[]&lt;br&gt;- activeTabIndex&lt;br&gt;- viewMode (detail/overview)&lt;br&gt;- projectData{} (cached)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;align=left;spacingLeft=10;" vertex="1" parent="1">
+          <mxGeometry x="100" y="80" width="600" height="100" as="geometry" />
+        </mxCell>
+        <!-- TabBar UI -->
+        <mxCell id="4" value="&lt;b&gt;TabBar UI&lt;/b&gt;&lt;br&gt;(render tabs)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="1">
+          <mxGeometry x="100" y="210" width="180" height="60" as="geometry" />
+        </mxCell>
+        <!-- DetailView -->
+        <mxCell id="5" value="&lt;b&gt;DetailView&lt;/b&gt;&lt;br&gt;(single project)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="1">
+          <mxGeometry x="310" y="210" width="180" height="60" as="geometry" />
+        </mxCell>
+        <!-- Overview -->
+        <mxCell id="6" value="&lt;b&gt;Overview&lt;/b&gt;&lt;br&gt;(grid)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="1">
+          <mxGeometry x="520" y="210" width="180" height="60" as="geometry" />
+        </mxCell>
+        <!-- SSEManager -->
+        <mxCell id="7" value="&lt;b&gt;SSEManager&lt;/b&gt;&lt;br&gt;(connection pool)&lt;br&gt;&lt;hr&gt;- connections{} (one EventSource per project)&lt;br&gt;- reconnect with exponential backoff" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;align=left;spacingLeft=10;" vertex="1" parent="1">
+          <mxGeometry x="100" y="300" width="600" height="70" as="geometry" />
+        </mxCell>
+        <!-- StorageManager -->
+        <mxCell id="8" value="&lt;b&gt;StorageManager&lt;/b&gt;&lt;br&gt;(localStorage persistence)&lt;br&gt;&lt;hr&gt;- save/load projects, activeTab, viewMode" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;align=left;spacingLeft=10;" vertex="1" parent="1">
+          <mxGeometry x="100" y="395" width="600" height="60" as="geometry" />
+        </mxCell>
+        <!-- Server -->
+        <mxCell id="9" value="&lt;b&gt;MCP Orchestrator Server (Kotlin/Ktor)&lt;/b&gt;&lt;br&gt;&lt;hr&gt;- GET /sync/live (SSE)&lt;br&gt;- GET /sync/status/{projectKey}&lt;br&gt;- POST /sync/start&lt;br&gt;- POST /sync/stop&lt;br&gt;- GET /api/credentials" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;align=left;spacingLeft=10;fontColor=#333333;" vertex="1" parent="1">
+          <mxGeometry x="150" y="560" width="500" height="120" as="geometry" />
+        </mxCell>
+        <!-- SSE Arrow -->
+        <mxCell id="10" value="SSE" style="endArrow=classic;html=1;strokeWidth=2;strokeColor=#d6b656;" edge="1" parent="1" source="7" target="9">
+          <mxGeometry x="-0.2" y="10" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <!-- REST Arrow -->
+        <mxCell id="11" value="REST" style="endArrow=classic;startArrow=classic;html=1;strokeWidth=2;strokeColor=#82b366;" edge="1" parent="1" source="2" target="9">
+          <mxGeometry x="-0.2" y="-10" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

@@ -1,0 +1,42 @@
+<mxGraphModel dx="1422" dy="762" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
+  <root>
+    <mxCell id="0" />
+    <mxCell id="1" parent="0" />
+    <mxCell id="2" value="Admin" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fontSize=12;" vertex="1" parent="1">
+      <mxGeometry x="80" y="320" width="50" height="70" as="geometry" />
+    </mxCell>
+    <mxCell id="3" value="Sync Dashboard&#xa;(Multi-Project)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=14;fontStyle=1;" vertex="1" parent="1">
+      <mxGeometry x="300" y="280" width="200" height="100" as="geometry" />
+    </mxCell>
+    <mxCell id="4" value="MCP Orchestrator&#xa;Server (Ktor)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=12;" vertex="1" parent="1">
+      <mxGeometry x="650" y="180" width="180" height="80" as="geometry" />
+    </mxCell>
+    <mxCell id="5" value="localStorage&#xa;(Browser)" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="350" y="500" width="100" height="80" as="geometry" />
+    </mxCell>
+    <mxCell id="6" value="SSE Endpoint&#xa;/sync/live" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="650" y="310" width="180" height="60" as="geometry" />
+    </mxCell>
+    <mxCell id="7" value="REST APIs&#xa;/sync/status, /start, /stop" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="650" y="410" width="180" height="60" as="geometry" />
+    </mxCell>
+    <mxCell id="8" value="Manages tabs,&#xa;views projects" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="2" target="3" parent="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="9" value="Real-time events&#xa;(progress, completed, error)" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="6" target="3" parent="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="10" value="Poll status,&#xa;Start/Stop sync" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="3" target="7" parent="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="11" value="Persist projects,&#xa;active tab, view mode" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="3" target="5" parent="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="12" value="Jira Cloud" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=11;" vertex="1" parent="1">
+      <mxGeometry x="900" y="280" width="120" height="60" as="geometry" />
+    </mxCell>
+    <mxCell id="13" value="Syncs issues" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="4" target="12" parent="1">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+  </root>
+</mxGraphModel>

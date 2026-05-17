@@ -1,0 +1,15 @@
+{
+  "ticket": "MTO-63",
+  "currentPhase": "requirements",
+  "phases": {
+    "requirements": { "status": "done", "file": "BRD.md", "version": 1, "completedAt": "2026-05-17T10:35:00Z" },
+    "specification": { "status": "done", "file": "FSD.md", "version": 1, "completedAt": "2026-05-17T10:45:00Z" },
+    "design": { "status": "in_progress", "file": "TDD.md", "version": null, "startedAt": "2026-05-17T10:45:00Z" },
+    "feedback_loop": { "status": "not_started", "iterations": 0, "maxIterations": 5 },
+    "test_planning": { "status": "not_started" },
+    "implementation": { "status": "not_started" },
+    "testing": { "status": "not_started" },
+    "deployment": { "status": "not_started" }
+  },
+  "lastUpdated": "2026-05-17T10:31:00Z"
+}

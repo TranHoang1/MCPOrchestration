@@ -1,0 +1,70 @@
+<mxGraphModel adaptiveColors="auto">
+  <root>
+    <mxCell id="0"/>
+    <mxCell id="1" parent="0"/>
+    <mxCell id="title" value="&lt;b&gt;Sequence Diagram — Agent Code Search (code_search)&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;fontSize=13;fontStyle=1;" vertex="1" parent="1">
+      <mxGeometry x="150" y="10" width="450" height="30" as="geometry"/>
+    </mxCell>
+    <mxCell id="agent_h" value="&lt;b&gt;Agent&lt;/b&gt;&lt;br&gt;(BA/TA/SA/DEV)" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=0;collapsible=0;recursiveResize=0;outlineConnect=0;size=40;fillColor=#fff3e0;strokeColor=#f57c00;" vertex="1" parent="1">
+      <mxGeometry x="60" y="60" width="120" height="400" as="geometry"/>
+    </mxCell>
+    <mxCell id="tool_h" value="&lt;b&gt;MCP Tool&lt;/b&gt;&lt;br&gt;code_search" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=0;collapsible=0;recursiveResize=0;outlineConnect=0;size=40;fillColor=#e8f5e9;strokeColor=#388e3c;" vertex="1" parent="1">
+      <mxGeometry x="260" y="60" width="120" height="400" as="geometry"/>
+    </mxCell>
+    <mxCell id="query_h" value="&lt;b&gt;Query Layer&lt;/b&gt;" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=0;collapsible=0;recursiveResize=0;outlineConnect=0;size=40;fillColor=#e1f5fe;strokeColor=#0288d1;" vertex="1" parent="1">
+      <mxGeometry x="460" y="60" width="120" height="400" as="geometry"/>
+    </mxCell>
+    <mxCell id="db_h" value="&lt;b&gt;SQLite DB&lt;/b&gt;&lt;br&gt;(FTS5)" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=0;collapsible=0;recursiveResize=0;outlineConnect=0;size=40;fillColor=#f3e5f5;strokeColor=#7b1fa2;" vertex="1" parent="1">
+      <mxGeometry x="660" y="60" width="120" height="400" as="geometry"/>
+    </mxCell>
+    <mxCell id="m1" value="code_search(query, lang, limit)" style="html=1;endSize=6;startSize=6;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="120" y="130" as="sourcePoint"/>
+        <mxPoint x="320" y="130" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="m2" value="validate params" style="html=1;endSize=6;startSize=6;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="320" y="160" as="sourcePoint"/>
+        <mxPoint x="320" y="185" as="targetPoint"/>
+        <Array as="points">
+          <mxPoint x="370" y="160"/>
+          <mxPoint x="370" y="185"/>
+        </Array>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="m3" value="searchFTS(query, lang, limit)" style="html=1;endSize=6;startSize=6;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="320" y="200" as="sourcePoint"/>
+        <mxPoint x="520" y="200" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="m4" value="SELECT ... FROM symbols_fts MATCH" style="html=1;endSize=6;startSize=6;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="520" y="230" as="sourcePoint"/>
+        <mxPoint x="720" y="230" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="m5" value="ranked results (BM25)" style="html=1;endSize=6;startSize=6;dashed=1;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="720" y="270" as="sourcePoint"/>
+        <mxPoint x="520" y="270" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="m6" value="List&lt;SearchResult&gt;" style="html=1;endSize=6;startSize=6;dashed=1;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="520" y="300" as="sourcePoint"/>
+        <mxPoint x="320" y="300" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="m7" value="JSON response {results, total, time}" style="html=1;endSize=6;startSize=6;dashed=1;" edge="1" parent="1">
+      <mxGeometry relative="1" as="geometry">
+        <mxPoint x="320" y="340" as="sourcePoint"/>
+        <mxPoint x="120" y="340" as="targetPoint"/>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="note1" value="&lt;font style=&quot;font-size:9px&quot;&gt;Total time &amp;lt; 200ms&lt;br&gt;for 100K+ symbols&lt;/font&gt;" style="shape=note;whiteSpace=wrap;html=1;size=14;fillColor=#fffde7;strokeColor=#f9a825;" vertex="1" parent="1">
+      <mxGeometry x="560" y="310" width="130" height="50" as="geometry"/>
+    </mxCell>
+  </root>
+</mxGraphModel>

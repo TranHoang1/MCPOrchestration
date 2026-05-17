@@ -38,10 +38,18 @@ object JsonConfigLoader {
      * Supports two formats:
      * - Root-level: { "upstream_servers": [...] }
      * - Nested: { "orchestrator": { "upstream_servers": [...] } }
+     *
+     * Validates JSON syntax first — throws ConfigValidationException
+     * on malformed input to fail fast on startup.
      */
     fun parseUpstreamServers(
-        content: String
+        content: String,
+        sourcePath: String = "mcp-servers.json"
     ): List<UpstreamServerConfig> {
+        // Fail fast on malformed JSON (MTO-113)
+        McpServersConfigValidator.validateOrThrow(
+            content, sourcePath
+        )
         return try {
             val resolved = ConfigurationManagerImpl
                 .resolveEnvVars(content)
@@ -49,11 +57,20 @@ object JsonConfigLoader {
                 .jsonObject
             // Try upstream_servers format first, then mcpServers format
             val servers = findServersArray(root)
-            if (servers.isNotEmpty()) {
+            val parsed = if (servers.isNotEmpty()) {
                 servers.map { parseServerEntry(it.jsonObject) }
             } else {
                 parseMcpServersFormat(content)
             }
+            // Validate semantic correctness (MTO-113)
+            val configErrors = McpServersConfigValidator
+                .validateServerConfigs(parsed)
+            if (configErrors.isNotEmpty()) {
+                configErrors.forEach { logger.warn(it) }
+            }
+            parsed
+        } catch (e: ConfigValidationException) {
+            throw e
         } catch (e: Exception) {
             logger.error(
                 "Failed to parse JSON config: ${e.message}"
@@ -78,9 +95,18 @@ object JsonConfigLoader {
                 .jsonObject
             val mcpServers = root["mcpServers"]
                 ?.jsonObject ?: return emptyList()
-            mcpServers.entries.map { (name, config) ->
+            val parsed = mcpServers.entries.map { (name, config) ->
                 parseMcpServerEntry(name, config.jsonObject)
             }
+            // Validate semantic correctness (MTO-113)
+            val configErrors = McpServersConfigValidator
+                .validateServerConfigs(parsed)
+            if (configErrors.isNotEmpty()) {
+                configErrors.forEach { logger.warn(it) }
+            }
+            parsed
+        } catch (e: ConfigValidationException) {
+            throw e
         } catch (e: Exception) {
             logger.error(
                 "Failed to parse mcpServers config: " +

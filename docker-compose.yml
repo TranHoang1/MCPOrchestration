@@ -3,9 +3,6 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-      platforms:
-        - linux/amd64
-    platform: linux/amd64
     container_name: mcp-orchestrator
     ports:
       - "8080:8080"
@@ -43,9 +40,6 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.kb
-      platforms:
-        - linux/amd64
-    platform: linux/amd64
     container_name: kb-server
     ports:
       - "9181:9181"

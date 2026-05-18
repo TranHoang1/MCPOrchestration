@@ -257,6 +257,28 @@
                                 </transformer>
                                 <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
                             </transformers>
+                            <filters>
+                                <filter>
+                                    <artifact>com.orchestrator.mcp:orchestrator-client</artifact>
+                                    <excludes>
+                                        <exclude>db/migration/**</exclude>
+                                    </excludes>
+                                </filter>
+                                <filter>
+                                    <artifact>com.orchestrator.mcp:sync-pipeline</artifact>
+                                    <excludes>
+                                        <exclude>db/migration/**</exclude>
+                                    </excludes>
+                                </filter>
+                                <filter>
+                                    <artifact>*:*</artifact>
+                                    <excludes>
+                                        <exclude>META-INF/*.SF</exclude>
+                                        <exclude>META-INF/*.DSA</exclude>
+                                        <exclude>META-INF/*.RSA</exclude>
+                                    </excludes>
+                                </filter>
+                            </filters>
                             <finalName>mcp-orchestrator-all</finalName>
                         </configuration>
                     </execution>

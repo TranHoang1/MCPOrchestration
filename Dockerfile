@@ -1,6 +1,7 @@
 # ============================================================
-# Single-stage Dockerfile for MCP Orchestration Server
-# Expects pre-built JAR from local machine
+# Dockerfile for MCP Orchestration Server
+# Expects pre-built JAR from Maven local build:
+#   mvn package -pl orchestrator-server -am -Dmaven.test.skip=true
 # Includes Node.js (npx) and Python/uv (uvx) for MCP servers
 # ============================================================
 
@@ -31,22 +32,19 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && ln -s /root/.local/bin/uvx /usr/local/bin/uvx \
     && uv --version && uvx --version
 
-# Copy the pre-built fat JAR from local build
-COPY orchestrator-server/build/libs/mcp-orchestrator-all.jar app.jar
+# Copy the pre-built fat JAR from Maven target
+COPY orchestrator-server/target/mcp-orchestrator-all.jar app.jar
 
-# Create temp directory for file proxy
-RUN mkdir -p /app/tmp/mcp-file-proxy
-
-# Create config directory for external MCP config
-RUN mkdir -p /app/config
+# Create directories
+RUN mkdir -p /app/tmp/mcp-file-proxy /app/config
 
 # Expose the server port
 EXPOSE 8080
 
-# Health check — TCP port check (avoid SSE endpoint which creates MCP sessions)
+# Health check
 HEALTHCHECK --interval=30s --timeout=5s --start-period=15s --retries=3 \
     CMD bash -c 'echo > /dev/tcp/localhost/8080' || exit 1
 
-# Run the application with external config if provided
+# Run the application
 ENTRYPOINT ["java", "-Djava.net.preferIPv4Stack=true", "-jar", "app.jar"]
 CMD ["--config", "/app/config/mcp.json"]

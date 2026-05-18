@@ -6,9 +6,23 @@
 .kiro
 .antigravity
 .analysis
+
+# Gradle build output
 **/build/
-!orchestrator-server/build/libs/mcp-orchestrator-all.jar
-!kb-server/build/libs/kb-server-all.jar
+
+# Maven build output (keep fat JARs for Docker COPY)
+**/target/*
+!orchestrator-server/target/mcp-orchestrator-all.jar
+!kb-server/target/kb-server-all.jar
+
+# Other
 **/bin/
 **/out/
 *.log
+logs/
+docs/
+documents/
+requirement/
+commonMain/
+mcp-bridge-python/
+mcp-client-bridge/

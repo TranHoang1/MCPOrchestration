@@ -37,6 +37,7 @@
         <postgresql.version>42.7.5</postgresql.version>
         <hikaricp.version>5.1.0</hikaricp.version>
         <flyway.version>10.22.0</flyway.version>
+        <jackson.version>2.18.2</jackson.version>
         <sqlite.jdbc.version>3.46.1.0</sqlite.jdbc.version>
         <junit.version>5.11.4</junit.version>
         <kotest.version>5.9.1</kotest.version>
@@ -48,6 +49,15 @@
 
     <dependencyManagement>
         <dependencies>
+            <!-- Jackson BOM — force consistent version across all modules -->
+            <dependency>
+                <groupId>com.fasterxml.jackson</groupId>
+                <artifactId>jackson-bom</artifactId>
+                <version>${jackson.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
             <!-- Kotlin -->
             <dependency>
                 <groupId>org.jetbrains.kotlin</groupId>

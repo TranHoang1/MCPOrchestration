@@ -1,10 +1,10 @@
 kb:
   server:
     port: 9181
-    transport: stdio
+    transport: http
 
   database:
-    url: "jdbc:postgresql://localhost:5432/mcp_orchestrator"
+    url: "jdbc:postgresql://postgres_db:5432/mcp_orchestrator"
     schema: "kb"
     username: "postgres"
     password: "postgres"
@@ -15,9 +15,9 @@ kb:
       connection_timeout_ms: 30000
 
   embedding:
-    provider: "ollama"
-    model: "nomic-embed-text"
-    base_url: "http://localhost:11434"
+    provider: "local"
+    model: "intfloat/multilingual-e5-base"
+    base_url: "http://embedding-server:8087"
     dimensions: 768
     cache_enabled: true
     cache_max_size: 200
@@ -26,8 +26,8 @@ kb:
   vector_db:
     provider: "pgvector"
     collection_name: "kb_entries"
-    host: "localhost"
-    port: 6333
+    host: "postgres_db"
+    port: 5432
 
   segmentation:
     provider: "ollama"
@@ -47,8 +47,8 @@ kb:
     placeholder_format: "[{TYPE}_{INDEX}]"
 
   security:
-    encryption_key: "vZ4K9dTisj6Z2fyaPVRMf0okAvEmhWtOxSxa/InVArk="
-    br_encryption_key: "UY5RoEhR9wgSYI9974fgzKyfwUlS1iHgFbPgWLgZTvA="
+    encryption_key: "VzLiE/H03I48H+JsLHXtUPAU8yZ7Q6/BV28K07Ecwlg="
+    br_encryption_key: "VzLiE/H03I48H+JsLHXtUPAU8yZ7Q6/BV28K07Ecwlg="
     default_role: "developer"
     session_ttl_minutes: 30
     rate_limit:

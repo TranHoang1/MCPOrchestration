@@ -71,7 +71,7 @@ fun appModule(configPath: String? = null) = module {
                 json(Json { ignoreUnknownKeys = true; encodeDefaults = true })
             }
             engine {
-                requestTimeout = 30_000
+                requestTimeout = 120_000
             }
         }
     }
@@ -90,12 +90,14 @@ fun appModule(configPath: String? = null) = module {
             embConfig.baseUrl.isNotBlank() -> embConfig.baseUrl
             provider == "ollama" -> "http://localhost:11434"
             provider == "lmstudio" -> "http://localhost:1234/v1"
+            provider == "local" -> "http://localhost:8087"
             else -> ""
         }
 
         when (provider) {
             "ollama" -> OllamaEmbeddingService(get(), effectiveBaseUrl, embConfig.model, embConfig.dimensions)
             "lmstudio" -> LmStudioEmbeddingService(get(), effectiveBaseUrl, embConfig.model, embConfig.dimensions)
+            "local" -> LocalEmbeddingService(get(), effectiveBaseUrl, embConfig.dimensions)
             else -> OpenAiEmbeddingService(
                 httpClient = get(),
                 apiKey = embConfig.apiKey,

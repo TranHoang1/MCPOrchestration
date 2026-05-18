@@ -1,0 +1,28 @@
+# ============================================================
+# Dockerfile for KB Server
+# Expects pre-built JAR from local machine
+# ============================================================
+
+FROM eclipse-temurin:21-jre
+
+WORKDIR /app
+
+# Create config directory
+RUN mkdir -p /app/config
+
+# Copy the pre-built fat JAR from local build
+COPY kb-server/build/libs/kb-server-all.jar app.jar
+
+# Copy default application.yml (overridable via volume mount)
+COPY kb-server/src/main/resources/application.yml /app/config/application.yml
+
+# Expose the KB server port
+EXPOSE 9181
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
+    CMD bash -c 'echo > /dev/tcp/localhost/9181' || exit 1
+
+# Run with HTTP transport and external config
+ENTRYPOINT ["java", "-Djava.net.preferIPv4Stack=true", "-jar", "app.jar"]
+CMD ["--transport=http", "--config=/app/config/application.yml"]

@@ -34,3 +34,15 @@ local.properties
 
 # Temp folder for testing
 TempRelease/
+
+# Build output (Gradle)
+kb-server/build
+orchestrator-bridge/build
+orchestrator-client/build
+orchestrator-core/build
+orchestrator-server/build
+sync-pipeline/build
+
+# Build output (Maven)
+**/target/
+**/dependency-reduced-pom.xml

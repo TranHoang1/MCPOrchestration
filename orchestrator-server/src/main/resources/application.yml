@@ -30,16 +30,17 @@ orchestrator:
     max_retries: 1
 
   embedding:
-    provider: ollama
-    model: nomic-embed-text:latest
+    provider: local
+    model: intfloat/multilingual-e5-base
     api_key: "unused"
     dimensions: 768
+    base_url: "http://localhost:8087"
     cache_enabled: true
     cache_max_size: 100
     cache_ttl_minutes: 5
 
   vector_db:
-    provider: postgres
+    provider: postgresql
     host: localhost
     port: 5432
     collection_name: mcp_db

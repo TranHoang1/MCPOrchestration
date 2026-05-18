@@ -1,0 +1,14 @@
+.git
+.gradle
+.idea
+.kotlin
+.vscode
+.kiro
+.antigravity
+.analysis
+**/build/
+!orchestrator-server/build/libs/mcp-orchestrator-all.jar
+!kb-server/build/libs/kb-server-all.jar
+**/bin/
+**/out/
+*.log

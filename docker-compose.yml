@@ -1,0 +1,70 @@
+services:
+  mcp-orchestrator:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      platforms:
+        - linux/amd64
+    platform: linux/amd64
+    container_name: mcp-orchestrator
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./mcp.json:/app/config/mcp.json:ro
+    environment:
+      SERVER_PORT: "8080"
+
+      # PostgreSQL (pgvector)
+      VECTOR_DB_PROVIDER: "postgresql"
+      VECTOR_DB_HOST: "postgres_db"
+      VECTOR_DB_PORT: "5432"
+      VECTOR_DB_USER: "postgres"
+      VECTOR_DB_PASSWORD: "postgres"
+
+      # Embedding service
+      EMBEDDING_PROVIDER: "local"
+      EMBEDDING_BASE_URL: "http://embedding-server:8087"
+      EMBEDDING_MODEL: "intfloat/multilingual-e5-base"
+      EMBEDDING_DIMENSIONS: "768"
+
+      JAVA_OPTS: "-Xmx512m -Xms256m"
+    networks:
+      - postgres-vector_default
+      - embedding-server_default
+      - internal
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    depends_on:
+      kb-server:
+        condition: service_healthy
+    restart: unless-stopped
+
+  kb-server:
+    build:
+      context: .
+      dockerfile: Dockerfile.kb
+      platforms:
+        - linux/amd64
+    platform: linux/amd64
+    container_name: kb-server
+    ports:
+      - "9181:9181"
+    volumes:
+      - ./kb-config.yml:/app/config/application.yml:ro
+    environment:
+      JAVA_OPTS: "-Xmx256m -Xms128m"
+    networks:
+      - postgres-vector_default
+      - embedding-server_default
+      - internal
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    restart: unless-stopped
+
+networks:
+  postgres-vector_default:
+    external: true
+  embedding-server_default:
+    external: true
+  internal:
+    driver: bridge

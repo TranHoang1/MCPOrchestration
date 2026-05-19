@@ -93,12 +93,7 @@
 <script>
 (function() {
     'use strict';
-    const basePath = window.__MCP_BASE || (function() {
-        const path = window.location.pathname;
-        const match = path.match(/^(.*?)(?:\/static\/|\/login|\/profile|\/admin\/|\/sync\/)/);
-        if (match && match[1]) return match[1];
-        return '';
-    })();
+    const basePath = window.__MCP_BASE || '/mcp';
 
     function init() {
         checkIfSetupNeeded();

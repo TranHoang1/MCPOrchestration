@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MCP Orchestrator — Sync Dashboard</title>
-    <script>(function(){var s=document.createElement("script");var p=window.location.pathname;var m=p.match(/^(.*?)\/(?:static\/|login|profile|admin\/|sync\/|nav-bar)/);var b=m&&m[1]?m[1]:"";window.__MCP_BASE=b;s.src=b+"/static/nav-bar.js";document.head.appendChild(s);})()</script>
+    <script>(function(){window.__MCP_BASE="/mcp";var s=document.createElement("script");s.src="/mcp/static/nav-bar.js";document.head.appendChild(s);})()</script>
     <style>
         :root {
             --bg: #1a1a2e;
@@ -515,7 +515,7 @@
 (function() {
     'use strict';
 
-    const basePath = window.__MCP_BASE || '';
+    const basePath = window.__MCP_BASE || '/mcp';
     const MAX_PROJECTS = 10;
     const KEY_PATTERN = /^[A-Z][A-Z0-9_]+$/;
     const MAX_LOG_ENTRIES = 50;
@@ -527,7 +527,8 @@
         if (!token) { window.location.href = basePath + '/login'; return Promise.reject('No token'); }
         const opts = options || {};
         opts.headers = Object.assign({ 'Authorization': 'Bearer ' + token }, opts.headers || {});
-        return fetch(url, opts).then(function(r) {
+        const fullUrl = url.startsWith('http') || url.startsWith(basePath) ? url : basePath + url;
+        return fetch(fullUrl, opts).then(function(r) {
             if (r.status === 401) { localStorage.removeItem('auth_token'); window.location.href = basePath + '/login'; }
             return r;
         });

@@ -6,16 +6,11 @@
 (function() {
     'use strict';
 
-    const basePath = (function() {
-        const base = document.querySelector('base');
-        if (base) return base.getAttribute('href').replace(/\/$/, '');
-        const path = window.location.pathname;
-        // Detect sub-path: /myapp/static/page.html → basePath = /myapp
-        // Match first occurrence of a known top-level route segment
-        const match = path.match(/^(.*?)(?:\/static\/|\/login|\/profile|\/admin\/|\/sync\/)/);
-        if (match && match[1]) return match[1];
-        return '';
-    })();
+    // Context path for reverse proxy deployment (e.g., nginx location /mcp/)
+    // Change this value if deploying under a different sub-path, or set to '' for root.
+    const CONTEXT_PATH = '/mcp';
+
+    const basePath = window.__MCP_BASE || CONTEXT_PATH;
     window.__MCP_BASE = basePath;
 
     const NAV_LINKS = [

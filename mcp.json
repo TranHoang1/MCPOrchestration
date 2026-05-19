@@ -1,18 +1,15 @@
 {
-  "mcpServers": {
-    "kb-server": {
-      "url": "http://kb-server:9181/mcp"
-    },
-    "atlassian": {
-      "command": "uvx",
-      "args": [
-        "--python",
-        "3.13",
-        "mcp-atlassian",
-        "--jira-url=https://jiraassist.atlassian.net",
-        "--jira-username=dnguyenminh@hotmail.com",
-        "--jira-token=ATATT3xFfGF0ais6wI-ix7FCWszdv_Z5iirFWPR_q-SXkYkuOdRCjeLQCGsv58yw_zdyPl7c4eWmgCKEtlaat7p0Obq-QFjogCSYgfCqc3J0GmhQgk97Y20PDapIftPZ2FDY9oDmUWpQeksMYGlGFC7KORSQF82mwzfktuu1t2rHgFNpSapFCeM=5B843418"
-      ]
+    "mcpServers": {
+        "kb-server": {
+            "url": "http://kb-server:9181/mcp"
+        },
+        "atlassian": {
+            "command": "uvx",
+            "args": [
+                "mcp-atlassian-multi",
+                "--multi-user",
+                "--jira-url=https://jiraassist.atlassian.net"
+            ]
+        }
     }
-  }
 }

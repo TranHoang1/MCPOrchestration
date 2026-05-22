@@ -63,11 +63,22 @@ class HttpToolRouter(factory: McpServerFactory) {
                 }
                 "ping" -> buildResponse(id, buildJsonObject {})
                 else -> {
-                    logger.info("Unknown method: $method")
-                    buildErrorResponse(
-                        id, -32601,
-                        "Method not found: $method"
-                    )
+                    // Bridge sends tool names directly as method
+                    // (e.g. "find_tools" instead of "tools/call")
+                    // Forward to dispatcher as a tool call
+                    if (method != null) {
+                        logger.info("tools/call (direct): $method")
+                        val result = dispatcher.callTool(
+                            method, params, headers
+                        )
+                        logger.info("tools/call done: $method")
+                        buildToolResponse(id, result)
+                    } else {
+                        buildErrorResponse(
+                            id, -32601,
+                            "Method not found: $method"
+                        )
+                    }
                 }
             }
         } catch (e: Exception) {

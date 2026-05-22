@@ -176,6 +176,48 @@
         .alert-success { background: rgba(76, 175, 80, 0.15); border: 1px solid var(--success); color: var(--success); }
         .alert-error { background: rgba(233, 69, 96, 0.15); border: 1px solid var(--accent); color: var(--accent); }
         .alert.visible { display: block; }
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+        .modal-content {
+            background: var(--surface);
+            border-radius: var(--radius);
+            padding: 24px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        .modal-content h2 { margin-bottom: 16px; font-size: 1.1rem; }
+        .new-field-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+        .new-field-row input { flex: 1; }
+        .new-field-row select {
+            padding: 8px;
+            border-radius: var(--radius);
+            border: 1px solid var(--card);
+            background: var(--bg);
+            color: var(--text);
+            font-size: 0.85rem;
+        }
+        .new-field-row .btn-remove-field {
+            background: none;
+            border: none;
+            color: var(--accent);
+            cursor: pointer;
+            font-size: 1.1rem;
+            padding: 4px 8px;
+        }
     </style>
 </head>
 <body>
@@ -215,9 +257,33 @@
 
     <!-- Credentials Section -->
     <section class="section" id="section-credentials">
-        <h2>🔐 Server Credentials</h2>
+        <h2 style="justify-content:space-between">
+            <span>🔐 Server Credentials</span>
+            <button class="btn btn-accent btn-sm" id="btn-add-server" style="display:none"
+                    aria-label="Add new server credential schema">+ Add Server</button>
+        </h2>
         <div id="servers-list"></div>
     </section>
+
+    <!-- Add Server Modal -->
+    <div class="modal-overlay" id="modal-add-server" role="dialog" aria-modal="true"
+         aria-labelledby="modal-title" style="display:none">
+        <div class="modal-content">
+            <h2 id="modal-title">Add Server Credentials</h2>
+            <div class="field-row">
+                <label for="new-server-name">Server Name</label>
+                <input type="text" id="new-server-name" placeholder="e.g. atlassian, github">
+            </div>
+            <div id="new-fields-container">
+                <p style="color:var(--muted);font-size:0.85rem;margin:8px 0">Credential Fields:</p>
+            </div>
+            <button class="btn btn-muted btn-sm" id="btn-add-field" style="margin-bottom:12px">+ Add Field</button>
+            <div class="server-actions">
+                <button class="btn btn-success btn-sm" id="btn-save-new-server">Save</button>
+                <button class="btn btn-muted btn-sm" id="btn-cancel-modal">Cancel</button>
+            </div>
+        </div>
+    </div>
 </div>
 
 <script>
@@ -235,6 +301,7 @@
         loadUserInfo();
         loadServers();
         bindEvents();
+        showAddServerButton();
     }
 
     function redirectToLogin() {
@@ -294,7 +361,8 @@
         const container = document.getElementById('servers-list');
         container.innerHTML = '';
         if (!servers || servers.length === 0) {
-            container.innerHTML = '<p style="color:var(--muted);font-size:0.9rem">No servers configured.</p>';
+            container.innerHTML = '<p style="color:var(--muted);font-size:0.9rem">' +
+                'No servers configured. Admin can add server schemas using the "+ Add Server" button above.</p>';
             return;
         }
         servers.forEach(raw => {
@@ -422,6 +490,97 @@
         document.getElementById('btn-logout').addEventListener('click', handleLogout);
         document.getElementById('btn-generate').addEventListener('click', generateToken);
         document.getElementById('btn-copy').addEventListener('click', copyToken);
+        document.getElementById('btn-add-server').addEventListener('click', openAddServerModal);
+        document.getElementById('btn-add-field').addEventListener('click', addFieldRow);
+        document.getElementById('btn-save-new-server').addEventListener('click', saveNewServer);
+        document.getElementById('btn-cancel-modal').addEventListener('click', closeAddServerModal);
+        document.getElementById('modal-add-server').addEventListener('click', function(e) {
+            if (e.target === this) closeAddServerModal();
+        });
+    }
+
+    function showAddServerButton() {
+        try {
+            var payload = JSON.parse(atob(authToken.split('.')[1]));
+            var roles = payload.roles || [];
+            var isAdmin = roles.some(function(r) {
+                return r === 'system_owner' || r === 'leader';
+            });
+            if (isAdmin) {
+                document.getElementById('btn-add-server').style.display = 'inline-block';
+            }
+        } catch (e) { /* not admin */ }
+    }
+
+    function openAddServerModal() {
+        var modal = document.getElementById('modal-add-server');
+        modal.style.display = 'flex';
+        document.getElementById('new-server-name').value = '';
+        resetFieldRows();
+        addFieldRow();
+    }
+
+    function closeAddServerModal() {
+        document.getElementById('modal-add-server').style.display = 'none';
+    }
+
+    function resetFieldRows() {
+        var container = document.getElementById('new-fields-container');
+        container.innerHTML = '<p style="color:var(--muted);font-size:0.85rem;margin:8px 0">Credential Fields:</p>';
+    }
+
+    function addFieldRow() {
+        var container = document.getElementById('new-fields-container');
+        var row = document.createElement('div');
+        row.className = 'new-field-row';
+        row.innerHTML =
+            '<input type="text" placeholder="Field key (e.g. api_token)" class="field-key-input">' +
+            '<input type="text" placeholder="Label (e.g. API Token)" class="field-label-input">' +
+            '<select class="field-type-select">' +
+            '  <option value="secret">Secret</option>' +
+            '  <option value="text">Text</option>' +
+            '  <option value="url">URL</option>' +
+            '  <option value="email">Email</option>' +
+            '</select>' +
+            '<button class="btn-remove-field" aria-label="Remove field">✕</button>';
+        row.querySelector('.btn-remove-field').addEventListener('click', function() {
+            row.remove();
+        });
+        container.appendChild(row);
+    }
+
+    function saveNewServer() {
+        var serverName = document.getElementById('new-server-name').value.trim();
+        if (!serverName) { showError('Server name is required'); return; }
+        var rows = document.querySelectorAll('#new-fields-container .new-field-row');
+        var fields = [];
+        for (var i = 0; i < rows.length; i++) {
+            var key = rows[i].querySelector('.field-key-input').value.trim();
+            var label = rows[i].querySelector('.field-label-input').value.trim();
+            var type = rows[i].querySelector('.field-type-select').value;
+            if (!key) continue;
+            fields.push({
+                field_key: key,
+                field_label: label || key,
+                field_type: type,
+                field_required: true,
+                display_order: i
+            });
+        }
+        if (fields.length === 0) { showError('At least one field is required'); return; }
+        document.getElementById('btn-save-new-server').disabled = true;
+        authFetch('/api/admin/credential-schemas/' + encodeURIComponent(serverName), {
+            method: 'PUT',
+            body: JSON.stringify({ fields: fields })
+        })
+        .then(function(r) { if (r.ok) return r.json(); throw new Error('Failed to save schema'); })
+        .then(function() {
+            showSuccess('Server "' + serverName + '" added successfully');
+            closeAddServerModal();
+            loadServers();
+        })
+        .catch(function(err) { showError(err.message); })
+        .finally(function() { document.getElementById('btn-save-new-server').disabled = false; });
     }
 
     function handleLogout() {

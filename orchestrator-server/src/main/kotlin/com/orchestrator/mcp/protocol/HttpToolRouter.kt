@@ -24,7 +24,8 @@ class HttpToolRouter(factory: McpServerFactory) {
     // approach: factory creates a ToolDispatch interface
     private val dispatcher = factory.createDispatcher()
 
-    suspend fun handle(body: String, headers: Map<String, String> = emptyMap()): String {
+    suspend fun handle(body: String): String {
+        logger.info("Router received: ${body.take(200)}")
         return try {
             val obj = json.parseToJsonElement(body).jsonObject
             val id = obj["id"]
@@ -32,16 +33,18 @@ class HttpToolRouter(factory: McpServerFactory) {
                 ?.jsonPrimitive?.content
             val params = obj["params"]?.jsonObject
 
+            logger.info("Routing method: $method")
+
             when (method) {
-                "initialize" -> {
-                    logger.info("Routing method: initialize")
-                    buildResponse(id, buildInitResult())
-                }
-                "notifications/initialized" -> buildResponse(id, null)
-                "tools/list" -> {
-                    logger.info("Routing method: tools/list")
-                    buildResponse(id, dispatcher.listTools())
-                }
+                "initialize" -> buildResponse(
+                    id, buildInitResult()
+                )
+                "notifications/initialized" -> buildResponse(
+                    id, null
+                )
+                "tools/list" -> buildResponse(
+                    id, dispatcher.listTools()
+                )
                 "tools/call" -> {
                     val name = params?.get("name")
                         ?.jsonPrimitive?.content
@@ -55,31 +58,19 @@ class HttpToolRouter(factory: McpServerFactory) {
                         )
                     } else {
                         val result = dispatcher.callTool(
-                            name, args, headers
+                            name, args
                         )
-                        logger.info("tools/call done: $name")
+                        logger.info(
+                            "tools/call done: $name"
+                        )
                         buildToolResponse(id, result)
                     }
                 }
                 "ping" -> buildResponse(id, buildJsonObject {})
-                else -> {
-                    // Bridge sends tool names directly as method
-                    // (e.g. "find_tools" instead of "tools/call")
-                    // Forward to dispatcher as a tool call
-                    if (method != null) {
-                        logger.info("tools/call (direct): $method")
-                        val result = dispatcher.callTool(
-                            method, params, headers
-                        )
-                        logger.info("tools/call done: $method")
-                        buildToolResponse(id, result)
-                    } else {
-                        buildErrorResponse(
-                            id, -32601,
-                            "Method not found: $method"
-                        )
-                    }
-                }
+                else -> buildErrorResponse(
+                    id, -32601,
+                    "Method not found: $method"
+                )
             }
         } catch (e: Exception) {
             logger.error("Router error: ${e.message}", e)

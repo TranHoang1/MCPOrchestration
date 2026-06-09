@@ -1,68 +1,135 @@
 package com.orchestrator.mcp.protocol
 
-import com.orchestrator.mcp.fileproxy.FilePathValidator
 import io.modelcontextprotocol.kotlin.sdk.types.CallToolResult
 import io.modelcontextprotocol.kotlin.sdk.types.TextContent
-import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.json.buildJsonObject
 import org.slf4j.LoggerFactory
 import java.io.File
 
 /**
- * Executes draw.io CLI export commands.
- * Supports PNG, SVG, and PDF output formats.
- * Accepts both absolute and relative paths (resolved from workspace root).
+ * Executes draw.io CLI export commands via xvfb-run (headless).
+ * Supports PNG, SVG, and PDF with embedded diagram XML.
  */
 object DrawioExportExecutor {
 
     private val logger = LoggerFactory.getLogger(DrawioExportExecutor::class.java)
 
-    private val DRAWIO_PATHS = listOf(
-        "C:\\Program Files\\draw.io\\draw.io.exe",
-        "/usr/local/bin/drawio",
-        "/usr/bin/drawio",
-        "/Applications/draw.io.app/Contents/MacOS/draw.io"
-    )
+    private val VALID_FORMATS = setOf("png", "svg", "pdf")
 
     fun execute(filePath: String, format: String): CallToolResult {
-        val resolvedPath = FilePathValidator.resolvePath(filePath)
-        val inputFile = File(resolvedPath)
+        if (format !in VALID_FORMATS) {
+            return errorResult("INVALID_PARAMS", "Unsupported format: $format. Must be one of: $VALID_FORMATS")
+        }
+
+        val inputFile = File(filePath)
         if (!inputFile.exists()) {
-            return errorResult("FILE_NOT_FOUND", "File not found: $resolvedPath")
+            return errorResult("FILE_NOT_FOUND", "File not found: $filePath")
         }
 
         val drawioExe = findDrawioExecutable()
-            ?: return errorResult("CLI_NOT_FOUND", "draw.io CLI not found")
+            ?: return errorResult(
+                "CLI_NOT_FOUND",
+                "draw.io CLI not found. Install from https://www.drawio.com/"
+            )
 
-        val outputPath = resolvedPath.replace(".drawio", ".$format")
-        return runExport(drawioExe, resolvedPath, outputPath, format)
+        val outputPath = buildOutputPath(filePath, format)
+        return runExport(drawioExe, filePath, outputPath, format)
     }
 
-    private fun runExport(exe: String, input: String, output: String, format: String): CallToolResult {
+    private fun runExport(
+        exe: String,
+        input: String,
+        output: String,
+        format: String
+    ): CallToolResult {
         return try {
-            val process = ProcessBuilder(exe, "-x", "-f", format, "-b", "10", "-o", output, input)
+            val command = buildExportCommand(exe, input, output, format)
+            logger.info("Executing draw.io export: ${command.joinToString(" ")}")
+
+            val process = ProcessBuilder(command)
                 .redirectErrorStream(true)
                 .start()
+
+            val processOutput = process.inputStream.bufferedReader().readText()
             val exitCode = process.waitFor()
+
             if (exitCode == 0) {
-                val outputFile = File(output)
-                val resultJson = buildJsonObject {
-                    put("output_path", JsonPrimitive(outputFile.absolutePath))
-                    put("bytes_written", JsonPrimitive(outputFile.length()))
-                }.toString()
-                CallToolResult(content = listOf(TextContent(text = resultJson)))
+                buildSuccessResult(output)
             } else {
-                val stderr = process.inputStream.bufferedReader().readText()
-                errorResult("EXPORT_FAILED", "draw.io export failed (exit $exitCode): $stderr")
+                logger.warn("draw.io export failed (exit $exitCode): $processOutput")
+                errorResult("EXPORT_FAILED", "draw.io export failed (exit $exitCode): $processOutput")
             }
         } catch (e: Exception) {
-            logger.error("draw.io export error: ${e.message}")
+            logger.error("draw.io export error: ${e.message}", e)
             errorResult("EXPORT_FAILED", "Export error: ${e.message}")
         }
     }
 
+    private fun buildExportCommand(
+        exe: String,
+        input: String,
+        output: String,
+        format: String
+    ): List<String> {
+        val baseCommand = mutableListOf(
+            exe, "--no-sandbox",
+            "-x",
+            "-f", format,
+            "-e",
+            "-b", "10",
+            "-o", output,
+            input
+        )
+        return if (isHeadlessEnvironment()) {
+            listOf("xvfb-run", "-a") + baseCommand
+        } else {
+            baseCommand
+        }
+    }
+
+    private fun buildSuccessResult(outputPath: String): CallToolResult {
+        val outputFile = File(outputPath)
+        val resultJson = buildJsonObject {
+            put("output_path", JsonPrimitive(outputFile.absolutePath))
+            put("bytes_written", JsonPrimitive(outputFile.length()))
+        }.toString()
+        return CallToolResult(content = listOf(TextContent(text = resultJson)))
+    }
+
+    private fun buildOutputPath(inputPath: String, format: String): String {
+        return inputPath.replace(".drawio", ".drawio.$format")
+    }
+
     private fun findDrawioExecutable(): String? {
-        return DRAWIO_PATHS.firstOrNull { File(it).exists() }
+        val dynamicSearch = findViaPATH()
+        if (dynamicSearch != null) return dynamicSearch
+
+        val knownPaths = listOf(
+            "/usr/bin/drawio",
+            "/usr/local/bin/drawio",
+            "/snap/bin/drawio",
+            "/Applications/draw.io.app/Contents/MacOS/draw.io",
+            "C:\\Program Files\\draw.io\\draw.io.exe"
+        )
+        return knownPaths.firstOrNull { File(it).exists() }
+    }
+
+    private fun findViaPATH(): String? {
+        return try {
+            val process = ProcessBuilder("which", "drawio")
+                .redirectErrorStream(true)
+                .start()
+            val result = process.inputStream.bufferedReader().readText().trim()
+            val exitCode = process.waitFor()
+            if (exitCode == 0 && result.isNotBlank()) result else null
+        } catch (_: Exception) {
+            null
+        }
+    }
+
+    private fun isHeadlessEnvironment(): Boolean {
+        return System.getenv("DISPLAY").isNullOrBlank()
     }
 
     private fun errorResult(code: String, message: String): CallToolResult {
@@ -75,7 +142,7 @@ object DrawioExportExecutor {
 }
 
 /**
- * Extension function used by HiddenToolRegistrar.
+ * Top-level function used by HiddenToolRegistrar.
  */
 fun doExportDrawio(filePath: String, format: String): CallToolResult {
     return DrawioExportExecutor.execute(filePath, format)

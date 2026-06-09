@@ -52,7 +52,10 @@ class KbApplication {
 
     private fun initializeDatabase(dataSource: HikariDataSource) {
         try {
-            FlywayMigrationRunner.migrate(dataSource)
+            FlywayMigrationRunner.migrate(
+                dataSource,
+                locations = listOf("classpath:db/migration/kb")
+            )
         } catch (e: Exception) {
             logger.error("FATAL: KB database migration failed", e)
             throw e

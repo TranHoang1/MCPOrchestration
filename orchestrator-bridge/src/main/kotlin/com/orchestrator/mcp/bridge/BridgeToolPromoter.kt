@@ -51,9 +51,8 @@ class BridgeToolPromoter(private val httpClient: HttpStreamableClient) {
             ?: return errorResult("Missing 'query' parameter")
 
         return try {
-            val params = buildJsonObject { put("query", query) }
-            val response = httpClient.sendRequest("find_tools", params)
-            val result = response["result"]?.toString() ?: "{}"
+            val arguments = buildJsonObject { put("query", query) }
+            val result = httpClient.callTool("find_tools", arguments)
             CallToolResult(content = listOf(TextContent(text = result)))
         } catch (e: Exception) {
             errorResult("find_tools failed: ${e.message}")
@@ -66,12 +65,11 @@ class BridgeToolPromoter(private val httpClient: HttpStreamableClient) {
         val toolArgs = args["arguments"]?.jsonObject
 
         return try {
-            val params = buildJsonObject {
+            val arguments = buildJsonObject {
                 put("tool_name", toolName)
                 toolArgs?.let { put("arguments", it) }
             }
-            val response = httpClient.sendRequest("execute_dynamic_tool", params)
-            val result = response["result"]?.toString() ?: "{}"
+            val result = httpClient.callTool("execute_dynamic_tool", arguments)
             CallToolResult(content = listOf(TextContent(text = result)))
         } catch (e: Exception) {
             errorResult("execute_dynamic_tool failed: ${e.message}")
@@ -120,9 +118,7 @@ class BridgeToolPromoter(private val httpClient: HttpStreamableClient) {
 
     private suspend fun proxyToOrchestrator(toolName: String, args: JsonObject?): CallToolResult {
         return try {
-            val params = args ?: buildJsonObject {}
-            val response = httpClient.sendRequest(toolName, params)
-            val result = response["result"]?.toString() ?: "{}"
+            val result = httpClient.callTool(toolName, args)
             CallToolResult(content = listOf(TextContent(text = result)))
         } catch (e: Exception) {
             errorResult("$toolName failed: ${e.message}")

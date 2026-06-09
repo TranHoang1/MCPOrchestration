@@ -65,6 +65,47 @@ class HttpStreamableClient(private val config: BridgeConfig) {
         return json.parseToJsonElement(response.bodyAsText()).jsonObject
     }
 
+    /**
+     * Call a tool via the MCP standard tools/call protocol.
+     * Wraps the call correctly as:
+     *   { "method": "tools/call", "params": { "name": toolName, "arguments": arguments } }
+     * Then extracts and returns the concatenated text from result.content[].text.
+     *
+     * @throws Exception if the server returns a JSON-RPC error
+     */
+    suspend fun callTool(toolName: String, arguments: JsonObject?): String {
+        val params = buildJsonObject {
+            put("name", JsonPrimitive(toolName))
+            arguments?.let { put("arguments", it) }
+        }
+        val request = buildJsonRpcRequest("tools/call", params)
+        val response = sendRawRequest(request, includeSession = true)
+        val jsonResponse = json.parseToJsonElement(response.bodyAsText()).jsonObject
+
+        // Happy path: extract text from result.content[]
+        val resultObj = jsonResponse["result"]?.jsonObject
+        if (resultObj != null) {
+            val contentArray = resultObj["content"]?.jsonArray
+            if (!contentArray.isNullOrEmpty()) {
+                return contentArray.joinToString("\n") { item ->
+                    item.jsonObject["text"]?.jsonPrimitive?.content ?: ""
+                }
+            }
+            // result exists but no content array — return raw result
+            return resultObj.toString()
+        }
+
+        // Error path: propagate as exception so callers can return errorResult
+        val errorObj = jsonResponse["error"]?.jsonObject
+        if (errorObj != null) {
+            val code = errorObj["code"]?.toString() ?: "UNKNOWN"
+            val message = errorObj["message"]?.jsonPrimitive?.content ?: "Unknown error"
+            throw Exception("tools/call '$toolName' failed [$code]: $message")
+        }
+
+        return "{}"
+    }
+
     suspend fun close() {
         connected = false
         sessionId = null

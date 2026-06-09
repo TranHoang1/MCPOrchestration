@@ -67,7 +67,14 @@ fun realMain(args: Array<String>) = runBlocking {
     // Run Flyway database migration (BEFORE any repository access)
     try {
         val dataSource = koin.get<com.zaxxer.hikari.HikariDataSource>()
-        com.orchestrator.mcp.core.migration.FlywayMigrationRunner.migrate(dataSource)
+        com.orchestrator.mcp.core.migration.FlywayMigrationRunner.migrate(
+            dataSource,
+            locations = listOf(
+                "classpath:db/migration",
+                "classpath:db/migration/client",
+                "classpath:db/migration/sync"
+            )
+        )
     } catch (e: Exception) {
         logger.error("FATAL: Database migration failed — application cannot start", e)
         throw e

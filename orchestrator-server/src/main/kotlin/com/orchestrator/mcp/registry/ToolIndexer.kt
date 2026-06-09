@@ -19,7 +19,7 @@ class ToolIndexer(
     private val vectorDbClient: VectorDbClient,
     private val toolRegistry: ToolRegistry,
     private val collectionName: String = "mcp_tools",
-    private val batchSize: Int = 100
+    private val batchSize: Int = 50
 ) {
     private val logger = LoggerFactory.getLogger(ToolIndexer::class.java)
 

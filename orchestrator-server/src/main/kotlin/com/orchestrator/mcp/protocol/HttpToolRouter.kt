@@ -24,8 +24,7 @@ class HttpToolRouter(factory: McpServerFactory) {
     // approach: factory creates a ToolDispatch interface
     private val dispatcher = factory.createDispatcher()
 
-    suspend fun handle(body: String): String {
-        logger.info("Router received: ${body.take(200)}")
+    suspend fun handle(body: String, headers: Map<String, String> = emptyMap()): String {
         return try {
             val obj = json.parseToJsonElement(body).jsonObject
             val id = obj["id"]

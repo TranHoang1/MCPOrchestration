@@ -1,5 +1,6 @@
 package com.orchestrator.mcp.protocol
 
+import com.orchestrator.mcp.auth.model.UserContext
 import io.modelcontextprotocol.kotlin.sdk.types.CallToolResult
 import io.modelcontextprotocol.kotlin.sdk.types.TextContent
 import kotlinx.serialization.json.*
@@ -24,15 +25,17 @@ class HttpToolRouter(factory: McpServerFactory) {
     // approach: factory creates a ToolDispatch interface
     private val dispatcher = factory.createDispatcher()
 
-    suspend fun handle(body: String, headers: Map<String, String> = emptyMap()): String {
+    suspend fun handle(
+        body: String,
+        headers: Map<String, String> = emptyMap(),
+        userContext: UserContext? = null
+    ): String {
         return try {
             val obj = json.parseToJsonElement(body).jsonObject
             val id = obj["id"]
             val method = obj["method"]
                 ?.jsonPrimitive?.content
             val params = obj["params"]?.jsonObject
-
-            logger.info("Routing method: $method")
 
             when (method) {
                 "initialize" -> buildResponse(
@@ -57,7 +60,7 @@ class HttpToolRouter(factory: McpServerFactory) {
                         )
                     } else {
                         val result = dispatcher.callTool(
-                            name, args
+                            name, args, headers, userContext
                         )
                         logger.info(
                             "tools/call done: $name"

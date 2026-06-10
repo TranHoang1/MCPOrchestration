@@ -45,7 +45,9 @@ data class UpstreamServerConfig(
     @SerialName("auto_approve")
     val autoApprove: List<String> = emptyList(),
     @SerialName("framing_mode")
-    val framingMode: String = "newline"
+    val framingMode: String = "newline",
+    @SerialName("credential_mapping")
+    val credentialMapping: Map<String, String> = emptyMap()
 )
 
 @Serializable

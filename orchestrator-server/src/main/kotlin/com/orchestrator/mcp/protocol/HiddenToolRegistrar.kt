@@ -113,11 +113,59 @@ object HiddenToolRegistrar {
     }
 
     private suspend fun executeExportDrawio(args: JsonObject?): CallToolResult {
+        val format = args?.get("format")?.jsonPrimitive?.content ?: "png"
+
+        // Option 1: file_content provided (Docker/remote mode)
+        val fileContent = args?.get("file_content")?.jsonPrimitive?.content
+        if (fileContent != null) {
+            val fileName = args["file_name"]?.jsonPrimitive?.content
+                ?: "diagram.drawio"
+            return DrawioExportExecutor.executeFromContent(fileContent, fileName, format)
+        }
+
+        // Option 2: file_id provided (FileProxy upload flow)
+        val fileIdStr = args?.get("file_id")?.jsonPrimitive?.content
+        if (fileIdStr != null) {
+            return resolveFileIdAndExport(fileIdStr, format)
+        }
+
+        // Option 3: file_path provided (local mode)
         val rawPath = args?.get("file_path")?.jsonPrimitive?.content
-            ?: return CallToolResult(content = listOf(TextContent(text = "file_path is required")), isError = true)
-        val format = args["format"]?.jsonPrimitive?.content ?: "png"
+            ?: return CallToolResult(
+                content = listOf(TextContent(text = "file_path, file_content, or file_id is required")),
+                isError = true
+            )
         val filePath = FilePathValidator.resolvePath(rawPath)
         return doExportDrawio(filePath, format)
+    }
+
+    private suspend fun resolveFileIdAndExport(
+        fileIdStr: String,
+        format: String
+    ): CallToolResult {
+        return try {
+            val fileId = java.util.UUID.fromString(fileIdStr)
+            val registry = org.koin.java.KoinJavaComponent.getKoin()
+                .get<com.orchestrator.mcp.fileproxy.FileProxyRegistry>()
+            val entry = registry.findByFileId(fileId)
+                ?: return CallToolResult(
+                    content = listOf(TextContent(text = "file_id not found: $fileIdStr")),
+                    isError = true
+                )
+            if (!java.io.File(entry.filePath).exists()) {
+                return CallToolResult(
+                    content = listOf(TextContent(text = "Uploaded file missing: ${entry.filePath}")),
+                    isError = true
+                )
+            }
+            val content = java.io.File(entry.filePath).readText()
+            DrawioExportExecutor.executeFromContent(content, entry.fileName ?: "diagram.drawio", format)
+        } catch (e: IllegalArgumentException) {
+            CallToolResult(
+                content = listOf(TextContent(text = "Invalid file_id: $fileIdStr")),
+                isError = true
+            )
+        }
     }
 
     private fun emptyJsonSchema(): JsonObject {
@@ -134,7 +182,19 @@ object HiddenToolRegistrar {
             put("properties", kotlinx.serialization.json.buildJsonObject {
                 put("file_path", kotlinx.serialization.json.buildJsonObject {
                     put("type", kotlinx.serialization.json.JsonPrimitive("string"))
-                    put("description", kotlinx.serialization.json.JsonPrimitive("Path to the .drawio file. Supports absolute or relative path (resolved from workspace root)"))
+                    put("description", kotlinx.serialization.json.JsonPrimitive("Path to the .drawio file (local mode)"))
+                })
+                put("file_content", kotlinx.serialization.json.buildJsonObject {
+                    put("type", kotlinx.serialization.json.JsonPrimitive("string"))
+                    put("description", kotlinx.serialization.json.JsonPrimitive("Raw XML content of .drawio file (Docker/remote mode)"))
+                })
+                put("file_id", kotlinx.serialization.json.buildJsonObject {
+                    put("type", kotlinx.serialization.json.JsonPrimitive("string"))
+                    put("description", kotlinx.serialization.json.JsonPrimitive("UUID from /files/upload endpoint (FileProxy mode)"))
+                })
+                put("file_name", kotlinx.serialization.json.buildJsonObject {
+                    put("type", kotlinx.serialization.json.JsonPrimitive("string"))
+                    put("description", kotlinx.serialization.json.JsonPrimitive("File name (used with file_content). Default: diagram.drawio"))
                 })
                 put("format", kotlinx.serialization.json.buildJsonObject {
                     put("type", kotlinx.serialization.json.JsonPrimitive("string"))
@@ -146,7 +206,6 @@ object HiddenToolRegistrar {
                 })
             })
             put("required", kotlinx.serialization.json.buildJsonArray {
-                add(kotlinx.serialization.json.JsonPrimitive("file_path"))
                 add(kotlinx.serialization.json.JsonPrimitive("format"))
             })
         }

@@ -118,7 +118,7 @@ suspend fun CoroutineScope.startHttpStreamableServer(
             exchange.responseBody.use { it.write(bytes) }
             return@createContext
         }
-        handleMcpRequest(exchange, router)
+        handleMcpRequest(exchange, router, userCtx)
     }
 
     server.createContext("/health") { exchange ->
@@ -226,6 +226,19 @@ suspend fun CoroutineScope.startHttpStreamableServer(
     server.createContext("/static") { exchange ->
         handleStaticFile(exchange)
     }
+
+    // File proxy upload/download routes
+    val fileUploadRoutes = com.orchestrator.mcp.fileproxy.FileUploadRoutes(
+        org.koin.java.KoinJavaComponent.getKoin().get<com.orchestrator.mcp.fileproxy.FileProxyConfig>(),
+        org.koin.java.KoinJavaComponent.getKoin().get<com.orchestrator.mcp.fileproxy.FileProxyRegistry>()
+    )
+    server.createContext("/files/upload") { exchange ->
+        fileUploadRoutes.handleUpload(exchange)
+    }
+    server.createContext("/files") { exchange ->
+        fileUploadRoutes.handleDownload(exchange)
+    }
+    httpLogger.info("File proxy routes registered: /files/upload, /files/{id}")
     // HTML pages served public — auth enforced by API endpoints they call (MTO-109)
     // JS in each page checks token validity; if API returns 401 → redirects to /login
     server.createContext("/sync/graph-viewer") { exchange ->
@@ -261,7 +274,8 @@ suspend fun CoroutineScope.startHttpStreamableServer(
 
 private fun handleMcpRequest(
     exchange: HttpExchange,
-    router: HttpToolRouter
+    router: HttpToolRouter,
+    userContext: com.orchestrator.mcp.auth.model.UserContext? = null
 ) {
     if (exchange.requestMethod != "POST") {
         exchange.sendResponseHeaders(405, -1)
@@ -278,7 +292,7 @@ private fun handleMcpRequest(
         return
     }
 
-    // Extract headers for auth context propagation
+    // Extract headers for fallback auth context propagation
     val headers = exchange.requestHeaders.entries.associate { (k, v) ->
         k to (v.firstOrNull() ?: "")
     }
@@ -286,7 +300,7 @@ private fun handleMcpRequest(
     // Run suspend function in blocking context
     // (each request has its own thread from pool)
     val response = runBlocking {
-        router.handle(body, headers)
+        router.handle(body, headers, userContext)
     }
 
     val bytes = response.toByteArray(Charsets.UTF_8)

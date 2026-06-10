@@ -85,17 +85,31 @@ class ToolExecutionDispatcherImpl(
                 credentialResolver.getDecryptedCredentials(userContext.userId, serverName)
             } ?: return null
             if (credentials.isEmpty()) return null
+            val mapped = applyCredentialMapping(serverName, credentials)
             logger.info("Injecting credentials for user={} server={} keys={}",
-                userContext.userId, serverName, credentials.keys)
+                userContext.userId, serverName, mapped.keys)
             buildJsonObject {
                 putJsonObject("credentials") {
-                    credentials.forEach { (key, value) -> put(key, value) }
+                    mapped.forEach { (key, value) -> put(key, value) }
                 }
             }
         } catch (e: Exception) {
             logger.warn("Failed to resolve credentials for user={} server={}: {}",
                 userContext.userId, serverName, e.message)
             null
+        }
+    }
+
+    private fun applyCredentialMapping(
+        serverName: String,
+        credentials: Map<String, String>
+    ): Map<String, String> {
+        val serverConfig = config.orchestrator.upstreamServers
+            .firstOrNull { it.name == serverName }
+        val mapping = serverConfig?.credentialMapping
+        if (mapping.isNullOrEmpty()) return credentials
+        return credentials.mapKeys { (key, _) ->
+            mapping[key] ?: key
         }
     }
 

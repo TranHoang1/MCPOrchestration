@@ -8,8 +8,12 @@
             "args": [
                 "mcp-atlassian-multi",
                 "--multi-user",
-                "--jira-url=https://jiraassist.atlassian.net"
-            ]
+                "--jira-url=https://fecredit.atlassian.net"
+            ],
+            "credential_mapping": {
+                "email": "jira_email",
+                "api_token": "jira_token"
+            }
         }
     }
 }

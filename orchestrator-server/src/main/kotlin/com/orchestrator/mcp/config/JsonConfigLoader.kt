@@ -195,6 +195,10 @@ object JsonConfigLoader {
             ?.mapValues { it.value.jsonPrimitive.content }
             ?: emptyMap()
         val cwd = obj["cwd"]?.jsonPrimitive?.content
+        val credentialMapping = obj["credential_mapping"]
+            ?.jsonObject
+            ?.mapValues { it.value.jsonPrimitive.content }
+            ?: emptyMap()
         return UpstreamServerConfig(
             name = name,
             transport = transport,
@@ -202,7 +206,8 @@ object JsonConfigLoader {
             args = args,
             env = env,
             cwd = cwd,
-            url = url
+            url = url,
+            credentialMapping = credentialMapping
         )
     }
 }

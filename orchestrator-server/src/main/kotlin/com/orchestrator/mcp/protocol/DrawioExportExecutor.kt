@@ -37,6 +37,54 @@ object DrawioExportExecutor {
         return runExport(drawioExe, filePath, outputPath, format)
     }
 
+    /**
+     * Export from XML content directly (no local file required).
+     * Writes content to temp, exports via CLI, returns base64 result.
+     */
+    fun executeFromContent(
+        xmlContent: String,
+        fileName: String,
+        format: String
+    ): CallToolResult {
+        if (format !in VALID_FORMATS) {
+            return errorResult("INVALID_PARAMS", "Unsupported format: $format")
+        }
+        val drawioExe = findDrawioExecutable()
+            ?: return errorResult("CLI_NOT_FOUND", "draw.io CLI not found")
+
+        return try {
+            val tempDir = File(System.getProperty("java.io.tmpdir"), "mcp-drawio-export")
+            tempDir.mkdirs()
+            val tempInput = File(tempDir, fileName)
+            tempInput.writeText(xmlContent)
+
+            val outputPath = buildOutputPath(tempInput.absolutePath, format)
+            val result = runExport(drawioExe, tempInput.absolutePath, outputPath, format)
+
+            if (result.isError != true) {
+                val outputFile = File(outputPath)
+                if (outputFile.exists()) {
+                    val base64 = java.util.Base64.getEncoder()
+                        .encodeToString(outputFile.readBytes())
+                    val resultJson = buildJsonObject {
+                        put("output_path", JsonPrimitive(outputPath))
+                        put("file_name", JsonPrimitive(outputFile.name))
+                        put("bytes_written", JsonPrimitive(outputFile.length()))
+                        put("base64_content", JsonPrimitive(base64))
+                    }.toString()
+                    tempInput.delete()
+                    outputFile.delete()
+                    return CallToolResult(content = listOf(TextContent(text = resultJson)))
+                }
+            }
+            tempInput.delete()
+            result
+        } catch (e: Exception) {
+            logger.error("draw.io content export error: ${e.message}", e)
+            errorResult("EXPORT_FAILED", "Content export error: ${e.message}")
+        }
+    }
+
     private fun runExport(
         exe: String,
         input: String,

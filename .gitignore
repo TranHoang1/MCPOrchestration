@@ -46,3 +46,4 @@ sync-pipeline/build
 # Build output (Maven)
 **/target/
 **/dependency-reduced-pom.xml
+/.analysis/

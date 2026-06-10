@@ -72,13 +72,14 @@ class McpServerFactory(
             override suspend fun callTool(
                 name: String,
                 arguments: JsonObject?,
-                headers: Map<String, String>
+                headers: Map<String, String>,
+                userContext: com.orchestrator.mcp.auth.model.UserContext?
             ): CallToolResult {
                 logger.info("Dispatcher.callTool: $name")
                 val result = when (name) {
                     "find_tools" -> handleFindTools(arguments)
                     "execute_dynamic_tool" ->
-                        handleExecuteDynamicTool(arguments, headers)
+                        handleExecuteDynamicTool(arguments, headers, userContext)
                     "toggle_tool" -> handleToggleTool(arguments)
                     "reset_tools" -> handleResetTools(arguments)
                     "manage_auto_approve" ->
@@ -174,12 +175,13 @@ class McpServerFactory(
     private suspend fun handleExecuteDynamicTool(
         arguments: JsonObject?
     ): CallToolResult {
-        return handleExecuteDynamicTool(arguments, emptyMap())
+        return handleExecuteDynamicTool(arguments, emptyMap(), null)
     }
 
     private suspend fun handleExecuteDynamicTool(
         arguments: JsonObject?,
-        headers: Map<String, String>
+        headers: Map<String, String>,
+        preAuthUserContext: com.orchestrator.mcp.auth.model.UserContext? = null
     ): CallToolResult {
         return try {
             val toolName = arguments?.get("tool_name")
@@ -198,13 +200,13 @@ class McpServerFactory(
                 return HiddenToolRegistrar.executeHiddenTool(toolName, toolArguments)
             }
 
-            // Resolve user context from JWT token for credential injection
-            val userContext = try {
+            // Use pre-authenticated UserContext if available; otherwise resolve from headers
+            val userContext = preAuthUserContext ?: try {
                 if (headers.isNotEmpty() && authMiddleware != null) {
                     authMiddleware.authenticate(headers)
                 } else null
             } catch (e: Exception) {
-                logger.debug("No user context from headers: {}", e.message)
+                logger.warn("Failed to resolve user context from headers: {}", e.message)
                 null
             }
 

@@ -47,3 +47,11 @@ sync-pipeline/build
 **/target/
 **/dependency-reduced-pom.xml
 /.analysis/
+/.code-intel/
+/.antigravity/
+/.ai/
+/.kiro/
+/.kotlin/
+/.mvn/
+/.vscode/
+/.kiro/

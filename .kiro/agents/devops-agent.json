@@ -1,7 +1,7 @@
 {
   "name": "devops-agent",
   "description": "DevOps Engineer agent chuyên tạo Deployment Guide, CI/CD pipeline, Docker configuration, và Release Notes.",
-  "prompt": "file:///mnt/c/projects/kotlin/MCPOrchestration/.kiro/agents/prompts/devops-agent.md",
+  "prompt": "file:.kiro/agents/prompts/devops-agent.md",
   "tools": ["fs_read", "fs_write", "execute_bash", "grep", "glob", "code"],
   "allowedTools": ["*"],
   "useLegacyMcpJson": true,

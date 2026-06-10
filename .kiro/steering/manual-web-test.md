@@ -10,14 +10,43 @@ Khi user yêu cầu "test manual", "QA test", "test web", "test UI", hoặc bấ
 
 ## Quy trình bắt buộc
 
-### Bước 1: DevOps — Build & Deploy
+### Bước 1: DevOps — Build & Start Server
 
-1. Build jar: `gradlew :orchestrator-server:shadowJar :kb-server:shadowJar`
-2. Copy jar vào TempRelease
-3. **Kill process cũ** và **restart server mới**:
-   - Dùng `control_pwsh_process` để start server process
-   - Verify server đã ready (health check hoặc wait for port)
-4. Báo QA server đã sẵn sàng
+Agent PHẢI thực hiện đầy đủ các bước sau (không skip, không hỏi user làm thay):
+
+1. **Detect build system** — đọc project root để xác định build tool:
+   - `package.json` → `npm run build` (hoặc script build trong scripts section)
+   - `build.gradle.kts` / `build.gradle` → `gradlew build` hoặc task tạo artifact
+   - `pom.xml` → `mvn package -DskipTests`
+   - `pyproject.toml` / `setup.py` → build theo hướng dẫn trong README
+   - `Makefile` → `make build`
+   - Nếu không rõ → đọc README, tìm section "Build" hoặc "Getting Started"
+
+2. **Chạy build** — dùng `execute_pwsh` để chạy build command đã detect:
+   - PHẢI verify build thành công (exit code 0, không error)
+   - Nếu build fail → fix lỗi rồi build lại
+
+3. **Deploy artifacts** (nếu cần) — copy output vào vị trí chạy:
+   - Jar → copy vào thư mục deploy
+   - dist/ hoặc build/ → serve bằng static server
+   - Nếu project chạy trực tiếp từ source (Node.js, Python) → skip bước này
+
+4. **Detect start command** — xác định cách start server:
+   - `package.json` scripts → `npm start` hoặc `npm run dev`
+   - Jar file → `java -jar <path-to-jar>`
+   - Python → `python main.py` hoặc `uvicorn app:app`
+   - Nếu không rõ → đọc README section "Run" hoặc "Usage"
+
+5. **Kill process cũ** (nếu có) — stop server đang chạy trước đó
+
+6. **Start server mới** — dùng `control_pwsh_process` (action: start):
+   - PHẢI dùng background process vì server là long-running
+   - Đọc output để verify server đã ready (listen on port, "started" message)
+   - Nếu server không start trong 30s → check logs, fix, retry
+
+7. **Verify server accessible** — thử navigate tới URL gốc bằng browser tool:
+   - Confirm page load thành công (không connection refused)
+   - Ghi nhận base URL và port cho QA dùng ở Bước 2
 
 ### Bước 2: QA — Test tất cả màn hình
 
@@ -34,14 +63,12 @@ Dùng browser DevTools MCP tools (`navigate_page`, `take_snapshot`, `take_screen
    - Create/Edit/Delete operations (nếu có)
    - Error states (invalid input, unauthorized)
 
-3. **Checklist pages:**
-   - [ ] `/login` — login form, SSO button
-   - [ ] `/profile` — user info, bridge token, credentials
-   - [ ] `/static/admin-users.html` — user list, create user
-   - [ ] `/admin/schemas` — credential schemas
-   - [ ] `/sync/dashboard` — sync status
-   - [ ] `/sync/graph-viewer` — 3D graph
-   - [ ] `/static/setup.html` — first-time setup (khi DB trống)
+3. **Discover & test tất cả pages:**
+   - Đọc source code (routes, controllers, static HTML files) để liệt kê tất cả endpoints
+   - Hoặc dùng nav-bar/sidebar links từ trang chủ để discover pages
+   - Test TỪNG page đã discover — không skip page nào
+   - Ghi nhận kết quả vào checklist format:
+     - [ ] `/<path>` — mô tả ngắn — status
 
 ### Bước 3: Dev — Fix lỗi
 

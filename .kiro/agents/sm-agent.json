@@ -1,7 +1,7 @@
 {
   "name": "sm-agent",
   "description": "Scrum Master agent điều phối toàn bộ pipeline multi-agent theo SDLC. Entry point duy nhất — user chỉ cần cung cấp Jira ticket key.",
-  "prompt": "file:///mnt/c/projects/kotlin/MCPOrchestration/.kiro/agents/prompts/sm-agent.md",
+  "prompt": "file:.kiro/agents/prompts/sm-agent.md",
   "tools": ["fs_read", "fs_write", "execute_bash", "grep", "glob", "code", "use_subagent"],
   "allowedTools": ["*"],
   "useLegacyMcpJson": true,

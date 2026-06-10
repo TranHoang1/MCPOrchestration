@@ -9,12 +9,27 @@ FROM eclipse-temurin:21-jre
 
 WORKDIR /app
 
-# Install system dependencies
+# Install system dependencies + draw.io runtime deps (Electron/headless)
 RUN apt-get update && apt-get install -y --no-install-recommends \
     curl \
     ca-certificates \
     gnupg \
+    xvfb \
+    libgbm1 libnss3 libatk1.0-0 libatk-bridge2.0-0 libcups2 \
+    libdrm2 libxcomposite1 libxdamage1 libxrandr2 libpango-1.0-0 \
+    libcairo2 libasound2t64 libxshmfence1 libgtk-3-0 libdbus-glib-1-2 \
+    libxss1 libxtst6 xdg-utils \
     && rm -rf /var/lib/apt/lists/*
+
+# Install draw.io Desktop (headless export via xvfb-run)
+ARG DRAWIO_VERSION=26.0.16
+RUN ARCH=$(dpkg --print-architecture) \
+    && curl -fsSL "https://github.com/jgraph/drawio-desktop/releases/download/v${DRAWIO_VERSION}/drawio-${ARCH}-${DRAWIO_VERSION}.deb" \
+    -o /tmp/drawio.deb \
+    && dpkg -i /tmp/drawio.deb || apt-get update && apt-get install -f -y --no-install-recommends \
+    && rm -f /tmp/drawio.deb \
+    && rm -rf /var/lib/apt/lists/* \
+    && which drawio
 
 # Install Node.js 22 LTS (for npx)
 RUN curl -fsSL https://deb.nodesource.com/setup_22.x | bash - \

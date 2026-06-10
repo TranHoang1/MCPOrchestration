@@ -57,7 +57,7 @@ Tạo database migration cho COLLEX-64
 ### Step 0: Parse Input & Validate Prerequisites
 
 1. Extract ticket key from user message.
-2. **Try Knowledge Base first** — Use the discovered **KB "search" tool** with query `"{TICKET-KEY} TDD"`, `"{TICKET-KEY} FSD"`, and `"{TICKET-KEY} BRD"` to check if documents are already in KB. If found, use the discovered **KB "read" tool** to retrieve content instead of reading large files directly. This reduces context window usage.
+2. **Try Memory first** — Use `mem_search("{TICKET-KEY} TDD API design")` and `mem_search("{TICKET-KEY} architecture")` to get relevant implementation context. This saves ~6,000+ tokens vs reading full files.
 3. If KB doesn't have the documents, fall back to file reads:
    - Read `documents/{TICKET-KEY}/TDD.md` — REQUIRED (primary source for implementation).
    - Read `documents/{TICKET-KEY}/FSD.md` — REQUIRED (for business rules and validation logic).

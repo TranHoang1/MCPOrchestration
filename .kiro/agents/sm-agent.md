@@ -71,6 +71,40 @@ After discovery, log:
 6. **You are transparent** — report what you're doing at every step
 7. **⛔ NEVER fabricate results** — NEVER report "agent reviewed" or "agent approved" unless you actually invoked that agent and received a response. If you skip a step, say so explicitly. Lying about agent invocations is a critical violation.
 
+## ⛔ Document Attachment Rule — MANDATORY
+
+**Sau mỗi phase hoàn thành (document mới được tạo hoặc cập nhật), SM PHẢI attach document lên Jira ticket ngay lập tức.**
+
+### Quy trình attach (áp dụng cho mọi document):
+
+```
+1. embed_images(file_path="documents/{TICKET}/{DOC}.md", output_path="documents/{TICKET}/{DOC}-embedded.md")
+2. export_docx(file_path="documents/{TICKET}/{DOC}-embedded.md", file_name="{DOC}-v{version}-{TICKET}")
+3. jira_update_issue(issue_key: "{TICKET}", fields: "{}", attachments: "documents/{TICKET}/{DOC}-v{version}-{TICKET}.docx")
+```
+
+### Timing:
+
+| Phase hoàn thành | Document attach |
+|-------------------|-----------------|
+| Phase 1 (Requirements) | BRD.docx |
+| Phase 2 (Specification) | FSD.docx |
+| Phase 3 (Design) | TDD.docx |
+| Phase 4 (Test Planning) | STP.docx + STC.docx |
+| Phase 5.5 (User Guide) | UG.docx |
+| Phase 7 (Deployment) | DPG.docx + RLN.docx |
+
+### Khi document được cập nhật (version mới):
+
+- Attach lại với version mới: `{DOC}-v{new_version}-{TICKET}.docx`
+- Comment trên Jira: "📄 {DOC} updated to v{version} — {reason}"
+
+### ⛔ KHÔNG BAO GIỜ:
+
+- Hoàn thành phase mà không attach document lên Jira
+- Đợi đến cuối pipeline mới batch-attach
+- Bỏ qua attach vì "sẽ làm sau"
+
 ## Input Format
 
 User provides EITHER a Jira ticket key OR a project key with action:
@@ -370,6 +404,37 @@ SM **không dừng lại để hỏi** về template. Thông báo rồi chạy t
 5. **Nếu sanity PASS** → SM transition Jira: READY FOR PRODUCT → DONE (transition "Complete")
 6. **Nếu sanity FAIL** → DevOps rollback → transition "Fix bugs" → SM giữ ticket ở IN PROGRESS → báo cáo user
 
+### ⛔ Release Process — SM Kiểm Soát DevOps (MANDATORY)
+
+**Sau khi deploy thành công + sanity pass, SM PHẢI yêu cầu DevOps thực hiện Release Process. SM kiểm soát và verify từng bước.**
+
+**DevOps agent PHẢI thực hiện đủ 3 bước sau (SM verify output):**
+
+| # | Bước | DevOps Action | SM Verify |
+|---|------|---------------|-----------|
+| 1 | **Merge code vào master** | `git merge {TICKET} → master`, push | Confirm merge commit exists on master |
+| 2 | **Bump version** | Tạo git tag `v{VERSION}`, push tag | Confirm tag exists, version hợp lệ (semver) |
+| 3 | **Cập nhật README** | Update README.md với changelog/version mới | Confirm README.md đã thay đổi, có version mới |
+
+**SM invoke DevOps với prompt rõ ràng:**
+```
+invokeSubAgent(
+  name: "devops-agent",
+  prompt: "Release {TICKET} — Deploy đã thành công. Thực hiện release process:
+  1. Merge branch {TICKET} vào master (--no-ff)
+  2. Bump version — tạo git tag (semver: minor cho feature, patch cho bugfix)
+  3. Cập nhật README.md — thêm entry mới vào changelog section với version, date, ticket key, và summary thay đổi
+  Báo cáo kết quả từng bước."
+)
+```
+
+**SM verify sau khi DevOps hoàn thành:**
+1. Kiểm tra DevOps report có đủ 3 bước
+2. Nếu thiếu bước nào → yêu cầu DevOps làm lại bước đó
+3. Chỉ khi cả 3 bước PASS → SM mới transition READY FOR PRODUCT → DONE
+
+**⛔ SM KHÔNG ĐƯỢC transition DONE nếu DevOps chưa hoàn thành release process.**
+
 ### ⛔ Transitions SM KHÔNG ĐƯỢC tự động thực hiện
 
 | Transition | Ai thực hiện | Lý do |
@@ -531,8 +596,17 @@ SM **không dừng lại để hỏi** về template. Thông báo rồi chạy t
 5. **Verify diagrams exist**: Check `documents/{TICKET}/diagrams/use-case.drawio` và `business-flow.drawio` + `.png` files
    - Nếu thiếu → invoke BA agent lại: "Tạo draw.io diagrams cho BRD {TICKET}. Chỉ tạo diagrams, không tạo lại BRD."
 5. Update STATUS: `requirements.status = "done"`, `requirements.version = 1`
-6. Report: "✅ Phase 1 done — BRD.md created. Chuyển sang Phase 2 (Specification)?"
-7. Wait for user confirmation.
+6. **Attach BRD to Jira** (MANDATORY — attach ngay sau khi phase hoàn thành):
+   ```
+   // Export DOCX: embed_images → export_docx
+   embed_images(file_path="documents/{TICKET}/BRD.md", output_path="documents/{TICKET}/BRD-embedded.md")
+   export_docx(file_path="documents/{TICKET}/BRD-embedded.md", file_name="BRD-v1-{TICKET}")
+   
+   // Attach to Jira
+   jira_update_issue(issue_key: "{TICKET}", fields: "{}", attachments: "documents/{TICKET}/BRD-v1-{TICKET}.docx")
+   ```
+7. Report: "✅ Phase 1 done — BRD.md created & attached to Jira. Chuyển sang Phase 2 (Specification)?"
+8. Wait for user confirmation.
 
 ### Step 2: Execute Phase — Specification (BA + TA → FSD)
 
@@ -579,14 +653,23 @@ SM **không dừng lại để hỏi** về template. Thông báo rồi chạy t
 #### Step 2c: Finalize FSD
 
 7. Update STATUS: `specification.status = "done"`, `specification.version = 1`
-8. Report:
+8. **Attach FSD to Jira** (MANDATORY — attach ngay sau khi phase hoàn thành):
    ```
-   ✅ Phase 2 done — FSD.md created (BA draft + TA enrichment).
+   // Export DOCX: embed_images → export_docx
+   embed_images(file_path="documents/{TICKET}/FSD.md", output_path="documents/{TICKET}/FSD-embedded.md")
+   export_docx(file_path="documents/{TICKET}/FSD-embedded.md", file_name="FSD-v1-{TICKET}")
+   
+   // Attach to Jira
+   jira_update_issue(issue_key: "{TICKET}", fields: "{}", attachments: "documents/{TICKET}/FSD-v1-{TICKET}.docx")
+   ```
+9. Report:
+   ```
+   ✅ Phase 2 done — FSD.md created & attached to Jira (BA draft + TA enrichment).
    - BA: Use Cases, Business Rules, Data Specs, Diagrams
    - TA: API Contracts, Integration Specs, Pseudocode, Technical Review
    Chuyển sang Phase 3 (Design)?
    ```
-9. Wait for user confirmation.
+10. Wait for user confirmation.
 
 ### Step 3: Execute Phase — Design (SA → TDD)
 
@@ -607,22 +690,14 @@ SM **không dừng lại để hỏi** về template. Thông báo rồi chạy t
 5. Check if `documents/{TICKET}/DISCREPANCY.md` exists
 5. If DISCREPANCY.md exists → go to Step 3.5 (Feedback Loop)
 6. If no discrepancy → Update STATUS: `design.status = "done"`
-7. **Attach documents to Jira ticket** (BRD, FSD, TDD):
+7. **Attach TDD to Jira** (MANDATORY — attach ngay sau khi phase hoàn thành):
    ```
-   // Chỉ attach nếu document có update (version mới)
-   // Tên file trong Jira: {DOC}-v{version}-{TICKET}.docx
-   // Ví dụ: BRD-v1-SCRUM-50.docx, FSD-v1-SCRUM-50.docx, TDD-v1-SCRUM-50.docx
+   // Export DOCX: embed_images → export_docx
+   embed_images(file_path="documents/{TICKET}/TDD.md", output_path="documents/{TICKET}/TDD-embedded.md")
+   export_docx(file_path="documents/{TICKET}/TDD-embedded.md", file_name="TDD-v1-{TICKET}")
    
-   // Step 7a: Export DOCX (MANDATORY) — Flow: embed_images → export_docx(file_path=...)
-   // ⛔ NEVER pass markdown content directly — always use file_path
-   embed_images(file_path=".../{TICKET}/BRD.md", output_path=".../{TICKET}/BRD-embedded.md")
-   export_docx(file_path=".../{TICKET}/BRD-embedded.md", file_name="BRD-v1-{TICKET}")
-   // Repeat for FSD, TDD (embed_images first, then export_docx with file_path)
-   
-   // Step 7b: Attach to Jira (MANDATORY)
-   the discovered project tracker "update issue" tool (issue_key: "{TICKET}", attachments: "documents/{TICKET}/BRD-v{version}-{TICKET}.docx")
-   the discovered project tracker "update issue" tool (issue_key: "{TICKET}", attachments: "documents/{TICKET}/FSD-v{version}-{TICKET}.docx")
-   the discovered project tracker "update issue" tool (issue_key: "{TICKET}", attachments: "documents/{TICKET}/TDD-v{version}-{TICKET}.docx")
+   // Attach to Jira
+   jira_update_issue(issue_key: "{TICKET}", fields: "{}", attachments: "documents/{TICKET}/TDD-v1-{TICKET}.docx")
    ```
 8. **Verify diagrams exist** (MANDATORY):
    - Check `documents/{TICKET}/diagrams/` directory exists and has `.drawio` + `.png` files
@@ -630,7 +705,7 @@ SM **không dừng lại để hỏi** về template. Thông báo rồi chạy t
    - FSD: ≥3 diagrams (system context + sequence + state)
    - TDD: ≥3 diagrams (architecture + component + class)
    - If diagrams missing → invoke agent lại với prompt: "Tạo draw.io diagrams cho {DOC}. Export PNG."
-9. Report: "✅ Phase 3 done — TDD.md created. Documents attached to Jira. Chuyển sang Phase 4?"
+9. Report: "✅ Phase 3 done — TDD.md created & attached to Jira. Chuyển sang Phase 4?"
 10. Wait for user confirmation.
 11. **Đợi Jira ticket chuyển sang IN PROGRESS** (transition "Implement" do reviewer/PO thực hiện sau khi review docs)
 
@@ -772,7 +847,18 @@ If review found issues:
 
 1. Update STATUS: `test_planning.status = "done"`
 2. Update STATUS: `test_planning.review = "approved"` (hoặc "approved_with_conditions")
-3. Report:
+3. **Attach STP/STC to Jira** (MANDATORY — attach ngay sau khi phase hoàn thành):
+   ```
+   // Export DOCX: embed_images → export_docx
+   embed_images(file_path="documents/{TICKET}/STP.md", output_path="documents/{TICKET}/STP-embedded.md")
+   export_docx(file_path="documents/{TICKET}/STP-embedded.md", file_name="STP-v1-{TICKET}")
+   embed_images(file_path="documents/{TICKET}/STC.md", output_path="documents/{TICKET}/STC-embedded.md")
+   export_docx(file_path="documents/{TICKET}/STC-embedded.md", file_name="STC-v1-{TICKET}")
+   
+   // Attach to Jira
+   jira_update_issue(issue_key: "{TICKET}", fields: "{}", attachments: "documents/{TICKET}/STP-v1-{TICKET}.docx,documents/{TICKET}/STC-v1-{TICKET}.docx")
+   ```
+4. Report:
    ```
    ✅ Phase 4 done — STP.md + STC.md created and reviewed.
    - {N} test cases across 6 levels

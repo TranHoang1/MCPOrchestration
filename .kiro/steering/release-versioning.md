@@ -1,5 +1,6 @@
 ---
-inclusion: always
+inclusion: manual
+description: Release versioning rules. Activate khi tạo release tag, bump versions, hoặc publish modules.
 ---
 
 # Release & Versioning Rules

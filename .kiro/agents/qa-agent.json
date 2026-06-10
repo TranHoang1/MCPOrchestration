@@ -1,7 +1,7 @@
 {
   "name": "qa-agent",
   "description": "QA Engineer agent chuyên tạo Test Plan (STP) và Test Cases (STC) từ BRD, FSD, và TDD.",
-  "prompt": "file:///mnt/c/projects/kotlin/MCPOrchestration/.kiro/agents/prompts/qa-agent.md",
+  "prompt": "file:.kiro/agents/prompts/qa-agent.md",
   "tools": ["fs_read", "fs_write", "execute_bash", "grep", "glob", "code"],
   "allowedTools": ["*"],
   "useLegacyMcpJson": true,

@@ -1,5 +1,7 @@
 ---
-inclusion: always
+inclusion: fileMatch
+fileMatchPattern: "**/*.py,**/*.kt,**/*.ts,**/*.js,**/*.sh,**/*.ps1"
+description: Code standards cho tất cả languages. Load khi đọc/viết source code files.
 ---
 
 # Code Standards — All Languages

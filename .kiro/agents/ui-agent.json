@@ -1,7 +1,7 @@
 {
   "name": "ui-agent",
   "description": "UI/UX Designer agent chuyên tạo UI mockups, wireframes, và design specifications cho features có giao diện.",
-  "prompt": "file:///mnt/c/projects/kotlin/MCPOrchestration/.kiro/agents/prompts/ui-agent.md",
+  "prompt": "file:.kiro/agents/prompts/ui-agent.md",
   "tools": ["fs_read", "fs_write", "execute_bash", "grep", "glob", "code"],
   "allowedTools": ["*"],
   "useLegacyMcpJson": true,

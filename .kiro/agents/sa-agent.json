@@ -1,7 +1,7 @@
 {
   "name": "sa-agent",
   "description": "Solution Architect agent chuyên tạo Technical Design Document (TDD) từ BRD và FSD.",
-  "prompt": "file:///mnt/c/projects/kotlin/MCPOrchestration/.kiro/agents/prompts/sa-agent.md",
+  "prompt": "file:.kiro/agents/prompts/sa-agent.md",
   "tools": ["fs_read", "fs_write", "execute_bash", "grep", "glob", "code"],
   "allowedTools": ["*"],
   "useLegacyMcpJson": true,

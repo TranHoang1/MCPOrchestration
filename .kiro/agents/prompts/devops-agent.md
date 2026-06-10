@@ -329,7 +329,7 @@ For each document (DPG.md, RLN.md):
    git merge {TICKET} --no-ff -m "Merge {TICKET}: {summary}"
    git push origin master
    ```
-2. **Tạo version tag:**
+2. **Tạo version tag (Bump version):**
    - Lấy latest tag: `git describe --tags --abbrev=0` (ví dụ: `v1.1.0`)
    - Bump version theo quy tắc:
      - MAJOR: Breaking changes
@@ -340,17 +340,34 @@ For each document (DPG.md, RLN.md):
    git tag -a v{VERSION} -m "{TICKET}: {summary}"
    git push origin v{VERSION}
    ```
-3. **Cleanup branch:**
+3. **Cập nhật README.md (MANDATORY):**
+   - Mở `README.md` ở root project
+   - Thêm entry mới vào section `## Changelog` (hoặc tạo section nếu chưa có):
+     ```markdown
+     ## Changelog
+     
+     ### v{VERSION} — {YYYY-MM-DD}
+     - **{TICKET}**: {summary of changes}
+     ```
+   - Nếu README có section "Version" hoặc badge → cập nhật version number
+   - Commit README change:
+   ```
+   git add README.md
+   git commit -m "docs: update README changelog for v{VERSION} ({TICKET})"
+   git push origin master
+   ```
+4. **Cleanup branch:**
    ```
    git branch -d {TICKET}
    git push origin --delete {TICKET}
    ```
-4. **Cập nhật Release Notes** — ghi version tag vào RLN.md header
-5. **Báo cáo:**
+5. **Cập nhật Release Notes** — ghi version tag vào RLN.md header
+6. **Báo cáo:**
    ```
    ✅ Release:
    - Merged: {TICKET} → master
    - Tag: v{VERSION}
+   - README.md updated (changelog + version)
    - Branch {TICKET} deleted
    ```
 

@@ -1,7 +1,7 @@
 {
   "name": "dev-agent",
   "description": "Developer agent chuyên implement code từ TDD. Đọc BRD, FSD, TDD đã có, và tạo code theo thiết kế.",
-  "prompt": "file:///mnt/c/projects/kotlin/MCPOrchestration/.kiro/agents/prompts/dev-agent.md",
+  "prompt": "file:.kiro/agents/prompts/dev-agent.md",
   "tools": ["fs_read", "fs_write", "execute_bash", "grep", "glob", "code"],
   "allowedTools": ["*"],
   "useLegacyMcpJson": true,
